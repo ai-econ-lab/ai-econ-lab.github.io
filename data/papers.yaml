@@ -7,11 +7,13 @@ published:
     authors: "Lodefalk, M., Engberg, E., Lidskog, R. & A. Tang"
     year: 2026
     venue: "Digital Society (accepted)"
-    coverage: ["Publikt", "Dagens Industri (op-ed, SV)"]
+    coverage:
+      - {name: "Publikt", url: "https://www.publikt.se/fordjupning/pa-djupet/alla-paverkas-nar-ai-forandrar-arbetsmarknaden-27542"}
+      - {name: "Dagens Industri (op-ed)", url: "https://www.di.se/debatt/brist-pa-ai-ledarskap-hammar-offentlig-sektor/"}
     links:
       - {label: "ORU WP 6/2025", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2025/wp-6-2025.pdf"}
       - {label: "Appendix", url: "https://drive.google.com/file/d/1hwLsobJjqwFmf28bE26DxbekuvqGmDDw/view"}
-    abstract: ""
+    abstract: "This paper investigates the economic and societal impacts of Artificial Intelligence (AI) in the public sector, focusing on its potential to enhance productivity and mitigate labour shortages. Employing detailed administrative data and novel occupational exposure measures, we simulate future scenarios over a 20-year horizon, using Sweden as an illustrative case. Our findings indicate that advances in AI development and uptake could significantly alleviate projected labour shortages and enhance productivity. However, outcomes vary substantially across sectors and organisational types, driven by differing workforce compositions. Complementing the economic analysis, we identify key challenges that hinder AI’s effective deployment, including technical limitations, organisational barriers, regulatory ambiguity, and ethical risks such as algorithmic bias and lack of transparency. Drawing from an interdisciplinary conceptual framework, we argue that AI’s integration in the public sector must address these socio-technical and institutional factors comprehensively. To unlock AI’s full potential, substantial investments in technological infrastructure, human capital development, regulatory clarity, and robust governance mechanisms are essential. Our study thus contributes both novel economic evidence and an integrated societal perspective, informing strategies for sustainable and equitable public-sector digitalisation"
   - title: "Artificial Intelligence, Tasks, Skills and Wages: Worker-Level Evidence from Germany"
     authors: "Engberg, E., Koch, M., Lodefalk, M. & S. Schroeder"
     year: 2025
@@ -21,7 +23,7 @@ published:
       - {label: "DOI", url: "https://doi.org/10.1016/j.respol.2025.105285"}
       - {label: "ORU WP 12/2023", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2023/wp-12-2023.pdf"}
       - {label: "Ratio WP 371", url: "https://ratio.se/publikationer/working-paper-no-371-artificial-intelligence-tasks-skills-and-wages-worker-level-evidence-from-germany"}
-    abstract: ""
+    abstract: "This paper documents novel facts on within-occupation task and skill changes over the past two decades in Germany. In a second step, it reveals a distinct relationship between occupational work content and exposure to artificial intelligence (AI) and automation (robots). Workers in occupations with high AI exposure, perform different activities and face different skill requirements, compared to workers in occupations exposed to robots. In a third step, the study uses individual labour market biographies to investigate the impact on wages between 2010 and 2017. Results indicate a wage growth premium in occupations more exposed to AI, contrasting with a wage growth discount in occupations exposed to robots. Finally, the study further explores the dynamic influence of AI exposure on individual wages over time, uncovering positive associations with wages, with nuanced variations across occupational groups"
   - title: "Artificial Intelligence, Hiring and Employment: Job Postings Evidence from Sweden"
     authors: "Engberg, E., Hellsten, M., Javed, F., Lodefalk, M., Sabolova, R., Schroeder, S. & A. Tang"
     year: 2025
@@ -31,17 +33,19 @@ published:
       - {label: "DOI", url: "https://doi.org/10.1080/13504851.2025.2497431"}
       - {label: "ORU WP 10/2024", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2024/wp-10-2024.pdf"}
       - {label: "Ratio WP 380", url: "https://cms.ratio.se/app/uploads/2024/11/wp-380.pdf"}
-    abstract: ""
+    abstract: "This paper investigates the impact of artificial intelligence (AI) on hiring and employment, using the universe of job postings published by the Swedish Public Employment Service from 2014-2022 and universal register data for Sweden. We construct a detailed measure of AI exposure according to occupational content and find that establishments exposed to AI are more likely to hire AI workers. Survey data further indicate that AI exposure aligns with greater use of AI services. Importantly, rather than displacing non-AI workers, AI exposure is positively associated with increased hiring for both AI and non-AI roles. In the absence of substantial productivity gains that might account for this increase, we interpret the positive link between AI exposure and non-AI hiring as evidence that establishments are using AI to augment existing roles and expand task capabilities, rather than to replace non-AI workers"
   - title: "Artificial Intelligence and Worker Stress: Evidence from Germany"
     authors: "Koch, M. & M. Lodefalk"
     year: 2025
     venue: "Digital Society, 4(5)"
-    coverage: ["Sveriges Radio (from 101:25)", "Realtid"]
+    coverage:
+      - {name: "Sveriges Radio", url: "https://www.sverigesradio.se/avsnitt/2570335"}
+      - {name: "Realtid", url: "https://www.realtid.se/it-tech/overraskande-ai-fyndet-man-paverkas/"}
     links:
       - {label: "Article", url: "https://rdcu.be/d8No5"}
       - {label: "ORU WP 5/2024", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2024/wp-5-2024.pdf"}
       - {label: "Ratio WP 377", url: "https://cms.ratio.se/app/uploads/2024/06/wp-377-sammanfogad.pdf"}
-    abstract: ""
+    abstract: "We use individual survey data providing detailed information on stress, technology adoption, and work, worker, and employer characteristics, in combination with recent measures of AI and robot exposure, to investigate how new technologies affect worker stress. We find a persistent negative relationship, suggesting that AI and robots could reduce the stress level of workers. We furthermore provide evidence on potential mechanisms to explain our findings. Overall, the results provide suggestive evidence of modern technologies changing the way we perform our work in a way that reduces stress and work pressure"
   - title: "Double Whammy? Trade and Automation in Engineering Services"
     authors: "Kyvik-Nordås, H. & F. Klügl"
     year: 2024
@@ -50,7 +54,7 @@ published:
     links:
       - {label: "DOI", url: "https://doi.org/10.1111/roie.12743"}
       - {label: "ORU WP 16/2021", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2021/wp-16-2021.pdf"}
-    abstract: ""
+    abstract: "This paper studies the role of trade for the joint uptake of AI-enabled automation in manufacturing and engineering. It develops an agent-based model (ABM) where the agents are heterogeneous manufacturers and engineering firms. The model features two technology-related business models: engineering as a face-to-face consultancy service and engineering as automated software. Switching to the software technology is costly for both manufacturers and engineers, but the cost declines with the number of firms having made the leap due to network effects. The simulations start with a scenario where all firms are in the consultancy business model and trace out the path of software adoption over time. The software adoption rate follows an S-shaped curve for manufacturers and a boom and bust cycle for engineers. Trade affects the cut-off productivity rate at which manufacturers switch technology, the shape of the adoption rate curve, and the incentives for engineers to develop software. In a two-country model with a high and low-wage country, the low wage country adopts software early and import consultancy services from the high-wage country, a pattern similar to China’s trade and AI development"
   - title: "Modelling Agent Decision Making in Agent-Based Simulation: Analysis Using an Economic Technology Uptake Model"
     authors: "Kyvik-Nordås, H. & F. Klügl"
     year: 2023
@@ -67,14 +71,22 @@ published:
     links:
       - {label: "Article", url: "https://www.frontiersin.org/articles/10.3389/frobt.2021.637125/full"}
       - {label: "ORU WP 16/2020", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2020/wp-16-2020.pdf"}
-    abstract: ""
+    abstract: "This paper studies the uptake of AI-driven automation and its impact on employment, using a dynamic agent-based model (ABM). It simulates the adoption of automation software as well as job destruction and job creation in its wake. There are two types of agents: manufacturing firms and engineering services firms. The agents choose between two business models: consulting or automated software. From the engineering firms’ point of view, the model exhibits static economies of scale in the software model and dynamic (learning by doing) economies of scale in the consultancy model. From the manufacturing firms’ point of view, switching to the software model requires restructuring of production and there are network effects in switching. The ABM matches engineering and manufacturing agents and derives employment of engineers and the tasks they perform, i.e. consultancy, software development, software maintenance, or employment in manufacturing. Policy parameters influencing the results are occupational licensing and protection of intellectual property rights. We find that the uptake of software is gradual; slow in the first few years and then accelerates. Software is fully adopted after about 18 years in the base line run. The adoption rate is slower the higher the license fee for software, while the adoption rate is faster the higher the mark-up rate of consultancy. Employment of engineers shifts from consultancy to software development and to new jobs in manufacturing. Spells of unemployment may occur, if skilled jobs creation in manufacturing is slow. Finally, the model generates boom and bust cycles in the software sector"
 
 working:
   - title: "AI Unboxed and Jobs: A Novel Measure and Firm-Level Evidence from Three Countries"
     authors: "Engberg, E., Görg, H., Hellsten, M., Javed, F., Kyvik-Nordås, H., Lodefalk, M., Längkvist, M., Monteiro, N., Pulito, G., Schroeder, S. & A. Tang"
     year: 2026
     venue: "In review"
-    coverage: ["Il Foglio", "Die Zeit", "Focus", "DN", "GP", "SVT", "FR", "Staatsanzeiger", "Kiel Policy Brief"]
+    coverage:
+      - {name: "Il Foglio", url: "https://www.ilfoglio.it/tecnologia/2026/02/12/news/l-ai-non-distrugge-i-posti-di-lavoro-li-cambia-uno-studio-tedesco--8647321/"}
+      - {name: "Die Zeit", url: "https://www.zeit.de/wirtschaft/2026-05/automatisierungsrisiko-arbeitnehmer-ki-arbeitsmarkt-bedrohung"}
+      - {name: "Focus", url: "https://www.focus.de/finanzen/arbeit-veraendert-sich-gerade-fuer-alle-was-beschaeftigte-aushalten-muessen_80a1aba4-fc2e-4493-9437-9991be50c929.html"}
+      - {name: "DN", url: "https://www.dn.se/ekonomi/har-ar-jobben-som-inte-paverkas-av-ai/"}
+      - {name: "GP", url: "https://www.gp.se/ekonomi/jobben-som-hotas-av-ai-inom-20-ar.922f02e9-ab00-442b-916f-188e011a5078"}
+      - {name: "SVT", url: "https://www.svt.se/nyheter/ekonomi/anders-hansen-om-framtidens-ai-jobb-det-ar-som-att-bli-omhandertagen-av-en-psykopat"}
+      - {name: "Frankfurter Rundschau", url: "https://www.fr.de/wissen/sorge-vor-ki-als-jobkiller-obwohl-kaum-arbeitsplaetze-verloren-gehen-zr-94146761.html"}
+      - {name: "Staatsanzeiger", url: "https://www.staatsanzeiger.de/beruf-und-karriere/einsatz-von-ki-veraendert-die-arbeitsplaetze/"}
     links:
       - {label: "ORU WP 13/2023", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2023/wp-13-2023.pdf"}
       - {label: "Ratio WP 370", url: "https://cms.ratio.se/app/uploads/2023/12/wp-370-ai-unboxed.pdf"}
@@ -82,29 +94,35 @@ working:
       - {label: "CReAM/RFBerlin", url: "https://www.rfberlin.com/wp-content/uploads/2024/08/AI-Unboxed-and-Jobs-A-Novel-Measure-and-Firm-Level-Evidence-from-Three-Countries.pdf"}
       - {label: "Kiel Policy Brief 198", url: "https://www.kielinstitut.de/fileadmin/Dateiverwaltung/IfW-Publications/-ifw/Kiel_Policy_Brief/KPB_198.pdf"}
       - {label: "Data", url: "https://drive.google.com/drive/folders/16PwsyGY28iXnsGOIY7dzN6hDwwxIuHRV"}
-    abstract: ""
+    abstract: "We unbox developments in artificial intelligence (AI) to estimate how exposure to these developments affect firm-level labour demand, using detailed register data from Denmark, Portugal and Sweden over two decades. Based on data on AI capabilities and occupational work content, We develop and validate a time-variant measure for occupational exposure to AI across subdomains of AI, including language modelling. According to our model, white collar occupations are most exposed to AI, and especially white collar work that entails relatively little social interaction. We illustrate its usefulness by applying it to near-universal data on firms and individuals from Sweden, Denmark, and Portugal, and estimating firm labour demand regressions. We find a positive (negative) association between AI exposure and labour demand for highskilled white (blue) collar work. Overall, there is an up-skilling effect, with the share of white-collar to blue collar workers increasing with AI exposure. Exposure to AI within the subdomains of image and language are positively (negatively) linked to demand for high-skilled white collar (blue collar) work, whereas other AI-areas are heterogeneously linked to groups of workers"
   - title: "The Effects of Artificial Intelligence on Jobs: Evidence from an AI Subsidy Program"
     authors: "Hellsten, M., Khanna, S., Lodefalk, M. & Y. Yakymovych"
     year: 2025
     venue: "In review, Economic Journal"
-    coverage: ["Sveriges Radio", "LLM Podcast"]
+    coverage:
+      - {name: "Sveriges Radio", url: "https://www.sverigesradio.se/avsnitt/kommer-ai-ta-ditt-jobb"}
+      - {name: "LLM Podcast"}
     links:
       - {label: "ORU WP 13/2025", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2025/wp-13-2025.pdf"}
       - {label: "Ratio WP 386", url: "https://cms.ratio.se/app/uploads/2025/11/working-paper-386-1.pdf"}
       - {label: "IZA DP 18267", url: "https://www.iza.org/publications/dp/18267/the-effects-of-artificial-intelligence-on-jobs-evidence-from-an-ai-subsidy-program"}
       - {label: "GLO DP 1692", url: "https://ideas.repec.org/p/zbw/glodps/1692.html"}
-    abstract: ""
+    abstract: "Artificial intelligence (AI) is expected to reshape labor markets, yet causal evidence remains scarce. We exploit a novel Swedish subsidy program that encouraged small and mid-sized firms to adopt AI. Using a synthetic difference-in-differences design comparing awarded and non-awarded firms, we find that AI subsidies led to a sustained increase in job postings over five years, but with no statistically detectable change in employment. This pattern reflects hiring signals concentrated in AI occupations and white-collar roles. Our findings align with task-based models of automation, in which AI adoption reconfigures work and spurs demand for new skills, but hiring frictions and the need for complementary investments delay workforce expansion"
   - title: "Same Storm, Different Boats: Generative AI and the Age Gradient in Hiring"
     authors: "Lodefalk, M., Löthman, L., Koch, M. & E. Engberg"
     year: 2026
     venue: "In review"
-    coverage: ["Sveriges Radio", "SvD", "DN", "Arbetsvärlden"]
+    coverage:
+      - {name: "Sveriges Radio", url: "https://www.sverigesradio.se/artikel/blir-allt-svarare-for-unga-att-fa-jobb-efter-sakra-utbildningar"}
+      - {name: "SvD", url: "https://www.svd.se/a/9pzVaM/laskigaste-kurvan-visar-ai-tar-jobb-fran-unga-i-sverige"}
+      - {name: "DN", url: "https://www.dn.se/debatt/ja-ai-hotar-ungas-jobb-men-inte-som-vi-trott/"}
+      - {name: "Arbetsvärlden", url: "https://www.arbetsvarlden.se/unga-blev-forlorare-nar-chatgpt-forandrade-arbetet/"}
     links:
       - {label: "Paper (PDF)", url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/main.pdf"}
       - {label: "One-pager", url: "https://magnus-l.github.io/canaries-sweden/onepager/onepager.pdf"}
       - {label: "ORU WP 2/2026", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2026/wp-2-2026.pdf"}
       - {label: "Appendix", url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/appendix.pdf"}
-    abstract: ""
+    abstract: "We show that the age composition of employment within Swedish employers shifts after the arrival of generative AI, with no corresponding reduction in aggregate labour demand. Using 4.6 million job advertisements from Sweden’s largest recruitment platform, we find that the broad decline in postings since 2022 aligns with monetary tightening rather than AI, exploiting Sweden’s seven-month gap between the Riksbank’s first rate hike and the launch of ChatGPT as a timing test. We then use full-population employer– employee register data and an employer-level difference-in-differences design to estimate how AI exposure affects employment composition across six age groups. An event study documents an accelerating decline in employment of 22–25-year-olds in high-AI-exposure occupations, reaching 5.5 per cent by early 2025 relative to less exposed occupations within the same employers, while employment of workers over 50 rose by 1.3 per cent. The widening age gradient suggests that generative AI reshapes hiring composition rather than aggregate demand, with the adjustment burden falling disproportionately on entry-level workers"
   - title: "Who Adopts AI? Evidence on Firms, Technologies and Workers"
     authors: "Pulito, G., Pytlikova, M., Schroeder, S. & M. Lodefalk"
     year: 2026
@@ -145,7 +163,7 @@ working:
     coverage: []
     links:
       - {label: "Ratio WP 378", url: "https://cms.ratio.se/app/uploads/2024/08/wp-378-framsida-sammanfogad.pdf"}
-    abstract: ""
+    abstract: "This paper assesses whether workers who develop and apply artificial intelligence experience a earnings premium. I link skill requirements specified in job vacancies to the individuals ultimately hired to fill those positions using a combination of Swedish job vacancy and matched employer-employee register data. By identifying positions that explicitly necessitate AI skills, this paper seeks to determine if a earnings premium is associated with these skills while controlling for other individual attributes. Findings suggest a significant earnings premium for individuals hired to positions requiring AI skills. Discerning between AI developers and AI users, the results indicate that the former group experiences a stronger earnings premium. The premium is partly driven by workers being hired into high-wage industries. However, transitioning into roles requiring AI skills does not result in additional earnings increases, indicating that firms do not engage in wage competition for these workers"
   - title: "The First AI at My Firm: Worker Outcomes after Firm-Level AI Adoption"
     authors: "Hellsten, M., Lodefalk, M., Lechner, M., Löthman, L., Persson, A. & Y. Yakymovych"
     year: 2026

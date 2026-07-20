@@ -213,8 +213,14 @@ def paper_row(p, detail):
         if p.get("abstract"):
             parts += f'<p class="pab">{h(p["abstract"])}</p>'
         if p.get("coverage"):
-            parts += (f'<p class="pmeta2"><span class="lbl">In the media</span> '
-                      f'{" · ".join(h(c) for c in p["coverage"])}</p>')
+            covs = ""
+            for c in p["coverage"]:
+                nm = c["name"] if isinstance(c, dict) else c
+                if isinstance(c, dict) and c.get("url"):
+                    covs += f'<a class="lchip" href="{c["url"]}">{h(nm)}</a>'
+                else:
+                    covs += f'<span class="lchip nolink">{h(nm)}</span>'
+            parts += f'<p class="pmeta2"><span class="lbl">In the media</span> {covs}</p>'
         if p.get("links"):
             chips = "".join(f'<a class="lchip" href="{l["url"]}">{h(l["label"])}</a>' for l in p["links"])
             parts += f'<p class="plinks"><span class="lbl">Versions &amp; links</span> {chips}</p>'
