@@ -8,7 +8,7 @@ engine and no third-party deps beyond PyYAML — so it runs the same on your Mac
 and in CI. Edit the YAML, run `python3 build.py`, commit, push.
 """
 from pathlib import Path
-import shutil, yaml, html, re, unicodedata
+import shutil, yaml, html, re, unicodedata, hashlib
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
@@ -261,10 +261,13 @@ def pslug(name):
     return re.sub(r"[^a-z0-9]+", "-", n.lower()).strip("-")
 
 def photo_for(name):
-    """Auto-detect assets/people/<slug>.<ext>; drop a correctly named file and it appears."""
+    """Auto-detect assets/people/<slug>.<ext>; drop a correctly named file and it appears.
+    Appends ?v=<hash> so browsers refetch when a photo's content changes (no stale cache)."""
     for ext in ("jpg", "jpeg", "png", "webp"):
-        if (ROOT / "assets" / "people" / f"{pslug(name)}.{ext}").exists():
-            return f"{pslug(name)}.{ext}"
+        p = ROOT / "assets" / "people" / f"{pslug(name)}.{ext}"
+        if p.exists():
+            v = hashlib.md5(p.read_bytes()).hexdigest()[:8]
+            return f"{pslug(name)}.{ext}?v={v}"
     return None
 
 def person_card(m):
@@ -309,6 +312,8 @@ def daioe():
     d = DAIOE
     res = "".join(f'<li><a href="{r["href"]}">{h(r["label"])}</a> <span class="mono">· {h(r["note"])}</span></li>'
                   for r in d["resources"])
+    faq = "".join(f'<details class="faq"><summary>{h(q["q"])}</summary><p>{h(q["a"])}</p></details>'
+                  for q in d.get("faq", []))
     most = exposure_bars(DAIOE_EXP["most"], "hi")
     least = exposure_bars(list(reversed(DAIOE_EXP["least"])), "lo")
     body = f"""<div class="wrap"><div class="hero" style="padding-bottom:6px"><div>
@@ -387,6 +392,12 @@ def daioe():
     &ldquo;{h(d['paper']['title'])}&rdquo;. See <a href="/research/">Research</a>.</p>
 </section></div></div>
 
+<div class="rule" id="faq"><div class="wrap"><section>
+  <p class="kicker">FAQ</p>
+  <h2 class="sec">What DAIOE is, and isn't.</h2>
+  <div class="faqlist">{faq}</div>
+</section></div></div>
+
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">See it live</p>
   <h2 class="sec">DAIOE in the Monitor.</h2>
@@ -418,7 +429,11 @@ def events():
             rows += (f'<div class="semrow"><span class="yr tnum">{h(e["date"])}</span>'
                      f'<span><span class="rt">{speaker}{aff}</span><span class="ra">{title}</span></span></div>')
         seasons += f'<div class="grouphdr">{h(season["name"])}</div><div class="rows semlist">{rows}</div>'
-    def cfp_link(c): return f' <a class="lchip" href="{c["cfp"]}">Call for papers (PDF)</a>' if c.get("cfp") else ""
+    def cfp_link(c):
+        out = ""
+        if c.get("cfp"): out += f' <a class="lchip" href="{c["cfp"]}">Call for papers</a>'
+        if c.get("programme"): out += f' <a class="lchip" href="{c["programme"]}">Programme</a>'
+        return out
     past = ""
     for c in s["conferences"]["past"]:
         past += (f'<div class="confentry"><div class="confhd"><span class="confedition">{h(c["edition"])} conference</span>'

@@ -85,12 +85,18 @@ conferences:
   past:
     - {edition: "4th", year: 2026, title: "AI and White-Collar Work", when: "10–11 June 2026", where: "Katrinelund, Örebro",
        note: "27 participants, 12 papers; keynotes by Michael Lechner (St. Gallen) and Christina Gathmann (LISER / Luxembourg).",
-       cfp: "/assets/conferences/CfP_AIEL_2026.pdf"}
-    - {edition: "3rd", year: 2024, title: "AI and White-Collar Work", when: "12–13 June 2024", where: "Örebro",
-       note: "20 researchers from multiple countries.", cfp: ""}
-    - {edition: "2nd", year: 2022, title: "AI and White-Collar Work", when: "15–16 June 2022", where: "Örebro",
-       note: "Participants from three continents and four disciplines.", cfp: ""}
+       cfp: "/assets/conferences/CfP_AIEL_2026.pdf", programme: ""}
+    - {edition: "3rd", year: 2024, title: "AI and White-Collar Work", when: "12–13 June 2024", where: "Katrinelund, Örebro",
+       note: "11 papers; an interdisciplinary workshop with participants from eight countries and four disciplines.",
+       cfp: "https://drive.google.com/file/d/17Fq3VIGGBOgRk8oRG5fisiqBMN-dvjRj/view", programme: ""}
+    - {edition: "2nd", year: 2022, title: "AI and White-Collar Work", when: "15–16 June 2022", where: "Katrinelund, Örebro",
+       note: "12 papers; participants from three continents and four disciplines.",
+       cfp: "https://drive.google.com/file/d/10p0dX_o86e6C4XNO6Yd45CIw1jsE8mdj/view",
+       programme: "https://drive.google.com/file/d/1-4QEMbApLjcdUJu0oCG1jnJU7s6ZEk0-/view"}
     - {edition: "TIISA 2021", year: 2021, title: "Trade and the Digital Transformation of Services", when: "8–12 November 2021", where: "Örebro · Stockholm · online",
-       note: "14 papers, 3 keynotes (Christen, Walden, Kortum), a panel and a roundtable including Richard Baldwin and Lucian Cernat.", cfp: ""}
+       note: "14 papers, 3 keynotes (Christen, Walden, Kortum), a panel and a roundtable including Richard Baldwin and Lucian Cernat.",
+       cfp: "", programme: ""}
     - {edition: "1st", year: 2020, title: "The Impact of AI on White-Collar Work", when: "25 November 2020", where: "online",
-       note: "The inaugural digital conference.", cfp: ""}
+       note: "The inaugural digital conference; keynotes by Anna Salomons (Utrecht) and Morgan Frank (Pittsburgh / MIT).",
+       cfp: "https://drive.google.com/file/d/1cCp7UxcNQizDmGjAslZ4SIx35E43Qo7Q/view",
+       programme: "https://drive.google.com/file/d/1fUkBXjT4xrKvdo2lNo8-63zb6l_22CWh/view"}

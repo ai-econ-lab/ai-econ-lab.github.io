@@ -1,11 +1,25 @@
-# DAIOE — the lab's data-driven AI Occupational Exposure measure and its public tools.
+# DAIOE — the lab's Dynamic AI Occupational Exposure measure and its public tools.
+# NB: the old site expands DAIOE as "Dynamic AI Occupational Exposure" (confirm with Magnus).
 headline: "DAIOE"
-tagline: "Data-driven AI Occupational Exposure"
+tagline: "Dynamic AI Occupational Exposure"
 lede: >-
-  DAIOE is the lab's measure of how exposed each occupation is to artificial intelligence,
-  built from data rather than expert guesswork. It is openly published, versioned and mapped
-  across the US (SOC), international (ISCO) and Swedish (SSYK) occupational classifications, so
-  others can use it directly in their own work.
+  DAIOE measures how exposed each occupation is to artificial intelligence, from data rather than
+  expert guesswork. It tracks nine AI subdomains annually since 2010, capturing the potential
+  applicability of AI capabilities to occupational content, not job-loss forecasts or adoption
+  probabilities. It is openly published, versioned and mapped across the US (SOC), international
+  (ISCO) and Swedish (SSYK) classifications, so others can use it directly.
+
+# FAQ — ported verbatim from the old ai-econlab.com/ai-exposure-daioe page (typos fixed). VERIFY.
+faq:
+  - {q: "Does “exposure” mean automation or job loss?", a: "No. DAIOE captures the potential applicability of AI capabilities to occupational content. Whether this changes jobs depends on adoption, complements and organisational choices."}
+  - {q: "Is it a forecast of AI adoption?", a: "No. DAIOE captures potential applicability. If, when and how AI is applied in an occupation depends on the cost of acquiring, adapting and using the technology, the institutional setting (laws and regulations), and more."}
+  - {q: "What is different about DAIOE versus prior indices?", a: "DAIOE is dynamic and grounded in measured AI benchmark progress. It tracks nine subdomains over time and explicitly adjusts for social interaction."}
+  - {q: "Which occupations tend to score highest?", a: "Cognitive, non-physical roles with lower social-interaction intensity, often white-collar, tend to rank higher."}
+  - {q: "Do the data say anything about employment outcomes?", a: "Higher DAIOE relates to up-skilling: higher high- to low-skill ratios, and a shift from low-skill clerical toward high-skill work."}
+  - {q: "How do you handle interpersonal-heavy work?", a: "We compute a social-skills index from O*NET (importance × level across six social skills) and discount exposure accordingly."}
+  - {q: "What are the nine AI subdomains?", a: "Capabilities across games, vision and language, split into nine subdomains, aggregated into an overall index and a generative-AI sub-index."}
+  - {q: "Can I compare across countries or industries?", a: "Yes. Combine occupation-level DAIOE with local workforce structures (firms, industries, regions) to assess exposure distributions."}
+  - {q: "Is there a generative-AI version?", a: "Yes. We provide a generative-AI sub-index that combines language modelling and image generation."}
 
 # The live interactive tools (Shiny for Python on Hugging Face). Built and maintained in-house.
 # Named "Occupations Explorer" on the site: primarily employment by occupation over time (and, soon,
