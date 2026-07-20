@@ -9,11 +9,11 @@ lede: >-
 
 # The live interactive tools (Shiny for Python on Hugging Face). Built and maintained in-house.
 explorers:
-  - name: "DAIOE Explorer — yearly"
+  - name: "DAIOE Explorer · yearly"
     desc: "Yearly SCB employment by Swedish occupation group, alongside DAIOE AI-exposure levels."
     embed: "https://ai-econ-lab-daioe-explorer-years.hf.space"
     open: "https://huggingface.co/spaces/ai-econ-lab/daioe-explorer-years"
-  - name: "DAIOE Explorer — monthly"
+  - name: "DAIOE Explorer · monthly"
     desc: "Monthly SCB employment by Swedish occupation group, alongside DAIOE AI-exposure levels."
     embed: "https://ai-econ-lab-months.hf.space"
     open: "https://huggingface.co/spaces/ai-econ-lab/months"

@@ -297,7 +297,7 @@ def daioe():
   <p class="secintro">The <a href="/monitor/#daioe-explorer">DAIOE Explorer</a>, part of the AI-Econ Lab Monitor, sets
     Swedish employment by occupation against DAIOE exposure levels, in yearly and monthly views.</p>
 </section></div></div>"""
-    return shell(f"DAIOE — data-driven AI occupational exposure · {SITE['brand']['name']}",
+    return shell(f"DAIOE · data-driven AI occupational exposure · {SITE['brand']['name']}",
                  "DAIOE: the lab's open, data-driven measure of occupational AI exposure, mapped across SOC / ISCO / SSYK.",
                  "/daioe/", body, jsonld=daioe_ld())
 
