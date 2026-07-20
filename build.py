@@ -418,19 +418,26 @@ def events():
             rows += (f'<div class="semrow"><span class="yr tnum">{h(e["date"])}</span>'
                      f'<span><span class="rt">{speaker}{aff}</span><span class="ra">{title}</span></span></div>')
         seasons += f'<div class="grouphdr">{h(season["name"])}</div><div class="rows semlist">{rows}</div>'
-    past = "".join(f'<div class="confrow"><span class="yr tnum">{h(c["year"])}</span>'
-                   f'<span class="rd">{h(c["note"])}</span></div>' for c in s["conferences"]["past"])
+    def cfp_link(c): return f' <a class="lchip" href="{c["cfp"]}">Call for papers (PDF)</a>' if c.get("cfp") else ""
+    past = ""
+    for c in s["conferences"]["past"]:
+        past += (f'<div class="confentry"><div class="confhd"><span class="confedition">{h(c["edition"])} conference</span>'
+                 f'<span class="yr tnum">{h(c["when"])}</span></div>'
+                 f'<div class="conftitle">{h(c["title"])}</div>'
+                 f'<div class="confmeta">{h(c["where"])}. {h(c["note"])}{cfp_link(c)}</div></div>')
     nx = s["conferences"]["next"]
+    nxdetails = "".join(f"<li>{h(x)}</li>" for x in nx["details"])
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">Events</p><h2 class="sec">Seminars &amp; conferences</h2>
   <p class="secintro">{h(ser['intro'])}</p></div></div>
 
 <div class="rule" id="conference-2028"><div class="wrap"><section style="padding-top:20px">
-  <p class="kicker">Next conference</p>
-  <h2 class="sec">{h(nx['title'])}: {h(nx['theme'])}.</h2>
-  <p class="secintro">{h(nx['when'])} · {h(nx['where'])}. {h(nx['note'])}</p>
-  <div class="grouphdr" style="margin-top:24px">Earlier conferences</div>
-  <div class="rows">{past}</div>
+  <p class="kicker">Next conference · {h(nx['edition'])} AIEL conference</p>
+  <h2 class="sec">{h(nx['title'])}.</h2>
+  <p class="secintro">{h(nx['when'])} · {h(nx['where'])}. Hosted by {h(nx['hosts'])}. Organisers: {h(nx['organisers'])}.</p>
+  <ul class="reslist" style="margin-top:12px;max-width:70ch">{nxdetails}</ul>
+  <div class="grouphdr" style="margin-top:30px">Earlier conferences</div>
+  {past}
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
