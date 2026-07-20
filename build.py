@@ -339,7 +339,25 @@ def daioe():
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
-  <p class="kicker">What it shows · generative AI, {DAIOE_EXP['year']}</p>
+  <p class="kicker">The whole landscape · generative AI, {DAIOE_EXP['year']}</p>
+  <h2 class="sec">Every occupation, placed by its exposure.</h2>
+  <div class="scrolly">
+    <div class="scrolly-chart">
+      <svg id="beeswarm" viewBox="0 0 760 340" role="img" aria-label="Beeswarm of about 420 occupations by generative-AI exposure"></svg>
+      <div class="beeaxis"><span>← less exposed</span><span>more exposed →</span></div>
+    </div>
+    <div class="scrolly-steps">
+      <div class="step" data-hl="all"><p>Roughly 420 occupations, each a dot, placed left to right by how exposed they are to generative AI. Hover any dot to name it.</p></div>
+      <div class="step" data-hl="hi"><p><b>The exposed end is desk work.</b> Writers, programmers, analysts, marketers and, yes, economists cluster on the right.</p></div>
+      <div class="step" data-hl="lo"><p><b>The other end is hands and bodies.</b> Care, craft, construction, cleaning and farming sit on the left, where generative AI reaches least.</p></div>
+      <div class="step" data-hl="hi"><p><b>It cuts against intuition.</b> The more schooling a job needs, the more exposed it tends to be. Exposure is not replacement, but the pattern is stark.</p></div>
+    </div>
+  </div>
+  <p class="prov" style="margin-top:8px">Source: DAIOE v{DAIOE_EXP['year']} · ISCO-08. Look up your own job in the search above.</p>
+</section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">The named extremes · generative AI, {DAIOE_EXP['year']}</p>
   <h2 class="sec">Where generative AI reaches, and where it doesn't.</h2>
   <p class="secintro">DAIOE's generative-AI exposure across roughly 420 occupations. Writers, marketers, programmers
     and, yes, economists sit at the very top; hands-on manual, craft and outdoor work sits at the bottom.</p>

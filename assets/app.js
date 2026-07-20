@@ -122,4 +122,45 @@ window.drawTrend();
     const row = DATA.occ.find(r => r[0] === b.dataset.t); input.value = row[0]; sugg.style.display = "none"; render(row); });
   domSel.addEventListener("change", () => { di = +domSel.value; if (current) render(current); if (input.value) showSugg(matches(input.value)); });
   document.addEventListener("click", e => { if (!e.target.closest(".occsearchbox")) sugg.style.display = "none"; });
+  input.addEventListener("keydown", e => { if (e.key === "Enter" && window.beeHighlight) { const m = matches(input.value); if (m.length) window.beeHighlight(m[0][0]); } });
+  sugg.addEventListener("click", e => { const b = e.target.closest(".occopt"); if (b && window.beeHighlight) window.beeHighlight(b.dataset.t); });
+})();
+
+/* DAIOE beeswarm — every occupation placed by generative-AI exposure, with scroll steps */
+(function beeswarm(){
+  const svg = $("#beeswarm"); if (!svg) return;
+  fetch("/assets/daioe_occupations.json").then(r => r.json()).then(d => {
+    const occ = d.occ.map(r => ({ t: r[0], s: r[1][0], p: r[1][1] }));  // genAI = domain 0
+    const W = 760, H = 340, pad = 28, r = 3.4, colW = 2 * r + 1.2, cy = H / 2;
+    const ss = occ.map(o => o.s), smin = Math.min(...ss), smax = Math.max(...ss);
+    const X = v => pad + (v - smin) / (smax - smin) * (W - 2 * pad);
+    occ.sort((a, b) => a.s - b.s);
+    const cols = {};
+    occ.forEach(o => { const ci = Math.round(X(o.s) / colW); (cols[ci] = cols[ci] || []).push(o); o._x = ci * colW; });
+    Object.values(cols).forEach(list => list.forEach((o, i) => { o._y = cy + (i % 2 ? 1 : -1) * Math.ceil(i / 2) * (2 * r + 1); }));
+    const hx = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const lo = hx("--c2"), mid = hx("--c4"), hi = hx("--c1");
+    const lerp = (a, b, t) => { a = a.replace("#",""); b = b.replace("#","");
+      const ax = [0,2,4].map(i => parseInt(a.slice(i,i+2),16)), bx = [0,2,4].map(i => parseInt(b.slice(i,i+2),16));
+      return "#" + ax.map((v,i) => Math.round(v + (bx[i]-v)*t).toString(16).padStart(2,"0")).join(""); };
+    const colOf = p => p < 50 ? lerp(lo, mid, p/50) : lerp(mid, hi, (p-50)/50);
+    svg.innerHTML = occ.map((o,i) => `<circle class="bee" data-i="${i}" cx="${o._x.toFixed(1)}" cy="${o._y.toFixed(1)}" r="${r}" fill="${colOf(o.p)}"/>`).join("");
+    const circles = [...svg.querySelectorAll(".bee")];
+    svg.addEventListener("pointermove", ev => { const t = ev.target;
+      if (t.classList && t.classList.contains("bee")) { const o = occ[+t.dataset.i];
+        showTip(`<b>${o.t}</b><div class="r"><span>genAI exposure</span><b>${o.s.toFixed(2)}</b></div><div class="r"><span>percentile</span><b>${Math.round(o.p)}</b></div>`, ev.clientX, ev.clientY);
+      } else hideTip(); });
+    svg.addEventListener("pointerleave", hideTip);
+    function setHL(mode){ circles.forEach((c,i) => { const p = occ[i].p;
+      const on = mode === "hi" ? p >= 88 : mode === "lo" ? p <= 12 : true;
+      c.style.opacity = on ? 1 : 0.1; c.setAttribute("r", r); }); }
+    const steps = document.querySelectorAll(".scrolly-steps .step");
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) {
+      steps.forEach(s => s.classList.remove("active")); e.target.classList.add("active"); setHL(e.target.dataset.hl); } }),
+      { rootMargin: "-45% 0px -45% 0px" });
+    steps.forEach(s => io.observe(s));
+    setHL("all");
+    window.beeHighlight = name => { const idx = occ.findIndex(o => o.t === name);
+      circles.forEach((c,i) => { c.style.opacity = idx < 0 ? 1 : (i === idx ? 1 : 0.1); c.setAttribute("r", i === idx ? 6 : r); }); };
+  }).catch(() => {});
 })();
