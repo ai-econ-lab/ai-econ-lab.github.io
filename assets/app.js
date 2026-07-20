@@ -104,7 +104,7 @@ window.drawTrend();
       <div class="occscore"><span class="tnum">${s.toFixed(2)}</span> <span class="occunit">${dl} exposure</span></div>
       <div class="occscale"><div class="occmark" style="left:${p}%"></div>
         <span class="occlab lo">less exposed</span><span class="occlab hi">more exposed</span></div>
-      <p class="occsent">More exposed to ${dl.toLowerCase()} than <b>${Math.round(p)}%</b> of occupations
+      <p class="occsent">More exposed to ${dl} than <b>${Math.round(p)}%</b> of occupations
         (rank ${rank} of ${N}, ISCO-08 ${DATA.year}).</p>`;
     result.style.display = "block";
   }
