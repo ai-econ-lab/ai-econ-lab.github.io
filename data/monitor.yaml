@@ -1,18 +1,22 @@
 # AI in Demand — monitor content. Numbers are REAL (from the prototype).
 # The builder/integrator/user split is a PREVIEW (not yet measured) — keep it flagged.
 
-headline: "The AI-Econ Lab Monitor"
+headline: "The AIEL Monitor"
 lede: >-
-  A public monitor of artificial intelligence in the Swedish labour market:
-  how often employers ask for AI, how it is used, and what holds its use back.
-  Built on public data, updated as the data arrive, committed to no funder.
+  A public monitor of how artificial intelligence is moving through the Swedish labour market: the
+  skills employers demand, how exposed each occupation is, how far adoption and everyday use have
+  spread, whether AI augments or replaces tasks, and what that means for entry-level opportunity and
+  job quality. Built on public data so it can be cited and refreshed automatically, and committed to
+  no funder. Two views are live today; the rest are on an open roadmap.
 
-# The monitor's modules. 'live' modules have their own section below; 'planned' are honest placeholders.
+# The monitor's modules. 'live' has its own section below; 'next'/'planned'/'someday' are honest roadmap.
 modules:
-  - {name: "AI in Demand", status: "live", desc: "How often employers ask for AI in their job ads, by year and occupation."}
-  - {name: "DAIOE Explorer", status: "live", desc: "Employment by Swedish occupation set against DAIOE AI-exposure levels."}
-  - {name: "AI use", status: "planned", desc: "Firm and worker adoption of AI, from SCB and survey sources."}
-  - {name: "Barriers to AI use", status: "planned", desc: "What holds adoption back, e.g. from Akavia member data."}
+  - {name: "AI in Demand", status: "live", desc: "How often employers ask for AI skills in job ads, by occupation, sector and region over time."}
+  - {name: "Occupations Explorer", status: "live", desc: "Swedish employment by occupation over time (and soon region), with DAIOE AI-exposure overlaid."}
+  - {name: "Entry-level squeeze", status: "next", desc: "The young/entry-level share of openings in AI-exposed occupations: the canaries signal on vacancies."}
+  - {name: "AI adoption & use", status: "planned", desc: "Firm and worker adoption from public SCB data and realized-use task views."}
+  - {name: "Augmentation vs automation", status: "planned", desc: "Whether AI adds to or replaces the tasks of each occupation."}
+  - {name: "Across countries", status: "someday", desc: "AI-in-demand compared across countries via ISCO occupations."}
 
 # The AI in Demand module.
 aiindemand_lede: >-

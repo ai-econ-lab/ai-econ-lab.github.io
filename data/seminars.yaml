@@ -1,36 +1,85 @@
-# Seminars & events — ported from ai-econlab.com/seminars (2026-07-20). VERIFY before go-live.
+# Seminars — full list ported from ai-econlab.com/seminars (2026-07-20). VERIFY before go-live.
 series:
   title: "AIEL brown-bag seminar series"
   intro: >-
-    A monthly, virtual brown-bag lunch research seminar. From autumn 2025 it is part of the
-    Swedish research cluster on AI, Structural Change and the Future of Work (AISCAF), funded by
-    WASP-HS. Internal or invited external researchers present work-in-progress and get feedback
-    from colleagues.
+    Since 2024 the AI-Econ Lab arranges a monthly, virtual brown-bag lunch research seminar. From
+    autumn 2025 it is part of the Swedish research cluster on AI, Structural Change and the Future of
+    Work (AISCAF), funded by WASP-HS. Internal or invited external researchers present work-in-progress
+    and get feedback from colleagues.
   format:
-    - "Monthly, online (Zoom link on request)"
+    - "Monthly, online via Zoom"
     - "12:00–13:00 CET (12:30–13:30 from autumn 2026)"
     - "20–30 minutes presentation, then Q&A"
+    - "Slots by invitation, first-come-first-served"
   contact: "Magnus Lodefalk, firstname.surname[at]oru.se"
+  zoom: "https://oru-se.zoom.us/j/63703049171?pwd=aEx4Z213VDFxT2NDM1dQY2JwQ3ZtUT09"
 
-# Upcoming / recent seminars (speaker — topic — date). Keep reverse-chronological within season.
-upcoming:
-  - {date: "2026-05-08", speaker: "Tomáš Oleš", topic: "Title TBD"}
-  - {date: "2026-04-10", speaker: "Joonas Tuhkuri", topic: "Title TBD"}
-  - {date: "2026-03-13", speaker: "Mariola Pytlikova", topic: "AI adoption"}
-  - {date: "2025-12-12", speaker: "Fredrik Heinz", topic: "European AI strategy"}
-  - {date: "2025-11-14", speaker: "Malin Heintz", topic: "Digitalisation and female-dominated occupations"}
-  - {date: "2025-10-10", speaker: "Charlotta Kronblad", topic: "Algorithmic injustice and multilayered blackboxing"}
-  - {date: "2025-09-12", speaker: "Otto Kässi", topic: "Generative AI's labour market effects"}
+# Seasons, newest first. Each seminar: date, speaker, affil, title, desc (optional), links[{label,url}].
+seasons:
+  - name: "2026 / 2027"
+    seminars:
+      - {date: "2026-09-11", speaker: "Carlo Pizzinelli", affil: "International Monetary Fund", title: "TBD",
+         links: [{label: "Speaker", url: "https://sites.google.com/site/carlopizzinelli/carlo-pizzinelli"}]}
+      - {date: "2026-10-09", speaker: "Kristina Palm", affil: "Karlstad University",
+         title: "Working with robots — from a work-environment perspective",
+         links: [{label: "Speaker", url: "https://www.kau.se/forskare/kristina-palm"}]}
+      - {date: "2026-11-13", speaker: "TBD", affil: "", title: "TBD", links: []}
+      - {date: "2026-12-11", speaker: "Dennis Facius & Roberto Iacono", affil: "EUI · NTNU", title: "TBD",
+         links: [{label: "Facius", url: "https://www.eui.eu/people?id=dennis-facius"}, {label: "Iacono", url: "https://robertoiacono.org"}]}
+      - {date: "2027-02-12", speaker: "TBD", affil: "", title: "TBD", links: []}
+      - {date: "2027-03-12", speaker: "TBD", affil: "", title: "TBD", links: []}
+      - {date: "2027-04-09", speaker: "TBD", affil: "", title: "TBD", links: []}
+      - {date: "2027-05-14", speaker: "TBD", affil: "", title: "TBD", links: []}
+  - name: "2025 / 2026"
+    seminars:
+      - {date: "2026-05-08", speaker: "Tomáš Oleš", affil: "University of Economics, Bratislava", title: "TBD",
+         links: [{label: "Speaker", url: "https://tomasoles.github.io/home/#hello"}]}
+      - {date: "2026-04-10", speaker: "Joonas Tuhkuri", affil: "Stockholm University", title: "TBD",
+         links: [{label: "Speaker", url: "https://joonastuhkuri.com"}]}
+      - {date: "2026-03-13", speaker: "Mariola Pytlikova", affil: "CERGE-EI, Prague",
+         title: "Who Adopts AI? Evidence on Firms, Technologies and Workers",
+         links: [{label: "Speaker", url: "https://www.cerge-ei.cz/faculty/mariola-pytlikova-phd"}]}
+      - {date: "2025-12-12", speaker: "Fredrik Heinz", affil: "Linköping University",
+         title: "European Strategic Research, Innovation and Deployment Agenda for AI, data and robotics",
+         links: [{label: "Speaker", url: "https://liu.se/en/employee/frehe08"}]}
+      - {date: "2025-11-14", speaker: "Malin Heintz", affil: "Swedish Public Employment Service",
+         title: "Digitalisation and Labor Demand in Female-Dominated Occupations: Evidence from Swedish Vacancy Ads", links: []}
+      - {date: "2025-10-10", speaker: "Charlotta Kronblad", affil: "University of Gothenburg",
+         title: "Algorithmic injustice and multilayered blackboxing",
+         links: [{label: "Scholar", url: "https://scholar.google.com/citations?user=98fw8KYAAAAJ"}]}
+      - {date: "2025-09-12", speaker: "Otto Kässi", affil: "ETLA · Oxford Internet Institute",
+         title: "Winners and losers of generative AI: Early evidence of shifts in freelancer demand",
+         links: [{label: "Paper", url: "https://www.sciencedirect.com/science/article/pii/S0167268124004591"}, {label: "Speaker", url: "https://sites.google.com/site/ottokassi/"}]}
+  - name: "2024 / 2025"
+    seminars:
+      - {date: "2025-05-09", speaker: "Peter Njekwa Ryberg", affil: "Jönköping International Business School",
+         title: "Toss a Coin to your Robot: The Automation and Augmentation of Tasks in Firms", links: []}
+      - {date: "2025-04-04", speaker: "Magdalena Ramstedt Stadin", affil: "Uppsala University",
+         title: "AI and working environment", links: []}
+      - {date: "2025-02-07", speaker: "Kerstin Enflo", affil: "Lund University",
+         title: "Power for progress: The impact of electricity on individual labor market outcomes", links: []}
+      - {date: "2025-01-10", speaker: "Mark Hellsten", affil: "Aarhus University · Ratio",
+         title: "Automation and skill demand: Evidence from Denmark", links: []}
+      - {date: "2024-12-13", speaker: "Mark Granberg", affil: "Ratio · Örebro University",
+         title: "Heterogeneous wage and employment premia of AI adoption? Evidence from Sweden", links: []}
+      - {date: "2024-11-29", speaker: "Tomáš Oleš", affil: "University of Economics, Bratislava",
+         title: "Impact of Robots and Artificial Intelligence on Wages and Skill Demand: Evidence from the UK", links: []}
+      - {date: "2024-09-20", speaker: "Emilie Vestergaard", affil: "University of Copenhagen",
+         title: "The Adoption of ChatGPT (with Anders Humlum)", links: []}
 
 # AIEL conference series.
 conferences:
   next:
     title: "5th AIEL Conference"
+    theme: "The Impact of AI on White-Collar Work"
     when: "14–15 June 2028"
-    where: "Örebro, Sweden"
-    note: "On AI and the future of work. Keynote speakers to be confirmed."
+    where: "Katrinelund, near Örebro, Sweden"
+    note: >-
+      The fifth interdisciplinary AIEL conference. Hosted by the AI-Econ Lab, Örebro University, Ratio and the
+      WASP-HS AISCAF cluster. Call for papers expected September 2027 (abstracts to ai.econlab.event@gmail.com,
+      300 words). 12 papers selected; every presenter also discusses.
   past:
-    - {year: 2026, note: "AIEL / AISCAF conference, Örebro"}
+    - {year: 2026, note: "AIEL / AISCAF conference, Katrinelund"}
     - {year: 2024, note: "AIEL conference, Örebro"}
     - {year: 2022, note: "AI and white-collar work, Örebro"}
     - {year: 2021, note: "TIISA conference"}

@@ -8,13 +8,15 @@ lede: >-
   others can use it directly in their own work.
 
 # The live interactive tools (Shiny for Python on Hugging Face). Built and maintained in-house.
+# Named "Occupations Explorer" on the site: primarily employment by occupation over time (and, soon,
+# region), with DAIOE exposure as one overlay — so "DAIOE Explorer" would over-state the exposure part.
 explorers:
-  - name: "DAIOE Explorer · yearly"
-    desc: "Yearly SCB employment by Swedish occupation group, alongside DAIOE AI-exposure levels."
+  - name: "Occupations Explorer · yearly"
+    desc: "Yearly Swedish employment by occupation group, with DAIOE AI-exposure levels overlaid."
     embed: "https://ai-econ-lab-daioe-explorer-years.hf.space"
     open: "https://huggingface.co/spaces/ai-econ-lab/daioe-explorer-years"
-  - name: "DAIOE Explorer · monthly"
-    desc: "Monthly SCB employment by Swedish occupation group, alongside DAIOE AI-exposure levels."
+  - name: "Occupations Explorer · monthly"
+    desc: "Monthly Swedish employment by occupation group, with DAIOE AI-exposure levels overlaid."
     embed: "https://ai-econ-lab-months.hf.space"
     open: "https://huggingface.co/spaces/ai-econ-lab/months"
 

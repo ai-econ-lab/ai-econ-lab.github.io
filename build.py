@@ -20,6 +20,7 @@ PEOPLE   = load("people.yaml")
 MONITOR  = load("monitor.yaml")
 DAIOE    = load("daioe.yaml")
 SEMINARS = load("seminars.yaml")
+DAIOE_EXP = load("daioe_exposure.yaml")
 
 OUT = ROOT / SITE["build"]["out"]
 BASE = SITE["brand"]["base_url"].rstrip("/")
@@ -132,8 +133,8 @@ def home():
     <div class="eyebrow"><span class="dot"></span> A multi-country, multi-disciplinary research lab</div>
     <h1 class="title">We measure how <em>artificial intelligence</em> is reshaping the world of work.</h1>
     <p class="lede">An economics-led lab at Örebro University and RATIO, part of the WASP-HS AISCAF cluster.
-      Our flagship public good, <b>AI in Demand</b>, tracks how often Swedish employers ask for AI in their
-      job ads, openly and honestly, and updated as the data arrive.</p>
+      Our flagship public good, the <b>AIEL Monitor</b>, tracks how AI is moving through the Swedish
+      labour market, openly and honestly, updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open AI in Demand →</a>
       <a class="btn ghost" href="/monitor/#method">How we measure it</a></div>
     <div class="affil">{affils}</div>
@@ -181,8 +182,8 @@ def home():
   <div class="tiles">{tiles}</div>
   <div class="two">
     <div class="prod"><div class="tag">The Monitor · public data</div><h3>The AI-Econ Lab Monitor</h3>
-      <p>How AI shows up in the Swedish labour market: AI in Demand (live), the DAIOE Explorer (live), and modules
-        on AI use and barriers to use in development.</p>
+      <p>How AI shows up in the Swedish labour market: AI in Demand (live), the Occupations Explorer (live), and
+        modules on adoption, augmentation and barriers in development.</p>
       <a class="go" href="/monitor/">Open the monitor →</a></div>
     <div class="prod"><div class="tag">The measure · open &amp; versioned</div><h3>DAIOE</h3>
       <p>Our data-driven AI Occupational Exposure measure, published openly and mapped across SOC / ISCO / SSYK so
@@ -199,26 +200,36 @@ def home():
     return shell(f"{b['name']} · measuring AI and the future of work", b["description"], "/",
                  body, jsonld=org_ld(), need_chart=True)
 
-def research_rows(limit=None):
-    rows = ""
-    pubs = [("Published", PAPERS["published"], True), ("Working papers & in review", PAPERS["working"], False)]
+def paper_row(p, detail):
+    primary = p["links"][0]["url"] if p.get("links") else ""
+    title = h(p["title"])
+    if primary: title = f'<a href="{primary}" style="color:inherit">{title}</a>'
+    bcls = " pub" if p in PAPERS["published"] else ""
+    tag = h(p["venue"]) if p.get("venue") else "Working paper"
+    det = ""
+    if detail and (p.get("abstract") or p.get("coverage") or p.get("links")):
+        parts = ""
+        if p.get("abstract"):
+            parts += f'<p class="pab">{h(p["abstract"])}</p>'
+        if p.get("coverage"):
+            parts += (f'<p class="pmeta2"><span class="lbl">In the media</span> '
+                      f'{" · ".join(h(c) for c in p["coverage"])}</p>')
+        if p.get("links"):
+            chips = "".join(f'<a class="lchip" href="{l["url"]}">{h(l["label"])}</a>' for l in p["links"])
+            parts += f'<p class="plinks"><span class="lbl">Versions &amp; links</span> {chips}</p>'
+        det = f'<details class="pdetail"><summary>Details</summary><div class="pbody">{parts}</div></details>'
+    return (f'<div class="rrow"><span class="yr tnum">{h(p["year"])}</span>'
+            f'<span><span class="rt">{title}</span><span class="ra">{h(p["authors"])}</span>{det}</span>'
+            f'<span class="badge{bcls}">{tag}</span></div>')
+
+def research_rows(limit=None, detail=False):
     if limit:
         merged = (PAPERS["published"] + PAPERS["working"])[:limit]
-        pubs = [("", merged, None)]
-    for gname, items, is_pub in pubs:
-        if gname: rows += f'<div class="grouphdr">{h(gname)}</div>'
-        for p in items:
-            badge = "Published" if p["venue"] and ("accepted" in p["venue"].lower() or "online" in p["venue"].lower()
-                    or p in PAPERS["published"]) else p["venue"] or "Working paper"
-            bcls = " pub" if p in PAPERS["published"] else ""
-            tag = h(p["venue"]) if p["venue"] else "Working paper"
-            title = h(p["title"])
-            if p.get("url"):
-                title = f'<a href="{p["url"]}" style="color:inherit">{title}</a>'
-            rows += (f'<div class="rrow"><span class="yr tnum">{h(p["year"])}</span>'
-                     f'<span><span class="rt">{title}</span><span class="ra">{h(p["authors"])}</span></span>'
-                     f'<span class="badge{bcls}">{tag}</span></div>')
-    return rows
+        return "".join(paper_row(p, detail) for p in merged)
+    out = ""
+    for gname, items in [("Published", PAPERS["published"]), ("Working papers & in review", PAPERS["working"])]:
+        out += f'<div class="grouphdr">{h(gname)}</div>' + "".join(paper_row(p, detail) for p in items)
+    return out
 
 def paper_count(): return len(PAPERS["published"]) + len(PAPERS["working"])
 
@@ -227,7 +238,7 @@ def research():
   <p class="kicker">Research</p><h2 class="sec">Papers &amp; publications</h2>
   <p class="secintro">Peer-reviewed articles and working papers from the lab and its network. Data-driven measures,
     causal identification, and register-grade evidence on AI and work.</p></div></div>
-<div class="wrap"><section style="padding-top:8px"><div class="rows">{research_rows()}</div></section></div>"""
+<div class="wrap"><section style="padding-top:8px"><div class="rows">{research_rows(detail=True)}</div></section></div>"""
     return shell(f"Research · {SITE['brand']['name']}",
                  "Peer-reviewed articles and working papers on AI and the labour market.",
                  "/research/", body)
@@ -274,18 +285,45 @@ def people():
                  "The AI-Econ Lab team and its international, multi-disciplinary network.",
                  "/people/", body, jsonld=people_ld())
 
+def exposure_bars(items, cls):
+    mx = DAIOE_EXP["most"][0]["score"]
+    out = ""
+    for it in items:
+        w = max(4, it["score"] / mx * 100)
+        out += (f'<div class="exprow"><span class="expocc">{h(it["occ"])}</span>'
+                f'<span class="expval tnum">{it["score"]:.2f}</span>'
+                f'<div class="expbarwrap"><div class="expbar {cls}" style="width:{w:.1f}%"></div></div></div>')
+    return out
+
 def daioe():
     # The PURE measure. The interactive Explorer lives under the Monitor (it consumes DAIOE + SCB).
     d = DAIOE
     res = "".join(f'<li><a href="{r["href"]}">{h(r["label"])}</a> <span class="mono">· {h(r["note"])}</span></li>'
                   for r in d["resources"])
+    most = exposure_bars(DAIOE_EXP["most"], "hi")
+    least = exposure_bars(list(reversed(DAIOE_EXP["least"])), "lo")
     body = f"""<div class="wrap"><div class="hero" style="padding-bottom:6px"><div>
   <div class="eyebrow"><span class="dot"></span> {h(d['tagline'])}</div>
   <h1 class="title" style="max-width:16ch">{h(d['headline'])}: how exposed is each job to AI?</h1>
   <p class="lede" style="max-width:60ch">{h(d['lede'])}</p>
   <div class="cta-row"><a class="btn primary" href="{d['resources'][0]['href']}">Download the data →</a>
-    <a class="btn ghost" href="/monitor/#daioe-explorer">See it applied in the Monitor</a></div>
+    <a class="btn ghost" href="/monitor/#occupations-explorer">See it applied in the Monitor</a></div>
 </div></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">What it shows · generative AI, {DAIOE_EXP['year']}</p>
+  <h2 class="sec">Where generative AI reaches, and where it doesn't.</h2>
+  <p class="secintro">DAIOE's generative-AI exposure across roughly 420 occupations. Writers, marketers, programmers
+    and, yes, economists sit at the very top; hands-on manual, craft and outdoor work sits at the bottom.</p>
+  <div class="expgrid">
+    <div><div class="exphead"><span class="dotc hi"></span>Most exposed to generative AI</div>
+      <div class="expbars">{most}</div></div>
+    <div><div class="exphead"><span class="dotc lo"></span>Least exposed</div>
+      <div class="expbars">{least}</div></div>
+  </div>
+  <p class="prov" style="margin-top:16px">Source: DAIOE v{DAIOE_EXP['year']} · ISCO-08 · higher score = more exposed.
+    Explore every occupation in the <a href="/monitor/#occupations-explorer">Occupations Explorer</a>.</p>
+</section></div></div>
 
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">The measure</p>
@@ -306,7 +344,7 @@ def daioe():
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">See it live</p>
   <h2 class="sec">DAIOE in the Monitor.</h2>
-  <p class="secintro">The <a href="/monitor/#daioe-explorer">DAIOE Explorer</a>, part of the AI-Econ Lab Monitor, sets
+  <p class="secintro">The <a href="/monitor/#occupations-explorer">Occupations Explorer</a>, part of the AIEL Monitor, sets
     Swedish employment by occupation against DAIOE exposure levels, in yearly and monthly views.</p>
 </section></div></div>"""
     return shell(f"DAIOE · data-driven AI occupational exposure · {SITE['brand']['name']}",
@@ -316,10 +354,17 @@ def daioe():
 def seminars():
     s = SEMINARS; ser = s["series"]
     fmt = "".join(f"<li>{h(x)}</li>" for x in ser["format"])
-    ups = ""
-    for e in s["upcoming"]:
-        ups += (f'<div class="semrow"><span class="yr tnum">{h(e["date"])}</span>'
-                f'<span><span class="rt">{h(e["speaker"])}</span><span class="ra">{h(e["topic"])}</span></span></div>')
+    seasons = ""
+    for season in s["seasons"]:
+        rows = ""
+        for e in season["seminars"]:
+            links = "".join(f'<a class="lchip" href="{l["url"]}">{h(l["label"])}</a>' for l in e.get("links", []))
+            aff = f' <span class="saff">{h(e["affil"])}</span>' if e.get("affil") else ""
+            title = h(e["title"]) if e["title"] and e["title"] != "TBD" else '<span class="tbd">To be announced</span>'
+            rows += (f'<div class="semrow"><span class="yr tnum">{h(e["date"])}</span>'
+                     f'<span><span class="rt">{h(e["speaker"])}{aff}</span>'
+                     f'<span class="ra">{title}</span>{f"<span class=lk>{links}</span>" if links else ""}</span></div>')
+        seasons += f'<div class="grouphdr">{h(season["name"])}</div><div class="rows semlist">{rows}</div>'
     past = "".join(f'<div class="confrow"><span class="yr tnum">{h(c["year"])}</span>'
                    f'<span class="rd">{h(c["note"])}</span></div>' for c in s["conferences"]["past"])
     nx = s["conferences"]["next"]
@@ -327,17 +372,18 @@ def seminars():
   <p class="kicker">Seminars &amp; events</p><h2 class="sec">{h(ser['title'])}</h2>
   <p class="secintro">{h(ser['intro'])}</p></div></div>
 <div class="wrap"><section style="padding-top:6px">
-  <div class="two" style="grid-template-columns:1.3fr 1fr;align-items:start">
-    <div><div class="grouphdr">Upcoming &amp; recent</div><div class="rows">{ups}</div></div>
-    <div class="card"><div class="charttitle" style="margin-bottom:8px">Format</div>
+  <div class="two" style="grid-template-columns:1.5fr 1fr;align-items:start">
+    <div>{seasons}</div>
+    <div class="card"><div class="charttitle" style="margin-bottom:8px">Attending</div>
       <ul class="reslist">{fmt}</ul>
+      <p style="margin:12px 0 0"><a class="btn ghost" style="font-size:12px" href="{ser['zoom']}">Join on Zoom →</a></p>
       <p class="psub" style="margin-top:12px">Contact: {h(ser['contact'])}</p></div>
   </div>
 </section></div>
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">Conference series</p>
-  <h2 class="sec">{h(nx['title'])} · {h(nx['when'])} · {h(nx['where'])}.</h2>
-  <p class="secintro">{h(nx['note'])}</p>
+  <h2 class="sec">{h(nx['title'])}: {h(nx['theme'])}.</h2>
+  <p class="secintro">{h(nx['when'])} · {h(nx['where'])}. {h(nx['note'])}</p>
   <div class="grouphdr" style="margin-top:24px">Earlier conferences</div>
   <div class="rows">{past}</div>
 </section></div></div>"""
@@ -348,10 +394,11 @@ def seminars():
 def monitor():
     m = MONITOR
     mods = ""
+    STCHIP = {"live":"● live", "next":"◑ next", "planned":"◔ planned", "someday":"◌ someday"}
     for mod in m["modules"]:
         live = mod["status"] == "live"
-        anchor = {"AI in Demand": "#ai-in-demand", "DAIOE Explorer": "#daioe-explorer"}.get(mod["name"], "")
-        chip = ('<span class="mstatus live">● live</span>' if live else '<span class="mstatus planned">◔ planned</span>')
+        anchor = {"AI in Demand": "#ai-in-demand", "Occupations Explorer": "#occupations-explorer"}.get(mod["name"], "")
+        chip = f'<span class="mstatus {"live" if live else "planned"}">{STCHIP.get(mod["status"],mod["status"])}</span>'
         name = f'<a href="{anchor}">{h(mod["name"])}</a>' if anchor else h(mod["name"])
         mods += (f'<div class="module {"on" if live else "off"}"><div class="mtop"><h3>{name}</h3>{chip}</div>'
                  f'<p>{h(mod["desc"])}</p></div>')
@@ -379,7 +426,7 @@ def monitor():
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
     <div class="cta-row"><a class="btn primary" href="#ai-in-demand">See AI in Demand →</a>
-      <a class="btn ghost" href="#daioe-explorer">Open the DAIOE Explorer</a></div></div>
+      <a class="btn ghost" href="#occupations-explorer">Open the Occupations Explorer</a></div></div>
   <div class="panel"><div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
     <span class="livechip"><i></i>live</span></div>
     <div class="panelbody"><p class="psub">Broad measure, any AI-related term, 2006–2025.</p>
@@ -411,11 +458,11 @@ def monitor():
   <div class="two" style="grid-template-columns:1fr 1fr 1fr">{seg}</div>
 </section></div></div>
 
-<div class="rule" id="daioe-explorer"><div class="wrap"><section>
+<div class="rule" id="occupations-explorer"><div class="wrap"><section>
   <p class="kicker">Module · live</p>
-  <h2 class="sec">DAIOE Explorer.</h2>
-  <p class="secintro">Swedish employment by occupation set against <a href="/daioe/">DAIOE</a> AI-exposure levels
-    (built and maintained in-house). Yearly and monthly views.</p>
+  <h2 class="sec">Occupations Explorer.</h2>
+  <p class="secintro">Swedish employment by occupation over time (and, soon, by region), with
+    <a href="/daioe/">DAIOE</a> AI-exposure overlaid. Built and maintained in-house; yearly and monthly views.</p>
   <div class="explorers">{explorers}</div>
 </section></div></div>
 

@@ -1,119 +1,197 @@
-# Papers — ported verbatim from ai-econlab.com/papers (2026-07-20).
-# VERIFY before go-live. Two OCR fixes applied vs the web extraction:
-#   - paper "AI, Hiring and Employment": "Jahved, F" -> "Javed, F" (matches Farrukh Javed)
-#   - "New Work, Exiting Work and Artificial lntelligence" -> "Intelligence"
-# Group order on the page: published first, then working/in-review.
+# Papers — full detail ported from ai-econlab.com/papers (2026-07-20). VERIFY before go-live.
+# Each paper: title, authors, year/status, venue, coverage[], links[{label,url}], abstract (optional).
+# abstract: pulled from the most recent version where available; blank = to add.
 
 published:
   - title: "Artificial Intelligence for Public Use"
     authors: "Lodefalk, M., Engberg, E., Lidskog, R. & A. Tang"
     year: 2026
     venue: "Digital Society (accepted)"
-    url: ""
+    coverage: ["Publikt", "Dagens Industri (op-ed, SV)"]
+    links:
+      - {label: "ORU WP 6/2025", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2025/wp-6-2025.pdf"}
+      - {label: "Appendix", url: "https://drive.google.com/file/d/1hwLsobJjqwFmf28bE26DxbekuvqGmDDw/view"}
+    abstract: ""
   - title: "Artificial Intelligence, Tasks, Skills and Wages: Worker-Level Evidence from Germany"
     authors: "Engberg, E., Koch, M., Lodefalk, M. & S. Schroeder"
     year: 2025
     venue: "Research Policy (early online)"
-    url: "https://doi.org/10.1016/j.respol.2025.105285"
+    coverage: []
+    links:
+      - {label: "DOI", url: "https://doi.org/10.1016/j.respol.2025.105285"}
+      - {label: "ORU WP 12/2023", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2023/wp-12-2023.pdf"}
+      - {label: "Ratio WP 371", url: "https://ratio.se/publikationer/working-paper-no-371-artificial-intelligence-tasks-skills-and-wages-worker-level-evidence-from-germany"}
+    abstract: ""
   - title: "Artificial Intelligence, Hiring and Employment: Job Postings Evidence from Sweden"
     authors: "Engberg, E., Hellsten, M., Javed, F., Lodefalk, M., Sabolova, R., Schroeder, S. & A. Tang"
     year: 2025
     venue: "Applied Economics Letters (early online)"
-    url: "https://doi.org/10.1080/13504851.2025.2497431"
+    coverage: []
+    links:
+      - {label: "DOI", url: "https://doi.org/10.1080/13504851.2025.2497431"}
+      - {label: "ORU WP 10/2024", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2024/wp-10-2024.pdf"}
+      - {label: "Ratio WP 380", url: "https://cms.ratio.se/app/uploads/2024/11/wp-380.pdf"}
+    abstract: ""
   - title: "Artificial Intelligence and Worker Stress: Evidence from Germany"
     authors: "Koch, M. & M. Lodefalk"
     year: 2025
     venue: "Digital Society, 4(5)"
-    url: "https://rdcu.be/d8No5"
+    coverage: ["Sveriges Radio (from 101:25)", "Realtid"]
+    links:
+      - {label: "Article", url: "https://rdcu.be/d8No5"}
+      - {label: "ORU WP 5/2024", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2024/wp-5-2024.pdf"}
+      - {label: "Ratio WP 377", url: "https://cms.ratio.se/app/uploads/2024/06/wp-377-sammanfogad.pdf"}
+    abstract: ""
   - title: "Double Whammy? Trade and Automation in Engineering Services"
     authors: "Kyvik-Nordås, H. & F. Klügl"
     year: 2024
     venue: "Review of International Economics"
-    url: "https://doi.org/10.1111/roie.12743"
+    coverage: []
+    links:
+      - {label: "DOI", url: "https://doi.org/10.1111/roie.12743"}
+      - {label: "ORU WP 16/2021", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2021/wp-16-2021.pdf"}
+    abstract: ""
   - title: "Modelling Agent Decision Making in Agent-Based Simulation: Analysis Using an Economic Technology Uptake Model"
     authors: "Kyvik-Nordås, H. & F. Klügl"
     year: 2023
     venue: "Proc. 22nd Int. Conf. on Autonomous Agents and Multi-Agent Systems (AAMAS)"
-    url: "https://dl.acm.org/doi/abs/10.5555/3545946.3598857"
+    coverage: []
+    links:
+      - {label: "ACM", url: "https://dl.acm.org/doi/abs/10.5555/3545946.3598857"}
+    abstract: ""
   - title: "Drivers of Automation and Consequences for Jobs in Engineering Services: An Agent-Based Modelling Approach"
     authors: "Kyvik-Nordås, H. & F. Klügl"
     year: 2021
     venue: "Frontiers in Robotics and AI, 8(637125)"
-    url: "https://www.frontiersin.org/articles/10.3389/frobt.2021.637125/full"
+    coverage: []
+    links:
+      - {label: "Article", url: "https://www.frontiersin.org/articles/10.3389/frobt.2021.637125/full"}
+      - {label: "ORU WP 16/2020", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2020/wp-16-2020.pdf"}
+    abstract: ""
 
 working:
   - title: "AI Unboxed and Jobs: A Novel Measure and Firm-Level Evidence from Three Countries"
     authors: "Engberg, E., Görg, H., Hellsten, M., Javed, F., Kyvik-Nordås, H., Lodefalk, M., Längkvist, M., Monteiro, N., Pulito, G., Schroeder, S. & A. Tang"
     year: 2026
     venue: "In review"
-    url: ""
+    coverage: ["Il Foglio", "Die Zeit", "Focus", "DN", "GP", "SVT", "FR", "Staatsanzeiger", "Kiel Policy Brief"]
+    links:
+      - {label: "ORU WP 13/2023", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2023/wp-13-2023.pdf"}
+      - {label: "Ratio WP 370", url: "https://cms.ratio.se/app/uploads/2023/12/wp-370-ai-unboxed.pdf"}
+      - {label: "IZA DP 16717", url: "https://docs.iza.org/dp16717.pdf"}
+      - {label: "CReAM/RFBerlin", url: "https://www.rfberlin.com/wp-content/uploads/2024/08/AI-Unboxed-and-Jobs-A-Novel-Measure-and-Firm-Level-Evidence-from-Three-Countries.pdf"}
+      - {label: "Kiel Policy Brief 198", url: "https://www.kielinstitut.de/fileadmin/Dateiverwaltung/IfW-Publications/-ifw/Kiel_Policy_Brief/KPB_198.pdf"}
+      - {label: "Data", url: "https://drive.google.com/drive/folders/16PwsyGY28iXnsGOIY7dzN6hDwwxIuHRV"}
+    abstract: ""
   - title: "The Effects of Artificial Intelligence on Jobs: Evidence from an AI Subsidy Program"
     authors: "Hellsten, M., Khanna, S., Lodefalk, M. & Y. Yakymovych"
     year: 2025
     venue: "In review, Economic Journal"
-    url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2025/wp-13-2025.pdf"
+    coverage: ["Sveriges Radio", "LLM Podcast"]
+    links:
+      - {label: "ORU WP 13/2025", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2025/wp-13-2025.pdf"}
+      - {label: "Ratio WP 386", url: "https://cms.ratio.se/app/uploads/2025/11/working-paper-386-1.pdf"}
+      - {label: "IZA DP 18267", url: "https://www.iza.org/publications/dp/18267/the-effects-of-artificial-intelligence-on-jobs-evidence-from-an-ai-subsidy-program"}
+      - {label: "GLO DP 1692", url: "https://ideas.repec.org/p/zbw/glodps/1692.html"}
+    abstract: ""
   - title: "Same Storm, Different Boats: Generative AI and the Age Gradient in Hiring"
     authors: "Lodefalk, M., Löthman, L., Koch, M. & E. Engberg"
-    year: 2025
+    year: 2026
     venue: "In review"
-    url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/main.pdf"
+    coverage: ["Sveriges Radio", "SvD", "DN", "Arbetsvärlden"]
+    links:
+      - {label: "Paper (PDF)", url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/main.pdf"}
+      - {label: "One-pager", url: "https://magnus-l.github.io/canaries-sweden/onepager/onepager.pdf"}
+      - {label: "ORU WP 2/2026", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2026/wp-2-2026.pdf"}
+      - {label: "Appendix", url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/appendix.pdf"}
+    abstract: ""
+  - title: "Who Adopts AI? Evidence on Firms, Technologies and Workers"
+    authors: "Pulito, G., Pytlikova, M., Schroeder, S. & M. Lodefalk"
+    year: 2026
+    venue: "Working paper"
+    coverage: []
+    links:
+      - {label: "ORU WP 3/2026", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2026/wp-3-2026.pdf"}
+      - {label: "IZA DP 18515", url: "https://docs.iza.org/dp18515.pdf"}
+      - {label: "RFBerlin 26089", url: "https://www.rfberlin.com/wp-content/uploads/2026/03/26089.pdf"}
+      - {label: "CERGE-EI WP 818", url: "https://www.cerge-ei.cz/pdf/wp/Wp818.pdf"}
+    abstract: ""
   - title: "Automation and the Changing Composition of Skill Demand"
     authors: "Hellsten, M., Pulito, G. & S. Schroeder"
     year: 2025
     venue: "In review, Labour Economics"
-    url: ""
+    coverage: []
+    links: []
+    abstract: ""
   - title: "Cross-Border Data Flows and AI-Technology Adoption: Agent-Based Model Simulations"
     authors: "Kyvik-Nordås, H. & F. Klügl"
     year: 2025
     venue: "Resubmitted, Structural Change and Economic Dynamics"
-    url: ""
-  - title: "Who Adopts AI? Evidence on Firms, Technologies and Workers"
-    authors: "Pulito, G., Pytlikova, M., Schroeder, S. & M. Lodefalk"
-    year: 2025
-    venue: "Working paper"
-    url: ""
-  - title: "The First AI at My Firm: Worker Outcomes after Firm-Level AI Adoption"
-    authors: "Hellsten, M., Lodefalk, M., Lechner, M., Löthman, L., Persson, A. & Y. Yakymovych"
-    year: 2025
-    venue: "In progress"
-    url: ""
-  - title: "AI and Inequality"
-    authors: "Granberg, M., Lodefalk, M. & Y. Yakymovych"
-    year: 2025
-    venue: "In progress"
-    url: ""
-  - title: "New Work, Exiting Work and Artificial Intelligence"
-    authors: "Engberg, E., Kyvik-Nordås, H., Lodefalk, M., Sabolova, R. & A. Tang"
-    year: 2025
-    venue: "In progress"
-    url: ""
+    coverage: []
+    links: []
+    abstract: ""
   - title: "Artificial Intelligence, Trade and Services Jobs"
     authors: "Engberg, E., Kyvik-Nordås, H. & A. Tang"
-    year: 2025
+    year: 2022
     venue: "Submission tbc"
-    url: ""
-  - title: "The ChatGPT Shock, Labor Demand, and the Social Dimension(s) of Work"
-    authors: "Engberg, E."
-    year: 2025
-    venue: "In progress"
-    url: ""
+    coverage: []
+    links:
+      - {label: "Adelaide WP 2022-14", url: "https://iit.adelaide.edu.au/ua/media/1783/wp-2022-14-h-nordas_a-tang.-march-2022.pdf"}
+    abstract: ""
   - title: "Returns to AI Skills"
     authors: "Hellsten, M."
-    year: 2025
+    year: 2024
     venue: "Submission tbc"
-    url: ""
+    coverage: []
+    links:
+      - {label: "Ratio WP 378", url: "https://cms.ratio.se/app/uploads/2024/08/wp-378-framsida-sammanfogad.pdf"}
+    abstract: ""
+  - title: "The First AI at My Firm: Worker Outcomes after Firm-Level AI Adoption"
+    authors: "Hellsten, M., Lodefalk, M., Lechner, M., Löthman, L., Persson, A. & Y. Yakymovych"
+    year: 2026
+    venue: "In progress"
+    coverage: []
+    links: []
+    abstract: ""
+  - title: "AI and Inequality"
+    authors: "Granberg, M., Lodefalk, M. & Y. Yakymovych"
+    year: 2026
+    venue: "In progress"
+    coverage: []
+    links: []
+    abstract: ""
+  - title: "New Work, Exiting Work and Artificial Intelligence"
+    authors: "Engberg, E., Kyvik-Nordås, H., Lodefalk, M., Sabolova, R. & A. Tang"
+    year: 2026
+    venue: "In progress"
+    coverage: []
+    links: []
+    abstract: ""
+  - title: "The ChatGPT Shock, Labor Demand, and the Social Dimension(s) of Work"
+    authors: "Engberg, E."
+    year: 2026
+    venue: "In progress"
+    coverage: []
+    links: []
+    abstract: ""
   - title: "AI and Firm Productivity Dynamics"
     authors: "Ruth, M. & M. Lodefalk"
-    year: 2025
+    year: 2026
     venue: "In progress"
-    url: ""
+    coverage: []
+    links: []
+    abstract: ""
   - title: "Skills and the Value of AI Jobs: Evidence from a Swedish Grant Program"
     authors: "Ruth, M. & M. Lodefalk"
-    year: 2025
+    year: 2026
     venue: "In progress"
-    url: ""
+    coverage: []
+    links: []
+    abstract: ""
   - title: "How Productivity Differences Drive Trade and Technology Uptake"
     authors: "Kyvik-Nordås, H. & F. Klügl"
     year: 2025
     venue: "In progress"
-    url: ""
+    coverage: []
+    links: []
+    abstract: ""
