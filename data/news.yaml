@@ -1,0 +1,113 @@
+# News / lab history — ported verbatim from ai-econlab.com (2026-07-20). Preserve faithfully.
+# Each year: list of {date, text}. text may contain inline <a href> where a URL is known.
+# Many original "here" links had no resolvable URL and are kept as plain text; enrich later.
+years:
+  - year: 2026
+    items:
+      - {date: "Jun 24", text: 'The paper "Artificial Intelligence for Public Use" (Lodefalk, Engberg, Lidskog, Skargren & Tang) was accepted for publication in Digital Society.'}
+      - {date: "Jun 17", text: 'A column was published in ProMarket (Stigler Center, Chicago Booth), "AI Is Not Reducing Employment but Rather Who Gets Hired" (Lodefalk, Löthman, Koch & Engberg), drawing on the "Same Storm, Different Boats" paper.'}
+      - {date: "Jun 10–11", text: 'The fourth conference on AI and white-collar work was held at Katrinelund outside Örebro: 27 participants, 12 papers, keynotes by Michael Lechner (St. Gallen) and Christina Gathmann (LISER / Luxembourg). Dates set for the AIEL/AISCAF 2028 conference, 14–15 June 2028.'}
+      - {date: "Mar 27", text: 'ORU working paper released: "Who Adopts AI? Evidence on Firms, Technologies and Workers" (Pulito, Pytlikova, Schroeder & Lodefalk).'}
+      - {date: "Mar 16", text: 'ORU and Ratio working papers released: "Same Storm, Different Boats: Generative AI and the Age Gradient in Hiring" (Lodefalk, Löthman, Koch & Engberg), with an accompanying op-ed with the labour-market partners'' AI council in DN.'}
+      - {date: "Mar 7", text: 'A one-page summary released of the forthcoming "Same Storm, Different Boats" working paper on AI and workers across age groups.'}
+  - year: 2025
+    items:
+      - {date: "Dec 29", text: "Call for papers published for the fourth AIEL conference on AI and White-Collar Work, jointly arranged with the Swedish research cluster AISCAF."}
+      - {date: "Nov 14", text: 'Lodefalk interviewed on Swedish Public Radio, discussing the new working paper "The Effects of Artificial Intelligence on Jobs: Evidence from an AI Subsidy Program" (with Hellsten, Khanna & Yakymovych), out on ORU, Ratio, IZA and GLO.'}
+      - {date: "Oct", text: "Kyvik-Nordås & Klügl's paper on cross-border data flows and AI uptake accepted for publication in Structural Change and Economic Dynamics."}
+      - {date: "Sep", text: 'Kyvik-Nordås presents "How productivity differences drive trade and technology uptake" (with Klügl) at ETSG (and later at Univ. of Oslo, 9 Nov).'}
+      - {date: "Sep 8", text: "New PhD student Lydia Löthman joins the lab, based at Örebro University."}
+      - {date: "Sep 1", text: "The AI-Econ Lab became part of, and via Örebro University a node for, the new Swedish research cluster on AI, Structural Change and the Future of Work (AISCAF), funded by WASP-HS. Five-year financing; other nodes are Uppsala University and Stockholm University."}
+      - {date: "Jul 8", text: 'Paper published in Research Policy: "Artificial Intelligence, Tasks, Skills and Wages: Worker-Level Evidence from Germany" (Engberg, Koch, Lodefalk & Schroeder).'}
+      - {date: "May 28", text: "The AI-Econ Lab became part of the new Center for AI, Robotics and Cybersecurity (ARC) at Örebro University."}
+      - {date: "May 7", text: 'Paper published in Applied Economics Letters: "Artificial Intelligence, Hiring and Employment: Job Postings Evidence from Sweden" (Hellsten, Engberg, Javed, Lodefalk, Sabolová, Schroeder & Tang).'}
+      - {date: "May 2", text: "A new book (chapter 3 with Kyvik-Nordås) published by OECD/BCG/INSEAD: The Adoption of Artificial Intelligence in Firms: New Evidence for Policymaking."}
+      - {date: "Apr 30", text: "Mark Hellsten successfully defended his PhD thesis in Economics on automation (including AI) and work at Aarhus University, Denmark."}
+      - {date: "Apr 3", text: "A commissioned report on AI in the public sector (Lodefalk, Engberg & Tang) was launched at the Ministry of Finance, Stockholm, focusing on productivity and labour demand; op-ed in Dagens Industri."}
+      - {date: "Apr 3", text: 'A new working paper on AI in the public sector released at Örebro University ("Artificial Intelligence for Public Use"; Lodefalk, Engberg, Lidskog & Tang).'}
+      - {date: "Feb 5", text: 'Paper published in Digital Society: "Artificial Intelligence and Worker Stress" (Lodefalk & Koch).'}
+      - {date: "Feb 1", text: "Professor Michael Lechner joins the lab and Örebro University as a guest professor."}
+  - year: 2024
+    items:
+      - {date: "Dec", text: "Fredric Skargren and Monisha Punith join as visiting junior researchers (PhD students at Örebro University and University of Antwerp)."}
+      - {date: "Nov", text: 'Kyvik-Nordås reviewed the WTO report "Trading with Intelligence" and sat on a panel at its launch.'}
+      - {date: "Nov 14", text: "Kyvik-Nordås participated in an Expert Group meeting at the OECD AI observatory."}
+      - {date: "Oct 24", text: "Kyvik-Nordås on a panel on AI standards organised by the International Technology Industry, at Microsoft's Brussels offices."}
+      - {date: "Sep 13", text: 'Kyvik-Nordås presented "Cross-border data flows and AI adoption: agent-based model simulations" at the ETSG conference, Athens.'}
+      - {date: "Aug 19", text: "Kyvik-Nordås presented on AI and gender at the APEC meeting, Lima, Peru."}
+      - {date: "Aug", text: "Lodefalk presented on AI and the labour market at DIGG (Sweden); Kyvik-Nordås presented on AI, trade and jobs at APEC Senior Officials Meetings, Peru."}
+      - {date: "Jun", text: "Erik Engberg presented on AI and the labour market at Almedalen."}
+      - {date: "Jun 18", text: 'New working paper released at Ratio and Örebro University: "Artificial Intelligence and Worker Stress: Evidence from Germany".'}
+      - {date: "Jun 12–13", text: "The third AIEL conference on AI and White-Collar Work took place in Örebro, with 20 researchers from multiple countries."}
+      - {date: "Jun 11", text: 'Kyvik-Nordås presented the "AI Unboxed" paper at the EUROSHOCK conference, Oslo.'}
+      - {date: "May", text: "Erik Engberg invited to present on AI and the labour market at the Ministry of Finance, Sweden."}
+      - {date: "Apr 8", text: 'Blog column by Kyvik-Nordås at CEP: "Governing AI for Humanity: Thoughts on the UN AI Advisory Body Interim Report."'}
+      - {date: "Mar 22", text: "Opinion piece in Dagens Industri on AI policy, by Lodefalk with Almega, Akavia, the Swedish Association of Graduate Engineers and Ratio."}
+      - {date: "Mar 15", text: "A new lifelong-learning course launched (in Swedish) on AI and the (r)evolution of working life, online, Fall 2024."}
+      - {date: "Mar 6", text: 'Paper published in Review of International Economics: "Double Whammy? Trade and Automation in Engineering Services" (Klügl & Kyvik-Nordås).'}
+      - {date: "Feb 22", text: "Lodefalk in an Akavia podcast, together with the Minister for Public Administration, Sweden, among others."}
+      - {date: "Jan 25", text: "Lodefalk presented at a Statistics Sweden seminar."}
+  - year: 2023
+    items:
+      - {date: "Dec", text: 'Two new working papers released at Ratio and Örebro University: "AI Unboxed and Jobs" and "AI, Tasks, Skills and Wages".'}
+      - {date: "Dec 7", text: "Research (dissemination) grant from Jan Wallanders och Tom Hedelius Stiftelse (Fh23-0069), 200k SEK."}
+      - {date: "Dec 7", text: "Lodefalk appointed a government member of an advisory board to the Swedish National Agency for Higher Vocational Education."}
+      - {date: "Nov", text: 'Kyvik-Nordås held a special lecture (with Klügl) at the IFFT conference: "Double Whammy? Trade and Automation in Engineering Services".'}
+      - {date: "Nov 30", text: 'Engberg presented "AI Unboxed — Firm-Level Evidence from Three Countries" at the SWEGPEC Workshop.'}
+      - {date: "Nov 23", text: "Lodefalk presented at the Swedish Society of Medicine, Örebro."}
+      - {date: "Nov 20–24", text: "Michael Koch (Aarhus University) visited the lab."}
+      - {date: "Nov 16", text: "Lodefalk presented at the Swedish Universities and Colleges expert group on business administration."}
+      - {date: "Nov 15", text: "Research grant from Torsten Söderbergs Stiftelse (ET3/23), 788k SEK."}
+      - {date: "Nov 10", text: "Engberg and Lodefalk presented at the Swedish Public Employment Agency."}
+      - {date: "Oct 27", text: "Engberg featured with lab research in an episode of a YouTube documentary series on digitalisation."}
+      - {date: "Oct", text: "Kyvik-Nordås appointed an AI expert at the OECD.AI Network of Experts."}
+      - {date: "Sep 30", text: "Engberg presented at the Workshop in AI + Economics at ETH Zürich."}
+      - {date: "Jun 20", text: "Call for papers released for the third AIEL conference (12–13 June 2024)."}
+      - {date: "Jun 8", text: "Lodefalk and Tang commissioned to write an expert ESO report on AI and the public sector."}
+      - {date: "May", text: "Engberg and Lodefalk presented at the Swedish Media Association annual conference."}
+      - {date: "May 23", text: "Engberg and Lodefalk presented at a Ratio seminar on AI and the labour market."}
+      - {date: "Mar 29", text: "Lodefalk interviewed by Swedish TV4."}
+      - {date: "Mar 13", text: "Lodefalk interviewed by SVT for the news and Ekonomibyrån."}
+      - {date: "Feb", text: "Engberg and Lodefalk interviewed about the lab's research on the ORU-Talks podcast."}
+      - {date: "Jan 25", text: "Lodefalk on The Employer Branding Geeks Podcast (Universum) about AI, work and the work environment."}
+      - {date: "Jan", text: 'Paper accepted for the AAMAS conference proceedings: Klügl & Nordås, "Modelling Agent Decision Making in Agent-Based Simulation".'}
+  - year: 2022
+    items:
+      - {date: "Nov 12 & 25", text: 'Engberg presented "New Work, Exiting Work, and Artificial Intelligence" at the Swedish Conference in Economics and the SWEGPEC Workshop.'}
+      - {date: "Sep 28", text: 'Two presentations at the WTO Public Forum by Kyvik-Nordås: "AI and Services" and "Digital Services".'}
+      - {date: "Jun 24", text: 'Kyvik-Nordås presented "AI and Services Trade" (virtual) at the APEC meeting.'}
+      - {date: "Jun 15–16", text: "The 2nd AIEL Conference took place, with participants from three continents and four disciplines."}
+      - {date: "Jun 8", text: "Mark Granberg welcomed as a postdoc, placed at Ratio and Örebro University."}
+      - {date: "Mar 21", text: 'New working paper released: "Artificial Intelligence, Trade and Services Jobs" (TIISA WP 2022-14).'}
+      - {date: "Feb 18", text: 'Presentation at the PILLARS conference (online) of "New Work, Exiting Work and Artificial Intelligence".'}
+      - {date: "Feb 1", text: "Mark Hellsten welcomed as a PhD student, placed at Aarhus University and Ratio."}
+      - {date: "Jan 10", text: 'CEP blog column: "Double Whammy? The Impact of Trade and Automation on High-Skilled Jobs" (Kyvik-Nordås & Klügl).'}
+      - {date: "Jan 4", text: "New working paper released on AI-enabled automation, trade and the future of engineering services (ORU WP 16/2021)."}
+  - year: 2021
+    items:
+      - {date: "Dec", text: 'TIISA policy brief published: "The EU Digital Market Regulations: Rule-Maker or Deal-Breaker?"'}
+      - {date: "Nov 26", text: "Two new PhD students recruited, starting at Aarhus University and Ratio in February and September 2022."}
+      - {date: "Nov 26", text: "Research grant from Torsten Söderbergs Stiftelse (E46/21), 1.4 MSEK."}
+      - {date: "Nov 24", text: 'Ratio seminar with Kyvik-Nordås & Klügl on "Trade and Automation: The Case of Engineering".'}
+      - {date: "Nov 8–12", text: 'The 3rd TIISA Annual Conference took place (14 papers, 3 keynotes, a panel and a roundtable incl. Richard Baldwin, Lucian Cernat and Google). Theme: "Trade and the Digital Transformation of Services". Örebro, Stockholm and online.'}
+      - {date: "Sep 2", text: 'GLO Virtual Seminar with Lodefalk on "New Work, Exiting Work and Artificial Intelligence".'}
+      - {date: "Aug 27", text: 'Upcoming call for the TIISA Annual Conference 2021 at the AI-Econ Lab. Theme: "Trade and the Digital Transformation of Services", 8–12 November 2021.'}
+      - {date: "Aug 20", text: "New PhD position opened at the lab, positioned at Aarhus University and Ratio."}
+      - {date: "May 10", text: 'Paper published in Frontiers in Robotics and AI: "Drivers of automation and consequences for jobs in engineering services".'}
+      - {date: "Apr", text: "Paper on labour dynamics and AI accepted for the ILERA world congress."}
+  - year: 2020
+    items:
+      - {date: "Dec 23", text: "New working paper released on the drivers of automation and consequences for jobs in engineering services (ORU WP 16/2020)."}
+      - {date: "Nov 25", text: 'Online conference on "The Impact of AI on White-Collar Work".'}
+      - {date: "Nov 19", text: "Presentation at the Trade Policy Research Forum webinar series."}
+      - {date: "Nov", text: "Presentation of two papers at the TIISA annual conference and PhD workshop, Beijing and online."}
+      - {date: "Oct 14", text: 'Call for papers: online conference on "The Impact of AI on White-Collar Work", 25 November 2020.'}
+      - {date: "Oct 1", text: "Two AI-Econ Lab papers accepted for an upcoming international conference."}
+      - {date: "Jun 4", text: "Presentation at the AGAINST20 workshop, at the IEEE International Conference on Robotics and Automation (ICRA)."}
+      - {date: "May 12", text: "Research grant from Jan Wallanders och Tom Hedelius Stiftelse (Fv20-0023), 227k SEK."}
+      - {date: "Mar 18", text: "PhD student recruited (starting 17 August 2020)."}
+      - {date: "Feb 16", text: "Deadline for the PhD position in economics, financed by the Ratio Institute."}
+  - year: 2019
+    items:
+      - {date: "Sep 4", text: "Presentation of the research at the Economic Policy Forum, Swedish Entrepreneurship Forum, Stockholm."}
+      - {date: "May 13", text: "Research grant from Jan Wallanders och Tom Hedelius Stiftelse (P19-0234), 1.5 MSEK. The AI-Econ Lab is initiated."}

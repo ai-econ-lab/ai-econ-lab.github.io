@@ -242,6 +242,12 @@ details.bio p{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin:8px 0 0
 .expbar{height:100%;border-radius:4px} .expbar.hi{background:var(--c1)} .expbar.lo{background:var(--c2)}
 .prov{font-family:var(--mono);font-size:11px;color:var(--muted)} .prov a{color:var(--link)}
 
+/* news timeline */
+.nrow{display:grid;grid-template-columns:84px 1fr;gap:16px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--border)}
+.nrow .yr{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.ntext{font-size:14px;color:var(--ink-2);line-height:1.55} .ntext a{color:var(--link)}
+@media(max-width:560px){.nrow{grid-template-columns:1fr;gap:2px}}
+
 /* prose */
 .prose{max-width:68ch}
 .prose p{font-size:15.5px;color:var(--ink-2);line-height:1.62;margin:0 0 16px}

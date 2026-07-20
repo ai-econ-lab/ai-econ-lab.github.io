@@ -21,6 +21,7 @@ MONITOR  = load("monitor.yaml")
 DAIOE    = load("daioe.yaml")
 SEMINARS = load("seminars.yaml")
 DAIOE_EXP = load("daioe_exposure.yaml")
+NEWS     = load("news.yaml")
 
 OUT = ROOT / SITE["build"]["out"]
 BASE = SITE["brand"]["base_url"].rstrip("/")
@@ -351,45 +352,70 @@ def daioe():
                  "DAIOE: the lab's open, data-driven measure of occupational AI exposure, mapped across SOC / ISCO / SSYK.",
                  "/daioe/", body, jsonld=daioe_ld())
 
-def seminars():
+def events():
     s = SEMINARS; ser = s["series"]
     fmt = "".join(f"<li>{h(x)}</li>" for x in ser["format"])
+    def surname(name): return name.split("&")[0].strip().split()[-1] if name and name != "TBD" else name
     seasons = ""
     for season in s["seasons"]:
         rows = ""
         for e in season["seminars"]:
-            links = "".join(f'<a class="lchip" href="{l["url"]}">{h(l["label"])}</a>' for l in e.get("links", []))
+            spk_url = next((l["url"] for l in e.get("links", []) if l["label"] != "Paper"), "")
+            paper_url = next((l["url"] for l in e.get("links", []) if l["label"] == "Paper"), "")
+            speaker = h(e["speaker"])
+            if spk_url:   # link the presenter's own name (surname), not a "Speaker" chip
+                speaker = speaker.replace(h(surname(e["speaker"])), f'<a href="{spk_url}">{h(surname(e["speaker"]))}</a>', 1)
             aff = f' <span class="saff">{h(e["affil"])}</span>' if e.get("affil") else ""
-            title = h(e["title"]) if e["title"] and e["title"] != "TBD" else '<span class="tbd">To be announced</span>'
+            if e["title"] and e["title"] != "TBD":
+                title = f'<a href="{paper_url}">{h(e["title"])}</a>' if paper_url else h(e["title"])
+            else:
+                title = '<span class="tbd">To be announced</span>'
             rows += (f'<div class="semrow"><span class="yr tnum">{h(e["date"])}</span>'
-                     f'<span><span class="rt">{h(e["speaker"])}{aff}</span>'
-                     f'<span class="ra">{title}</span>{f"<span class=lk>{links}</span>" if links else ""}</span></div>')
+                     f'<span><span class="rt">{speaker}{aff}</span><span class="ra">{title}</span></span></div>')
         seasons += f'<div class="grouphdr">{h(season["name"])}</div><div class="rows semlist">{rows}</div>'
     past = "".join(f'<div class="confrow"><span class="yr tnum">{h(c["year"])}</span>'
                    f'<span class="rd">{h(c["note"])}</span></div>' for c in s["conferences"]["past"])
     nx = s["conferences"]["next"]
     body = f"""<div class="wrap"><div class="pagehead">
-  <p class="kicker">Seminars &amp; events</p><h2 class="sec">{h(ser['title'])}</h2>
+  <p class="kicker">Events</p><h2 class="sec">Seminars &amp; conferences</h2>
   <p class="secintro">{h(ser['intro'])}</p></div></div>
-<div class="wrap"><section style="padding-top:6px">
-  <div class="two" style="grid-template-columns:1.5fr 1fr;align-items:start">
+
+<div class="rule" id="conference-2028"><div class="wrap"><section style="padding-top:20px">
+  <p class="kicker">Next conference</p>
+  <h2 class="sec">{h(nx['title'])}: {h(nx['theme'])}.</h2>
+  <p class="secintro">{h(nx['when'])} · {h(nx['where'])}. {h(nx['note'])}</p>
+  <div class="grouphdr" style="margin-top:24px">Earlier conferences</div>
+  <div class="rows">{past}</div>
+</section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">Seminar series</p>
+  <h2 class="sec">{h(ser['title'])}.</h2>
+  <div class="two" style="grid-template-columns:1.5fr 1fr;align-items:start;margin-top:8px">
     <div>{seasons}</div>
     <div class="card"><div class="charttitle" style="margin-bottom:8px">Attending</div>
       <ul class="reslist">{fmt}</ul>
       <p style="margin:12px 0 0"><a class="btn ghost" style="font-size:12px" href="{ser['zoom']}">Join on Zoom →</a></p>
       <p class="psub" style="margin-top:12px">Contact: {h(ser['contact'])}</p></div>
   </div>
-</section></div>
-<div class="rule"><div class="wrap"><section>
-  <p class="kicker">Conference series</p>
-  <h2 class="sec">{h(nx['title'])}: {h(nx['theme'])}.</h2>
-  <p class="secintro">{h(nx['when'])} · {h(nx['where'])}. {h(nx['note'])}</p>
-  <div class="grouphdr" style="margin-top:24px">Earlier conferences</div>
-  <div class="rows">{past}</div>
 </section></div></div>"""
-    return shell(f"Seminars &amp; conferences · {SITE['brand']['name']}",
-                 "The AIEL brown-bag seminar series (part of WASP-HS AISCAF) and the AIEL conference series.",
-                 "/seminars/", body)
+    return shell(f"Events · {SITE['brand']['name']}",
+                 "The AIEL conference series and the monthly brown-bag seminar series (part of WASP-HS AISCAF).",
+                 "/events/", body)
+
+def news():
+    blocks = ""
+    for yr in NEWS["years"]:
+        items = "".join(f'<div class="nrow"><span class="yr tnum">{h(it["date"])}</span>'
+                        f'<span class="ntext">{it["text"]}</span></div>' for it in yr["items"])
+        blocks += f'<div class="grouphdr">{h(yr["year"])}</div><div class="rows">{items}</div>'
+    body = f"""<div class="wrap"><div class="pagehead">
+  <p class="kicker">News</p><h2 class="sec">What the lab has been up to</h2>
+  <p class="secintro">Publications, media, grants, conferences and people, since the lab was initiated in 2019.</p></div></div>
+<div class="wrap"><section style="padding-top:8px">{blocks}</section></div>"""
+    return shell(f"News · {SITE['brand']['name']}",
+                 "News and history of the AI-Econ Lab since 2019: publications, media, grants and events.",
+                 "/news/", body)
 
 def monitor():
     m = MONITOR
@@ -482,28 +508,50 @@ def monitor():
                  "/monitor/", body, jsonld=dataset_ld(), need_chart=True)
 
 def about():
+    c = SITE["contact"]; bk = SITE["book"]
+    labdesc = "".join(f"<p>{h(p)}</p>" for p in SITE["about_paras"])
+    clinks = "".join(f'<a href="{l["href"]}">{h(l["label"])}</a> ' for l in c.get("links", []))
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">About</p><h2 class="sec">An economics-led lab on AI and the future of work</h2></div>
 <section style="padding-top:14px"><div class="prose">
   <p>The AI-Econ Lab, at Örebro University and the Ratio Institute, studies how artificial intelligence is
-    reshaping labour markets, particularly for white-collar and service work. We are part of the WASP-HS
-    <b>AISCAF</b> cluster (AI, Structural Change and the Future of Work) and its ten-university network.</p>
-  <p>Our work combines unique Swedish administrative registers with public job-ad data and international
-    comparisons across Denmark, Portugal, Germany and beyond. We are deliberately multi-disciplinary: economists
-    work alongside sociologists, business scholars and computer scientists.</p>
-  <p>Alongside peer-reviewed research we build open, citable public goods (the <a href="/monitor/">AI in Demand</a>
-    monitor and the <a href="{SITE['links']['explorer']}">DAIOE</a> occupational-exposure measure), so that
-    evidence on AI and work is available to policymakers, journalists and the public, not only to specialists.</p>
-  <h3>Contact</h3>
-  <p>{h(SITE['footer']['contact'])}<br>Seminars and conferences are announced through the lab and the AISCAF
-    seminar series.</p>
-</div></section></div>"""
-    return shell(f"About · {SITE['brand']['name']}", SITE["brand"]["description"], "/about/", body)
+    reshaping labour markets, particularly for white-collar and service work. Alongside peer-reviewed research we
+    build open, citable public goods (the <a href="/monitor/">AIEL Monitor</a> and the <a href="/daioe/">DAIOE</a>
+    exposure measure), so evidence on AI and work reaches policymakers, journalists and the public, not only
+    specialists.</p>
+</div></section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">The lab</p><h2 class="sec">Who we are.</h2>
+  <div class="prose" style="margin-top:14px">{labdesc}</div>
+</section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">Book</p>
+  <h2 class="sec">{h(bk['title'])}.</h2>
+  <p class="secintro">{h(bk['author'])} · {h(bk['year'])} · {h(bk['publisher'])}. {h(bk['note'])}</p>
+</section></div></div>
+
+<div class="rule" id="contact"><div class="wrap"><section>
+  <p class="kicker">Contact &amp; visit</p><h2 class="sec">Get in touch.</h2>
+  <div class="two" style="grid-template-columns:1fr 1fr;margin-top:18px">
+    <div class="prose">
+      <p>{h(c['invite'])}</p>
+      <p>{clinks}</p>
+    </div>
+    <div class="card">
+      <p style="margin:0 0 8px"><span class="lbl">E-mail</span> <a href="mailto:{c['email']}">{h(c['email'])}</a></p>
+      <p style="margin:0 0 8px"><span class="lbl">Phone</span> {h(c['phone'])}</p>
+      <p style="margin:0"><span class="lbl">Post</span> {h(c['address'])}</p>
+    </div>
+  </div>
+</section></div></div>"""
+    return shell(f"About &amp; contact · {SITE['brand']['name']}", SITE["brand"]["description"], "/about/", body)
 
 # ── write ────────────────────────────────────────────────────────────────────
 PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.html": daioe(),
          "research/index.html": research(), "people/index.html": people(),
-         "seminars/index.html": seminars(), "about/index.html": about()}
+         "events/index.html": events(), "news/index.html": news(), "about/index.html": about()}
 
 def build():
     if OUT.exists(): shutil.rmtree(OUT)
@@ -517,7 +565,7 @@ def build():
         (OUT / "CNAME").write_text(SITE["brand"]["domain"] + "\n", encoding="utf-8")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
-    urls = ["/", "/monitor/", "/daioe/", "/research/", "/people/", "/seminars/", "/about/"]
+    urls = ["/", "/monitor/", "/daioe/", "/research/", "/people/", "/events/", "/news/", "/about/"]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:
