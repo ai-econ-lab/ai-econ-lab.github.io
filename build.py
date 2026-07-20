@@ -102,6 +102,13 @@ def dataset_ld():
         "isAccessibleForFree":True,"temporalCoverage":"2006/2025",
         "spatialCoverage":"Sweden","url":BASE+"/monitor/"}, ensure_ascii=False)
 
+def daioe_ld():
+    return json.dumps({"@context":"https://schema.org","@type":"Dataset","name":"DAIOE — data-driven AI Occupational Exposure",
+        "description":DAIOE["lede"],"license":"https://creativecommons.org/licenses/by/4.0/",
+        "creator":{"@type":"Organization","name":SITE["brand"]["name"]},"isAccessibleForFree":True,
+        "distribution":{"@type":"DataDownload","contentUrl":DAIOE["resources"][0]["href"]},
+        "url":BASE+"/daioe/"}, ensure_ascii=False)
+
 def people_ld():
     ppl = [{"@type":"Person","name":m["name"],"jobTitle":m["role"],
             **({"url":m["url"]} if m.get("url") else {})}
@@ -173,15 +180,14 @@ def home():
     something is not yet measured, we say so.</p>
   <div class="tiles">{tiles}</div>
   <div class="two">
-    <div class="prod"><div class="tag">Public monitor · lexical layer live</div><h3>AI in Demand</h3>
-      <p>The share of Swedish job ads requesting AI, by year and occupation, with the semantic layer and a
-        builder / integrator / user split in training.</p>
-      <span class="preview-flag">◔ Builder/integrator/user split · preview, not yet measured</span>
+    <div class="prod"><div class="tag">The Monitor · public data</div><h3>The AI-Econ Lab Monitor</h3>
+      <p>How AI shows up in the Swedish labour market: AI in Demand (live), the DAIOE Explorer (live), and modules
+        on AI use and barriers to use in development.</p>
       <a class="go" href="/monitor/">Open the monitor →</a></div>
-    <div class="prod"><div class="tag">Companion tool · DAIOE Explorer</div><h3>AI exposure by occupation</h3>
-      <p>Our data-driven AI Occupational Exposure measure (DAIOE), explorable by occupation and mapped across
-        SOC / ISCO / SSYK. A separate interactive app.</p>
-      <a class="go" href="{SITE['links']['explorer']}">Open the Explorer →</a></div>
+    <div class="prod"><div class="tag">The measure · open &amp; versioned</div><h3>DAIOE</h3>
+      <p>Our data-driven AI Occupational Exposure measure, published openly and mapped across SOC / ISCO / SSYK so
+        others can join it onto their own data.</p>
+      <a class="go" href="/daioe/">Explore DAIOE →</a></div>
   </div>
 </section></div></div>
 
@@ -257,32 +263,24 @@ def people():
                  "/people/", body, jsonld=people_ld())
 
 def daioe():
+    # The PURE measure. The interactive Explorer lives under the Monitor (it consumes DAIOE + SCB).
     d = DAIOE
-    explorers = ""
-    for i, e in enumerate(d["explorers"]):
-        explorers += f"""<div class="explorer">
-  <div class="charthead"><div class="charttitle">{h(e['name'])}</div>
-    <a class="mono" style="font-size:12px" href="{e['open']}">Open full ↗</a></div>
-  <p class="psub" style="margin:2px 0 10px">{h(e['desc'])}</p>
-  <div class="embedwrap"><iframe src="{e['embed']}" title="{h(e['name'])}" loading="lazy"
-    referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
-</div>"""
-    res = "".join(f'<li><a href="{r["href"]}">{h(r["label"])}</a> <span class="mono">— {h(r["note"])}</span></li>'
+    res = "".join(f'<li><a href="{r["href"]}">{h(r["label"])}</a> <span class="mono">· {h(r["note"])}</span></li>'
                   for r in d["resources"])
     body = f"""<div class="wrap"><div class="hero" style="padding-bottom:6px"><div>
   <div class="eyebrow"><span class="dot"></span> {h(d['tagline'])}</div>
   <h1 class="title" style="max-width:16ch">{h(d['headline'])}: how exposed is each job to AI?</h1>
   <p class="lede" style="max-width:60ch">{h(d['lede'])}</p>
-  <div class="cta-row"><a class="btn primary" href="{d['explorers'][0]['open']}">Open the Explorer →</a>
-    <a class="btn ghost" href="{d['resources'][0]['href']}">Download the data</a></div>
+  <div class="cta-row"><a class="btn primary" href="{d['resources'][0]['href']}">Download the data →</a>
+    <a class="btn ghost" href="/monitor/#daioe-explorer">See it applied in the Monitor</a></div>
 </div></div></div>
 
 <div class="rule"><div class="wrap"><section>
-  <p class="kicker">Explore it live</p>
-  <h2 class="sec">The DAIOE Explorer — occupation by occupation.</h2>
-  <p class="secintro">Interactive dashboards (built and maintained in-house) showing Swedish employment by occupation
-    group alongside DAIOE exposure. Yearly and monthly views.</p>
-  <div class="explorers">{explorers}</div>
+  <p class="kicker">The measure</p>
+  <h2 class="sec">Data-driven, not expert-guessed.</h2>
+  <p class="secintro">DAIOE scores each occupation's exposure to AI from data, and publishes those scores openly and with
+    versions, mapped across the US (SOC), international (ISCO) and Swedish (SSYK) classifications, so others can join
+    it straight onto their own data.</p>
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
@@ -291,10 +289,17 @@ def daioe():
   <ul class="reslist">{res}</ul>
   <p class="secintro" style="margin-top:18px">Introduced and validated in the working paper
     &ldquo;{h(d['paper']['title'])}&rdquo;. See <a href="/research/">Research</a>.</p>
+</section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">See it live</p>
+  <h2 class="sec">DAIOE in the Monitor.</h2>
+  <p class="secintro">The <a href="/monitor/#daioe-explorer">DAIOE Explorer</a>, part of the AI-Econ Lab Monitor, sets
+    Swedish employment by occupation against DAIOE exposure levels, in yearly and monthly views.</p>
 </section></div></div>"""
     return shell(f"DAIOE — data-driven AI occupational exposure · {SITE['brand']['name']}",
-                 "DAIOE: the lab's open, data-driven measure of occupational AI exposure, with live Explorer dashboards.",
-                 "/daioe/", body, jsonld=dataset_ld())
+                 "DAIOE: the lab's open, data-driven measure of occupational AI exposure, mapped across SOC / ISCO / SSYK.",
+                 "/daioe/", body, jsonld=daioe_ld())
 
 def seminars():
     s = SEMINARS; ser = s["series"]
@@ -319,7 +324,7 @@ def seminars():
 </section></div>
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">Conference series</p>
-  <h2 class="sec">{h(nx['title'])} — {h(nx['when'])}, {h(nx['where'])}.</h2>
+  <h2 class="sec">{h(nx['title'])} · {h(nx['when'])} · {h(nx['where'])}.</h2>
   <p class="secintro">{h(nx['note'])}</p>
   <div class="grouphdr" style="margin-top:24px">Earlier conferences</div>
   <div class="rows">{past}</div>
@@ -330,6 +335,14 @@ def seminars():
 
 def monitor():
     m = MONITOR
+    mods = ""
+    for mod in m["modules"]:
+        live = mod["status"] == "live"
+        anchor = {"AI in Demand": "#ai-in-demand", "DAIOE Explorer": "#daioe-explorer"}.get(mod["name"], "")
+        chip = ('<span class="mstatus live">● live</span>' if live else '<span class="mstatus planned">◔ planned</span>')
+        name = f'<a href="{anchor}">{h(mod["name"])}</a>' if anchor else h(mod["name"])
+        mods += (f'<div class="module {"on" if live else "off"}"><div class="mtop"><h3>{name}</h3>{chip}</div>'
+                 f'<p>{h(mod["desc"])}</p></div>')
     tiles = ""
     for t in m["tiles"]:
         cls = f' {t["cls"]}' if t["cls"] else ""
@@ -340,13 +353,22 @@ def monitor():
         seg += (f'<div class="prod"><h3><span style="display:inline-block;width:11px;height:11px;border-radius:3px;'
                 f'background:var({c["color"]});margin-right:8px"></span>{h(c["name"])}</h3><p>{h(c["text"])}</p></div>')
     caveats = "".join(f"<li>{c}</li>" for c in m["caveats"])
+    explorers = ""
+    for e in DAIOE["explorers"]:
+        explorers += f"""<div class="explorer">
+  <div class="charthead"><div class="charttitle">{h(e['name'])}</div>
+    <a class="mono" style="font-size:12px" href="{e['open']}">Open full ↗</a></div>
+  <p class="psub" style="margin:2px 0 10px">{h(e['desc'])}</p>
+  <div class="embedwrap"><iframe src="{e['embed']}" title="{h(e['name'])}" loading="lazy"
+    referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
+</div>"""
     body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px"><div class="herogrid">
-  <div><div class="eyebrow"><span class="dot"></span> Flagship monitor · lexical layer live</div>
+  <div><div class="eyebrow"><span class="dot"></span> Public monitor · updated as the data arrive</div>
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
-    <div class="cta-row"><a class="btn primary" href="{SITE['links']['explorer']}">Open the DAIOE Explorer →</a>
-      <a class="btn ghost" href="#method">How we measure it</a></div></div>
-  <div class="panel"><div class="panelhead"><span class="ttl">Share of Swedish job ads requesting AI</span>
+    <div class="cta-row"><a class="btn primary" href="#ai-in-demand">See AI in Demand →</a>
+      <a class="btn ghost" href="#daioe-explorer">Open the DAIOE Explorer</a></div></div>
+  <div class="panel"><div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
     <span class="livechip"><i></i>live</span></div>
     <div class="panelbody"><p class="psub">Broad measure, any AI-related term, 2006–2025.</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
@@ -355,32 +377,49 @@ def monitor():
 </div></div></div>
 
 <div class="rule"><div class="wrap"><section>
-  <p class="kicker">Headline figures</p>
-  <h2 class="sec">What the Swedish job market is telling us.</h2>
+  <p class="kicker">What the monitor tracks</p>
+  <h2 class="sec">Several views on AI in the Swedish labour market.</h2>
+  <p class="secintro">Two modules are live today; more are in development. Everything runs on public data, so it can be
+    citable and refreshed without any funder's data.</p>
+  <div class="modules">{mods}</div>
+</section></div></div>
+
+<div class="rule" id="ai-in-demand"><div class="wrap"><section>
+  <p class="kicker">Module · live</p>
+  <h2 class="sec">AI in Demand.</h2>
+  <p class="secintro">{h(m['aiindemand_lede'])}</p>
   <div class="tiles">{tiles}</div>
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
-  <p class="kicker">Coming next</p>
+  <p class="kicker">AI in Demand · coming next</p>
   <h2 class="sec" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">Who is the AI for?
     <span class="preview-flag">◔ {h(m['segmentation']['flag'])}</span></h2>
   <p class="secintro">{h(m['segmentation']['intro'])}</p>
   <div class="two" style="grid-template-columns:1fr 1fr 1fr">{seg}</div>
 </section></div></div>
 
+<div class="rule" id="daioe-explorer"><div class="wrap"><section>
+  <p class="kicker">Module · live</p>
+  <h2 class="sec">DAIOE Explorer.</h2>
+  <p class="secintro">Swedish employment by occupation set against <a href="/daioe/">DAIOE</a> AI-exposure levels
+    (built and maintained in-house). Yearly and monthly views.</p>
+  <div class="explorers">{explorers}</div>
+</section></div></div>
+
 <div class="rule" id="method"><div class="wrap"><section>
   <p class="kicker">How to read this</p>
   <h2 class="sec">What we measure, and what we don't yet.</h2>
   <div class="prose" style="margin-top:16px">
-    <p>Every open and historical advertisement in Sweden's public job board (Platsbanken / JobTech), 2006–2025 —
-      about <b>10.9 million ads</b>. An ad counts as AI-in-demand when its text requests an AI skill, matched by a
-      versioned, citable term list (Swedish and English). A semantic layer, now training, will catch AI ads that
-      use no listed term.</p>
+    <p>The AI in Demand module reads every open and historical advertisement in Sweden's public job board
+      (Platsbanken / JobTech), 2006–2025: about <b>10.9 million ads</b>. An ad counts as AI-in-demand when its text
+      requests an AI skill, matched by a versioned, citable term list (Swedish and English). A semantic layer, now
+      training, will catch AI ads that use no listed term.</p>
     <h3>Caveats, in plain sight</h3><ul style="color:var(--ink-2);font-size:14px;line-height:1.6">{caveats}</ul>
   </div>
 </section></div></div>"""
-    return shell(f"AI in Demand · {SITE['brand']['name']}",
-                 "A public-data monitor of AI-skill demand in Swedish job ads, 2006–2025.",
+    return shell(f"The AI-Econ Lab Monitor · {SITE['brand']['name']}",
+                 "A public monitor of AI in the Swedish labour market: demand, use and barriers, on public data.",
                  "/monitor/", body, jsonld=dataset_ld(), need_chart=True)
 
 def about():

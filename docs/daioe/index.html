@@ -1,13 +1,13 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DAIOE — data-driven AI occupational exposure · AI-Econ Lab</title>
-<meta name="description" content="DAIOE: the lab&#x27;s open, data-driven measure of occupational AI exposure, with live Explorer dashboards.">
+<meta name="description" content="DAIOE: the lab&#x27;s open, data-driven measure of occupational AI exposure, mapped across SOC / ISCO / SSYK.">
 <link rel="canonical" href="https://ai-econlab.com/daioe/">
 <meta property="og:type" content="website"><meta property="og:title" content="DAIOE — data-driven AI occupational exposure · AI-Econ Lab">
-<meta property="og:description" content="DAIOE: the lab&#x27;s open, data-driven measure of occupational AI exposure, with live Explorer dashboards."><meta property="og:url" content="https://ai-econlab.com/daioe/">
+<meta property="og:description" content="DAIOE: the lab&#x27;s open, data-driven measure of occupational AI exposure, mapped across SOC / ISCO / SSYK."><meta property="og:url" content="https://ai-econlab.com/daioe/">
 <meta property="og:site_name" content="AI-Econ Lab">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "AI in Demand", "description": "A public-data monitor of how often Swedish employers ask for artificial intelligence in their job ads, by year, by occupation, and soon by whether they want AI built, integrated, or simply used.", "license": "https://creativecommons.org/publicdomain/zero/1.0/", "creator": {"@type": "Organization", "name": "AI-Econ Lab"}, "isAccessibleForFree": true, "temporalCoverage": "2006/2025", "spatialCoverage": "Sweden", "url": "https://ai-econlab.com/monitor/"}</script>
+<link rel="stylesheet" href="/assets/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "DAIOE — data-driven AI Occupational Exposure", "description": "DAIOE is the lab's measure of how exposed each occupation is to artificial intelligence, built from data rather than expert guesswork. It is openly published, versioned and mapped across the US (SOC), international (ISCO) and Swedish (SSYK) occupational classifications, so others can use it directly in their own work.", "license": "https://creativecommons.org/licenses/by/4.0/", "creator": {"@type": "Organization", "name": "AI-Econ Lab"}, "isAccessibleForFree": true, "distribution": {"@type": "DataDownload", "contentUrl": "https://github.com/ai-econ-lab/daioe_dataset"}, "url": "https://ai-econlab.com/daioe/"}</script>
 </head><body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="mast"><div class="wrap"><div class="mastbar">
@@ -20,36 +20,31 @@
   <div class="eyebrow"><span class="dot"></span> Data-driven AI Occupational Exposure</div>
   <h1 class="title" style="max-width:16ch">DAIOE: how exposed is each job to AI?</h1>
   <p class="lede" style="max-width:60ch">DAIOE is the lab&#x27;s measure of how exposed each occupation is to artificial intelligence, built from data rather than expert guesswork. It is openly published, versioned and mapped across the US (SOC), international (ISCO) and Swedish (SSYK) occupational classifications, so others can use it directly in their own work.</p>
-  <div class="cta-row"><a class="btn primary" href="https://huggingface.co/spaces/ai-econ-lab/daioe-explorer-years">Open the Explorer →</a>
-    <a class="btn ghost" href="https://github.com/ai-econ-lab/daioe_dataset">Download the data</a></div>
+  <div class="cta-row"><a class="btn primary" href="https://github.com/ai-econ-lab/daioe_dataset">Download the data →</a>
+    <a class="btn ghost" href="/monitor/#daioe-explorer">See it applied in the Monitor</a></div>
 </div></div></div>
 
 <div class="rule"><div class="wrap"><section>
-  <p class="kicker">Explore it live</p>
-  <h2 class="sec">The DAIOE Explorer — occupation by occupation.</h2>
-  <p class="secintro">Interactive dashboards (built and maintained in-house) showing Swedish employment by occupation
-    group alongside DAIOE exposure. Yearly and monthly views.</p>
-  <div class="explorers"><div class="explorer">
-  <div class="charthead"><div class="charttitle">DAIOE Explorer — yearly</div>
-    <a class="mono" style="font-size:12px" href="https://huggingface.co/spaces/ai-econ-lab/daioe-explorer-years">Open full ↗</a></div>
-  <p class="psub" style="margin:2px 0 10px">Yearly SCB employment by Swedish occupation group, alongside DAIOE AI-exposure levels.</p>
-  <div class="embedwrap"><iframe src="https://ai-econ-lab-daioe-explorer-years.hf.space" title="DAIOE Explorer — yearly" loading="lazy"
-    referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
-</div><div class="explorer">
-  <div class="charthead"><div class="charttitle">DAIOE Explorer — monthly</div>
-    <a class="mono" style="font-size:12px" href="https://huggingface.co/spaces/ai-econ-lab/months">Open full ↗</a></div>
-  <p class="psub" style="margin:2px 0 10px">Monthly SCB employment by Swedish occupation group, alongside DAIOE AI-exposure levels.</p>
-  <div class="embedwrap"><iframe src="https://ai-econ-lab-months.hf.space" title="DAIOE Explorer — monthly" loading="lazy"
-    referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
-</div></div>
+  <p class="kicker">The measure</p>
+  <h2 class="sec">Data-driven, not expert-guessed.</h2>
+  <p class="secintro">DAIOE scores each occupation's exposure to AI from data, and publishes those scores openly and with
+    versions, mapped across the US (SOC), international (ISCO) and Swedish (SSYK) classifications, so others can join
+    it straight onto their own data.</p>
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">Use it in your own work</p>
   <h2 class="sec">Open data &amp; crosswalks.</h2>
-  <ul class="reslist"><li><a href="https://github.com/ai-econ-lab/daioe_dataset">DAIOE datasets (all versions)</a> <span class="mono">— SOC / ISCO / SSYK, versioned</span></li><li><a href="https://github.com/ai-econ-lab/daioe_translations">SSYK 2012 &amp; SSYK 96 translation utility</a> <span class="mono">— crosswalk helper</span></li></ul>
+  <ul class="reslist"><li><a href="https://github.com/ai-econ-lab/daioe_dataset">DAIOE datasets (all versions)</a> <span class="mono">· SOC / ISCO / SSYK, versioned</span></li><li><a href="https://github.com/ai-econ-lab/daioe_translations">SSYK 2012 &amp; SSYK 96 translation utility</a> <span class="mono">· crosswalk helper</span></li></ul>
   <p class="secintro" style="margin-top:18px">Introduced and validated in the working paper
     &ldquo;AI Unboxed and Jobs: A Novel Measure and Firm-Level Evidence from Three Countries&rdquo;. See <a href="/research/">Research</a>.</p>
+</section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">See it live</p>
+  <h2 class="sec">DAIOE in the Monitor.</h2>
+  <p class="secintro">The <a href="/monitor/#daioe-explorer">DAIOE Explorer</a>, part of the AI-Econ Lab Monitor, sets
+    Swedish employment by occupation against DAIOE exposure levels, in yearly and monthly views.</p>
 </section></div></div></main>
 <footer><div class="wrap"><div class="foot">
   <div><a class="brand" href="/" style="color:var(--navy-ink);margin-bottom:14px">

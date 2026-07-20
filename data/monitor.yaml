@@ -1,11 +1,23 @@
 # AI in Demand — monitor content. Numbers are REAL (from the prototype).
 # The builder/integrator/user split is a PREVIEW (not yet measured) — keep it flagged.
 
-headline: "AI in Demand"
+headline: "The AI-Econ Lab Monitor"
 lede: >-
-  A public-data monitor of how often Swedish employers ask for artificial
-  intelligence in their job ads, by year, by occupation, and soon by whether
-  they want AI built, integrated, or simply used.
+  A public monitor of artificial intelligence in the Swedish labour market:
+  how often employers ask for AI, how it is used, and what holds its use back.
+  Built on public data, updated as the data arrive, committed to no funder.
+
+# The monitor's modules. 'live' modules have their own section below; 'planned' are honest placeholders.
+modules:
+  - {name: "AI in Demand", status: "live", desc: "How often employers ask for AI in their job ads, by year and occupation."}
+  - {name: "DAIOE Explorer", status: "live", desc: "Employment by Swedish occupation set against DAIOE AI-exposure levels."}
+  - {name: "AI use", status: "planned", desc: "Firm and worker adoption of AI, from SCB and survey sources."}
+  - {name: "Barriers to AI use", status: "planned", desc: "What holds adoption back, e.g. from Akavia member data."}
+
+# The AI in Demand module.
+aiindemand_lede: >-
+  How often Swedish employers ask for artificial intelligence in their job ads, by
+  year, by occupation, and soon by whether they want AI built, integrated, or simply used.
 
 # Trend: broad measure (any AI-related term), share of all vacancies (%).
 trend:
