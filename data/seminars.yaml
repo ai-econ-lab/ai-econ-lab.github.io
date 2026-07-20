@@ -85,10 +85,12 @@ conferences:
   past:
     - {edition: "4th", year: 2026, title: "AI and White-Collar Work", when: "10–11 June 2026", where: "Katrinelund, Örebro",
        note: "27 participants, 12 papers; keynotes by Michael Lechner (St. Gallen) and Christina Gathmann (LISER / Luxembourg).",
-       cfp: "/assets/conferences/CfP_AIEL_2026.pdf", programme: ""}
+       cfp: "/assets/conferences/CfP_AIEL_2026.pdf",
+       programme: "https://drive.google.com/file/d/1ha5p4GXCTsj_WlY62FnYe2jnRNDhtMOE/view"}
     - {edition: "3rd", year: 2024, title: "AI and White-Collar Work", when: "12–13 June 2024", where: "Katrinelund, Örebro",
        note: "11 papers; an interdisciplinary workshop with participants from eight countries and four disciplines.",
-       cfp: "https://drive.google.com/file/d/17Fq3VIGGBOgRk8oRG5fisiqBMN-dvjRj/view", programme: ""}
+       cfp: "https://drive.google.com/file/d/17Fq3VIGGBOgRk8oRG5fisiqBMN-dvjRj/view",
+       programme: "https://drive.google.com/file/d/15I17rDnI91IcbYyKyRbqrAigqMUStanl/view"}
     - {edition: "2nd", year: 2022, title: "AI and White-Collar Work", when: "15–16 June 2022", where: "Katrinelund, Örebro",
        note: "12 papers; participants from three continents and four disciplines.",
        cfp: "https://drive.google.com/file/d/10p0dX_o86e6C4XNO6Yd45CIw1jsE8mdj/view",
