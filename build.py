@@ -22,6 +22,8 @@ DAIOE    = load("daioe.yaml")
 SEMINARS = load("seminars.yaml")
 DAIOE_EXP = load("daioe_exposure.yaml")
 NEWS     = load("news.yaml")
+# The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
+# (see app.js occSearch), so it is NOT embedded here. It auto-tracks the latest DAIOE year.
 
 OUT = ROOT / SITE["build"]["out"]
 BASE = SITE["brand"]["base_url"].rstrip("/")
@@ -316,6 +318,25 @@ def daioe():
   <div class="cta-row"><a class="btn primary" href="{d['resources'][0]['href']}">Download the data →</a>
     <a class="btn ghost" href="/monitor/#occupations-explorer">See it applied in the Monitor</a></div>
 </div></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">How exposed is your job?</p>
+  <h2 class="sec">Find your occupation.</h2>
+  <p class="secintro">Type an occupation to see its DAIOE exposure and where it sits among roughly 420 occupations.
+    Generative AI by default; switch the sub-domain to compare. This is the measure behind Die Zeit's
+    &ldquo;Wie ersetzbar ist Ihr Job?&rdquo; interactive.</p>
+  <div class="occtool">
+    <div class="occrow1">
+      <div class="occsearchbox">
+        <input id="occsearch" type="text" autocomplete="off" aria-label="Search occupation"
+          placeholder="e.g. Economists, Software developers, Roofers…">
+        <div id="occsugg" class="occsugg" role="listbox"></div>
+      </div>
+      <label class="occdomwrap">Sub-domain<select id="occdom" aria-label="DAIOE sub-domain"></select></label>
+    </div>
+    <div id="occresult" class="occresult" aria-live="polite"></div>
+  </div>
+</section></div></div>
 
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">What it shows · generative AI, {DAIOE_EXP['year']}</p>

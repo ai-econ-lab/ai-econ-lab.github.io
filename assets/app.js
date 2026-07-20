@@ -84,3 +84,42 @@ window.drawTrend = function drawTrend(){
   svg.onpointerleave = () => { hv.style.opacity=0; dot.style.opacity=0; hideTip(); };
 };
 window.drawTrend();
+
+/* DAIOE occupation lookup — "how exposed is your job?" (Die Zeit-style), sub-domain switchable */
+(function occSearch(){
+  const input = $("#occsearch"); if (!input) return;
+  const sugg = $("#occsugg"), result = $("#occresult"), domSel = $("#occdom");
+  let DATA = null, di = 0, current = null;
+  fetch("/assets/daioe_occupations.json").then(r => r.json()).then(d => {
+    DATA = d;
+    domSel.innerHTML = d.domains.map((dm, i) => `<option value="${i}">${dm[1]}</option>`).join("");
+    domSel.value = "0";
+  }).catch(() => { result.innerHTML = '<p class="occsent">Occupation data could not load.</p>'; result.style.display = "block"; });
+  const scoreOf = r => r[1 + di][0], pctlOf = r => r[1 + di][1];
+  function render(row){
+    current = row; const s = scoreOf(row), p = pctlOf(row);
+    const rank = DATA.occ.filter(r => scoreOf(r) > s).length + 1, N = DATA.occ.length;
+    const dl = DATA.domains[di][1];
+    result.innerHTML = `<div class="occname">${row[0]}</div>
+      <div class="occscore"><span class="tnum">${s.toFixed(2)}</span> <span class="occunit">${dl} exposure</span></div>
+      <div class="occscale"><div class="occmark" style="left:${p}%"></div>
+        <span class="occlab lo">less exposed</span><span class="occlab hi">more exposed</span></div>
+      <p class="occsent">More exposed to ${dl.toLowerCase()} than <b>${Math.round(p)}%</b> of occupations
+        (rank ${rank} of ${N}, ISCO-08 ${DATA.year}).</p>`;
+    result.style.display = "block";
+  }
+  function matches(q){ q = q.toLowerCase().trim(); if (!q || !DATA) return [];
+    return DATA.occ.filter(r => r[0].toLowerCase().includes(q)).sort((a, b) => scoreOf(b) - scoreOf(a)).slice(0, 7); }
+  function showSugg(list){
+    if (!list.length){ sugg.style.display = "none"; return; }
+    sugg.innerHTML = list.map(r => `<button type="button" class="occopt" data-t="${r[0].replace(/"/g, "&quot;")}">${r[0]} <span class="tnum">${scoreOf(r).toFixed(2)}</span></button>`).join("");
+    sugg.style.display = "block";
+  }
+  input.addEventListener("input", () => showSugg(matches(input.value)));
+  input.addEventListener("focus", () => { if (input.value) showSugg(matches(input.value)); });
+  input.addEventListener("keydown", e => { if (e.key === "Enter"){ const m = matches(input.value); if (m.length){ input.value = m[0][0]; sugg.style.display = "none"; render(m[0]); } } });
+  sugg.addEventListener("click", e => { const b = e.target.closest(".occopt"); if (!b) return;
+    const row = DATA.occ.find(r => r[0] === b.dataset.t); input.value = row[0]; sugg.style.display = "none"; render(row); });
+  domSel.addEventListener("change", () => { di = +domSel.value; if (current) render(current); if (input.value) showSugg(matches(input.value)); });
+  document.addEventListener("click", e => { if (!e.target.closest(".occsearchbox")) sugg.style.display = "none"; });
+})();

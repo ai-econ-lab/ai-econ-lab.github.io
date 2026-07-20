@@ -1,66 +1,65 @@
-note: DAIOE generative-AI exposure by occupation (ISCO-08, 2024). Score = data-driven
-  exposure; higher = more exposed.
-source: DAIOE v2024 (daioe_isco08), AI-Econ Lab
-year: 2024
+note: DAIOE generative-AI exposure by occupation (ISCO-08). Higher = more exposed.
+source: DAIOE v2023 (public release), AI-Econ Lab
+year: 2023
 most:
 - occ: Coding, proof-reading and related clerks
-  score: 3.68
+  score: 5.17
   pctl: 99.9
 - occ: Authors and related writers
-  score: 3.53
+  score: 4.74
   pctl: 99.7
-- occ: Advertising and marketing professionals
-  score: 3.45
-  pctl: 99.4
 - occ: Mathematicians, actuaries and statisticians
-  score: 3.44
+  score: 4.69
+  pctl: 99.4
+- occ: Advertising and marketing professionals
+  score: 4.63
   pctl: 99.2
 - occ: Applications programmers
-  score: 3.4
+  score: 4.63
   pctl: 98.9
 - occ: Software developers
-  score: 3.27
+  score: 4.42
   pctl: 98.7
-- occ: Statistical, mathematical and related associate professionals
-  score: 3.22
-  pctl: 98.5
 - occ: Economists
-  score: 3.21
+  score: 4.38
+  pctl: 98.5
+- occ: Statistical, mathematical and related associate professionals
+  score: 4.35
   pctl: 98.2
-- occ: Physicists and astronomers
-  score: 3.2
-  pctl: 98.0
 - occ: Chemical engineers
-  score: 3.2
+  score: 4.29
+  pctl: 98.0
+- occ: Physicists and astronomers
+  score: 4.28
   pctl: 97.8
 least:
 - occ: Fibre preparing, spinning and winding machine operators
-  score: 1.03
-  pctl: 2.5
-- occ: Weaving and knitting machine operators
-  score: 1.03
+  score: 1.33
   pctl: 2.2
+- occ: Earthmoving and related plant operators
+  score: 1.33
+  pctl: 2.5
 - occ: Subsistence crop farmers
-  score: 1.02
-  pctl: 1.5
-- occ: Crop farm labourers
-  score: 1.02
+  score: 1.32
   pctl: 1.8
+- occ: Crop farm labourers
+  score: 1.32
+  pctl: 1.5
 - occ: Water and firewood collectors
-  score: 1.02
+  score: 1.31
   pctl: 1.3
-- occ: Miners and quarriers
-  score: 1.01
-  pctl: 1.1
 - occ: Garden and horticultural labourers
-  score: 1.01
+  score: 1.3
+  pctl: 1.1
+- occ: Miners and quarriers
+  score: 1.28
   pctl: 0.8
 - occ: Roofers
-  score: 0.95
+  score: 1.22
   pctl: 0.6
 - occ: Athletes and sports players
-  score: 0.92
+  score: 1.21
   pctl: 0.3
 - occ: Hand launderers and pressers
-  score: 0.87
+  score: 1.12
   pctl: 0.1
