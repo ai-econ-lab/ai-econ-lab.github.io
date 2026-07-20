@@ -323,8 +323,8 @@ def daioe():
   <p class="kicker">How exposed is your job?</p>
   <h2 class="sec">Find your occupation.</h2>
   <p class="secintro">Type an occupation to see its DAIOE exposure and where it sits among roughly 420 occupations.
-    Generative AI by default; switch the sub-domain to compare. This is the measure behind Die Zeit's
-    &ldquo;Wie ersetzbar ist Ihr Job?&rdquo; interactive.</p>
+    Generative AI by default; switch the sub-domain to compare.
+    <a class="mono" style="font-size:12px;white-space:nowrap" href="https://www.zeit.de/wirtschaft/2026-05/automatisierungsrisiko-arbeitnehmer-ki-arbeitsmarkt-bedrohung">As featured in Die Zeit ↗</a></p>
   <div class="occtool">
     <div class="occrow1">
       <div class="occsearchbox">
