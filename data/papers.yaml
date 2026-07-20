@@ -1,0 +1,119 @@
+# Papers — ported verbatim from ai-econlab.com/papers (2026-07-20).
+# VERIFY before go-live. Two OCR fixes applied vs the web extraction:
+#   - paper "AI, Hiring and Employment": "Jahved, F" -> "Javed, F" (matches Farrukh Javed)
+#   - "New Work, Exiting Work and Artificial lntelligence" -> "Intelligence"
+# Group order on the page: published first, then working/in-review.
+
+published:
+  - title: "Artificial Intelligence for Public Use"
+    authors: "Lodefalk, M., Engberg, E., Lidskog, R. & A. Tang"
+    year: 2026
+    venue: "Digital Society (accepted)"
+    url: ""
+  - title: "Artificial Intelligence, Tasks, Skills and Wages: Worker-Level Evidence from Germany"
+    authors: "Engberg, E., Koch, M., Lodefalk, M. & S. Schroeder"
+    year: 2025
+    venue: "Research Policy (early online)"
+    url: "https://doi.org/10.1016/j.respol.2025.105285"
+  - title: "Artificial Intelligence, Hiring and Employment: Job Postings Evidence from Sweden"
+    authors: "Engberg, E., Hellsten, M., Javed, F., Lodefalk, M., Sabolova, R., Schroeder, S. & A. Tang"
+    year: 2025
+    venue: "Applied Economics Letters (early online)"
+    url: "https://doi.org/10.1080/13504851.2025.2497431"
+  - title: "Artificial Intelligence and Worker Stress: Evidence from Germany"
+    authors: "Koch, M. & M. Lodefalk"
+    year: 2025
+    venue: "Digital Society, 4(5)"
+    url: "https://rdcu.be/d8No5"
+  - title: "Double Whammy? Trade and Automation in Engineering Services"
+    authors: "Kyvik-Nordås, H. & F. Klügl"
+    year: 2024
+    venue: "Review of International Economics"
+    url: "https://doi.org/10.1111/roie.12743"
+  - title: "Modelling Agent Decision Making in Agent-Based Simulation: Analysis Using an Economic Technology Uptake Model"
+    authors: "Kyvik-Nordås, H. & F. Klügl"
+    year: 2023
+    venue: "Proc. 22nd Int. Conf. on Autonomous Agents and Multi-Agent Systems (AAMAS)"
+    url: "https://dl.acm.org/doi/abs/10.5555/3545946.3598857"
+  - title: "Drivers of Automation and Consequences for Jobs in Engineering Services: An Agent-Based Modelling Approach"
+    authors: "Kyvik-Nordås, H. & F. Klügl"
+    year: 2021
+    venue: "Frontiers in Robotics and AI, 8(637125)"
+    url: "https://www.frontiersin.org/articles/10.3389/frobt.2021.637125/full"
+
+working:
+  - title: "AI Unboxed and Jobs: A Novel Measure and Firm-Level Evidence from Three Countries"
+    authors: "Engberg, E., Görg, H., Hellsten, M., Javed, F., Kyvik-Nordås, H., Lodefalk, M., Längkvist, M., Monteiro, N., Pulito, G., Schroeder, S. & A. Tang"
+    year: 2026
+    venue: "In review"
+    url: ""
+  - title: "The Effects of Artificial Intelligence on Jobs: Evidence from an AI Subsidy Program"
+    authors: "Hellsten, M., Khanna, S., Lodefalk, M. & Y. Yakymovych"
+    year: 2025
+    venue: "In review, Economic Journal"
+    url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2025/wp-13-2025.pdf"
+  - title: "Same Storm, Different Boats: Generative AI and the Age Gradient in Hiring"
+    authors: "Lodefalk, M., Löthman, L., Koch, M. & E. Engberg"
+    year: 2025
+    venue: "In review"
+    url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/main.pdf"
+  - title: "Automation and the Changing Composition of Skill Demand"
+    authors: "Hellsten, M., Pulito, G. & S. Schroeder"
+    year: 2025
+    venue: "In review, Labour Economics"
+    url: ""
+  - title: "Cross-Border Data Flows and AI-Technology Adoption: Agent-Based Model Simulations"
+    authors: "Kyvik-Nordås, H. & F. Klügl"
+    year: 2025
+    venue: "Resubmitted, Structural Change and Economic Dynamics"
+    url: ""
+  - title: "Who Adopts AI? Evidence on Firms, Technologies and Workers"
+    authors: "Pulito, G., Pytlikova, M., Schroeder, S. & M. Lodefalk"
+    year: 2025
+    venue: "Working paper"
+    url: ""
+  - title: "The First AI at My Firm: Worker Outcomes after Firm-Level AI Adoption"
+    authors: "Hellsten, M., Lodefalk, M., Lechner, M., Löthman, L., Persson, A. & Y. Yakymovych"
+    year: 2025
+    venue: "In progress"
+    url: ""
+  - title: "AI and Inequality"
+    authors: "Granberg, M., Lodefalk, M. & Y. Yakymovych"
+    year: 2025
+    venue: "In progress"
+    url: ""
+  - title: "New Work, Exiting Work and Artificial Intelligence"
+    authors: "Engberg, E., Kyvik-Nordås, H., Lodefalk, M., Sabolova, R. & A. Tang"
+    year: 2025
+    venue: "In progress"
+    url: ""
+  - title: "Artificial Intelligence, Trade and Services Jobs"
+    authors: "Engberg, E., Kyvik-Nordås, H. & A. Tang"
+    year: 2025
+    venue: "Submission tbc"
+    url: ""
+  - title: "The ChatGPT Shock, Labor Demand, and the Social Dimension(s) of Work"
+    authors: "Engberg, E."
+    year: 2025
+    venue: "In progress"
+    url: ""
+  - title: "Returns to AI Skills"
+    authors: "Hellsten, M."
+    year: 2025
+    venue: "Submission tbc"
+    url: ""
+  - title: "AI and Firm Productivity Dynamics"
+    authors: "Ruth, M. & M. Lodefalk"
+    year: 2025
+    venue: "In progress"
+    url: ""
+  - title: "Skills and the Value of AI Jobs: Evidence from a Swedish Grant Program"
+    authors: "Ruth, M. & M. Lodefalk"
+    year: 2025
+    venue: "In progress"
+    url: ""
+  - title: "How Productivity Differences Drive Trade and Technology Uptake"
+    authors: "Kyvik-Nordås, H. & F. Klügl"
+    year: 2025
+    venue: "In progress"
+    url: ""

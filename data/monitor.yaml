@@ -1,0 +1,39 @@
+# AI in Demand — monitor content. Numbers are REAL (from the prototype).
+# The builder/integrator/user split is a PREVIEW (not yet measured) — keep it flagged.
+
+headline: "AI in Demand"
+lede: >-
+  A public-data monitor of how often Swedish employers ask for artificial
+  intelligence in their job ads, by year, by occupation, and soon by whether
+  they want AI built, integrated, or simply used.
+
+# Trend: broad measure (any AI-related term), share of all vacancies (%).
+trend:
+  years:  [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+  values: [0.015, 0.025, 0.016, 0.029, 0.028, 0.036, 0.038, 0.039, 0.047, 0.050, 0.078, 0.177, 0.387, 0.686, 0.794, 0.967, 0.825, 0.760, 1.225, 2.081]
+  provisionalFrom: 19   # 0-based index of the first provisional year (2025)
+  ymax: 2.2
+  yticks: [0, 0.5, 1, 1.5, 2]
+
+tiles:
+  - {num: "1.1<span>%</span>", lab: "of current vacancies name a specific AI skill", foot: "+40% incl. generative-AI terms", cls: ""}
+  - {num: "≈140×", lab: "growth in AI-in-demand since 2006 (0.015% → 2.08%)", foot: "2006–2025 · all Platsbanken ads", cls: "b"}
+  - {num: "4.3", lab: "ads per 10,000 mention generative AI in 2025, from zero before 2023", foot: "post-ChatGPT takeoff", cls: "c"}
+  - {num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations", foot: "gap widening since 2020", cls: "d"}
+
+segmentation:
+  flag: "Preview · not yet measured"
+  intro: >-
+    The next release splits AI-mentioning ads by what the worker does with AI.
+    Our current lexical measure already hints at the split; the semantic layer,
+    now training, will classify each ad properly.
+  cards:
+    - {name: "Builders",    color: "--c1", text: "Ads asking someone to create AI: ML engineers, data scientists, research roles requiring specific techniques."}
+    - {name: "Integrators", color: "--c2", text: "Ads asking someone to wire AI in: software, MLOps and product roles that use AI components."}
+    - {name: "Users",       color: "--c3", text: "Ads where AI is simply a tool of the job: marketing, admin, teaching, sales. The largest, fastest-growing tier."}
+
+caveats:
+  - "<b>2025 is provisional</b>: the current-year bulk file is still filling; the latest point may revise up."
+  - "The lexical measure is a <b>lower bound</b>; roughly three times as many ads mention AI in passing without naming a technique."
+  - "The occupation snapshot is a live sample of open ads, not the full year."
+  - "The builder / integrator / user split is a <b>preview</b> and not yet a measured series."

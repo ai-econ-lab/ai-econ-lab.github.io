@@ -1,0 +1,55 @@
+# Site-wide config: brand, nav, links, footer. Edit here, run build.py, push.
+brand:
+  name: "AI-Econ Lab"
+  monogram: "AIEL"
+  tagline: "Örebro University · RATIO"
+  domain: "ai-econlab.com"
+  base_url: "https://ai-econlab.com"     # canonical host for <link rel=canonical> + sitemap
+  description: >-
+    An economics-led, multi-disciplinary research lab studying how artificial
+    intelligence is reshaping the world of work, within the WASP-HS AISCAF cluster.
+
+# Top navigation. 'cta' renders as the filled button on the right.
+nav:
+  - {label: "Monitor",  href: "/monitor/"}
+  - {label: "Research", href: "/research/"}
+  - {label: "People",   href: "/people/"}
+  - {label: "About",    href: "/about/"}
+  - {label: "Open the monitor →", href: "/monitor/", cta: true}
+
+# Instrument registration strip under the masthead (honesty-as-aesthetic).
+registration:
+  - "SOURCE <b>JobTech / Platsbanken</b> (CC0)"
+  - "<b>10.9M</b> ADS · 2006–2025"
+  - "UPDATED <b>2026-07-20</b>"
+  - '<span class="lv">● LIVE · LEXICAL LAYER</span>'
+  - "2025 <b>PROVISIONAL</b>"
+
+affiliations: ["WASP-HS · AISCAF", "10-university network", "Sweden · Denmark · Portugal · Germany"]
+
+links:
+  monitor: "/monitor/"
+  # TODO(Magnus): confirm exact Hugging Face Space URL for the DAIOE Explorer.
+  explorer: "https://huggingface.co/ai-econ-lab"
+  daioe_dataset: "https://github.com/ai-econ-lab/daioe_dataset"
+
+footer:
+  columns:
+    - title: "Explore"
+      links:
+        - {label: "AI in Demand monitor", href: "/monitor/"}
+        - {label: "DAIOE Explorer", href: "https://huggingface.co/ai-econ-lab"}
+        - {label: "Research", href: "/research/"}
+        - {label: "People", href: "/people/"}
+    - title: "The lab"
+      links:
+        - {label: "About", href: "/about/"}
+        - {label: "WASP-HS AISCAF", href: "https://wasp-hs.org"}
+        - {label: "Örebro University", href: "https://www.oru.se"}
+        - {label: "RATIO", href: "https://ratio.se"}
+  contact: "Örebro University School of Business, SE-701 82 Örebro, Sweden"
+
+# Where finished pages are written (GitHub Pages serves from this folder).
+build:
+  out: "docs"
+  emit_cname: false   # false = previewable at ai-econ-lab.github.io. Set true ONLY at the DNS-flip step.
