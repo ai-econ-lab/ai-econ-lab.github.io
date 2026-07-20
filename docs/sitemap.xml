@@ -2,7 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>https://ai-econlab.com/</loc><changefreq>monthly</changefreq></url>
 <url><loc>https://ai-econlab.com/monitor/</loc><changefreq>monthly</changefreq></url>
+<url><loc>https://ai-econlab.com/daioe/</loc><changefreq>monthly</changefreq></url>
 <url><loc>https://ai-econlab.com/research/</loc><changefreq>monthly</changefreq></url>
 <url><loc>https://ai-econlab.com/people/</loc><changefreq>monthly</changefreq></url>
+<url><loc>https://ai-econlab.com/seminars/</loc><changefreq>monthly</changefreq></url>
 <url><loc>https://ai-econlab.com/about/</loc><changefreq>monthly</changefreq></url>
 </urlset>

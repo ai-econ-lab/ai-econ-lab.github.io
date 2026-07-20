@@ -12,8 +12,10 @@ brand:
 # Top navigation. 'cta' renders as the filled button on the right.
 nav:
   - {label: "Monitor",  href: "/monitor/"}
+  - {label: "DAIOE",    href: "/daioe/"}
   - {label: "Research", href: "/research/"}
   - {label: "People",   href: "/people/"}
+  - {label: "Seminars", href: "/seminars/"}
   - {label: "About",    href: "/about/"}
   - {label: "Open the monitor →", href: "/monitor/", cta: true}
 
@@ -29,8 +31,10 @@ affiliations: ["WASP-HS · AISCAF", "10-university network", "Sweden · Denmark 
 
 links:
   monitor: "/monitor/"
-  # TODO(Magnus): confirm exact Hugging Face Space URL for the DAIOE Explorer.
-  explorer: "https://huggingface.co/ai-econ-lab"
+  daioe: "/daioe/"                       # the DAIOE page (hosts the live Explorers)
+  explorer: "/daioe/"                    # legacy alias used on home/about
+  explorer_years: "https://huggingface.co/spaces/ai-econ-lab/daioe-explorer-years"
+  explorer_months: "https://huggingface.co/spaces/ai-econ-lab/months"
   daioe_dataset: "https://github.com/ai-econ-lab/daioe_dataset"
 
 footer:
@@ -38,9 +42,10 @@ footer:
     - title: "Explore"
       links:
         - {label: "AI in Demand monitor", href: "/monitor/"}
-        - {label: "DAIOE Explorer", href: "https://huggingface.co/ai-econ-lab"}
+        - {label: "DAIOE & Explorer", href: "/daioe/"}
         - {label: "Research", href: "/research/"}
         - {label: "People", href: "/people/"}
+        - {label: "Seminars & conferences", href: "/seminars/"}
     - title: "The lab"
       links:
         - {label: "About", href: "/about/"}

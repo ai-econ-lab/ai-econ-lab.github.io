@@ -14,10 +14,12 @@ ROOT = Path(__file__).parent
 DATA = ROOT / "data"
 def load(name): return yaml.safe_load((DATA / name).read_text(encoding="utf-8"))
 
-SITE    = load("site.yaml")
-PAPERS  = load("papers.yaml")
-PEOPLE  = load("people.yaml")
-MONITOR = load("monitor.yaml")
+SITE     = load("site.yaml")
+PAPERS   = load("papers.yaml")
+PEOPLE   = load("people.yaml")
+MONITOR  = load("monitor.yaml")
+DAIOE    = load("daioe.yaml")
+SEMINARS = load("seminars.yaml")
 
 OUT = ROOT / SITE["build"]["out"]
 BASE = SITE["brand"]["base_url"].rstrip("/")
@@ -224,24 +226,107 @@ def research():
                  "Peer-reviewed articles and working papers on AI and the labour market.",
                  "/research/", body)
 
+def initials(name):
+    parts = [p for p in name.replace("-", " ").split() if p]
+    return (parts[0][0] + parts[-1][0]).upper() if len(parts) >= 2 else name[:2].upper()
+
+def person_card(m):
+    if m.get("photo"):
+        avatar = f'<img class="avatar" src="/assets/people/{m["photo"]}" alt="{h(m["name"])}" loading="lazy">'
+    else:
+        avatar = f'<span class="avatar mono" aria-hidden="true">{h(initials(m["name"]))}</span>'
+    role = f'<div class="role">{h(m["role"])}</div>' if m.get("role") else ""
+    link = f'<a class="pl" href="{m["url"]}">Profile →</a>' if m.get("url") else ""
+    bio = (f'<details class="bio"><summary>Read more</summary><p>{h(m["bio"])}</p></details>'
+           if m.get("bio") else "")
+    return (f'<div class="person">{avatar}<div class="pmeta"><h3>{h(m["name"])}</h3>{role}'
+            f'<div class="aff">{h(m["aff"])}</div>{bio}{link}</div></div>')
+
 def people():
     blocks = ""
     for g in PEOPLE["groups"]:
-        cards = ""
-        for m in g["members"]:
-            link = f'<a class="pl" href="{m["url"]}">Profile →</a>' if m.get("url") else ""
-            cards += (f'<div class="person"><h3>{h(m["name"])}</h3>'
-                      f'<div class="role">{h(m["role"])}</div>'
-                      f'<div class="aff">{h(m["aff"])}</div>{link}</div>')
+        cards = "".join(person_card(m) for m in g["members"])
         blocks += f'<div class="grouphdr">{h(g["name"])}</div><div class="people">{cards}</div>'
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">People</p><h2 class="sec">The lab &amp; its network</h2>
   <p class="secintro">Economists, statisticians, computer scientists and business scholars across Sweden, Denmark,
-    Portugal, Germany and Switzerland.</p></div></div>
+    Portugal, Germany and Switzerland. Select any name to read more.</p></div></div>
 <div class="wrap"><section style="padding-top:8px">{blocks}</section></div>"""
     return shell(f"People · {SITE['brand']['name']}",
                  "The AI-Econ Lab team and its international, multi-disciplinary network.",
                  "/people/", body, jsonld=people_ld())
+
+def daioe():
+    d = DAIOE
+    explorers = ""
+    for i, e in enumerate(d["explorers"]):
+        explorers += f"""<div class="explorer">
+  <div class="charthead"><div class="charttitle">{h(e['name'])}</div>
+    <a class="mono" style="font-size:12px" href="{e['open']}">Open full ↗</a></div>
+  <p class="psub" style="margin:2px 0 10px">{h(e['desc'])}</p>
+  <div class="embedwrap"><iframe src="{e['embed']}" title="{h(e['name'])}" loading="lazy"
+    referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
+</div>"""
+    res = "".join(f'<li><a href="{r["href"]}">{h(r["label"])}</a> <span class="mono">— {h(r["note"])}</span></li>'
+                  for r in d["resources"])
+    body = f"""<div class="wrap"><div class="hero" style="padding-bottom:6px"><div>
+  <div class="eyebrow"><span class="dot"></span> {h(d['tagline'])}</div>
+  <h1 class="title" style="max-width:16ch">{h(d['headline'])}: how exposed is each job to AI?</h1>
+  <p class="lede" style="max-width:60ch">{h(d['lede'])}</p>
+  <div class="cta-row"><a class="btn primary" href="{d['explorers'][0]['open']}">Open the Explorer →</a>
+    <a class="btn ghost" href="{d['resources'][0]['href']}">Download the data</a></div>
+</div></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">Explore it live</p>
+  <h2 class="sec">The DAIOE Explorer — occupation by occupation.</h2>
+  <p class="secintro">Interactive dashboards (built and maintained in-house) showing Swedish employment by occupation
+    group alongside DAIOE exposure. Yearly and monthly views.</p>
+  <div class="explorers">{explorers}</div>
+</section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">Use it in your own work</p>
+  <h2 class="sec">Open data &amp; crosswalks.</h2>
+  <ul class="reslist">{res}</ul>
+  <p class="secintro" style="margin-top:18px">Introduced and validated in the working paper
+    &ldquo;{h(d['paper']['title'])}&rdquo;. See <a href="/research/">Research</a>.</p>
+</section></div></div>"""
+    return shell(f"DAIOE — data-driven AI occupational exposure · {SITE['brand']['name']}",
+                 "DAIOE: the lab's open, data-driven measure of occupational AI exposure, with live Explorer dashboards.",
+                 "/daioe/", body, jsonld=dataset_ld())
+
+def seminars():
+    s = SEMINARS; ser = s["series"]
+    fmt = "".join(f"<li>{h(x)}</li>" for x in ser["format"])
+    ups = ""
+    for e in s["upcoming"]:
+        ups += (f'<div class="semrow"><span class="yr tnum">{h(e["date"])}</span>'
+                f'<span><span class="rt">{h(e["speaker"])}</span><span class="ra">{h(e["topic"])}</span></span></div>')
+    past = "".join(f'<div class="confrow"><span class="yr tnum">{h(c["year"])}</span>'
+                   f'<span class="rd">{h(c["note"])}</span></div>' for c in s["conferences"]["past"])
+    nx = s["conferences"]["next"]
+    body = f"""<div class="wrap"><div class="pagehead">
+  <p class="kicker">Seminars &amp; events</p><h2 class="sec">{h(ser['title'])}</h2>
+  <p class="secintro">{h(ser['intro'])}</p></div></div>
+<div class="wrap"><section style="padding-top:6px">
+  <div class="two" style="grid-template-columns:1.3fr 1fr;align-items:start">
+    <div><div class="grouphdr">Upcoming &amp; recent</div><div class="rows">{ups}</div></div>
+    <div class="card"><div class="charttitle" style="margin-bottom:8px">Format</div>
+      <ul class="reslist">{fmt}</ul>
+      <p class="psub" style="margin-top:12px">Contact: {h(ser['contact'])}</p></div>
+  </div>
+</section></div>
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">Conference series</p>
+  <h2 class="sec">{h(nx['title'])} — {h(nx['when'])}, {h(nx['where'])}.</h2>
+  <p class="secintro">{h(nx['note'])}</p>
+  <div class="grouphdr" style="margin-top:24px">Earlier conferences</div>
+  <div class="rows">{past}</div>
+</section></div></div>"""
+    return shell(f"Seminars &amp; conferences · {SITE['brand']['name']}",
+                 "The AIEL brown-bag seminar series (part of WASP-HS AISCAF) and the AIEL conference series.",
+                 "/seminars/", body)
 
 def monitor():
     m = MONITOR
@@ -318,23 +403,23 @@ def about():
     return shell(f"About · {SITE['brand']['name']}", SITE["brand"]["description"], "/about/", body)
 
 # ── write ────────────────────────────────────────────────────────────────────
-PAGES = {"index.html": home(), "research/index.html": research(), "people/index.html": people(),
-         "monitor/index.html": monitor(), "about/index.html": about()}
+PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.html": daioe(),
+         "research/index.html": research(), "people/index.html": people(),
+         "seminars/index.html": seminars(), "about/index.html": about()}
 
 def build():
     if OUT.exists(): shutil.rmtree(OUT)
-    (OUT / "assets").mkdir(parents=True)
+    OUT.mkdir(parents=True)
     for name, htmlstr in PAGES.items():
         p = OUT / name; p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(htmlstr, encoding="utf-8")
-    for a in (ROOT / "assets").iterdir():
-        shutil.copy(a, OUT / "assets" / a.name)
+    shutil.copytree(ROOT / "assets", OUT / "assets")   # recurses into assets/people/ etc.
     # infra
     if SITE["build"].get("emit_cname"):   # only at DNS-flip time; otherwise github.io stays previewable
         (OUT / "CNAME").write_text(SITE["brand"]["domain"] + "\n", encoding="utf-8")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
-    urls = ["/", "/monitor/", "/research/", "/people/", "/about/"]
+    urls = ["/", "/monitor/", "/daioe/", "/research/", "/people/", "/seminars/", "/about/"]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:

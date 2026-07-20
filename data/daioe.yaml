@@ -1,0 +1,27 @@
+# DAIOE — the lab's data-driven AI Occupational Exposure measure and its public tools.
+headline: "DAIOE"
+tagline: "Data-driven AI Occupational Exposure"
+lede: >-
+  DAIOE is the lab's measure of how exposed each occupation is to artificial intelligence,
+  built from data rather than expert guesswork. It is openly published, versioned and mapped
+  across the US (SOC), international (ISCO) and Swedish (SSYK) occupational classifications, so
+  others can use it directly in their own work.
+
+# The live interactive tools (Shiny for Python on Hugging Face). Built and maintained in-house.
+explorers:
+  - name: "DAIOE Explorer — yearly"
+    desc: "Yearly SCB employment by Swedish occupation group, alongside DAIOE AI-exposure levels."
+    embed: "https://ai-econ-lab-daioe-explorer-years.hf.space"
+    open: "https://huggingface.co/spaces/ai-econ-lab/daioe-explorer-years"
+  - name: "DAIOE Explorer — monthly"
+    desc: "Monthly SCB employment by Swedish occupation group, alongside DAIOE AI-exposure levels."
+    embed: "https://ai-econ-lab-months.hf.space"
+    open: "https://huggingface.co/spaces/ai-econ-lab/months"
+
+resources:
+  - {label: "DAIOE datasets (all versions)", href: "https://github.com/ai-econ-lab/daioe_dataset", note: "SOC / ISCO / SSYK, versioned"}
+  - {label: "SSYK 2012 & SSYK 96 translation utility", href: "https://github.com/ai-econ-lab/daioe_translations", note: "crosswalk helper"}
+
+paper:
+  title: "AI Unboxed and Jobs: A Novel Measure and Firm-Level Evidence from Three Countries"
+  note: "The working paper introducing and validating the measure."

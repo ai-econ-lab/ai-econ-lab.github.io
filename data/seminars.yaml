@@ -1,0 +1,37 @@
+# Seminars & events — ported from ai-econlab.com/seminars (2026-07-20). VERIFY before go-live.
+series:
+  title: "AIEL brown-bag seminar series"
+  intro: >-
+    A monthly, virtual brown-bag lunch research seminar. From autumn 2025 it is part of the
+    Swedish research cluster on AI, Structural Change and the Future of Work (AISCAF), funded by
+    WASP-HS. Internal or invited external researchers present work-in-progress and get feedback
+    from colleagues.
+  format:
+    - "Monthly, online (Zoom link on request)"
+    - "12:00–13:00 CET (12:30–13:30 from autumn 2026)"
+    - "20–30 minutes presentation, then Q&A"
+  contact: "Magnus Lodefalk — firstname.surname[at]oru.se"
+
+# Upcoming / recent seminars (speaker — topic — date). Keep reverse-chronological within season.
+upcoming:
+  - {date: "2026-05-08", speaker: "Tomáš Oleš", topic: "Title TBD"}
+  - {date: "2026-04-10", speaker: "Joonas Tuhkuri", topic: "Title TBD"}
+  - {date: "2026-03-13", speaker: "Mariola Pytlikova", topic: "AI adoption"}
+  - {date: "2025-12-12", speaker: "Fredrik Heinz", topic: "European AI strategy"}
+  - {date: "2025-11-14", speaker: "Malin Heintz", topic: "Digitalisation and female-dominated occupations"}
+  - {date: "2025-10-10", speaker: "Charlotta Kronblad", topic: "Algorithmic injustice and multilayered blackboxing"}
+  - {date: "2025-09-12", speaker: "Otto Kässi", topic: "Generative AI's labour market effects"}
+
+# AIEL conference series.
+conferences:
+  next:
+    title: "5th AIEL Conference"
+    when: "14–15 June 2028"
+    where: "Örebro, Sweden"
+    note: "On AI and the future of work. Keynote speakers to be confirmed."
+  past:
+    - {year: 2026, note: "AIEL / AISCAF conference, Örebro"}
+    - {year: 2024, note: "AIEL conference, Örebro"}
+    - {year: 2022, note: "AI and white-collar work, Örebro"}
+    - {year: 2021, note: "TIISA conference"}
+    - {year: 2020, note: "Digital conference (inaugural)"}
