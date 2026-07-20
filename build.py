@@ -8,7 +8,7 @@ engine and no third-party deps beyond PyYAML — so it runs the same on your Mac
 and in CI. Edit the YAML, run `python3 build.py`, commit, push.
 """
 from pathlib import Path
-import shutil, yaml, html
+import shutil, yaml, html, re, unicodedata
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
@@ -236,9 +236,21 @@ def initials(name):
     parts = [p for p in name.replace("-", " ").split() if p]
     return (parts[0][0] + parts[-1][0]).upper() if len(parts) >= 2 else name[:2].upper()
 
+def pslug(name):
+    n = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode().replace("ø", "o")
+    return re.sub(r"[^a-z0-9]+", "-", n.lower()).strip("-")
+
+def photo_for(name):
+    """Auto-detect assets/people/<slug>.<ext>; drop a correctly named file and it appears."""
+    for ext in ("jpg", "jpeg", "png", "webp"):
+        if (ROOT / "assets" / "people" / f"{pslug(name)}.{ext}").exists():
+            return f"{pslug(name)}.{ext}"
+    return None
+
 def person_card(m):
-    if m.get("photo"):
-        avatar = f'<img class="avatar" src="/assets/people/{m["photo"]}" alt="{h(m["name"])}" loading="lazy">'
+    photo = m.get("photo") or photo_for(m["name"])
+    if photo:
+        avatar = f'<img class="avatar" src="/assets/people/{photo}" alt="{h(m["name"])}" loading="lazy" width="52" height="52">'
     else:
         avatar = f'<span class="avatar mono" aria-hidden="true">{h(initials(m["name"]))}</span>'
     role = f'<div class="role">{h(m["role"])}</div>' if m.get("role") else ""
