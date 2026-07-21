@@ -194,8 +194,9 @@ def home():
     scientists, because a labour market changed by AI cannot be read from one discipline or one country alone.</p>
   <div class="pillars">
     <div class="pillar"><div class="n">01 · DATA</div><h3>Register-grade evidence</h3>
-      <p>Linked employer–employee register data at population scale, monthly and at 4-digit occupations in Sweden
-        (LISA, AGI), plus comparable access in a handful of other countries. Rare reach, paired with 10.9M public job ads.</p></div>
+      <p>Linked employer–employee register data at population scale in Sweden: annual, with 4-digit occupations
+        (LISA), and monthly individual employment (AGI); plus comparable access in a handful of other countries.
+        Rare reach, paired with 10.9M public job ads.</p></div>
     <div class="pillar"><div class="n">02 · REACH</div><h3>Multi-country</h3>
       <p>Register-level in Sweden, Denmark, Portugal and Germany, with more countries planned; 30-plus via EU-LFS
         and international job-ad data for external validity.</p></div>
