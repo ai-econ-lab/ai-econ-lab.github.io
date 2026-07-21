@@ -212,8 +212,9 @@ def home():
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">Flagship · The AIEL Monitor</p>
   <h2 class="sec">Sweden, in depth: four things the live job-ad data show.</h2>
-  <p class="secintro">One of the monitor's country cuts, at register-grade depth. Every figure is measured from the
-    ad text with a versioned, citable term list. Where something is not yet measured, we say so.</p>
+  <p class="secintro">One of the monitor's country cuts, read from Sweden's public job-ad stream (JobTech / Platsbanken).
+    Every figure is measured from the ad text with a versioned, citable term list. Where something is not yet
+    measured, we say so.</p>
   <div class="tiles">{tiles}</div>
   <div class="two">
     <div class="prod"><div class="tag">The Monitor · public data</div><h3>The AI-Econ Lab Monitor</h3>
