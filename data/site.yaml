@@ -20,6 +20,9 @@ nav:
   - {label: "About",    href: "/about/"}
 
 # Instrument registration strip under the masthead (honesty-as-aesthetic).
+# Monthly brief subscription (Substack). Replace with the real Space URL once created.
+brief_subscribe: "https://aielmonitor.substack.com"
+
 registration:
   - "SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS"
   - "<b>10.9M</b> SWEDISH ADS · 36 COUNTRIES"

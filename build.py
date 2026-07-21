@@ -965,49 +965,89 @@ def about():
 </section></div></div>"""
     return shell(f"About &amp; contact · {SITE['brand']['name']}", SITE["brand"]["description"], "/about/", body)
 
-def brief():
-    """Monthly one-page 'AIEL Monitor Brief': an auto-generated snapshot (the four spine
-    headline numbers), the always-fresh vacancy pulse, a themed deep-dive that rotates through
-    the spine month by month, and the latest lab news. Generated from the same data as the
-    site; print-to-PDF ready. English (MVP; a Swedish sibling and a monthly cron come next)."""
+def brief(lang="en"):
+    """Monthly one-page 'AIEL Monitor Brief' (English + Swedish): an auto-generated snapshot (the
+    four spine headline numbers), the always-fresh vacancy pulse, a themed deep-dive that rotates
+    through the spine month by month, and the latest lab news. Same data as the site; print-to-PDF
+    ready. The news items are shown in their original (English) wording in both editions."""
     from datetime import date
     today = date.today()
-    MONTHS = ["January", "February", "March", "April", "May", "June",
-              "July", "August", "September", "October", "November", "December"]
-    mname = MONTHS[today.month - 1]; issue = f"{today.year}-{today.month:02d}"
-
-    cards = ""                                            # at a glance: the four spine numbers
-    for o in MONITOR["overview"]:
-        cls = f' {o["cls"]}' if o["cls"] else ""
-        cards += (f'<div class="bstat{cls}"><span class="stripe"></span><div class="bk">{h(o["k"])}</div>'
-                  f'<div class="bnum">{o["num"]}</div><div class="blab">{h(o["lab"])}</div>'
-                  f'<div class="bfoot">{h(o["foot"])}</div></div>')
+    sv = lang == "sv"
+    def L(en, se): return se if sv else en
+    def svn(x): return str(x).replace(".", ",") if sv else str(x)
+    MO = {"en": ["January", "February", "March", "April", "May", "June", "July", "August",
+                 "September", "October", "November", "December"],
+          "sv": ["januari", "februari", "mars", "april", "maj", "juni", "juli", "augusti",
+                 "september", "oktober", "november", "december"]}
+    mname = MO[lang][today.month - 1]; issue = f"{today.year}-{today.month:02d}"
+    sub = SITE.get("brief_subscribe", "")
 
     t = MONITOR["trend"]                                  # the pulse: the always-fresh vacancy series
-    cc = CROSS; dm = DEMAND; sm = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
+    cc = CROSS; dm = DEMAND; smd = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
+    n_ctry = cc["meta"]["n_countries"]; dver = cc["meta"]["daioe_version"]
     order = ["exposure", "demand", "adoption", "outcomes"]   # theme rotates through the spine
     theme = order[(today.month - 1) % 4]
-    specs = {
-        "exposure": ("Exposure across countries", dotplot(cc),
-            f"Sweden's workforce is the 2nd most AI-exposed of {cc['meta']['n_countries']} European countries "
-            f"(DAIOE generative-AI {cc['meta']['daioe_version']}). Exposure marks where AI overlaps with the work, not displacement.",
-            f"DAIOE generative-AI {cc['meta']['daioe_version']} × Eurostat EU-LFS {cc['meta']['weight_year']}"),
-        "demand": ("Hiring for AI across countries",
-            barplot(dm["countries"], 0, int(max(r["share"] for r in dm["countries"])) + 1, 0, "share", ".1f"),
-            f"{dm['meta']['note_prev']} The Swedish live job-ad measure is the pulse shown above.",
-            f"{dm['meta']['source']}, {dm['meta']['year']}"),
-        "adoption": ("AI adoption by firm size in Sweden",
-            barplot(SWEAD["sizes"], 0, 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f"),
-            f"Adoption climbs steeply with firm size, from {sm['10-49']}% of small firms (10–49 employees) to "
-            f"{sm['250-']}% of large ones (250+) in {SWEAD['meta']['year']}, every class up sharply since {SWEAD['meta']['prev_year']}.",
-            f"{SWEAD['meta']['source']}, {SWEAD['meta']['year']}"),
-        "outcomes": ("The entry-level squeeze", squeeze_svg(ELS),
+    titles = {"exposure": L("Exposure across countries", "Exponering mellan länder"),
+              "demand": L("Hiring for AI across countries", "Efterfrågan på AI mellan länder"),
+              "adoption": L("AI adoption by firm size in Sweden", "AI-användning efter företagsstorlek i Sverige"),
+              "outcomes": L("The entry-level squeeze", "Klämman för instegsjobb")}
+    takeaways = {
+        "exposure": L(
+            f"Sweden's workforce is the 2nd most AI-exposed of {n_ctry} European countries (DAIOE generative-AI "
+            f"{dver}). Exposure marks where AI overlaps with the work, not displacement.",
+            f"Sveriges arbetskraft är den näst mest AI-exponerade av {n_ctry} europeiska länder (DAIOE generativ AI "
+            f"{dver}). Exponering visar var AI överlappar med arbetet, inte förträngning av jobb."),
+        "demand": L(
+            "Demand roughly doubled in a year for most countries (Sweden 1.3% in 2024 to 2.8% in 2025). The Swedish "
+            "live job-ad measure is the pulse shown above.",
+            "Efterfrågan ungefär fördubblades på ett år i de flesta länder (Sverige 1,3% 2024 till 2,8% 2025). Den "
+            "svenska livemätningen av jobbannonser är pulsen ovan."),
+        "adoption": L(
+            f"Adoption climbs steeply with firm size, from {smd['10-49']}% of small firms (10–49 employees) to "
+            f"{smd['250-']}% of large ones (250+) in {SWEAD['meta']['year']}, every class up sharply since {SWEAD['meta']['prev_year']}.",
+            f"Användningen ökar brant med företagsstorlek, från {smd['10-49']}% av småföretagen (10–49 anställda) till "
+            f"{smd['250-']}% av de stora (250+) {SWEAD['meta']['year']}, alla storleksklasser kraftigt upp sedan {SWEAD['meta']['prev_year']}."),
+        "outcomes": L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
             f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
             f"in {ELS['meta']['last_year']}. Descriptive, not causal.",
-            f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}"),
+            f"I de mest AI-exponerade yrkena utgör instegsjobb en mindre andel av annonserna än i de minst exponerade, "
+            f"ett gap som vuxit från −{svn(abs(ELS['meta']['gap_first']))} till −{svn(abs(ELS['meta']['gap_last']))} "
+            f"procentenheter {ELS['meta']['last_year']}. Beskrivande, inte kausalt."),
     }
-    th_title, th_chart, th_take, th_src = specs[theme]
+    srcs = {
+        "exposure": L(f"DAIOE generative-AI {dver} × Eurostat EU-LFS {cc['meta']['weight_year']}",
+                      f"DAIOE generativ AI {dver} × Eurostat AKU {cc['meta']['weight_year']}"),
+        "demand": f"{dm['meta']['source']}, {dm['meta']['year']}",
+        "adoption": L(f"{SWEAD['meta']['source']}, {SWEAD['meta']['year']}",
+                      f"SCB, IT-användning i företag (NV0116), {SWEAD['meta']['year']}"),
+        "outcomes": L(f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}",
+                      f"{ELS['meta']['source']} × DAIOE generativ AI {ELS['meta']['daioe_version']}"),
+    }
+    if theme == "exposure":
+        th_chart = dotplot(cc)
+    elif theme == "demand":
+        th_chart = barplot(dm["countries"], 0, int(max(r["share"] for r in dm["countries"])) + 1, 0, "share", ".1f")
+    elif theme == "adoption":
+        th_chart = barplot(SWEAD["sizes"], 0, 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f")
+    else:
+        th_chart = squeeze_svg(ELS)
+    th_title = titles[theme]
+
+    KSV = {"Exposure": "Exponering", "Demand": "Efterfrågan", "Adoption": "Användning", "Outcomes": "Utfall"}
+    LABSV = {"Exposure": "Sveriges arbetskraft näst mest AI-exponerad av 36 europeiska länder",
+             "Demand": "av svenska jobbannonser nämner AI 2025, ca 140 gånger fler än 2006",
+             "Adoption": "av svenska företag använder AI, tredje högst i EU och upp från 25% året innan",
+             "Outcomes": "färre instegsjobb i de mest AI-exponerade yrkena, ett gap som vuxit sedan 2020"}
+    cards = ""                                            # at a glance: the four spine numbers
+    for o in MONITOR["overview"]:
+        cls = f' {o["cls"]}' if o["cls"] else ""
+        k = KSV[o["k"]] if sv else o["k"]
+        lab = LABSV[o["k"]] if sv else o["lab"]
+        foot = o["foot"].replace("live", "löpande") if sv else o["foot"]
+        cards += (f'<div class="bstat{cls}"><span class="stripe"></span><div class="bk">{h(k)}</div>'
+                  f'<div class="bnum">{o["num"]}</div><div class="blab">{h(lab)}</div>'
+                  f'<div class="bfoot">{h(foot)}</div></div>')
 
     flat = [(yr["year"], it) for yr in NEWS["years"] for it in yr["items"]]   # newest first
     news_html = ""
@@ -1016,46 +1056,60 @@ def brief():
         lr = f' <span class="nlinks">{links}</span>' if links else ""
         news_html += f'<li><span class="bnd">{h(it["date"])} {h(yr)}</span> {it["text"]}{lr}</li>'
 
+    en_cur = '' if sv else ' aria-current="page"'
+    sv_cur = ' aria-current="page"' if sv else ''
+    subscribe = f'<a class="btn ghost" href="{sub}">{L("Subscribe monthly","Prenumerera")}</a>' if sub else ""
+    total = SWEAD["meta"]["total"]
+    pulse_p = L(
+        f"Sweden sits near the international frontier: 2nd of {n_ctry} European countries on workforce AI exposure, and "
+        f"among the EU leaders on firm adoption ({total}%). The series that moves every month is the Swedish depth cut "
+        f"below, the share of vacancies asking for an AI skill, 2006–2025, now about <b>{t['values'][-1]:.2f}%</b> "
+        f"({t['years'][-1]}, provisional), roughly <b>140×</b> its level twenty years ago.",
+        f"Sverige ligger nära den internationella frontlinjen: näst mest AI-exponerad arbetskraft av {n_ctry} europeiska "
+        f"länder, och bland EU:s ledande på företagsanvändning ({total}%). Serien som rör sig varje månad är den svenska "
+        f"fördjupningen nedan, andelen lediga jobb som efterfrågar en AI-kompetens, 2006–2025, nu omkring "
+        f"<b>{svn(round(t['values'][-1], 2))}%</b> ({t['years'][-1]}, preliminärt), ungefär <b>140×</b> nivån för tjugo år sedan.")
+
     body = f"""<div class="wrap brief"><article class="briefsheet">
   <header class="bhead">
-    <div><p class="kicker">AIEL Monitor Brief · {issue}</p>
-      <h1 class="btitle">AI and the labour market — {mname} {today.year}</h1>
-      <p class="bsub">A monthly snapshot from the AI-Econ Lab: international, with Sweden in depth, on public data.
-        In focus this month: {h(th_title)}.</p></div>
+    <div><p class="kicker">{L("AIEL Monitor · monthly brief","AIEL Monitor · månadsbrev")} · {issue}</p>
+      <h1 class="btitle">{L("AI and the labour market","AI och arbetsmarknaden")} — {mname} {today.year}</h1>
+      <p class="bsub">{L("A monthly snapshot from the AI-Econ Lab: international, with Sweden in depth, on public data.", "En månatlig ögonblicksbild från AI-Econ Lab: internationell, med Sverige på djupet, byggd på öppna data.")}
+        {L("In focus this month","I fokus denna månad")}: {h(th_title)}.</p></div>
     <div class="bactions">
-      <button class="btn primary" id="printbrief" type="button">↓ Download PDF</button>
-      <span class="blang"><a aria-current="page">EN</a> · <span class="soon" title="Swedish version coming">SV</span></span>
-      <a class="bback" href="/monitor/">← the live monitor</a></div>
+      <button class="btn primary" id="printbrief" type="button">{L("↓ Download PDF","↓ Ladda ner PDF")}</button>
+      {subscribe}
+      <span class="blang"><a href="/monitor/brief/"{en_cur}>EN</a> · <a href="/monitor/brief/sv/"{sv_cur}>SV</a></span>
+      <a class="bback" href="/monitor/">{L("← the live monitor","← den levande monitorn")}</a></div>
   </header>
 
-  <section class="bsec"><h2 class="bh2">At a glance</h2>
+  <section class="bsec"><h2 class="bh2">{L("At a glance","I korthet")}</h2>
     <div class="bstats">{cards}</div></section>
 
-  <section class="bsec"><h2 class="bh2">The pulse · AI in Swedish job ads</h2>
-    <p class="bp">The one series that moves every month: the share of Swedish vacancies asking for an AI skill,
-      2006–2025, now about <b>{t['values'][-1]:.2f}%</b> ({t['years'][-1]}, provisional) and roughly <b>140×</b> its
-      level twenty years ago.</p>
+  <section class="bsec"><h2 class="bh2">{L("The pulse · Sweden in international context","Pulsen · Sverige i internationellt sammanhang")}</h2>
+    <p class="bp">{pulse_p}</p>
     <div class="bchart">{trend_svg(t)}</div></section>
 
-  <section class="bsec"><h2 class="bh2">In focus · {h(th_title)}</h2>
-    <p class="bp">{th_take}</p>
+  <section class="bsec"><h2 class="bh2">{L("In focus","I fokus")} · {h(th_title)}</h2>
+    <p class="bp">{takeaways[theme]}</p>
     <div class="bchart">{th_chart}</div>
-    <p class="bsrc">Source: {h(th_src)}. Full method at ai-econ-lab.github.io/monitor/#method.</p></section>
+    <p class="bsrc">{L("Source","Källa")}: {h(srcs[theme])}. {L("Full method at","Fullständig metod på")} ai-econ-lab.github.io/monitor/#method.</p></section>
 
-  <section class="bsec bnews"><h2 class="bh2">Lab news</h2>
+  <section class="bsec bnews"><h2 class="bh2">{L("Lab news","Nyheter från labbet")}</h2>
     <ul class="blist">{news_html}</ul></section>
 
   <footer class="bfooter">
-    <span>AI-Econ Lab · AIEL Monitor · {issue}. Public data; cite the version and date.</span>
+    <span>AI-Econ Lab · AIEL Monitor · {issue}. {L("Public data; cite the version and date.","Öppna data; ange version och datum vid citering.")}</span>
     <span>ai-econ-lab.github.io/monitor</span></footer>
 </article></div>"""
-    return shell(f"AIEL Monitor Brief — {mname} {today.year} · {SITE['brand']['name']}",
-                 f"A monthly one-page snapshot of AI in the labour market from the AI-Econ Lab: {mname} {today.year}.",
-                 "/monitor/brief/", body)
+    return shell(f"{L('AIEL Monitor Brief','AIEL Monitor-brief')} — {mname} {today.year} · {SITE['brand']['name']}",
+                 L(f"A monthly one-page snapshot of AI in the labour market from the AI-Econ Lab: {mname} {today.year}.",
+                   f"En månatlig ögonblicksbild av AI på arbetsmarknaden från AI-Econ Lab: {mname} {today.year}."),
+                 "/monitor/brief/sv/" if sv else "/monitor/brief/", body)
 
 # ── write ────────────────────────────────────────────────────────────────────
 PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.html": daioe(),
-         "monitor/brief/index.html": brief(),
+         "monitor/brief/index.html": brief("en"), "monitor/brief/sv/index.html": brief("sv"),
          "research/index.html": research(), "people/index.html": people(),
          "events/index.html": events(), "news/index.html": news(), "about/index.html": about()}
 
