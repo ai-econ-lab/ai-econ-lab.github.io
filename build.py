@@ -87,7 +87,7 @@ def footer():
   <div><h4>Contact</h4><p>{h(SITE['footer']['contact'])}</p></div>
 </div><div class="footend">
   <span>© 2026 {h(b['name'])} · Örebro University &amp; RATIO</span>
-  <span>DATA JobTech / Platsbanken (CC0) · MONITOR PROTOTYPE · NOT FOR CITATION</span>
+  <span>PUBLIC DATA · MONITOR PROTOTYPE · CITE THE VERSION AND DATE</span>
 </div></div></footer>"""
 
 def shell(title, desc, path, body, jsonld="", need_chart=False):
