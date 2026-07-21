@@ -1,37 +1,37 @@
-code,country,exposure_daioe_genai_v2023,emp_coverage_pct,lfs_year
-LU,Luxembourg,2.2103,100.0,2023
-SE,Sweden,2.0651,99.7,2023
-NL,Netherlands,2.046,99.7,2023
-CH,Switzerland,2.0227,99.9,2023
-BE,Belgium,2.0011,99.5,2023
-UK,United Kingdom,1.9933,99.7,2019
-NO,Norway,1.9848,100.0,2023
-DK,Denmark,1.9738,99.6,2023
-IE,Ireland,1.973,100.0,2023
-DE,Germany,1.9727,99.6,2023
-FI,Finland,1.9581,99.7,2023
-IS,Iceland,1.9527,100.0,2023
-FR,France,1.9454,99.3,2023
-MT,Malta,1.9437,99.4,2023
-CY,Cyprus,1.9334,98.3,2023
-LT,Lithuania,1.931,99.7,2023
-AT,Austria,1.9304,99.9,2023
-EE,Estonia,1.9299,99.7,2023
-PL,Poland,1.9077,99.2,2023
-PT,Portugal,1.884,99.6,2023
-LV,Latvia,1.8813,99.2,2023
-SI,Slovenia,1.8732,99.3,2023
-CZ,Czechia,1.873,99.6,2023
-HR,Croatia,1.8678,99.3,2023
-IT,Italy,1.8658,99.0,2023
-SK,Slovakia,1.8633,99.7,2023
-HU,Hungary,1.8519,99.5,2023
-EL,Greece,1.8426,98.4,2023
-ME,Montenegro,1.842,100.0,2020
-ES,Spain,1.8372,99.5,2023
-MK,N. Macedonia,1.8017,99.1,2023
-RS,Serbia,1.8016,99.4,2023
-BG,Bulgaria,1.7967,99.2,2023
-BA,Bosnia & Herz.,1.7358,99.3,2023
-RO,Romania,1.7145,99.4,2023
-TR,Turkey,1.6821,99.3,2023
+code,country,top_tier_share_pct,daioe_genai_score,emp_coverage_pct,lfs_year
+LU,Luxembourg,64.2,2.2103,100.0,2023
+SE,Sweden,47.5,2.0651,99.7,2023
+BE,Belgium,47.5,2.0011,99.5,2023
+NL,Netherlands,46.3,2.046,99.7,2023
+CH,Switzerland,45.8,2.0227,99.9,2023
+DE,Germany,44.2,1.9727,99.6,2023
+DK,Denmark,42.8,1.9738,99.6,2023
+CY,Cyprus,42.7,1.9334,98.3,2023
+UK,United Kingdom,42.3,1.9933,99.7,2019
+IS,Iceland,41.5,1.9527,100.0,2023
+LT,Lithuania,40.9,1.931,99.7,2023
+NO,Norway,40.2,1.9848,100.0,2023
+MT,Malta,40.2,1.9437,99.4,2023
+FR,France,40.0,1.9454,99.3,2023
+IE,Ireland,39.9,1.973,100.0,2023
+FI,Finland,39.8,1.9581,99.7,2023
+AT,Austria,39.4,1.9304,99.9,2023
+LV,Latvia,39.1,1.8813,99.2,2023
+EE,Estonia,38.4,1.9299,99.7,2023
+PL,Poland,38.4,1.9077,99.2,2023
+SI,Slovenia,37.3,1.8732,99.3,2023
+IT,Italy,36.9,1.8658,99.0,2023
+CZ,Czechia,36.3,1.873,99.6,2023
+PT,Portugal,36.0,1.884,99.6,2023
+HU,Hungary,35.8,1.8519,99.5,2023
+ME,Montenegro,34.9,1.842,100.0,2020
+HR,Croatia,34.8,1.8678,99.3,2023
+ES,Spain,34.4,1.8372,99.5,2023
+SK,Slovakia,34.1,1.8633,99.7,2023
+EL,Greece,33.3,1.8426,98.4,2023
+MK,N. Macedonia,32.0,1.8017,99.1,2023
+RS,Serbia,31.7,1.8016,99.4,2023
+BG,Bulgaria,29.9,1.7967,99.2,2023
+BA,Bosnia & Herz.,25.0,1.7358,99.3,2023
+RO,Romania,24.9,1.7145,99.4,2023
+TR,Turkey,22.5,1.6821,99.3,2023

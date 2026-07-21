@@ -725,27 +725,29 @@ def working_conditions_block():
     report far less influence than men (56% vs 68%); in high-exposure jobs it nearly closes (74% vs 78%).</p>"""
 
 def exposure_section():
-    """Module 1 — Exposure. Headline chart is the cross-country dot plot (international first)."""
+    """Module 1 — Exposure. Interpretable metric: the share of a country's jobs in the most
+    AI-exposed occupations (top DAIOE genai tercile), rather than an abstract mean score."""
     cc = CROSS; mt = cc["meta"]
-    src = (f'DAIOE {mt["variant"]} {mt["daioe_version"]} × Eurostat EU-LFS employment {mt["weight_year"]} '
-           f'(a few countries: latest available, marked ’YY)')
+    se = next(r for r in cc["countries"] if r["is_se"])
+    xmax = 10 * (int(max(r["share"] for r in cc["countries"]) // 10) + 1)
+    src = (f'DAIOE {mt["variant"]} {mt["daioe_version"]} (top-tercile occupations) × Eurostat EU-LFS employment '
+           f'{mt["weight_year"]} (a few countries: latest available, marked ’YY)')
     return f"""<div class="rule module-sec" id="exposure"><div class="wrap"><section>
   <p class="kicker">Module 1 · Exposure · across countries</p>
-  <h2 class="sec">How AI-exposed is each country's workforce?</h2>
-  <p class="secintro">DAIOE scores occupations (ISCO-08), not only Swedish jobs, so every country sits on one
-    public-data scale. Each score is the employment-weighted average DAIOE <b>{h(mt['variant'])}</b> exposure
-    ({h(mt['daioe_version'])}) across a country's occupational mix, weighted by Eurostat EU-LFS employment in
-    <b>{h(mt['weight_year'])}</b> (a few countries use their latest year, marked ’YY). <b>Exposure is not
-    displacement</b>: in our panel it predicts occupational growth as often as decline, showing only where AI
-    overlaps with the work.</p>
-  <div class="dotwrap">{dotplot(cc)}</div>
+  <h2 class="sec">How much of each country's work is AI-exposed?</h2>
+  <p class="secintro">DAIOE scores every occupation (ISCO-08) for how far generative AI overlaps with its tasks.
+    Taking the <b>third of occupations most exposed</b>, the bars show the share of each country's jobs that fall in
+    that top tier (Eurostat EU-LFS employment, <b>{h(mt['weight_year'])}</b>); a few countries use their latest year,
+    marked ’YY. So <b>{se['share']:.0f}%</b> means nearly half of Swedish jobs are in the most AI-exposed
+    occupations. <b>Exposure is not displacement</b>: in our panel it predicts occupational growth as often as
+    decline, showing only where AI overlaps with the work.</p>
+  <div class="dotwrap">{barplot(cc['countries'], mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f')}</div>
   {figfooter("cross_country.csv", src, "cross_country.svg")}
   <div class="depth"><p class="dk">Sweden, in depth</p>
-    <p class="secintro" style="margin:0">Sweden's workforce is the <b>2nd most exposed of {h(mt['n_countries'])}</b>
-      countries (employment coverage ≈100%). The occupation-by-occupation detail behind the measure lives on the
-      <a href="/daioe/">DAIOE</a> page, and Swedish employment is set against exposure over time in the
-      <a href="#occupations-explorer">Occupations Explorer</a> below. Register data give the depth this
-      public-data view cannot; the two are complements.</p></div>
+    <p class="secintro" style="margin:0"><b>{se['share']:.0f}%</b> of Swedish jobs are in the most AI-exposed
+      occupations, the <b>2nd-highest of {h(mt['n_countries'])}</b> countries (EU average {mt['mean_share']:.0f}%).
+      The occupation-by-occupation detail lives on the <a href="/daioe/">DAIOE</a> page, and Swedish employment is
+      set against exposure over time in the <a href="#occupations-explorer">Occupations Explorer</a> below.</p></div>
 </section></div></div>"""
 
 def demand_section(tiles, seg):
@@ -1040,7 +1042,7 @@ def brief(lang="en"):
     th_title = titles[theme]
 
     KSV = {"Exposure": "Exponering", "Demand": "Efterfrågan", "Adoption": "Användning", "Outcomes": "Utfall"}
-    LABSV = {"Exposure": "kognitiva tjänstemannayrken (kodning, skrivande, analys, ekonomi) är mest AI-exponerade, bland de 2% mest utsatta av alla yrken; mätt för 36 europeiska länder",
+    LABSV = {"Exposure": "av de europeiska jobben finns i de mest AI-exponerade yrkena (generativ AI); Sverige 48%, näst högst av 36",
              "Demand": "medianandel jobbannonser som kräver AI i 22 länder 2025 (Stanford AI Index); Sverige 2,8%",
              "Adoption": "av EU:s företag använde AI 2025, upp från 8% 2023 (Eurostat); Sverige 35%, bland de ledande",
              "Outcomes": "Sveriges instegsklämma: färre instegsjobb i de mest AI-exponerade yrkena sedan 2020; mönstret syns även internationellt"}
@@ -1148,9 +1150,11 @@ def emit_data(out):
     import csv as _csv
     d = out / "assets" / "data"; d.mkdir(parents=True, exist_ok=True)
     with (d / "cross_country.csv").open("w", newline="", encoding="utf-8") as f:
-        w = _csv.writer(f); w.writerow(["code", "country", "exposure_daioe_genai_v2023", "emp_coverage_pct", "lfs_year"])
-        for r in CROSS["countries"]: w.writerow([r["code"], r["name"], r["exposure"], r["coverage"], r["year"]])
-    (d / "cross_country.svg").write_text(chart_standalone(dotplot(CROSS)), encoding="utf-8")
+        w = _csv.writer(f); w.writerow(["code", "country", "top_tier_share_pct", "daioe_genai_score", "emp_coverage_pct", "lfs_year"])
+        for r in CROSS["countries"]: w.writerow([r["code"], r["name"], r["share"], r["exposure"], r["coverage"], r["year"]])
+    _ccx = 10 * (int(max(r["share"] for r in CROSS["countries"]) // 10) + 1)
+    (d / "cross_country.svg").write_text(
+        chart_standalone(barplot(CROSS["countries"], CROSS["meta"]["mean_share"], _ccx, CROSS["meta"]["weight_year"], "share", ".0f")), encoding="utf-8")
     with (d / "cross_country_adoption.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["code", "country", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])
         for r in ADOPT["countries"]:
