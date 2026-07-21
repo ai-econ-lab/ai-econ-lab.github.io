@@ -795,8 +795,8 @@ def adoption_section():
       by size: adoption climbs steeply with the size of the firm, from <b>{sm['10-49']}%</b> of small firms
       (10–49 employees) to <b>{sm['250-']}%</b> of large ones (250+), every class up sharply since {h(swm['prev_year'])}.
       The all-firms figure ({sm['Tot250']}%, highlighted) is the same number the cross-country bar shows.</p>
-    <div class="dotwrap">{barplot(SWEAD['sizes'], 0, swxmax, 0, 'adoption', '.0f')}</div>
-    {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}", svg_name="swe_adoption.svg")}
+    <div class="dotwrap">{barplot(SWEAD['sizes'], amt['eu_avg'], swxmax, 0, 'adoption', '.0f')}</div>
+    {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; EU average {amt['eu_avg']:g}% (Eurostat)", svg_name="swe_adoption.svg")}
   </div>
 </section></div></div>"""
 
@@ -1029,7 +1029,7 @@ def brief(lang="en"):
     elif theme == "demand":
         th_chart = barplot(dm["countries"], 0, int(max(r["share"] for r in dm["countries"])) + 1, 0, "share", ".1f")
     elif theme == "adoption":
-        th_chart = barplot(SWEAD["sizes"], 0, 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f")
+        th_chart = barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f")
     else:
         th_chart = squeeze_svg(ELS)
     th_title = titles[theme]
@@ -1059,15 +1059,17 @@ def brief(lang="en"):
     en_cur = '' if sv else ' aria-current="page"'
     sv_cur = ' aria-current="page"' if sv else ''
     subscribe = f'<a class="btn ghost" href="{sub}">{L("Subscribe monthly","Prenumerera")}</a>' if sub else ""
-    total = SWEAD["meta"]["total"]
+    total = SWEAD["meta"]["total"]; eu_adopt = ADOPT["meta"]["eu_avg"]
     pulse_p = L(
-        f"Sweden sits near the international frontier: 2nd of {n_ctry} European countries on workforce AI exposure, and "
-        f"among the EU leaders on firm adoption ({total}%). The series that moves every month is the Swedish depth cut "
-        f"below, the share of vacancies asking for an AI skill, 2006–2025, now about <b>{t['values'][-1]:.2f}%</b> "
-        f"({t['years'][-1]}, provisional), roughly <b>140×</b> its level twenty years ago.",
-        f"Sverige ligger nära den internationella frontlinjen: näst mest AI-exponerad arbetskraft av {n_ctry} europeiska "
-        f"länder, och bland EU:s ledande på företagsanvändning ({total}%). Serien som rör sig varje månad är den svenska "
-        f"fördjupningen nedan, andelen lediga jobb som efterfrågar en AI-kompetens, 2006–2025, nu omkring "
+        f"Across the EU, firm AI adoption is climbing fast: the average reached <b>{eu_adopt:.0f}%</b> of enterprises in "
+        f"{ADOPT['meta']['year']}, up from 8% in 2023 (Eurostat). Sweden is well above, at <b>{total}%</b>, and its "
+        f"workforce ranks 2nd of {n_ctry} on generative-AI exposure. The series that moves every month is the Swedish "
+        f"depth cut below, the share of vacancies asking for an AI skill, 2006–2025, now about "
+        f"<b>{t['values'][-1]:.2f}%</b> ({t['years'][-1]}, provisional), roughly <b>140×</b> its level twenty years ago.",
+        f"I hela EU ökar företagens AI-användning snabbt: genomsnittet nådde <b>{eu_adopt:.0f}%</b> av företagen "
+        f"{ADOPT['meta']['year']}, upp från 8% 2023 (Eurostat). Sverige ligger klart över, med <b>{total}%</b>, och "
+        f"arbetskraften är näst mest exponerad för generativ AI av {n_ctry} länder. Serien som rör sig varje månad är den "
+        f"svenska fördjupningen nedan, andelen lediga jobb som efterfrågar en AI-kompetens, 2006–2025, nu omkring "
         f"<b>{svn(round(t['values'][-1], 2))}%</b> ({t['years'][-1]}, preliminärt), ungefär <b>140×</b> nivån för tjugo år sedan.")
 
     body = f"""<div class="wrap brief"><article class="briefsheet">
@@ -1184,7 +1186,7 @@ def emit_data(out):
             w.writerow([r["name"], r["adoption"], SWEAD["meta"]["year"], r.get("prev", ""), SWEAD["meta"]["prev_year"]])
     _swxmax = 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1)
     (d / "swe_adoption.svg").write_text(
-        chart_standalone(barplot(SWEAD["sizes"], 0, _swxmax, 0, "adoption", ".0f")), encoding="utf-8")
+        chart_standalone(barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], _swxmax, 0, "adoption", ".0f")), encoding="utf-8")
 
 def build():
     if OUT.exists(): shutil.rmtree(OUT)
