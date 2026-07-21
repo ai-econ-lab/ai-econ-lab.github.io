@@ -175,7 +175,8 @@ def home():
       <span class="livechip"><i></i>live</span></div>
     <div class="panelbody">
       <p class="psub">Vacancies requesting any AI skill, 2006–2025. About <b>140×</b> higher than twenty years
-        ago, and steepest after 2023.</p>
+        ago, and steepest after 2023. Internationally (AI Index / Lightcast, 2025): a median <b>1.9%</b> of
+        postings across 22 countries require AI skills, Sweden <b>2.8%</b> on that measure.</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Line chart: AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div>
@@ -821,7 +822,8 @@ def outcomes_section(explorers):
     no prior experience than in the least-exposed occupations, every year since {h(em['first_year'])}, and the gap has
     widened from −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. An independent,
     ad-based echo of the Canaries finding; descriptive, not causal (less-exposed work skews lower-skill, so part of the
-    level gap is structural, the widening is the signal).</p>
+    level gap is structural, the widening is the signal). The same entry-level pattern appears in the international AI
+    "canaries" literature on young workers, though no directly comparable cross-country series exists yet.</p>
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}", svg_name="entry_level_squeeze.svg")}
@@ -881,7 +883,7 @@ def monitor():
       <a class="btn ghost" href="#method">How we measure it</a></div></div>
   <div class="panel"><div class="panelhead"><span class="ttl">Sweden · AI in job ads (our live measure)</span>
     <span class="livechip"><i></i>live</span></div>
-    <div class="panelbody"><p class="psub">Broad measure, any AI-related term, 2006–2025. The Swedish depth cut behind the demand module.</p>
+    <div class="panelbody"><p class="psub">Broad measure, any AI-related term, 2006–2025. The Swedish depth cut behind the demand module. Internationally (AI Index / Lightcast, 2025): median <b>1.9%</b> across 22 countries, Sweden <b>2.8%</b>.</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div></div></div>
@@ -1090,7 +1092,8 @@ def brief(lang="en"):
 
   <section class="bsec"><h2 class="bh2">{L("The pulse · Sweden in international context","Pulsen · Sverige i internationellt sammanhang")}</h2>
     <p class="bp">{pulse_p}</p>
-    <div class="bchart">{trend_svg(t)}</div></section>
+    <div class="bchart">{trend_svg(t)}</div>
+    <p class="bsrc">{L("International benchmark","Internationell jämförelse")} (AI Index / Lightcast, 2025): {L("AI skills are required in a median 1.9% of postings across 22 countries; Sweden 2.8% on that measure. Not directly comparable to the Swedish JobTech series above (a narrower, live measure).","AI-kompetens krävs i medianen 1,9% av annonserna i 22 länder; Sverige 2,8% på det måttet. Ej direkt jämförbart med den svenska JobTech-serien ovan (ett smalare, löpande mått).")}</p></section>
 
   <section class="bsec"><h2 class="bh2">{L("In focus","I fokus")} · {h(th_title)}</h2>
     <p class="bp">{takeaways[theme]}</p>
