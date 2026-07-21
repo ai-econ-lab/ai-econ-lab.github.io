@@ -602,7 +602,7 @@ def barplot(data, eu_avg, xmax, hy=0):
         p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(r["adoption"])-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
         p.append(f'<text class="dval{se}" x="574" y="{y+rowh*0.72:.1f}" text-anchor="end">{r["adoption"]:.0f}</text>')
         if r.get("prev") is not None:
-            p.append(f'<text class="ddelta" x="632" y="{y+rowh*0.72:.1f}" text-anchor="end">+{r["adoption"]-r["prev"]:.0f}</text>')
+            p.append(f'<text class="ddelta" x="632" y="{y+rowh*0.72:.1f}" text-anchor="end">{r["adoption"]-r["prev"]:+.0f}</text>')
     p.append("</svg>")
     return "".join(p)
 
