@@ -1,0 +1,18 @@
+# 12-month theme calendar for the AIEL Monitor Brief (confirmed with Magnus 2026-07).
+# Each month foregrounds one theme; over a year it covers the whole monitor.
+# `theme` = which built chart+takeaway to show for now (exposure/demand/adoption/outcomes);
+# months whose dedicated view isn't built yet map to the closest one until the 2-weeks-ahead
+# monthly draft builds it out. `title` is the displayed monthly theme.
+months:
+  1:  {title_en: "Augmentation or automation?",              title_sv: "Förstärkning eller automatisering?",       theme: demand}
+  2:  {title_en: "Which AI skills employers want",           title_sv: "AI-kompetenser i jobbannonserna",          theme: demand}
+  3:  {title_en: "Canaries: young workers and entry-level",  title_sv: "Kanariefåglar: unga och instegsjobb",       theme: outcomes}
+  4:  {title_en: "Different boats: gender and AI",           title_sv: "Olika båtar: kön och AI",                   theme: outcomes}
+  5:  {title_en: "Who is adopting AI? Firms",                title_sv: "Vem använder AI? Företagen",                theme: adoption}
+  6:  {title_en: "How professionals really use AI",          title_sv: "Hur yrkesverksamma använder AI",            theme: adoption}
+  7:  {title_en: "AI exposure across Europe",                title_sv: "AI-exponering i Europa",                    theme: exposure}
+  8:  {title_en: "Barriers: why AI is not used yet",         title_sv: "Hinder: varför AI inte används",            theme: adoption}
+  9:  {title_en: "Sectors and industries",                   title_sv: "Sektorer och branscher",                    theme: adoption}
+  10: {title_en: "Reskilling and the competence gap",        title_sv: "Omställning och kompetensgap",              theme: demand}
+  11: {title_en: "Job quality and the work environment",     title_sv: "Jobbkvalitet och arbetsmiljö",              theme: outcomes}
+  12: {title_en: "The year in review, and outlook",          title_sv: "Året i backspegeln",                        theme: exposure}

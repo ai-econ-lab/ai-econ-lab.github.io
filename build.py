@@ -993,18 +993,20 @@ def brief(lang="en"):
     t = MONITOR["trend"]                                  # the pulse: the always-fresh vacancy series
     cc = CROSS; dm = DEMAND; smd = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
     n_ctry = cc["meta"]["n_countries"]; dver = cc["meta"]["daioe_version"]
-    order = ["exposure", "demand", "adoption", "outcomes"]   # theme rotates through the spine
-    theme = order[(today.month - 1) % 4]
-    titles = {"exposure": L("Exposure across countries", "Exponering mellan länder"),
-              "demand": L("Hiring for AI across countries", "Efterfrågan på AI mellan länder"),
-              "adoption": L("AI adoption by firm size in Sweden", "AI-användning efter företagsstorlek i Sverige"),
-              "outcomes": L("The entry-level squeeze", "Klämman för instegsjobb")}
+    se_share = next(r["share"] for r in cc["countries"] if r["is_se"]); eu_share = cc["meta"]["mean_share"]
+    CAL = load("brief_calendar.yaml")["months"]            # confirmed 12-month theme calendar
+    cm = CAL.get(today.month, {"theme": "exposure", "title_en": "AI exposure across Europe",
+                               "title_sv": "AI-exponering i Europa"})
+    theme = cm["theme"]                                    # which built chart+takeaway to show
+    titles = {theme: (cm["title_sv"] if sv else cm["title_en"])}   # displayed monthly theme
     takeaways = {
         "exposure": L(
-            f"Sweden's workforce is the 2nd most AI-exposed of {n_ctry} European countries (DAIOE generative-AI "
-            f"{dver}). Exposure marks where AI overlaps with the work, not displacement.",
-            f"Sveriges arbetskraft är den näst mest AI-exponerade av {n_ctry} europeiska länder (DAIOE generativ AI "
-            f"{dver}). Exponering visar var AI överlappar med arbetet, inte förträngning av jobb."),
+            f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top DAIOE generative-AI "
+            f"tercile), 2nd-highest of {n_ctry} countries; the EU average is {eu_share:.0f}%. Exposure marks where AI "
+            f"overlaps with the work, not displacement.",
+            f"{se_share:.0f}% av de svenska jobben finns i de mest AI-exponerade yrkena (översta DAIOE generativ AI-"
+            f"tercilen), näst högst av {n_ctry} länder; EU-snittet är {eu_share:.0f}%. Exponering visar var AI "
+            f"överlappar med arbetet, inte förträngning."),
         "demand": L(
             "Demand roughly doubled in a year for most countries (Sweden 1.3% in 2024 to 2.8% in 2025). The Swedish "
             "live job-ad measure is the pulse shown above.",
@@ -1033,7 +1035,8 @@ def brief(lang="en"):
                       f"{ELS['meta']['source']} × DAIOE generativ AI {ELS['meta']['daioe_version']}"),
     }
     if theme == "exposure":
-        th_chart = dotplot(cc)
+        th_chart = barplot(cc["countries"], eu_share, 10 * (int(max(r["share"] for r in cc["countries"]) // 10) + 1),
+                           cc["meta"]["weight_year"], "share", ".0f")
     elif theme == "demand":
         th_chart = barplot(dm["countries"], 0, int(max(r["share"] for r in dm["countries"])) + 1, 0, "share", ".1f")
     elif theme == "adoption":
