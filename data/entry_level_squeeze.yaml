@@ -1,0 +1,19 @@
+# Entry-level squeeze (Monitor Outcomes module). Auto-generated; rerun
+# scripts/refresh_entry_level_squeeze.py then build.py. Public data, descriptive.
+meta:
+  daioe_variant: "generative-AI"
+  daioe_version: "v2023"
+  source: "JobTech / Platsbanken job ads (CC0)"
+  measure: "Share of openings requiring no prior experience, by AI-exposure tier (DAIOE genai terciles, SSYK)"
+  first_year: 2020
+  last_year: 2025
+  gap_first: -3.1
+  gap_last: -5.3
+  ymax: 35
+series:
+  - {year: 2020, high: 16.1, low: 19.2, gap: -3.1}
+  - {year: 2021, high: 20.5, low: 23.8, gap: -3.3}
+  - {year: 2022, high: 21.7, low: 25.0, gap: -3.4}
+  - {year: 2023, high: 20.6, low: 22.7, gap: -2.1}
+  - {year: 2024, high: 24.1, low: 27.7, gap: -3.6}
+  - {year: 2025, high: 28.0, low: 33.4, gap: -5.3}

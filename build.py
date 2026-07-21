@@ -26,6 +26,7 @@ CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
 WORKCOND = load("working_conditions.yaml")
+ELS      = load("entry_level_squeeze.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
 # (see app.js occSearch), so it is NOT embedded here. It auto-tracks the latest DAIOE year.
 
@@ -633,6 +634,39 @@ def dumbbell_svg(conds, gkey, active=False):
     p.append("</svg>")
     return "".join(p)
 
+def squeeze_svg(els):
+    """Two-line time series: the entry-level share of openings in least- vs most-AI-exposed
+    occupations. The vertical gap between the lines is the 'squeeze'; it widens over time."""
+    s = els["series"]; ymax = int(els["meta"]["ymax"]); n = len(s)
+    W, H = 640, 292
+    x0, x1, top, bot = 60, 540, 22, 250
+    X = lambda i: x0 + i / (n - 1) * (x1 - x0)
+    Y = lambda v: bot - v / ymax * (bot - top)
+    p = [f'<svg class="rankchart squeeze" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Entry-level share of job openings in least- versus most-AI-exposed occupations, '
+         f'{s[0]["year"]} to {s[-1]["year"]}, with a widening gap">']
+    for t in range(0, ymax + 1, 10):
+        gy = Y(t)
+        p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
+        p.append(f'<text class="tick" x="{x0-8}" y="{gy+3.5:.1f}" text-anchor="end">{t}%</text>')
+    for i, r in enumerate(s):
+        p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-12}" text-anchor="middle">{r["year"]}</text>')
+    band = " ".join(f'{X(i):.1f},{Y(r["low"]):.1f}' for i, r in enumerate(s))
+    band += " " + " ".join(f'{X(i):.1f},{Y(r["high"]):.1f}' for i, r in reversed(list(enumerate(s))))
+    p.append(f'<polygon class="sqband" points="{band}"/>')
+    lo_pts = " ".join(f'{X(i):.1f},{Y(r["low"]):.1f}' for i, r in enumerate(s))
+    hi_pts = " ".join(f'{X(i):.1f},{Y(r["high"]):.1f}' for i, r in enumerate(s))
+    p.append(f'<polyline class="sqlo" points="{lo_pts}"/>')
+    p.append(f'<polyline class="sqhi" points="{hi_pts}"/>')
+    for i, r in enumerate(s):
+        p.append(f'<circle class="sqdot lo" cx="{X(i):.1f}" cy="{Y(r["low"]):.1f}" r="2.7"/>')
+        p.append(f'<circle class="sqdot hi" cx="{X(i):.1f}" cy="{Y(r["high"]):.1f}" r="2.7"/>')
+    last = s[-1]; xl = X(n - 1)
+    p.append(f'<text class="sqval lo" x="{xl+8:.1f}" y="{Y(last["low"])+3:.1f}">{last["low"]:.0f}%</text>')
+    p.append(f'<text class="sqval hi" x="{xl+8:.1f}" y="{Y(last["high"])+3:.1f}">{last["high"]:.0f}%</text>')
+    p.append("</svg>")
+    return "".join(p)
+
 def working_conditions_block():
     """Working-environment view (dumbbell + gender lens). A sub-view inside the Outcomes module."""
     w = WORKCOND; mt = w["meta"]; conds = w["conditions"]
@@ -723,7 +757,8 @@ def adoption_section():
 </section></div></div>"""
 
 def outcomes_section(explorers):
-    """Module 4 — Outcomes. Occupations Explorer + working conditions (live) + entry-level squeeze (preview)."""
+    """Module 4 — Outcomes. Occupations Explorer + working conditions + entry-level squeeze (all live)."""
+    em = ELS["meta"]
     return f"""<div class="rule module-sec" id="outcomes"><div class="wrap"><section>
   <p class="kicker">Module 4 · Outcomes</p>
   <h2 class="sec">What does it mean for jobs and job quality?</h2>
@@ -737,10 +772,15 @@ def outcomes_section(explorers):
 
   {working_conditions_block()}
 
-  <div class="grouphdr" style="margin-top:36px">Entry-level squeeze <span class="preview-flag">◔ next</span></div>
-  <p class="secintro" style="margin-top:4px">In the most AI-exposed occupations the entry-level share of openings is
-    lower every year, and the gap has widened from −3.1pp in 2020 to <b>−5.3pp in 2025</b>: an independent, ad-based
-    echo of the Canaries finding. The full series is being wired in.</p>
+  <div class="grouphdr" style="margin-top:36px">Entry-level squeeze</div>
+  <p class="secintro" style="margin-top:4px">In the most AI-exposed occupations, a smaller share of openings ask for
+    no prior experience than in the least-exposed occupations, every year since {h(em['first_year'])}, and the gap has
+    widened from −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. An independent,
+    ad-based echo of the Canaries finding; descriptive, not causal (less-exposed work skews lower-skill, so part of the
+    level gap is structural, the widening is the signal).</p>
+  <div class="dotwrap">{squeeze_svg(ELS)}</div>
+  <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
+  {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}")}
 </section></div></div>"""
 
 def stat_overview():
@@ -927,6 +967,10 @@ def emit_data(out):
     with (d / "ai_in_demand_trend.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["year", "ai_ad_share_pct"])
         for y, v in zip(t["years"], t["values"]): w.writerow([y, v])
+    with (d / "entry_level_squeeze.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["year", "entry_level_share_least_exposed_pct", "entry_level_share_most_exposed_pct", "gap_pp"])
+        for r in ELS["series"]: w.writerow([r["year"], r["low"], r["high"], r["gap"]])
 
 def build():
     if OUT.exists(): shutil.rmtree(OUT)

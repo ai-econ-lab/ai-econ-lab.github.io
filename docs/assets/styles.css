@@ -356,6 +356,14 @@ footer{background:var(--navy);color:var(--navy-ink);margin-top:20px}
 .dblegend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .dblegend i.lo{background:var(--muted)}.dblegend i.hi{background:var(--c1)}
 
+/* entry-level squeeze: two-line time series with the widening gap shaded */
+.squeeze .sqband{fill:var(--c1);opacity:.10}
+.squeeze .sqlo{fill:none;stroke:var(--muted);stroke-width:2}
+.squeeze .sqhi{fill:none;stroke:var(--c1);stroke-width:2.6}
+.squeeze .sqdot.lo{fill:var(--muted)}.squeeze .sqdot.hi{fill:var(--c1)}
+.squeeze .sqval{font-family:var(--mono);font-size:11px;font-weight:700}
+.squeeze .sqval.lo{fill:var(--muted)}.squeeze .sqval.hi{fill:var(--c1)}
+
 /* news link chips after each entry */
 .nlinks{display:inline-flex;flex-wrap:wrap;gap:6px;margin-left:6px;vertical-align:baseline}
 
