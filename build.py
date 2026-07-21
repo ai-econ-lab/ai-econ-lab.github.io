@@ -84,7 +84,7 @@ def footer():
     <span class="brandtext"><b style="color:#fff">{h(b['name'])}</b><small>{h(b['tagline'])}</small></span></a>
     <p>{h(b['description'])}</p></div>
   {cols}
-  <div><h4>Contact</h4><p>{h(SITE['footer']['contact'])}</p></div>
+  <div><h4>Contact</h4><a href="/about/#contact">Contact &amp; visit →</a></div>
 </div><div class="footend">
   <span>© 2026 {h(b['name'])} · Örebro University &amp; RATIO</span>
   <span>PUBLIC DATA · MONITOR PROTOTYPE · CITE THE VERSION AND DATE</span>
