@@ -25,6 +25,7 @@ NEWS     = load("news.yaml")
 CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
+WORKCOND = load("working_conditions.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
 # (see app.js occSearch), so it is NOT embedded here. It auto-tracks the latest DAIOE year.
 
@@ -608,6 +609,50 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f"):
     p.append("</svg>")
     return "".join(p)
 
+def dumbbell_svg(conds, gkey, active=False):
+    """Least- vs most-AI-exposed occupations across working-condition indicators (one gender)."""
+    n = len(conds); W, rowh, top, bot = 640, 38, 16, 32
+    H = top + n * rowh + bot; x0, x1 = 205, 556
+    X = lambda v: x0 + v / 100 * (x1 - x0)
+    on = " on" if active else ""
+    p = [f'<svg class="rankchart dumb{on}" data-g="{gkey}" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Working conditions in least- vs most-AI-exposed occupations, {gkey}">']
+    for t in (0, 25, 50, 75, 100):
+        gx = X(t)
+        p.append(f'<line class="grid" x1="{gx:.1f}" y1="{top}" x2="{gx:.1f}" y2="{top+n*rowh}"/>')
+        p.append(f'<text class="tick" x="{gx:.1f}" y="{H-13}" text-anchor="middle">{t}%</text>')
+    for i, c in enumerate(conds):
+        y = top + i * rowh + rowh * 0.5
+        d = c[gkey]; lo, hi = d["lo"], d["hi"]
+        p.append(f'<text class="dname" x="192" y="{y+3.5:.1f}" text-anchor="end">{h(c["label"])}</text>')
+        p.append(f'<line class="dbtrack" x1="{X(lo):.1f}" y1="{y:.1f}" x2="{X(hi):.1f}" y2="{y:.1f}"/>')
+        p.append(f'<circle class="dblo" cx="{X(lo):.1f}" cy="{y:.1f}" r="4"/>')
+        p.append(f'<circle class="dbhi" cx="{X(hi):.1f}" cy="{y:.1f}" r="5.5"/>')
+        p.append(f'<text class="dval" x="632" y="{y+3.5:.1f}" text-anchor="end">{lo:.0f}→{hi:.0f}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+def working_conditions_section():
+    w = WORKCOND; mt = w["meta"]; conds = w["conditions"]
+    views = "".join(dumbbell_svg(conds, g, active=(g == "all")) for g in ("all", "women", "men"))
+    return f"""<div class="rule" id="working-conditions"><div class="wrap"><section>
+  <p class="kicker">Module · Outcomes · working environment</p>
+  <h2 class="sec">Working conditions and AI exposure.</h2>
+  <p class="secintro">More AI-exposed occupations are the classic "active job": more mentally demanding, but with
+    <b>more control</b> over one's work; harder to switch off after hours, yet more meaningful and markedly more
+    positive about technology. Public survey data by occupation, set against DAIOE {h(mt['daioe_variant'])}
+    ({h(mt['daioe_version'])}); descriptive, not causal.</p>
+  <div class="lensmod">
+    <div class="lensbar2"><span class="ll">Gender</span>
+      <button class="gbtn on" data-g="all">All</button><button class="gbtn" data-g="women">Women</button><button class="gbtn" data-g="men">Men</button></div>
+    <div class="dotwrap">{views}</div>
+    <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
+  </div>
+  {figfooter("working_conditions.csv", f"{mt['wc_source']} × DAIOE {mt['daioe_variant']} {mt['daioe_version']}")}
+  <p class="prov" style="margin-top:10px">Toggle gender: the control gap is the story — in low-exposure jobs women
+    report far less influence than men (56% vs 68%); in high-exposure jobs it nearly closes (74% vs 78%).</p>
+</section></div></div>"""
+
 def cross_country_section():
     cc = CROSS; mt = cc["meta"]
     ad = ADOPT; amt = ad["meta"]
@@ -726,6 +771,8 @@ def monitor():
 
 {cross_country_section()}
 
+{working_conditions_section()}
+
 <div class="rule" id="method"><div class="wrap"><section>
   <p class="kicker">How to read this</p>
   <h2 class="sec">What we measure, and what we don't yet.</h2>
@@ -824,6 +871,11 @@ def emit_data(out):
     _dxmax = int(max(r["share"] for r in DEMAND["countries"])) + 1
     (d / "cross_country_demand.svg").write_text(
         chart_standalone(barplot(DEMAND["countries"], 0, _dxmax, 0, "share", ".1f")), encoding="utf-8")
+    with (d / "working_conditions.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f); w.writerow(["condition", "gender", "pct_least_exposed_occ", "pct_most_exposed_occ", "daioe", "wc_year"])
+        for c in WORKCOND["conditions"]:
+            for g in ("all", "women", "men"):
+                w.writerow([c["label"], g, c[g]["lo"], c[g]["hi"], WORKCOND["meta"]["daioe_version"], WORKCOND["meta"]["wc_year"]])
     with (d / "daioe_most_least.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["occupation", "daioe_genai_score", "group", "daioe_version"])
         for it in DAIOE_EXP["most"]:  w.writerow([it["occ"], it["score"], "most_exposed", f"v{DAIOE_EXP['year']}"])

@@ -1,0 +1,44 @@
+# Working conditions & AI exposure (Monitor item 1). Auto-generated; rerun
+# scripts/refresh_working_conditions.py then build.py. Public data, descriptive.
+meta:
+  daioe_variant: "generative-AI"
+  daioe_version: "v2023"
+  wc_source: "SCB Arbetsmiljoundersokningen 2024"
+  wc_year: 2024
+  measure: "% of employed, mean over least- vs most-exposed occupations (DAIOE terciles, SSYK 2-digit)"
+conditions:
+  - code: "PsykAnst"
+    label: "Mentally strenuous work"
+    kind: "strain"
+    all: {lo: 52, hi: 62.9}
+    women: {lo: 55.6, hi: 61}
+    men: {lo: 51.9, hi: 62.9}
+    n_occ: 26
+  - code: "OlustAEO"
+    label: "Can influence own work"
+    kind: "resource"
+    all: {lo: 65.1, hi: 75.8}
+    women: {lo: 55.9, hi: 74.4}
+    men: {lo: 67.5, hi: 77.9}
+    n_occ: 26
+  - code: "KanSEAKopplaBort"
+    label: "Can't switch off after work"
+    kind: "strain"
+    all: {lo: 25.4, hi: 32.9}
+    women: {lo: 25.6, hi: 32.4}
+    men: {lo: 26.4, hi: 33.8}
+    n_occ: 26
+  - code: "TekUtvNegativ"
+    label: "Negative view of technology"
+    kind: "strain"
+    all: {lo: 13, hi: 8.9}
+    women: {lo: 10.3, hi: 7.9}
+    men: {lo: 13, hi: 9.1}
+    n_occ: 25
+  - code: "Meningsfullt"
+    label: "Work feels meaningful"
+    kind: "resource"
+    all: {lo: 87.4, hi: 91.5}
+    women: {lo: 85, hi: 92}
+    men: {lo: 86.3, hi: 90}
+    n_occ: 24

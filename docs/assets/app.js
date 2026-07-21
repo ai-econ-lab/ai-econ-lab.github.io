@@ -174,3 +174,16 @@ window.drawTrend();
     if (a.dataset.reveal !== "keep") a.textContent = addr;
   });
 })();
+
+/* Monitor lens toggle (gender etc.): swap which pre-rendered chart variant is shown. */
+(function () {
+  document.querySelectorAll(".lensmod").forEach(function (m) {
+    m.querySelectorAll(".gbtn").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var g = b.dataset.g;
+        m.querySelectorAll(".gbtn").forEach(function (x) { x.classList.toggle("on", x === b); });
+        m.querySelectorAll(".dumb").forEach(function (s) { s.classList.toggle("on", s.dataset.g === g); });
+      });
+    });
+  });
+})();
