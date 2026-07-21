@@ -4,48 +4,48 @@
 meta:
   variant: "generative-AI"
   daioe_version: "v2023"
-  metric: "Share of employment in the most AI-exposed occupations (top DAIOE genai tercile, ISCO-2d)"
-  tier_note: "Top tier = the third of ISCO-08 2-digit occupations most exposed to generative AI (DAIOE v2023)"
+  metric: "Share of employment in the most AI-exposed occupations (top 25% of occupations by DAIOE genai)"
+  tier_note: "Most AI-exposed occupations = the top 25% (quartile) of ISCO-08 2-digit occupations by DAIOE generative-AI exposure, v2023"
   employment_source: "Eurostat EU-LFS (lfsa_egai2d)"
   weight_year: 2023
   mean: 1.908
-  mean_share: 38.4
+  mean_share: 30.2
   n_countries: 36
   note: "Descriptive only. Exposure is not displacement: exposure predicts occupational growth as often as decline."
 countries:
-  - {code: "LU", name: "Luxembourg", share: 64.2, exposure: 2.2103, coverage: 100.0, year: 2023, is_se: false}
-  - {code: "SE", name: "Sweden", share: 47.5, exposure: 2.0651, coverage: 99.7, year: 2023, is_se: true}
-  - {code: "BE", name: "Belgium", share: 47.5, exposure: 2.0011, coverage: 99.5, year: 2023, is_se: false}
-  - {code: "NL", name: "Netherlands", share: 46.3, exposure: 2.046, coverage: 99.7, year: 2023, is_se: false}
-  - {code: "CH", name: "Switzerland", share: 45.8, exposure: 2.0227, coverage: 99.9, year: 2023, is_se: false}
-  - {code: "DE", name: "Germany", share: 44.2, exposure: 1.9727, coverage: 99.6, year: 2023, is_se: false}
-  - {code: "DK", name: "Denmark", share: 42.8, exposure: 1.9738, coverage: 99.6, year: 2023, is_se: false}
-  - {code: "CY", name: "Cyprus", share: 42.7, exposure: 1.9334, coverage: 98.3, year: 2023, is_se: false}
-  - {code: "UK", name: "United Kingdom", share: 42.3, exposure: 1.9933, coverage: 99.7, year: 2019, is_se: false}
-  - {code: "IS", name: "Iceland", share: 41.5, exposure: 1.9527, coverage: 100.0, year: 2023, is_se: false}
-  - {code: "LT", name: "Lithuania", share: 40.9, exposure: 1.931, coverage: 99.7, year: 2023, is_se: false}
-  - {code: "NO", name: "Norway", share: 40.2, exposure: 1.9848, coverage: 100.0, year: 2023, is_se: false}
-  - {code: "MT", name: "Malta", share: 40.2, exposure: 1.9437, coverage: 99.4, year: 2023, is_se: false}
-  - {code: "FR", name: "France", share: 40.0, exposure: 1.9454, coverage: 99.3, year: 2023, is_se: false}
-  - {code: "IE", name: "Ireland", share: 39.9, exposure: 1.973, coverage: 100.0, year: 2023, is_se: false}
-  - {code: "FI", name: "Finland", share: 39.8, exposure: 1.9581, coverage: 99.7, year: 2023, is_se: false}
-  - {code: "AT", name: "Austria", share: 39.4, exposure: 1.9304, coverage: 99.9, year: 2023, is_se: false}
-  - {code: "LV", name: "Latvia", share: 39.1, exposure: 1.8813, coverage: 99.2, year: 2023, is_se: false}
-  - {code: "EE", name: "Estonia", share: 38.4, exposure: 1.9299, coverage: 99.7, year: 2023, is_se: false}
-  - {code: "PL", name: "Poland", share: 38.4, exposure: 1.9077, coverage: 99.2, year: 2023, is_se: false}
-  - {code: "SI", name: "Slovenia", share: 37.3, exposure: 1.8732, coverage: 99.3, year: 2023, is_se: false}
-  - {code: "IT", name: "Italy", share: 36.9, exposure: 1.8658, coverage: 99.0, year: 2023, is_se: false}
-  - {code: "CZ", name: "Czechia", share: 36.3, exposure: 1.873, coverage: 99.6, year: 2023, is_se: false}
-  - {code: "PT", name: "Portugal", share: 36.0, exposure: 1.884, coverage: 99.6, year: 2023, is_se: false}
-  - {code: "HU", name: "Hungary", share: 35.8, exposure: 1.8519, coverage: 99.5, year: 2023, is_se: false}
-  - {code: "ME", name: "Montenegro", share: 34.9, exposure: 1.842, coverage: 100.0, year: 2020, is_se: false}
-  - {code: "HR", name: "Croatia", share: 34.8, exposure: 1.8678, coverage: 99.3, year: 2023, is_se: false}
-  - {code: "ES", name: "Spain", share: 34.4, exposure: 1.8372, coverage: 99.5, year: 2023, is_se: false}
-  - {code: "SK", name: "Slovakia", share: 34.1, exposure: 1.8633, coverage: 99.7, year: 2023, is_se: false}
-  - {code: "EL", name: "Greece", share: 33.3, exposure: 1.8426, coverage: 98.4, year: 2023, is_se: false}
-  - {code: "MK", name: "N. Macedonia", share: 32.0, exposure: 1.8017, coverage: 99.1, year: 2023, is_se: false}
-  - {code: "RS", name: "Serbia", share: 31.7, exposure: 1.8016, coverage: 99.4, year: 2023, is_se: false}
-  - {code: "BG", name: "Bulgaria", share: 29.9, exposure: 1.7967, coverage: 99.2, year: 2023, is_se: false}
-  - {code: "BA", name: "Bosnia & Herz.", share: 25.0, exposure: 1.7358, coverage: 99.3, year: 2023, is_se: false}
-  - {code: "RO", name: "Romania", share: 24.9, exposure: 1.7145, coverage: 99.4, year: 2023, is_se: false}
-  - {code: "TR", name: "Turkey", share: 22.5, exposure: 1.6821, coverage: 99.3, year: 2023, is_se: false}
+  - {code: "LU", name: "Luxembourg", share: 56.0, exposure: 2.2103, coverage: 100.0, year: 2023, is_se: false}
+  - {code: "SE", name: "Sweden", share: 39.2, exposure: 2.0651, coverage: 99.7, year: 2023, is_se: true}
+  - {code: "NL", name: "Netherlands", share: 38.5, exposure: 2.046, coverage: 99.7, year: 2023, is_se: false}
+  - {code: "BE", name: "Belgium", share: 37.7, exposure: 2.0011, coverage: 99.5, year: 2023, is_se: false}
+  - {code: "CH", name: "Switzerland", share: 36.3, exposure: 2.0227, coverage: 99.9, year: 2023, is_se: false}
+  - {code: "DE", name: "Germany", share: 35.2, exposure: 1.9727, coverage: 99.6, year: 2023, is_se: false}
+  - {code: "CY", name: "Cyprus", share: 34.6, exposure: 1.9334, coverage: 98.3, year: 2023, is_se: false}
+  - {code: "DK", name: "Denmark", share: 34.2, exposure: 1.9738, coverage: 99.6, year: 2023, is_se: false}
+  - {code: "UK", name: "United Kingdom", share: 33.5, exposure: 1.9933, coverage: 99.7, year: 2019, is_se: false}
+  - {code: "FR", name: "France", share: 33.5, exposure: 1.9454, coverage: 99.3, year: 2023, is_se: false}
+  - {code: "LT", name: "Lithuania", share: 32.8, exposure: 1.931, coverage: 99.7, year: 2023, is_se: false}
+  - {code: "FI", name: "Finland", share: 32.8, exposure: 1.9581, coverage: 99.7, year: 2023, is_se: false}
+  - {code: "IE", name: "Ireland", share: 32.4, exposure: 1.973, coverage: 100.0, year: 2023, is_se: false}
+  - {code: "AT", name: "Austria", share: 31.6, exposure: 1.9304, coverage: 99.9, year: 2023, is_se: false}
+  - {code: "EE", name: "Estonia", share: 31.0, exposure: 1.9299, coverage: 99.7, year: 2023, is_se: false}
+  - {code: "PL", name: "Poland", share: 30.9, exposure: 1.9077, coverage: 99.2, year: 2023, is_se: false}
+  - {code: "NO", name: "Norway", share: 30.6, exposure: 1.9848, coverage: 100.0, year: 2023, is_se: false}
+  - {code: "MT", name: "Malta", share: 30.1, exposure: 1.9437, coverage: 99.4, year: 2023, is_se: false}
+  - {code: "SI", name: "Slovenia", share: 29.6, exposure: 1.8732, coverage: 99.3, year: 2023, is_se: false}
+  - {code: "CZ", name: "Czechia", share: 29.4, exposure: 1.873, coverage: 99.6, year: 2023, is_se: false}
+  - {code: "HU", name: "Hungary", share: 29.2, exposure: 1.8519, coverage: 99.5, year: 2023, is_se: false}
+  - {code: "IT", name: "Italy", share: 28.7, exposure: 1.8658, coverage: 99.0, year: 2023, is_se: false}
+  - {code: "PT", name: "Portugal", share: 28.1, exposure: 1.884, coverage: 99.6, year: 2023, is_se: false}
+  - {code: "LV", name: "Latvia", share: 28.0, exposure: 1.8813, coverage: 99.2, year: 2023, is_se: false}
+  - {code: "ME", name: "Montenegro", share: 27.1, exposure: 1.842, coverage: 100.0, year: 2020, is_se: false}
+  - {code: "SK", name: "Slovakia", share: 27.0, exposure: 1.8633, coverage: 99.7, year: 2023, is_se: false}
+  - {code: "HR", name: "Croatia", share: 26.7, exposure: 1.8678, coverage: 99.3, year: 2023, is_se: false}
+  - {code: "IS", name: "Iceland", share: 25.3, exposure: 1.9527, coverage: 100.0, year: 2023, is_se: false}
+  - {code: "RS", name: "Serbia", share: 24.7, exposure: 1.8016, coverage: 99.4, year: 2023, is_se: false}
+  - {code: "EL", name: "Greece", share: 24.4, exposure: 1.8426, coverage: 98.4, year: 2023, is_se: false}
+  - {code: "MK", name: "N. Macedonia", share: 24.2, exposure: 1.8017, coverage: 99.1, year: 2023, is_se: false}
+  - {code: "ES", name: "Spain", share: 24.1, exposure: 1.8372, coverage: 99.5, year: 2023, is_se: false}
+  - {code: "BG", name: "Bulgaria", share: 23.9, exposure: 1.7967, coverage: 99.2, year: 2023, is_se: false}
+  - {code: "RO", name: "Romania", share: 19.7, exposure: 1.7145, coverage: 99.4, year: 2023, is_se: false}
+  - {code: "BA", name: "Bosnia & Herz.", share: 19.3, exposure: 1.7358, coverage: 99.3, year: 2023, is_se: false}
+  - {code: "TR", name: "Turkey", share: 15.9, exposure: 1.6821, coverage: 99.3, year: 2023, is_se: false}

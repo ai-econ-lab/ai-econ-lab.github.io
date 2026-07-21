@@ -732,22 +732,23 @@ def exposure_section():
     cc = CROSS; mt = cc["meta"]
     se = next(r for r in cc["countries"] if r["is_se"])
     xmax = 10 * (int(max(r["share"] for r in cc["countries"]) // 10) + 1)
-    src = (f'DAIOE {mt["variant"]} {mt["daioe_version"]} (top-tercile occupations) × Eurostat EU-LFS employment '
-           f'{mt["weight_year"]} (a few countries: latest available, marked ’YY)')
+    src = (f'DAIOE {mt["variant"]} {mt["daioe_version"]}; most-exposed = top 25% of occupations × Eurostat EU-LFS '
+           f'employment {mt["weight_year"]} (a few countries: latest available, marked ’YY)')
     return f"""<div class="rule module-sec" id="exposure"><div class="wrap"><section>
   <p class="kicker">Module 1 · Exposure · across countries</p>
   <h2 class="sec">How much of each country's work is AI-exposed?</h2>
   <p class="secintro">DAIOE scores every occupation (ISCO-08) for how far generative AI overlaps with its tasks.
-    Taking the <b>third of occupations most exposed</b>, the bars show the share of each country's jobs that fall in
-    that top tier (Eurostat EU-LFS employment, <b>{h(mt['weight_year'])}</b>); a few countries use their latest year,
-    marked ’YY. So <b>{se['share']:.0f}%</b> means nearly half of Swedish jobs are in the most AI-exposed
-    occupations. <b>Exposure is not displacement</b>: in our panel it predicts occupational growth as often as
-    decline, showing only where AI overlaps with the work.</p>
+    We label the <b>top 25% of occupations</b> by that score the <b>most AI-exposed</b>; the bars show the share of
+    each country's jobs in them (Eurostat EU-LFS employment, <b>{h(mt['weight_year'])}</b>; a few countries use their
+    latest year, marked ’YY). So <b>{se['share']:.0f}%</b> means about four in ten Swedish jobs sit in the most
+    AI-exposed quarter of occupations. <b>Exposure is not displacement</b>: in our panel it predicts occupational
+    growth as often as decline, showing only where AI overlaps with the work.</p>
   <div class="dotwrap">{barplot(cc['countries'], mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f')}</div>
   {figfooter("cross_country.csv", src, "cross_country.svg")}
   <div class="depth"><p class="dk">Sweden, in depth</p>
     <p class="secintro" style="margin:0"><b>{se['share']:.0f}%</b> of Swedish jobs are in the most AI-exposed
-      occupations, the <b>2nd-highest of {h(mt['n_countries'])}</b> countries (EU average {mt['mean_share']:.0f}%).
+      occupations (the <b>top 25%</b> by generative-AI exposure), the <b>2nd-highest of {h(mt['n_countries'])}</b>
+      countries (EU average {mt['mean_share']:.0f}%).
       The occupation-by-occupation detail lives on the <a href="/daioe/">DAIOE</a> page, and Swedish employment is
       set against exposure over time in the <a href="#occupations-explorer">Occupations Explorer</a> below.</p></div>
 </section></div></div>"""
@@ -1002,12 +1003,12 @@ def brief(lang="en"):
     titles = {theme: (cm["title_sv"] if sv else cm["title_en"])}   # displayed monthly theme
     takeaways = {
         "exposure": L(
-            f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top DAIOE generative-AI "
-            f"tercile), 2nd-highest of {n_ctry} countries; the EU average is {eu_share:.0f}%. Exposure marks where AI "
-            f"overlaps with the work, not displacement.",
-            f"{se_share:.0f}% av de svenska jobben finns i de mest AI-exponerade yrkena (översta DAIOE generativ AI-"
-            f"tercilen), näst högst av {n_ctry} länder; EU-snittet är {eu_share:.0f}%. Exponering visar var AI "
-            f"överlappar med arbetet, inte förträngning."),
+            f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
+            f"DAIOE generative-AI exposure), 2nd-highest of {n_ctry} countries; the EU average is {eu_share:.0f}%. "
+            f"Exposure marks where AI overlaps with the work, not displacement.",
+            f"{se_share:.0f}% av de svenska jobben finns i de mest AI-exponerade yrkena (den mest exponerade "
+            f"fjärdedelen, topp 25% efter DAIOE generativ AI-exponering), näst högst av {n_ctry} länder; EU-snittet är "
+            f"{eu_share:.0f}%. Exponering visar var AI överlappar med arbetet, inte förträngning."),
         "demand": L(
             "Demand roughly doubled in a year for most countries (Sweden 1.3% in 2024 to 2.8% in 2025). The Swedish "
             "live job-ad measure is the pulse shown above.",
@@ -1047,7 +1048,7 @@ def brief(lang="en"):
     th_title = titles[theme]
 
     KSV = {"Exposure": "Exponering", "Demand": "Efterfrågan", "Adoption": "Användning", "Outcomes": "Utfall"}
-    LABSV = {"Exposure": "av de europeiska jobben finns i de mest AI-exponerade yrkena (generativ AI); Sverige 48%, näst högst av 36",
+    LABSV = {"Exposure": "av de europeiska jobben finns i den mest AI-exponerade fjärdedelen av yrkena (topp 25% efter generativ AI-exponering); Sverige 39%, näst högst av 36",
              "Demand": "medianandel jobbannonser som kräver AI i 22 länder 2025 (Stanford AI Index); Sverige 2,8%",
              "Adoption": "av EU:s företag använde AI 2025, upp från 8% 2023 (Eurostat); Sverige 35%, bland de ledande",
              "Outcomes": "Sveriges instegsklämma: färre instegsjobb i de mest AI-exponerade yrkena sedan 2020; mönstret syns även internationellt"}
