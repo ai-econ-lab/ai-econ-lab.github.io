@@ -318,19 +318,21 @@ footer{background:var(--navy);color:var(--navy-ink);margin-top:20px}
 .foot .brand{display:flex;align-items:center;gap:12px}   /* restore lockup (beats .foot a{display:block}) */
 .foot .brand .brandtext small{color:#ffffff9c}
 .footend{border-top:1px solid #ffffff1f;padding:16px 0;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#ffffff8c}
-/* cross-country dot plot (Monitor View A) */
+/* cross-country ranked charts (Monitor Views A & B) */
 .dotwrap{margin-top:16px;overflow-x:auto}
-.dotplot{width:100%;min-width:520px;height:auto;font-family:var(--mono)}
-.dotplot .grid{stroke:var(--border)}
-.dotplot .rowguide{stroke:var(--border);opacity:.5}
-.dotplot .meanline{stroke:var(--muted);stroke-dasharray:3 3}
-.dotplot .meanlab,.dotplot .tick{fill:var(--muted);font-size:9px}
-.dotplot .dname{fill:var(--ink-2);font-size:10px}
-.dotplot .dname.se{fill:var(--c1);font-weight:700}
+.rankchart{width:100%;min-width:520px;height:auto;font-family:var(--mono)}
+.rankchart .grid{stroke:var(--border)}
+.rankchart .rowguide{stroke:var(--border);opacity:.5}
+.rankchart .meanline{stroke:var(--muted);stroke-dasharray:3 3}
+.rankchart .meanlab,.rankchart .tick{fill:var(--muted);font-size:9px}
+.rankchart .dname{fill:var(--ink-2);font-size:10px}
+.rankchart .dname.se{fill:var(--c1);font-weight:700}
+.rankchart .dval{fill:var(--muted);font-size:9.5px}
+.rankchart .dval.se{fill:var(--c1);font-weight:700}
 .dotplot .dot{fill:var(--muted)}
 .dotplot .dot.se{fill:var(--c1)}
-.dotplot .dval{fill:var(--muted);font-size:9.5px}
-.dotplot .dval.se{fill:var(--c1);font-weight:700}
+.barplot .bar{fill:var(--muted);opacity:.55}
+.barplot .bar.se{fill:var(--c1);opacity:1}
 
 /* figure download footer (item 10) */
 .figfoot{display:flex;flex-wrap:wrap;align-items:center;gap:7px 14px;margin-top:14px;

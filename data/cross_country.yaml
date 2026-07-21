@@ -5,7 +5,8 @@ meta:
   variant: "generative-AI"
   daioe_version: "v2023"
   measure: "Employment-weighted mean DAIOE generative-AI exposure across ISCO-08 2-digit occupations"
-  employment_source: "Eurostat EU-LFS (lfsa_egai2d), latest available year per country"
+  employment_source: "Eurostat EU-LFS (lfsa_egai2d)"
+  weight_year: 2023
   mean: 1.908
   n_countries: 36
   note: "Descriptive only. Exposure is not displacement: exposure predicts occupational growth as often as decline."
@@ -40,9 +41,9 @@ countries:
   - {code: "EL", name: "Greece", exposure: 1.8426, coverage: 98.4, year: 2023, is_se: false}
   - {code: "ME", name: "Montenegro", exposure: 1.842, coverage: 100.0, year: 2020, is_se: false}
   - {code: "ES", name: "Spain", exposure: 1.8372, coverage: 99.5, year: 2023, is_se: false}
-  - {code: "MK", name: "North Macedonia", exposure: 1.8017, coverage: 99.1, year: 2023, is_se: false}
+  - {code: "MK", name: "N. Macedonia", exposure: 1.8017, coverage: 99.1, year: 2023, is_se: false}
   - {code: "RS", name: "Serbia", exposure: 1.8016, coverage: 99.4, year: 2023, is_se: false}
   - {code: "BG", name: "Bulgaria", exposure: 1.7967, coverage: 99.2, year: 2023, is_se: false}
-  - {code: "BA", name: "Bosnia and Herzegovina", exposure: 1.7358, coverage: 99.3, year: 2023, is_se: false}
+  - {code: "BA", name: "Bosnia & Herz.", exposure: 1.7358, coverage: 99.3, year: 2023, is_se: false}
   - {code: "RO", name: "Romania", exposure: 1.7145, coverage: 99.4, year: 2023, is_se: false}
   - {code: "TR", name: "Turkey", exposure: 1.6821, coverage: 99.3, year: 2023, is_se: false}

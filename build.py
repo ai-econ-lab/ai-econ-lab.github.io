@@ -23,6 +23,7 @@ SEMINARS = load("seminars.yaml")
 DAIOE_EXP = load("daioe_exposure.yaml")
 NEWS     = load("news.yaml")
 CROSS    = load("cross_country.yaml")
+ADOPT    = load("cross_country_adoption.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
 # (see app.js occSearch), so it is NOT embedded here. It auto-tracks the latest DAIOE year.
 
@@ -102,14 +103,14 @@ def shell(title, desc, path, body, jsonld="", need_chart=False):
 <meta property="og:description" content="{h(desc)}"><meta property="og:url" content="{canonical}">
 <meta property="og:site_name" content="{h(SITE['brand']['name'])}">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/styles.css">{ld}
+<link rel="stylesheet" href="/assets/styles.css?v={assetv('assets/styles.css')}">{ld}
 </head><body>
 <a class="skip" href="#main">Skip to content</a>
 {masthead(path)}
 <main id="main">{body}</main>
 {footer()}
 <div class="tip" id="tip"></div>
-{trend_js}<script src="/assets/app.js"></script>
+{trend_js}<script src="/assets/app.js?v={assetv('assets/app.js')}"></script>
 </body></html>"""
 
 # ── JSON-LD ──────────────────────────────────────────────────────────────────
@@ -549,11 +550,12 @@ def dotplot(cc):
     """Server-rendered ranked dot plot (Cleveland) — dots, not bars, since the index is
     compressed and a bar would imply a false zero baseline. Sweden highlighted; mean marked."""
     rows = cc["countries"]; n = len(rows)
+    hy = int(cc["meta"].get("weight_year", 0))
     W, rowh, top, bot = 640, 16, 16, 34
     H = top + n * rowh + bot
     xmin, xmax, x0, x1 = 1.65, 2.25, 140, 560
     X = lambda v: x0 + (v - xmin) / (xmax - xmin) * (x1 - x0)
-    p = [f'<svg class="dotplot" viewBox="0 0 {W} {H}" role="img" '
+    p = [f'<svg class="rankchart dotplot" viewBox="0 0 {W} {H}" role="img" '
          f'aria-label="Ranked dot plot of employment-weighted AI exposure by country, {n} countries, Sweden highlighted">']
     for t in (1.7, 1.8, 1.9, 2.0, 2.1, 2.2):
         gx = X(t)
@@ -566,28 +568,65 @@ def dotplot(cc):
         y = top + i * rowh + rowh * 0.62
         se = " se" if r["is_se"] else ""
         vx = X(r["exposure"])
+        nm = h(r["name"]) + (f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else "")
         p.append(f'<line class="rowguide" x1="{x0}" y1="{y-3:.1f}" x2="{x1}" y2="{y-3:.1f}"/>')
-        p.append(f'<text class="dname{se}" x="128" y="{y:.1f}" text-anchor="end">{h(r["name"])}</text>')
+        p.append(f'<text class="dname{se}" x="128" y="{y:.1f}" text-anchor="end">{nm}</text>')
         p.append(f'<circle class="dot{se}" cx="{vx:.1f}" cy="{y-3:.1f}" r="{4.4 if r["is_se"] else 3.1}"/>')
         p.append(f'<text class="dval{se}" x="600" y="{y:.1f}" text-anchor="end">{r["exposure"]:.2f}</text>')
     p.append("</svg>")
     return "".join(p)
 
+def barplot(data, mean, xmax, hy=0):
+    """Server-rendered ranked horizontal bar chart (share with a meaningful zero). Sweden highlighted."""
+    rows = data; n = len(rows); hy = int(hy)
+    W, rowh, top, bot = 640, 15, 16, 34
+    H = top + n * rowh + bot
+    x0, x1 = 140, 540
+    X = lambda v: x0 + v / xmax * (x1 - x0)
+    p = [f'<svg class="rankchart barplot" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Ranked bar chart of firms using AI by country, {n} countries, Sweden highlighted">']
+    for t in range(0, int(xmax) + 1, 5):
+        gx = X(t)
+        p.append(f'<line class="grid" x1="{gx:.1f}" y1="{top}" x2="{gx:.1f}" y2="{top+n*rowh}"/>')
+        p.append(f'<text class="tick" x="{gx:.1f}" y="{H-14}" text-anchor="middle">{t}%</text>')
+    mx = X(mean)
+    p.append(f'<line class="meanline" x1="{mx:.1f}" y1="{top-1}" x2="{mx:.1f}" y2="{top+n*rowh}"/>')
+    p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-4}" text-anchor="middle">EU avg</text>')
+    for i, r in enumerate(rows):
+        y = top + i * rowh; se = " se" if r["is_se"] else ""
+        bw = max(1.5, X(r["adoption"]) - x0)
+        nm = h(r["name"]) + (f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else "")
+        p.append(f'<text class="dname{se}" x="128" y="{y+rowh*0.72:.1f}" text-anchor="end">{nm}</text>')
+        p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{bw:.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
+        p.append(f'<text class="dval{se}" x="600" y="{y+rowh*0.72:.1f}" text-anchor="end">{r["adoption"]:.1f}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
 def cross_country_section():
     cc = CROSS; mt = cc["meta"]
-    src = f'DAIOE {mt["variant"]} {mt["daioe_version"]} × Eurostat EU-LFS employment (latest year per country)'
+    ad = ADOPT; amt = ad["meta"]
+    xmax = 5 * (int(max(r["adoption"] for r in ad["countries"]) // 5) + 1)  # round up to 5
+    src = f'DAIOE {mt["variant"]} {mt["daioe_version"]} × Eurostat EU-LFS employment {mt["weight_year"]} (a few countries: latest available, marked ’YY)'
     return f"""<div class="rule" id="across-countries"><div class="wrap"><section>
   <p class="kicker">Module · live · across countries</p>
   <h2 class="sec">How AI-exposed is each country's workforce?</h2>
   <p class="secintro">Because DAIOE scores occupations (ISCO-08), not just Swedish jobs, we can place Sweden
     in international context on public data. Each country's score is the employment-weighted average
-    DAIOE <b>{h(mt['variant'])}</b> exposure ({h(mt['daioe_version'])}) across its occupational mix, using
-    Eurostat EU-LFS. <b>Exposure is not displacement</b>: in our cross-country panel, exposure predicts
+    DAIOE <b>{h(mt['variant'])}</b> exposure ({h(mt['daioe_version'])}) across its occupational mix, weighted by
+    Eurostat EU-LFS employment in <b>{h(mt['weight_year'])}</b> (a few countries use their latest year, marked ’YY).
+    <b>Exposure is not displacement</b>: in our cross-country panel, exposure predicts
     occupational growth as often as decline. It shows where AI <em>overlaps</em> with the work, no more.</p>
   <div class="dotwrap">{dotplot(cc)}</div>
   {figfooter("cross_country.csv", src, "cross_country.svg")}
   <p class="prov" style="margin-top:12px">{h(mt['n_countries'])} countries; employment coverage ≈100%.
     Swedish register data give the depth this public-data view cannot; the two are complements.</p>
+
+  <div class="grouphdr" style="margin-top:36px">And how widely have firms actually adopted AI?</div>
+  <p class="secintro" style="margin-top:6px">Exposure is potential; adoption is what firms have done so far. The share of
+    enterprises using at least one AI technology, <b>{h(amt['year'])}</b> (a few countries: latest available, marked ’YY);
+    Sweden marked. The two need not line up: a workforce can be highly exposed while adoption is still early.</p>
+  <div class="dotwrap">{barplot(ad['countries'], amt['mean'], xmax, amt['year'])}</div>
+  {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} · {amt['unit']}", "cross_country_adoption.svg")}
 </section></div></div>"""
 
 def monitor():
@@ -733,16 +772,15 @@ PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.htm
          "research/index.html": research(), "people/index.html": people(),
          "events/index.html": events(), "news/index.html": news(), "about/index.html": about()}
 
-def dotplot_standalone(cc):
-    """Self-contained SVG for download (inline light-theme styles; no page CSS)."""
-    style = ('<style>.dotplot{font-family:ui-monospace,Menlo,monospace}'
+def chart_standalone(svg):
+    """Self-contained SVG for download (inline light-theme styles; no page CSS). Dot or bar chart."""
+    style = ('<style>.rankchart{font-family:ui-monospace,Menlo,monospace}'
              '.grid,.rowguide{stroke:#e7e4dd}.rowguide{opacity:.6}'
              '.meanline{stroke:#8a8a8a;stroke-dasharray:3 3}.meanlab,.tick{fill:#6d6a63;font-size:9px}'
              '.dname{fill:#3f3d39;font-size:10px}.dname.se{fill:#0072b2;font-weight:700}'
-             '.dot{fill:#9a9a9a}.dot.se{fill:#0072b2}'
+             '.dot{fill:#9a9a9a}.dot.se{fill:#0072b2}.bar{fill:#9a9a9a}.bar.se{fill:#0072b2}'
              '.dval{fill:#6d6a63;font-size:9.5px}.dval.se{fill:#0072b2;font-weight:700}</style>')
-    s = dotplot(cc).replace('<svg class="dotplot"',
-                            '<svg xmlns="http://www.w3.org/2000/svg" class="dotplot"', 1)
+    s = svg.replace('<svg class="rankchart', '<svg xmlns="http://www.w3.org/2000/svg" class="rankchart', 1)
     i = s.index(">") + 1
     return s[:i] + style + s[i:]
 
@@ -753,7 +791,13 @@ def emit_data(out):
     with (d / "cross_country.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["code", "country", "exposure_daioe_genai_v2023", "emp_coverage_pct", "lfs_year"])
         for r in CROSS["countries"]: w.writerow([r["code"], r["name"], r["exposure"], r["coverage"], r["year"]])
-    (d / "cross_country.svg").write_text(dotplot_standalone(CROSS), encoding="utf-8")
+    (d / "cross_country.svg").write_text(chart_standalone(dotplot(CROSS)), encoding="utf-8")
+    with (d / "cross_country_adoption.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f); w.writerow(["code", "country", "pct_enterprises_using_ai", "year"])
+        for r in ADOPT["countries"]: w.writerow([r["code"], r["name"], r["adoption"], r["year"]])
+    _xmax = 5 * (int(max(r["adoption"] for r in ADOPT["countries"]) // 5) + 1)
+    (d / "cross_country_adoption.svg").write_text(
+        chart_standalone(barplot(ADOPT["countries"], ADOPT["meta"]["mean"], _xmax, ADOPT["meta"]["year"])), encoding="utf-8")
     with (d / "daioe_most_least.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["occupation", "daioe_genai_score", "group", "daioe_version"])
         for it in DAIOE_EXP["most"]:  w.writerow([it["occ"], it["score"], "most_exposed", f"v{DAIOE_EXP['year']}"])
