@@ -187,3 +187,31 @@ window.drawTrend();
     });
   });
 })();
+
+/* Monitor sticky sub-nav: pin it just below the sticky masthead, and highlight the
+   module currently in view (scrollspy). Robust to the masthead's variable height. */
+(function () {
+  var nav = document.querySelector(".subnav");
+  if (!nav) return;
+  var mast = document.querySelector(".mast");
+  function setOffset() {
+    if (mast) document.documentElement.style.setProperty("--mast-h", mast.offsetHeight + "px");
+  }
+  setOffset();
+  window.addEventListener("resize", setOffset);
+  var links = Array.prototype.slice.call(nav.querySelectorAll("a"));
+  var byId = {};
+  links.forEach(function (a) { byId[a.dataset.spy] = a; });
+  var secs = links.map(function (a) { return document.getElementById(a.dataset.spy); }).filter(Boolean);
+  if (!secs.length) return;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.isIntersecting) {
+        links.forEach(function (x) { x.classList.remove("on"); });
+        var a = byId[e.target.id];
+        if (a) a.classList.add("on");
+      }
+    });
+  }, { rootMargin: "-22% 0px -70% 0px" });
+  secs.forEach(function (s) { io.observe(s); });
+})();

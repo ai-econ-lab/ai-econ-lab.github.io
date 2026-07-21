@@ -632,13 +632,12 @@ def dumbbell_svg(conds, gkey, active=False):
     p.append("</svg>")
     return "".join(p)
 
-def working_conditions_section():
+def working_conditions_block():
+    """Working-environment view (dumbbell + gender lens). A sub-view inside the Outcomes module."""
     w = WORKCOND; mt = w["meta"]; conds = w["conditions"]
     views = "".join(dumbbell_svg(conds, g, active=(g == "all")) for g in ("all", "women", "men"))
-    return f"""<div class="rule" id="working-conditions"><div class="wrap"><section>
-  <p class="kicker">Module · Outcomes · working environment</p>
-  <h2 class="sec">Working conditions and AI exposure.</h2>
-  <p class="secintro">More AI-exposed occupations are the classic "active job": more mentally demanding, but with
+    return f"""<div class="grouphdr" id="working-conditions" style="margin-top:36px">Working conditions and AI exposure</div>
+  <p class="secintro" style="margin-top:4px">More AI-exposed occupations are the classic "active job": more mentally demanding, but with
     <b>more control</b> over one's work; harder to switch off after hours, yet more meaningful and markedly more
     positive about technology. Public survey data by occupation, set against DAIOE {h(mt['daioe_variant'])}
     ({h(mt['daioe_version'])}); descriptive, not causal.</p>
@@ -649,61 +648,126 @@ def working_conditions_section():
     <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   </div>
   {figfooter("working_conditions.csv", f"{mt['wc_source']} × DAIOE {mt['daioe_variant']} {mt['daioe_version']}")}
-  <p class="prov" style="margin-top:10px">Toggle gender: the control gap is the story — in low-exposure jobs women
-    report far less influence than men (56% vs 68%); in high-exposure jobs it nearly closes (74% vs 78%).</p>
-</section></div></div>"""
+  <p class="prov" style="margin-top:10px">Toggle gender: the control gap is the story. In low-exposure jobs women
+    report far less influence than men (56% vs 68%); in high-exposure jobs it nearly closes (74% vs 78%).</p>"""
 
-def cross_country_section():
+def exposure_section():
+    """Module 1 — Exposure. Headline chart is the cross-country dot plot (international first)."""
     cc = CROSS; mt = cc["meta"]
-    ad = ADOPT; amt = ad["meta"]
-    dm = DEMAND; dmt = dm["meta"]
-    xmax = 5 * (int(max(r["adoption"] for r in ad["countries"]) // 5) + 1)  # round up to 5
-    dxmax = int(max(r["share"] for r in dm["countries"])) + 1               # demand share, tight axis
-    src = f'DAIOE {mt["variant"]} {mt["daioe_version"]} × Eurostat EU-LFS employment {mt["weight_year"]} (a few countries: latest available, marked ’YY)'
-    return f"""<div class="rule" id="across-countries"><div class="wrap"><section>
-  <p class="kicker">Module · live · across countries</p>
+    src = (f'DAIOE {mt["variant"]} {mt["daioe_version"]} × Eurostat EU-LFS employment {mt["weight_year"]} '
+           f'(a few countries: latest available, marked ’YY)')
+    return f"""<div class="rule module-sec" id="exposure"><div class="wrap"><section>
+  <p class="kicker">Module 1 · Exposure · across countries</p>
   <h2 class="sec">How AI-exposed is each country's workforce?</h2>
-  <p class="secintro">Because DAIOE scores occupations (ISCO-08), not just Swedish jobs, we can place Sweden
-    in international context on public data. Each country's score is the employment-weighted average
-    DAIOE <b>{h(mt['variant'])}</b> exposure ({h(mt['daioe_version'])}) across its occupational mix, weighted by
-    Eurostat EU-LFS employment in <b>{h(mt['weight_year'])}</b> (a few countries use their latest year, marked ’YY).
-    <b>Exposure is not displacement</b>: in our cross-country panel, exposure predicts
-    occupational growth as often as decline. It shows where AI <em>overlaps</em> with the work, no more.</p>
+  <p class="secintro">DAIOE scores occupations (ISCO-08), not only Swedish jobs, so every country sits on one
+    public-data scale. Each score is the employment-weighted average DAIOE <b>{h(mt['variant'])}</b> exposure
+    ({h(mt['daioe_version'])}) across a country's occupational mix, weighted by Eurostat EU-LFS employment in
+    <b>{h(mt['weight_year'])}</b> (a few countries use their latest year, marked ’YY). <b>Exposure is not
+    displacement</b>: in our panel it predicts occupational growth as often as decline, showing only where AI
+    overlaps with the work.</p>
   <div class="dotwrap">{dotplot(cc)}</div>
   {figfooter("cross_country.csv", src, "cross_country.svg")}
-  <p class="prov" style="margin-top:12px">{h(mt['n_countries'])} countries; employment coverage ≈100%.
-    Swedish register data give the depth this public-data view cannot; the two are complements.</p>
+  <div class="depth"><p class="dk">Sweden, in depth</p>
+    <p class="secintro" style="margin:0">Sweden's workforce is the <b>2nd most exposed of {h(mt['n_countries'])}</b>
+      countries (employment coverage ≈100%). The occupation-by-occupation detail behind the measure lives on the
+      <a href="/daioe/">DAIOE</a> page, and Swedish employment is set against exposure over time in the
+      <a href="#occupations-explorer">Occupations Explorer</a> below. Register data give the depth this
+      public-data view cannot; the two are complements.</p></div>
+</section></div></div>"""
 
-  <div class="grouphdr" style="margin-top:36px">And how widely have firms actually adopted AI?</div>
-  <p class="secintro" style="margin-top:6px">Exposure is potential; adoption is what firms have done. The share of enterprises
-    using at least one AI technology (<b>{h(amt['year'])}</b>, Eurostat), with the year-on-year change since
-    {h(amt['prev_year'])} shown as <b>+pp</b>. Adoption is climbing fast: the EU average rose from 8% in 2023 to
-    {h(amt['eu_avg'])}% in {h(amt['year'])}. Sweden is among the leaders on both counts, though exposure and adoption
-    need not line up across countries.</p>
-  <div class="dotwrap">{barplot(ad['countries'], amt['eu_avg'], xmax, amt['year'])}</div>
-  {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg")}
-
-  <div class="grouphdr" style="margin-top:36px">And how much are employers hiring for AI?</div>
-  <p class="secintro" style="margin-top:6px">The demand side: the share of job postings that require AI skills
-    (<b>{h(dmt['year'])}</b>, {h(dmt['source'])}), Sweden marked. {h(dmt['note_prev'])} This is a separate,
-    international source (Lightcast), so its level is not directly comparable to the lab's own live
-    <a href="#ai-in-demand">AI in Demand</a> measure, which reads Swedish job ads (JobTech).</p>
+def demand_section(tiles, seg):
+    """Module 2 — Demand. Headline is the cross-country demand bar; Sweden's live measure is the depth cut."""
+    dm = DEMAND; dmt = dm["meta"]
+    dxmax = int(max(r["share"] for r in dm["countries"])) + 1  # demand share, tight axis
+    return f"""<div class="rule module-sec" id="demand"><div class="wrap"><section>
+  <p class="kicker">Module 2 · Demand · across countries</p>
+  <h2 class="sec">How much are employers hiring for AI?</h2>
+  <p class="secintro">The share of job postings that require AI skills, by country in <b>{h(dmt['year'])}</b>
+    ({h(dmt['source'])}), Sweden marked. {h(dmt['note_prev'])} This international series (Lightcast) is a separate
+    source from the lab's own Swedish measure below, so their levels are not directly comparable.</p>
   <div class="dotwrap">{barplot(dm['countries'], 0, dxmax, 0, 'share', '.1f')}</div>
   {figfooter("cross_country_demand.csv", f"{dmt['source']}, {dmt['year']} · {dmt['unit']}", "cross_country_demand.svg")}
+
+  <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
+    <p class="secintro" style="margin:0 0 4px">{h(MONITOR['aiindemand_lede'])} We read every open and historical
+      Swedish job ad (JobTech / Platsbanken, 2006–2025, about <b>10.9 million</b>) with a versioned, citable term
+      list, so the level and its 140-fold rise since 2006 are reproducible.</p>
+    <div class="tiles">{tiles}</div>
+    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical layer (not DAIOE)")}
+    <div class="grouphdr" style="margin-top:26px">Coming next · who is the AI for?
+      <span class="preview-flag">◔ {h(MONITOR['segmentation']['flag'])}</span></div>
+    <p class="secintro" style="margin-top:4px">{h(MONITOR['segmentation']['intro'])}</p>
+    <div class="two" style="grid-template-columns:1fr 1fr 1fr">{seg}</div>
+  </div>
 </section></div></div>"""
+
+def adoption_section():
+    """Module 3 — Adoption. Cross-country firm AI-adoption (Eurostat), Sweden as depth cut."""
+    ad = ADOPT; amt = ad["meta"]
+    se = next(r for r in ad["countries"] if r["is_se"])
+    xmax = 5 * (int(max(r["adoption"] for r in ad["countries"]) // 5) + 1)  # round up to 5
+    return f"""<div class="rule module-sec" id="adoption"><div class="wrap"><section>
+  <p class="kicker">Module 3 · Adoption · across countries</p>
+  <h2 class="sec">How widely have firms actually adopted AI?</h2>
+  <p class="secintro">Exposure is potential; adoption is what firms have done. The share of enterprises using at
+    least one AI technology (<b>{h(amt['year'])}</b>, {h(amt['source'])}), with the year-on-year change since
+    {h(amt['prev_year'])} shown as <b>+pp</b>. Adoption is climbing fast: the EU average rose from 8% in 2023 to
+    {h(amt['eu_avg'])}% in {h(amt['year'])}. Exposure and adoption need not line up across countries.</p>
+  <div class="dotwrap">{barplot(ad['countries'], amt['eu_avg'], xmax, amt['year'])}</div>
+  {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg")}
+  <div class="depth"><p class="dk">Sweden, in depth</p>
+    <p class="secintro" style="margin:0">Sweden is among the EU leaders at <b>{se['adoption']:g}%</b> in
+      {h(amt['year'])}, up from {se['prev']:g}% a year earlier. A firm-level and worker-level view from Swedish
+      sources (SCB) is on the roadmap.</p></div>
+</section></div></div>"""
+
+def outcomes_section(explorers):
+    """Module 4 — Outcomes. Occupations Explorer + working conditions (live) + entry-level squeeze (preview)."""
+    return f"""<div class="rule module-sec" id="outcomes"><div class="wrap"><section>
+  <p class="kicker">Module 4 · Outcomes</p>
+  <h2 class="sec">What does it mean for jobs and job quality?</h2>
+  <p class="secintro">Exposure and demand are inputs; outcomes are what happens to workers. Two live views below,
+    and the entry-level "canaries" signal in preview.</p>
+
+  <div class="grouphdr" id="occupations-explorer" style="margin-top:26px">Employment by occupation</div>
+  <p class="secintro" style="margin-top:4px">Swedish employment by occupation over time (and, soon, by region), with
+    <a href="/daioe/">DAIOE</a> AI-exposure overlaid. Built and maintained in-house; yearly and monthly views.</p>
+  <div class="explorers">{explorers}</div>
+
+  {working_conditions_block()}
+
+  <div class="grouphdr" style="margin-top:36px">Entry-level squeeze <span class="preview-flag">◔ next</span></div>
+  <p class="secintro" style="margin-top:4px">In the most AI-exposed occupations the entry-level share of openings is
+    lower every year, and the gap has widened from −3.1pp in 2020 to <b>−5.3pp in 2025</b>: an independent, ad-based
+    echo of the Canaries finding. The full series is being wired in.</p>
+</section></div></div>"""
+
+def stat_overview():
+    """Overview-first landing: one door per spine module. Whole picture in ~20s; detail one click down."""
+    cards = ""
+    for o in MONITOR["overview"]:
+        cls = f' {o["cls"]}' if o["cls"] else ""
+        cards += (f'<a class="ovcard{cls}" href="{o["anchor"]}"><div class="stripe"></div>'
+                  f'<div class="ok">{h(o["k"])}</div><div class="onum">{o["num"]}</div>'
+                  f'<div class="olab">{h(o["lab"])}</div>'
+                  f'<div class="ofoot"><span>{h(o["foot"])}</span><span class="go">Open →</span></div></a>')
+    return f"""<div class="rule" id="overview"><div class="wrap"><section>
+  <p class="kicker">The whole picture, in one glance</p>
+  <h2 class="sec">Four questions about AI and work.</h2>
+  <p class="secintro">Exposure, demand, adoption and outcomes: one headline number each, international first, with
+    Sweden as the depth cut inside every module. Every figure is public and dated; open a card to jump to the module.</p>
+  <div class="ovgrid">{cards}</div>
+</section></div></div>"""
+
+def subnav():
+    """Sticky spine nav under the masthead; scrollspy in app.js marks the active module."""
+    items = [("#exposure", "Exposure"), ("#demand", "Demand"),
+             ("#adoption", "Adoption"), ("#outcomes", "Outcomes")]
+    links = "".join(f'<a href="{a}" data-spy="{a[1:]}">{t}</a>' for a, t in items)
+    return f'<nav class="subnav" aria-label="Monitor modules"><div class="wrap">{links}</div></nav>'
 
 def monitor():
     m = MONITOR
-    mods = ""
-    STCHIP = {"live":"● live", "next":"◑ next", "planned":"◔ planned", "someday":"◌ someday"}
-    for mod in m["modules"]:
-        live = mod["status"] == "live"
-        anchor = {"AI in Demand": "#ai-in-demand", "Occupations Explorer": "#occupations-explorer",
-                  "Across countries": "#across-countries"}.get(mod["name"], "")
-        chip = f'<span class="mstatus {"live" if live else "planned"}">{STCHIP.get(mod["status"],mod["status"])}</span>'
-        name = f'<a href="{anchor}">{h(mod["name"])}</a>' if anchor else h(mod["name"])
-        mods += (f'<div class="module {"on" if live else "off"}"><div class="mtop"><h3>{name}</h3>{chip}</div>'
-                 f'<p>{h(mod["desc"])}</p></div>')
     tiles = ""
     for t in m["tiles"]:
         cls = f' {t["cls"]}' if t["cls"] else ""
@@ -724,63 +788,40 @@ def monitor():
     referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
 </div>"""
     body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px"><div class="herogrid">
-  <div><div class="eyebrow"><span class="dot"></span> Public monitor · updated as the data arrive</div>
+  <div><div class="eyebrow"><span class="dot"></span> Public monitor · international first, Sweden in depth · updated as the data arrive</div>
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
-    <div class="cta-row"><a class="btn primary" href="#ai-in-demand">See AI in Demand →</a>
-      <a class="btn ghost" href="#occupations-explorer">Open the Occupations Explorer</a></div></div>
-  <div class="panel"><div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
+    <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
+      <a class="btn ghost" href="#method">How we measure it</a></div></div>
+  <div class="panel"><div class="panelhead"><span class="ttl">Sweden · AI in job ads (our live measure)</span>
     <span class="livechip"><i></i>live</span></div>
-    <div class="panelbody"><p class="psub">Broad measure, any AI-related term, 2006–2025.</p>
+    <div class="panelbody"><p class="psub">Broad measure, any AI-related term, 2006–2025. The Swedish depth cut behind the demand module.</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div></div></div>
 </div></div></div>
 
-<div class="rule"><div class="wrap"><section>
-  <p class="kicker">What the monitor tracks</p>
-  <h2 class="sec">Several views on AI in the Swedish labour market.</h2>
-  <p class="secintro">Three modules are live today; more are in development. Everything runs on public data, so it can be
-    citable and refreshed without any funder's data.</p>
-  <div class="modules">{mods}</div>
-</section></div></div>
+{stat_overview()}
 
-<div class="rule" id="ai-in-demand"><div class="wrap"><section>
-  <p class="kicker">Module · live</p>
-  <h2 class="sec">AI in Demand.</h2>
-  <p class="secintro">{h(m['aiindemand_lede'])}</p>
-  <div class="tiles">{tiles}</div>
-  {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical layer (not DAIOE)")}
-</section></div></div>
+{subnav()}
 
-<div class="rule"><div class="wrap"><section>
-  <p class="kicker">AI in Demand · coming next</p>
-  <h2 class="sec" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">Who is the AI for?
-    <span class="preview-flag">◔ {h(m['segmentation']['flag'])}</span></h2>
-  <p class="secintro">{h(m['segmentation']['intro'])}</p>
-  <div class="two" style="grid-template-columns:1fr 1fr 1fr">{seg}</div>
-</section></div></div>
+{exposure_section()}
 
-<div class="rule" id="occupations-explorer"><div class="wrap"><section>
-  <p class="kicker">Module · live</p>
-  <h2 class="sec">Occupations Explorer.</h2>
-  <p class="secintro">Swedish employment by occupation over time (and, soon, by region), with
-    <a href="/daioe/">DAIOE</a> AI-exposure overlaid. Built and maintained in-house; yearly and monthly views.</p>
-  <div class="explorers">{explorers}</div>
-</section></div></div>
+{demand_section(tiles, seg)}
 
-{cross_country_section()}
+{adoption_section()}
 
-{working_conditions_section()}
+{outcomes_section(explorers)}
 
 <div class="rule" id="method"><div class="wrap"><section>
   <p class="kicker">How to read this</p>
   <h2 class="sec">What we measure, and what we don't yet.</h2>
   <div class="prose" style="margin-top:16px">
-    <p>The AI in Demand module reads every open and historical advertisement in Sweden's public job board
-      (Platsbanken / JobTech), 2006–2025: about <b>10.9 million ads</b>. An ad counts as AI-in-demand when its text
-      requests an AI skill, matched by a versioned, citable term list (Swedish and English). A semantic layer, now
-      training, will catch AI ads that use no listed term.</p>
+    <p>The measure runs on public data throughout. The Swedish demand series reads every open and historical
+      advertisement in Sweden's public job board (Platsbanken / JobTech), 2006–2025: about <b>10.9 million ads</b>.
+      An ad counts as AI-in-demand when its text requests an AI skill, matched by a versioned, citable term list
+      (Swedish and English); a semantic layer, now training, will catch AI ads that use no listed term. Exposure,
+      adoption and cross-country demand come from DAIOE (generative-AI, v2023), Eurostat and the Stanford AI Index.</p>
     <h3>Caveats, in plain sight</h3><ul style="color:var(--ink-2);font-size:14px;line-height:1.6">{caveats}</ul>
   </div>
 </section></div></div>"""

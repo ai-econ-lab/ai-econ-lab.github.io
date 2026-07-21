@@ -3,11 +3,19 @@
 
 headline: "The AIEL Monitor"
 lede: >-
-  A public monitor of how artificial intelligence is moving through the Swedish labour market: the
-  skills employers demand, how exposed each occupation is, how far adoption and everyday use have
-  spread, whether AI augments or replaces tasks, and what that means for entry-level opportunity and
-  job quality. Built on public data so it can be cited and refreshed automatically, and committed to
-  no funder. Three views are live today; the rest are on an open roadmap.
+  How artificial intelligence is reshaping work: measured internationally through a portable exposure
+  measure (DAIOE) and public data, and in unusual depth for Sweden via job ads, firm surveys and
+  administrative registers. One spine of four questions: how exposed the work is, how much employers
+  demand AI, how far firms have adopted it, and what it means for jobs. Built on public data so every
+  figure can be cited and refreshed automatically, and committed to no funder.
+
+# Overview-first landing: one door per spine module (Exposure · Demand · Adoption · Outcomes).
+# International-first headline number each; Sweden is the depth cut inside the module. Every figure dated.
+overview:
+  - {k: "Exposure", num: "#2 / 36", lab: "Sweden's workforce ranks 2nd of 36 European countries on AI exposure", foot: "DAIOE genAI v2023 · EU-LFS", anchor: "#exposure", cls: ""}
+  - {k: "Demand",   num: "2.1<span>%</span>", lab: "of Swedish job ads mention AI in 2025, up roughly 140-fold since 2006", foot: "JobTech · 2025 · live", anchor: "#demand", cls: "b"}
+  - {k: "Adoption", num: "35<span>%</span>", lab: "of Swedish firms use AI, 3rd-highest in the EU and up from 25% a year earlier", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
+  - {k: "Outcomes", num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations, a gap widening since 2020", foot: "job ads · 2020–2025 · preview", anchor: "#outcomes", cls: "d"}
 
 # The monitor's modules. 'live' has its own section below; 'next'/'planned'/'someday' are honest roadmap.
 modules:

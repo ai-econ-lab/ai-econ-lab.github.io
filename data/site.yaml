@@ -21,11 +21,11 @@ nav:
 
 # Instrument registration strip under the masthead (honesty-as-aesthetic).
 registration:
-  - "SOURCE <b>JobTech / Platsbanken</b> (CC0)"
-  - "<b>10.9M</b> ADS · 2006–2025"
-  - "UPDATED <b>2026-07-20</b>"
-  - '<span class="lv">● LIVE · LEXICAL LAYER</span>'
-  - "2025 <b>PROVISIONAL</b>"
+  - "SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS"
+  - "<b>10.9M</b> SWEDISH ADS · 36 COUNTRIES"
+  - "UPDATED <b>2026-07-21</b>"
+  - '<span class="lv">● LIVE · PUBLIC DATA</span>'
+  - "MONITOR PROTOTYPE"
 
 affiliations: ["Örebro University · RATIO", "WASP-HS · AISCAF", "Sweden · Denmark · Portugal · Germany"]
 
