@@ -514,10 +514,14 @@ def events():
                  "/events/", body)
 
 def news():
+    def nrow(it):
+        links = "".join(f'<a class="lchip" href="{l["url"]}">{h(l["label"])}</a>' for l in it.get("links", []))
+        linkrow = f' <span class="nlinks">{links}</span>' if links else ""
+        return (f'<div class="nrow"><span class="yr tnum">{h(it["date"])}</span>'
+                f'<span class="ntext">{it["text"]}{linkrow}</span></div>')
     blocks = ""
     for i, yr in enumerate(NEWS["years"]):   # newest year first; only it is open
-        items = "".join(f'<div class="nrow"><span class="yr tnum">{h(it["date"])}</span>'
-                        f'<span class="ntext">{it["text"]}</span></div>' for it in yr["items"])
+        items = "".join(nrow(it) for it in yr["items"])
         if i == 0:
             blocks += f'<div class="grouphdr">{h(yr["year"])}</div><div class="rows">{items}</div>'
         else:

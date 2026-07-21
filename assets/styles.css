@@ -318,6 +318,9 @@ footer{background:var(--navy);color:var(--navy-ink);margin-top:20px}
 .foot .brand{display:flex;align-items:center;gap:12px}   /* restore lockup (beats .foot a{display:block}) */
 .foot .brand .brandtext small{color:#ffffff9c}
 .footend{border-top:1px solid #ffffff1f;padding:16px 0;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#ffffff8c}
+/* news link chips after each entry */
+.nlinks{display:inline-flex;flex-wrap:wrap;gap:6px;margin-left:6px;vertical-align:baseline}
+
 /* Collapsible year / "previous" toggles (news years, previous seminars) */
 details.yearblock{border-top:1px solid var(--border)}
 details.yearblock>summary{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
