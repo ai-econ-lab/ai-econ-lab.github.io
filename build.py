@@ -162,8 +162,8 @@ def home():
     <h1 class="title">We measure how <em>artificial intelligence</em> is reshaping the world of work.</h1>
     <p class="lede">An economics-led lab at Örebro University and RATIO, part of the
       <a href="https://wasp-hs.org">WASP-HS</a> cluster <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>.
-      Our flagship public good, the <b>AIEL Monitor</b>, tracks how AI is moving through the Swedish
-      labour market, openly and honestly, updated as the data arrive.</p>
+      Our flagship public good, the <b>AIEL Monitor</b>, tracks how AI is reshaping work across
+      countries, with Sweden in uncommon depth, openly and updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
       <a class="btn ghost" href="/monitor/#method">How we measure it</a></div>
     <div class="affil">{affils}</div>
@@ -184,16 +184,17 @@ def home():
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">What the lab is</p>
   <h2 class="sec">A research lab first; the monitor is how we show our work in public.</h2>
-  <p class="secintro">We combine unique Swedish administrative registers with public job-ad data and international
-    comparisons. Economists work alongside sociologists, business scholars and computer scientists, because a
-    labour market changed by AI cannot be read from one discipline or one country alone.</p>
+  <p class="secintro">We work across countries on public data and international comparisons, and, rarely for any lab,
+    on linked employer–employee register data in several of them: deepest in Sweden, reaching Denmark, Portugal
+    and Germany, and expanding to more. Economists work alongside sociologists, business scholars and computer
+    scientists, because a labour market changed by AI cannot be read from one discipline or one country alone.</p>
   <div class="pillars">
     <div class="pillar"><div class="n">01 · DATA</div><h3>Register-grade evidence</h3>
-      <p>Population-wide, employer–employee-linked Swedish registers (LISA, AGI) with monthly frequency and
-        4-digit occupations, paired with 10.9M public job ads.</p></div>
+      <p>Linked employer–employee register data at population scale, monthly and at 4-digit occupations in Sweden
+        (LISA, AGI), plus comparable access in a handful of other countries. Rare reach, paired with 10.9M public job ads.</p></div>
     <div class="pillar"><div class="n">02 · REACH</div><h3>Multi-country</h3>
-      <p>Sweden at register depth; Denmark, Portugal and Germany through partners; 30 countries via EU-LFS for
-        external validity.</p></div>
+      <p>Register-level in Sweden, Denmark, Portugal and Germany, with more countries planned; 30-plus via EU-LFS
+        and international job-ad data for external validity.</p></div>
     <div class="pillar"><div class="n">03 · LENS</div><h3>Multi-disciplinary</h3>
       <p>Economics, sociology, business administration and computer science, inside the
         <a href="https://wasp-hs.org">WASP-HS</a> cluster <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>,
@@ -206,9 +207,9 @@ def home():
 
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">Flagship · The AIEL Monitor</p>
-  <h2 class="sec">Four things the Swedish job market is telling us right now.</h2>
-  <p class="secintro">Every figure is measured from the ad text with a versioned, citable term list. Where
-    something is not yet measured, we say so.</p>
+  <h2 class="sec">Sweden, in depth: four things the live job-ad data show.</h2>
+  <p class="secintro">One of the monitor's country cuts, at register-grade depth. Every figure is measured from the
+    ad text with a versioned, citable term list. Where something is not yet measured, we say so.</p>
   <div class="tiles">{tiles}</div>
   <div class="two">
     <div class="prod"><div class="tag">The Monitor · public data</div><h3>The AI-Econ Lab Monitor</h3>
@@ -839,11 +840,12 @@ def about():
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">About</p><h2 class="sec">An economics-led lab on AI and the future of work</h2></div>
 <section style="padding-top:14px"><div class="prose">
-  <p>The AI-Econ Lab, at Örebro University and the Ratio Institute, studies how artificial intelligence is
-    reshaping labour markets, particularly for white-collar and service work. Alongside peer-reviewed research we
-    build open, citable public goods (the <a href="/monitor/">AIEL Monitor</a> and the <a href="/daioe/">DAIOE</a>
-    exposure measure), so evidence on AI and work reaches policymakers, journalists and the public, not only
-    specialists.</p>
+  <p>The AI-Econ Lab studies how artificial intelligence is reshaping labour markets across countries,
+    particularly for white-collar and service work, combining international comparisons with uncommonly broad
+    access to linked register data: deepest in Sweden, reaching Denmark, Portugal and Germany, and expanding.
+    Based at Örebro University and the Ratio Institute, we pair peer-reviewed research with open, citable public
+    goods (the <a href="/monitor/">AIEL Monitor</a> and the <a href="/daioe/">DAIOE</a> exposure measure), so
+    evidence on AI and work reaches policymakers, journalists and the public, not only specialists.</p>
 </div></section></div></div>
 
 <div class="rule"><div class="wrap"><section>
