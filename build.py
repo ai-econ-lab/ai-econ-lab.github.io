@@ -1040,7 +1040,7 @@ def brief(lang="en"):
     th_title = titles[theme]
 
     KSV = {"Exposure": "Exponering", "Demand": "Efterfrågan", "Adoption": "Användning", "Outcomes": "Utfall"}
-    LABSV = {"Exposure": "genomsnittlig AI-exponering av arbetskraften i 36 europeiska länder (DAIOE genAI); Sverige näst högst, 2,07",
+    LABSV = {"Exposure": "kognitiva tjänstemannayrken (kodning, skrivande, analys, ekonomi) är mest AI-exponerade, bland de 2% mest utsatta av alla yrken; mätt för 36 europeiska länder",
              "Demand": "medianandel jobbannonser som kräver AI i 22 länder 2025 (Stanford AI Index); Sverige 2,8%",
              "Adoption": "av EU:s företag använde AI 2025, upp från 8% 2023 (Eurostat); Sverige 35%, bland de ledande",
              "Outcomes": "Sveriges instegsklämma: färre instegsjobb i de mest AI-exponerade yrkena sedan 2020; mönstret syns även internationellt"}

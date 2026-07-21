@@ -12,7 +12,7 @@ lede: >-
 # Overview-first landing: one door per spine module (Exposure · Demand · Adoption · Outcomes).
 # International-first headline number each; Sweden is the depth cut inside the module. Every figure dated.
 overview:
-  - {k: "Exposure", num: "1.9<span> avg</span>", lab: "average workforce AI exposure across 36 European countries (DAIOE genAI); Sweden 2nd-highest, at 2.07", foot: "DAIOE genAI v2023 · EU-LFS", anchor: "#exposure", cls: ""}
+  - {k: "Exposure", num: "top 2<span>%</span>", lab: "white-collar cognitive jobs (coding, writing, analysis, economics) are the most AI-exposed, in the top 2% of all occupations; scored for 36 European countries", foot: "DAIOE genAI v2023 · EU-LFS", anchor: "#exposure", cls: ""}
   - {k: "Demand",   num: "1.9<span>%</span>", lab: "median share of job ads requiring AI across 22 countries in 2025 (Stanford AI Index); Sweden 2.8%", foot: "AI Index / Lightcast · 2025", anchor: "#demand", cls: "b"}
   - {k: "Adoption", num: "20<span>%</span>", lab: "of EU firms used AI in 2025, up from 8% in 2023 (Eurostat); Sweden 35%, among the leaders", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
   - {k: "Outcomes", num: "−5.3<span>pp</span>", lab: "Sweden's entry-level squeeze: fewer entry-level openings in the most AI-exposed jobs since 2020; the pattern echoes international research", foot: "JobTech · 2020–2025", anchor: "#outcomes", cls: "d"}
