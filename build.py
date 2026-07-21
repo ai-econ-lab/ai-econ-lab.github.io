@@ -877,6 +877,7 @@ def monitor():
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
+      <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a>
       <a class="btn ghost" href="#method">How we measure it</a></div></div>
   <div class="panel"><div class="panelhead"><span class="ttl">Sweden · AI in job ads (our live measure)</span>
     <span class="livechip"><i></i>live</span></div>
@@ -964,8 +965,97 @@ def about():
 </section></div></div>"""
     return shell(f"About &amp; contact · {SITE['brand']['name']}", SITE["brand"]["description"], "/about/", body)
 
+def brief():
+    """Monthly one-page 'AIEL Monitor Brief': an auto-generated snapshot (the four spine
+    headline numbers), the always-fresh vacancy pulse, a themed deep-dive that rotates through
+    the spine month by month, and the latest lab news. Generated from the same data as the
+    site; print-to-PDF ready. English (MVP; a Swedish sibling and a monthly cron come next)."""
+    from datetime import date
+    today = date.today()
+    MONTHS = ["January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December"]
+    mname = MONTHS[today.month - 1]; issue = f"{today.year}-{today.month:02d}"
+
+    cards = ""                                            # at a glance: the four spine numbers
+    for o in MONITOR["overview"]:
+        cls = f' {o["cls"]}' if o["cls"] else ""
+        cards += (f'<div class="bstat{cls}"><span class="stripe"></span><div class="bk">{h(o["k"])}</div>'
+                  f'<div class="bnum">{o["num"]}</div><div class="blab">{h(o["lab"])}</div>'
+                  f'<div class="bfoot">{h(o["foot"])}</div></div>')
+
+    t = MONITOR["trend"]                                  # the pulse: the always-fresh vacancy series
+    cc = CROSS; dm = DEMAND; sm = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
+    order = ["exposure", "demand", "adoption", "outcomes"]   # theme rotates through the spine
+    theme = order[(today.month - 1) % 4]
+    specs = {
+        "exposure": ("Exposure across countries", dotplot(cc),
+            f"Sweden's workforce is the 2nd most AI-exposed of {cc['meta']['n_countries']} European countries "
+            f"(DAIOE generative-AI {cc['meta']['daioe_version']}). Exposure marks where AI overlaps with the work, not displacement.",
+            f"DAIOE generative-AI {cc['meta']['daioe_version']} × Eurostat EU-LFS {cc['meta']['weight_year']}"),
+        "demand": ("Hiring for AI across countries",
+            barplot(dm["countries"], 0, int(max(r["share"] for r in dm["countries"])) + 1, 0, "share", ".1f"),
+            f"{dm['meta']['note_prev']} The Swedish live job-ad measure is the pulse shown above.",
+            f"{dm['meta']['source']}, {dm['meta']['year']}"),
+        "adoption": ("AI adoption by firm size in Sweden",
+            barplot(SWEAD["sizes"], 0, 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f"),
+            f"Adoption climbs steeply with firm size, from {sm['10-49']}% of small firms (10–49 employees) to "
+            f"{sm['250-']}% of large ones (250+) in {SWEAD['meta']['year']}, every class up sharply since {SWEAD['meta']['prev_year']}.",
+            f"{SWEAD['meta']['source']}, {SWEAD['meta']['year']}"),
+        "outcomes": ("The entry-level squeeze", squeeze_svg(ELS),
+            f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
+            f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
+            f"in {ELS['meta']['last_year']}. Descriptive, not causal.",
+            f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}"),
+    }
+    th_title, th_chart, th_take, th_src = specs[theme]
+
+    flat = [(yr["year"], it) for yr in NEWS["years"] for it in yr["items"]]   # newest first
+    news_html = ""
+    for yr, it in flat[:5]:
+        links = "".join(f'<a class="lchip" href="{l["url"]}">{h(l["label"])}</a>' for l in it.get("links", []))
+        lr = f' <span class="nlinks">{links}</span>' if links else ""
+        news_html += f'<li><span class="bnd">{h(it["date"])} {h(yr)}</span> {it["text"]}{lr}</li>'
+
+    body = f"""<div class="wrap brief"><article class="briefsheet">
+  <header class="bhead">
+    <div><p class="kicker">AIEL Monitor Brief · {issue}</p>
+      <h1 class="btitle">AI and the labour market — {mname} {today.year}</h1>
+      <p class="bsub">A monthly snapshot from the AI-Econ Lab: international, with Sweden in depth, on public data.
+        In focus this month: {h(th_title)}.</p></div>
+    <div class="bactions">
+      <button class="btn primary" id="printbrief" type="button">↓ Download PDF</button>
+      <span class="blang"><a aria-current="page">EN</a> · <span class="soon" title="Swedish version coming">SV</span></span>
+      <a class="bback" href="/monitor/">← the live monitor</a></div>
+  </header>
+
+  <section class="bsec"><h2 class="bh2">At a glance</h2>
+    <div class="bstats">{cards}</div></section>
+
+  <section class="bsec"><h2 class="bh2">The pulse · AI in Swedish job ads</h2>
+    <p class="bp">The one series that moves every month: the share of Swedish vacancies asking for an AI skill,
+      2006–2025, now about <b>{t['values'][-1]:.2f}%</b> ({t['years'][-1]}, provisional) and roughly <b>140×</b> its
+      level twenty years ago.</p>
+    <div class="bchart">{trend_svg(t)}</div></section>
+
+  <section class="bsec"><h2 class="bh2">In focus · {h(th_title)}</h2>
+    <p class="bp">{th_take}</p>
+    <div class="bchart">{th_chart}</div>
+    <p class="bsrc">Source: {h(th_src)}. Full method at ai-econ-lab.github.io/monitor/#method.</p></section>
+
+  <section class="bsec bnews"><h2 class="bh2">Lab news</h2>
+    <ul class="blist">{news_html}</ul></section>
+
+  <footer class="bfooter">
+    <span>AI-Econ Lab · AIEL Monitor · {issue}. Public data; cite the version and date.</span>
+    <span>ai-econ-lab.github.io/monitor</span></footer>
+</article></div>"""
+    return shell(f"AIEL Monitor Brief — {mname} {today.year} · {SITE['brand']['name']}",
+                 f"A monthly one-page snapshot of AI in the labour market from the AI-Econ Lab: {mname} {today.year}.",
+                 "/monitor/brief/", body)
+
 # ── write ────────────────────────────────────────────────────────────────────
 PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.html": daioe(),
+         "monitor/brief/index.html": brief(),
          "research/index.html": research(), "people/index.html": people(),
          "events/index.html": events(), "news/index.html": news(), "about/index.html": about()}
 

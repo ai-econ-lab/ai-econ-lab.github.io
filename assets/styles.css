@@ -362,6 +362,13 @@ button.figdl{background:transparent;font-family:var(--mono);font-size:11px;curso
 .dblegend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .dblegend i.lo{background:var(--muted)}.dblegend i.hi{background:var(--c1)}
 
+/* AI-in-Demand trend (server-rendered static twin, used on the brief) */
+.trend .grid{stroke:var(--border)}.trend .tick{fill:var(--muted);font-size:9px}
+.trendarea{fill:var(--c1);opacity:.08}
+.trend .trendline,.trend .trenddash{fill:none;stroke:var(--c1);stroke-width:2}
+.trend .trenddash{stroke-dasharray:4 3}
+.trend .trenddot{fill:var(--c1)}.trend .trendval{fill:var(--c1);font-size:11px;font-weight:700}
+
 /* entry-level squeeze: two-line time series with the widening gap shaded */
 .squeeze .sqband{fill:var(--c1);opacity:.10}
 .squeeze .sqlo{fill:none;stroke:var(--muted);stroke-width:2}
@@ -421,5 +428,57 @@ details.yearblock[open]>summary::after{content:"－"}
 
 /* keep anchored modules clear of the sticky masthead + sub-nav (mast ~139 + sub ~48) */
 main [id]{scroll-margin-top:196px}
+
+/* Monthly Monitor Brief: a focused report page, print-to-PDF ready */
+.brief{max-width:820px;padding-top:28px;padding-bottom:40px}
+.briefsheet{background:var(--paper);border:1px solid var(--border);border-radius:14px;
+  box-shadow:var(--shadow);padding:clamp(20px,3vw,38px)}
+.bhead{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;
+  border-bottom:1px solid var(--border);padding-bottom:18px;margin-bottom:20px}
+.btitle{font-family:var(--serif);font-size:clamp(22px,3vw,30px);line-height:1.1;margin:8px 0 0;letter-spacing:-.01em}
+.bsub{color:var(--ink-2);font-size:14px;max-width:56ch;margin:10px 0 0;line-height:1.5}
+.bactions{display:flex;flex-direction:column;align-items:flex-end;gap:8px;white-space:nowrap}
+.blang{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.blang a{color:var(--blue);text-decoration:none}.blang .soon{opacity:.5}
+.bback{font-family:var(--mono);font-size:12px;color:var(--muted);text-decoration:none}
+.bback:hover{color:var(--blue)}
+.bsec{margin-top:26px}
+.bh2{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin:0 0 12px}
+.bp{color:var(--ink-2);font-size:14.5px;line-height:1.55;margin:0 0 12px;max-width:64ch}
+.bchart{margin-top:4px}.bchart svg{width:100%;height:auto}
+.bsrc{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:8px}
+.bstats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.bstats{grid-template-columns:1fr 1fr}}
+.bstat{position:relative;overflow:hidden;background:var(--raise);border:1px solid var(--border);border-radius:11px;padding:14px 14px 12px}
+.bstat .stripe{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c1)}
+.bstat.b .stripe{background:var(--c2)}.bstat.c .stripe{background:var(--c3)}.bstat.d .stripe{background:var(--c4)}
+.bk{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.bnum{font-family:var(--serif);font-size:clamp(22px,2.6vw,27px);font-weight:600;line-height:1;margin-top:5px;font-variant-numeric:tabular-nums}
+.bnum span{font-size:.6em;color:var(--muted)}
+.blab{font-size:11px;color:var(--ink-2);line-height:1.3;margin-top:7px}
+.bfoot{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:7px}
+.blist{list-style:none;margin:0;padding:0}
+.blist li{font-size:13.5px;color:var(--ink-2);line-height:1.5;padding:9px 0;border-top:1px solid var(--border)}
+.blist li:first-child{border-top:0}
+.bnd{font-family:var(--mono);font-size:11px;color:var(--blue);margin-right:8px;white-space:nowrap}
+.bfooter{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;padding-top:16px;
+  border-top:1px solid var(--border);font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+
+@media print {
+  /* force the light palette so charts print legibly even from dark mode */
+  :root, :root[data-theme="dark"] {
+    --paper:#fff; --raise:#fff; --bg:#fff; --ink:#161d2b; --ink-2:#3a4657; --muted:#65717f;
+    --border:#e3e8ee; --blue:#0072b2; --link:#065f92;
+    --c1:#0072b2; --c2:#d55e00; --c3:#009e73; --c4:#cc79a7;
+  }
+  .mast, footer, .tip, #printbrief, .bactions, .skip { display:none !important; }
+  body { background:#fff; color:#000; }
+  .brief { max-width:100%; padding:0; }
+  .briefsheet { box-shadow:none; border:0; border-radius:0; padding:0; }
+  .bsec, .bstat, .blist li, .bchart { break-inside:avoid; }
+  .bnum, .btitle, .bh2 { color:#000; }
+  a { color:#000; text-decoration:none; }
+  @page { size:A4; margin:14mm; }
+}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}

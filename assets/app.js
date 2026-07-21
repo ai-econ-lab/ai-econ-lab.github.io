@@ -216,6 +216,12 @@ window.drawTrend();
   secs.forEach(function (s) { io.observe(s); });
 })();
 
+/* Monitor Brief: 'Download PDF' = the browser's print-to-PDF of the print-styled sheet. */
+(function () {
+  var b = document.getElementById("printbrief");
+  if (b) b.addEventListener("click", function () { window.print(); });
+})();
+
 /* Figure download: rasterise a static SVG to a PNG in the browser (no build dependency),
    so any figure can be dropped straight into a Word / Google / text document. */
 (function () {
