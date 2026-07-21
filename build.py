@@ -179,7 +179,7 @@ def home():
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Line chart: AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", method_href="/monitor/#method")}
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method")}
     </div>
   </div>
 </div></div></div>
@@ -547,10 +547,13 @@ def news():
 
 def figfooter(csv_name, source, svg_name=None, method_href=None):
     """Item 10: download + provenance under a figure. Source states DAIOE variant + year.
-    method_href, when given, appends a link to the fuller method/sources note."""
+    Offers the data (CSV) plus, when the figure has a static SVG, the chart as SVG and PNG
+    (PNG is rasterised client-side from the SVG, so no build dependency). method_href, when
+    given, appends a link to the fuller method/sources note."""
     dl = f'<a class="figdl" href="/assets/data/{csv_name}" download>↓ Data (CSV)</a>'
     if svg_name:
-        dl += f'<a class="figdl" href="/assets/data/{svg_name}" download>↓ Chart (SVG)</a>'
+        dl += (f'<a class="figdl" href="/assets/data/{svg_name}" download>↓ SVG</a>'
+               f'<button class="figdl figpng" type="button" data-svg="/assets/data/{svg_name}">↓ PNG</button>')
     meth = f'<a class="figml" href="{h(method_href)}">Method &amp; sources →</a>' if method_href else ""
     return f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span>{meth}</div>'
 
@@ -638,6 +641,36 @@ def dumbbell_svg(conds, gkey, active=False):
     p.append("</svg>")
     return "".join(p)
 
+def trend_svg(t):
+    """Server-rendered static version of the AI-in-Demand trend (the hero panel is JS-drawn;
+    this is the downloadable twin). Solid line to the last final year, dashed to the provisional year."""
+    ys = t["years"]; vs = t["values"]; ymax = t["ymax"]; pf = int(t["provisionalFrom"]); n = len(ys)
+    W, H = 640, 300
+    x0, x1, top, bot = 46, 606, 22, 262
+    X = lambda i: x0 + i / (n - 1) * (x1 - x0)
+    Y = lambda v: bot - v / ymax * (bot - top)
+    pts = [(X(i), Y(vs[i])) for i in range(n)]
+    p = [f'<svg class="rankchart trend" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="AI in demand, share of Swedish job ads, {ys[0]} to {ys[-1]}">']
+    for tk in t["yticks"]:
+        gy = Y(tk)
+        p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
+        p.append(f'<text class="tick" x="{x0-6}" y="{gy+3.5:.1f}" text-anchor="end">{tk:g}%</text>')
+    for i, yr in enumerate(ys):
+        if yr % 3 == 0 or i == n - 1:
+            p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-8}" text-anchor="middle">{yr}</text>')
+    area = " ".join(f'{x:.1f},{y:.1f}' for x, y in pts[:pf]) if pf else ""
+    if pf:
+        area = f'{pts[0][0]:.1f},{Y(0):.1f} ' + area + f' {pts[pf-1][0]:.1f},{Y(0):.1f}'
+        p.append(f'<polygon class="trendarea" points="{area}"/>')
+        p.append(f'<polyline class="trendline" points="{" ".join(f"{x:.1f},{y:.1f}" for x,y in pts[:pf])}"/>')
+    p.append(f'<polyline class="trenddash" points="{" ".join(f"{x:.1f},{y:.1f}" for x,y in pts[pf-1:])}"/>')
+    lx, ly = pts[-1]
+    p.append(f'<circle class="trenddot" cx="{lx:.1f}" cy="{ly:.1f}" r="4"/>')
+    p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-8:.1f}" text-anchor="end">{vs[-1]:.2f}%</text>')
+    p.append("</svg>")
+    return "".join(p)
+
 def squeeze_svg(els):
     """Two-line time series: the entry-level share of openings in least- vs most-AI-exposed
     occupations. The vertical gap between the lines is the 'squeeze'; it widens over time."""
@@ -686,7 +719,7 @@ def working_conditions_block():
     <div class="dotwrap">{views}</div>
     <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   </div>
-  {figfooter("working_conditions.csv", f"{mt['wc_source']} × DAIOE {mt['daioe_variant']} {mt['daioe_version']}")}
+  {figfooter("working_conditions.csv", f"{mt['wc_source']} × DAIOE {mt['daioe_variant']} {mt['daioe_version']}", svg_name="working_conditions.svg")}
   <p class="prov" style="margin-top:10px">Toggle gender: the control gap is the story. In low-exposure jobs women
     report far less influence than men (56% vs 68%); in high-exposure jobs it nearly closes (74% vs 78%).</p>"""
 
@@ -732,7 +765,7 @@ def demand_section(tiles, seg):
       Swedish job ad (JobTech / Platsbanken, 2006–2025, about <b>10.9 million</b>) with a versioned, citable term
       list, so the level and its 140-fold rise since 2006 are reproducible.</p>
     <div class="tiles">{tiles}</div>
-    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical layer (not DAIOE)")}
+    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical layer (not DAIOE)", svg_name="ai_in_demand_trend.svg")}
     <div class="grouphdr" style="margin-top:26px">Coming next · who is the AI for?
       <span class="preview-flag">◔ {h(MONITOR['segmentation']['flag'])}</span></div>
     <p class="secintro" style="margin-top:4px">{h(MONITOR['segmentation']['intro'])}</p>
@@ -763,7 +796,7 @@ def adoption_section():
       (10–49 employees) to <b>{sm['250-']}%</b> of large ones (250+), every class up sharply since {h(swm['prev_year'])}.
       The all-firms figure ({sm['Tot250']}%, highlighted) is the same number the cross-country bar shows.</p>
     <div class="dotwrap">{barplot(SWEAD['sizes'], 0, swxmax, 0, 'adoption', '.0f')}</div>
-    {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}")}
+    {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}", svg_name="swe_adoption.svg")}
   </div>
 </section></div></div>"""
 
@@ -791,7 +824,7 @@ def outcomes_section(explorers):
     level gap is structural, the widening is the signal).</p>
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
-  {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}")}
+  {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}", svg_name="entry_level_squeeze.svg")}
 </section></div></div>"""
 
 def stat_overview():
@@ -938,13 +971,22 @@ PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.htm
 
 def chart_standalone(svg):
     """Self-contained SVG for download (inline light-theme styles; no page CSS). Dot or bar chart."""
-    style = ('<style>.rankchart{font-family:ui-monospace,Menlo,monospace}'
+    style = ('<style>.rankchart{font-family:ui-monospace,Menlo,monospace}svg{background:#ffffff}'
              '.grid,.rowguide{stroke:#e7e4dd}.rowguide{opacity:.6}'
              '.meanline{stroke:#8a8a8a;stroke-dasharray:3 3}.meanlab,.tick{fill:#6d6a63;font-size:9px}'
              '.dname{fill:#3f3d39;font-size:10px}.dname.se{fill:#0072b2;font-weight:700}'
              '.dot{fill:#9a9a9a}.dot.se{fill:#0072b2}.bar{fill:#9a9a9a}.bar.se{fill:#0072b2}'
              '.dval{fill:#6d6a63;font-size:9.5px}.dval.se{fill:#0072b2;font-weight:700}'
-             '.ddelta{fill:#6d6a63;font-size:8.5px}</style>')
+             '.ddelta{fill:#6d6a63;font-size:8.5px}'
+             # trend line
+             '.trendarea{fill:#0072b2;opacity:.08}.trendline,.trenddash{fill:none;stroke:#0072b2;stroke-width:2}'
+             '.trenddash{stroke-dasharray:4 3}.trenddot{fill:#0072b2}.trendval{fill:#0072b2;font-size:11px;font-weight:700}'
+             # entry-level squeeze
+             '.sqband{fill:#0072b2;opacity:.10}.sqlo{fill:none;stroke:#9a9a9a;stroke-width:2}'
+             '.sqhi{fill:none;stroke:#0072b2;stroke-width:2.6}.sqdot.lo{fill:#9a9a9a}.sqdot.hi{fill:#0072b2}'
+             '.sqval{font-size:11px;font-weight:700}.sqval.lo{fill:#9a9a9a}.sqval.hi{fill:#0072b2}'
+             # working-conditions dumbbell
+             '.dumb{display:block}.dbtrack{stroke:#d9d5cd;stroke-width:3}.dblo{fill:#9a9a9a}.dbhi{fill:#0072b2}</style>')
     s = svg.replace('<svg class="rankchart', '<svg xmlns="http://www.w3.org/2000/svg" class="rankchart', 1)
     i = s.index(">") + 1
     return s[:i] + style + s[i:]
@@ -983,15 +1025,22 @@ def emit_data(out):
     with (d / "ai_in_demand_trend.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["year", "ai_ad_share_pct"])
         for y, v in zip(t["years"], t["values"]): w.writerow([y, v])
+    (d / "ai_in_demand_trend.svg").write_text(chart_standalone(trend_svg(t)), encoding="utf-8")
     with (d / "entry_level_squeeze.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["year", "entry_level_share_least_exposed_pct", "entry_level_share_most_exposed_pct", "gap_pp"])
         for r in ELS["series"]: w.writerow([r["year"], r["low"], r["high"], r["gap"]])
+    (d / "entry_level_squeeze.svg").write_text(chart_standalone(squeeze_svg(ELS)), encoding="utf-8")
+    (d / "working_conditions.svg").write_text(
+        chart_standalone(dumbbell_svg(WORKCOND["conditions"], "all", active=True)), encoding="utf-8")
     with (d / "swe_adoption.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["firm_size", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])
         for r in SWEAD["sizes"]:
             w.writerow([r["name"], r["adoption"], SWEAD["meta"]["year"], r.get("prev", ""), SWEAD["meta"]["prev_year"]])
+    _swxmax = 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1)
+    (d / "swe_adoption.svg").write_text(
+        chart_standalone(barplot(SWEAD["sizes"], 0, _swxmax, 0, "adoption", ".0f")), encoding="utf-8")
 
 def build():
     if OUT.exists(): shutil.rmtree(OUT)

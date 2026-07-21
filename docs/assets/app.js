@@ -215,3 +215,42 @@ window.drawTrend();
   }, { rootMargin: "-22% 0px -70% 0px" });
   secs.forEach(function (s) { io.observe(s); });
 })();
+
+/* Figure download: rasterise a static SVG to a PNG in the browser (no build dependency),
+   so any figure can be dropped straight into a Word / Google / text document. */
+(function () {
+  function download(href, name) {
+    var a = document.createElement("a");
+    a.href = href; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  }
+  document.querySelectorAll(".figpng").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var url = btn.dataset.svg;
+      var label = btn.textContent; btn.textContent = "…";
+      fetch(url).then(function (r) { return r.text(); }).then(function (svg) {
+        var vb = (svg.match(/viewBox="([\d.\s-]+)"/) || [])[1];
+        var w = 640, h = 300;
+        if (vb) { var p = vb.trim().split(/\s+/).map(Number); w = p[2]; h = p[3]; }
+        var scale = 2;                                   // crisp on-screen and in print
+        var img = new Image();
+        var blobUrl = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+        img.onload = function () {
+          var c = document.createElement("canvas");
+          c.width = w * scale; c.height = h * scale;
+          var ctx = c.getContext("2d");
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, c.width, c.height);
+          ctx.drawImage(img, 0, 0, c.width, c.height);
+          URL.revokeObjectURL(blobUrl);
+          c.toBlob(function (png) {
+            var pngUrl = URL.createObjectURL(png);
+            download(pngUrl, url.split("/").pop().replace(".svg", ".png"));
+            setTimeout(function () { URL.revokeObjectURL(pngUrl); }, 1000);
+            btn.textContent = label;
+          }, "image/png");
+        };
+        img.onerror = function () { btn.textContent = label; };
+        img.src = blobUrl;
+      }).catch(function () { btn.textContent = label; });
+    });
+  });
+})();
