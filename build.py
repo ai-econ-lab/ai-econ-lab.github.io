@@ -576,29 +576,33 @@ def dotplot(cc):
     p.append("</svg>")
     return "".join(p)
 
-def barplot(data, mean, xmax, hy=0):
-    """Server-rendered ranked horizontal bar chart (share with a meaningful zero). Sweden highlighted."""
+def barplot(data, eu_avg, xmax, hy=0):
+    """Ranked horizontal bar chart (share; meaningful zero). Bar = latest year; a muted delta
+    shows the year-on-year change from the previous wave. Sweden highlighted."""
     rows = data; n = len(rows); hy = int(hy)
-    W, rowh, top, bot = 640, 15, 16, 34
+    W, rowh, top, bot = 640, 15, 18, 34
     H = top + n * rowh + bot
-    x0, x1 = 140, 540
+    x0, x1 = 140, 528
     X = lambda v: x0 + v / xmax * (x1 - x0)
+    step = 10 if xmax > 25 else 5
     p = [f'<svg class="rankchart barplot" viewBox="0 0 {W} {H}" role="img" '
          f'aria-label="Ranked bar chart of firms using AI by country, {n} countries, Sweden highlighted">']
-    for t in range(0, int(xmax) + 1, 5):
+    for t in range(0, int(xmax) + 1, step):
         gx = X(t)
         p.append(f'<line class="grid" x1="{gx:.1f}" y1="{top}" x2="{gx:.1f}" y2="{top+n*rowh}"/>')
-        p.append(f'<text class="tick" x="{gx:.1f}" y="{H-14}" text-anchor="middle">{t}%</text>')
-    mx = X(mean)
-    p.append(f'<line class="meanline" x1="{mx:.1f}" y1="{top-1}" x2="{mx:.1f}" y2="{top+n*rowh}"/>')
-    p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-4}" text-anchor="middle">EU avg</text>')
+        p.append(f'<text class="tick" x="{gx:.1f}" y="{H-13}" text-anchor="middle">{t}%</text>')
+    if eu_avg:
+        mx = X(eu_avg)
+        p.append(f'<line class="meanline" x1="{mx:.1f}" y1="{top-1}" x2="{mx:.1f}" y2="{top+n*rowh}"/>')
+        p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-5}" text-anchor="middle">EU {eu_avg:g}</text>')
     for i, r in enumerate(rows):
         y = top + i * rowh; se = " se" if r["is_se"] else ""
-        bw = max(1.5, X(r["adoption"]) - x0)
         nm = h(r["name"]) + (f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else "")
         p.append(f'<text class="dname{se}" x="128" y="{y+rowh*0.72:.1f}" text-anchor="end">{nm}</text>')
-        p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{bw:.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
-        p.append(f'<text class="dval{se}" x="600" y="{y+rowh*0.72:.1f}" text-anchor="end">{r["adoption"]:.1f}</text>')
+        p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(r["adoption"])-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
+        p.append(f'<text class="dval{se}" x="574" y="{y+rowh*0.72:.1f}" text-anchor="end">{r["adoption"]:.0f}</text>')
+        if r.get("prev") is not None:
+            p.append(f'<text class="ddelta" x="632" y="{y+rowh*0.72:.1f}" text-anchor="end">+{r["adoption"]-r["prev"]:.0f}</text>')
     p.append("</svg>")
     return "".join(p)
 
@@ -622,11 +626,13 @@ def cross_country_section():
     Swedish register data give the depth this public-data view cannot; the two are complements.</p>
 
   <div class="grouphdr" style="margin-top:36px">And how widely have firms actually adopted AI?</div>
-  <p class="secintro" style="margin-top:6px">Exposure is potential; adoption is what firms have done so far. The share of
-    enterprises using at least one AI technology, <b>{h(amt['year'])}</b> (a few countries: latest available, marked ’YY);
-    Sweden marked. The two need not line up: a workforce can be highly exposed while adoption is still early.</p>
-  <div class="dotwrap">{barplot(ad['countries'], amt['mean'], xmax, amt['year'])}</div>
-  {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} · {amt['unit']}", "cross_country_adoption.svg")}
+  <p class="secintro" style="margin-top:6px">Exposure is potential; adoption is what firms have done. The share of enterprises
+    using at least one AI technology (<b>{h(amt['year'])}</b>, Eurostat), with the year-on-year change since
+    {h(amt['prev_year'])} shown as <b>+pp</b>. Adoption is climbing fast: the EU average rose from 8% in 2023 to
+    {h(amt['eu_avg'])}% in {h(amt['year'])}. Sweden is among the leaders on both counts, though exposure and adoption
+    need not line up across countries.</p>
+  <div class="dotwrap">{barplot(ad['countries'], amt['eu_avg'], xmax, amt['year'])}</div>
+  {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg")}
 </section></div></div>"""
 
 def monitor():
@@ -779,7 +785,8 @@ def chart_standalone(svg):
              '.meanline{stroke:#8a8a8a;stroke-dasharray:3 3}.meanlab,.tick{fill:#6d6a63;font-size:9px}'
              '.dname{fill:#3f3d39;font-size:10px}.dname.se{fill:#0072b2;font-weight:700}'
              '.dot{fill:#9a9a9a}.dot.se{fill:#0072b2}.bar{fill:#9a9a9a}.bar.se{fill:#0072b2}'
-             '.dval{fill:#6d6a63;font-size:9.5px}.dval.se{fill:#0072b2;font-weight:700}</style>')
+             '.dval{fill:#6d6a63;font-size:9.5px}.dval.se{fill:#0072b2;font-weight:700}'
+             '.ddelta{fill:#6d6a63;font-size:8.5px}</style>')
     s = svg.replace('<svg class="rankchart', '<svg xmlns="http://www.w3.org/2000/svg" class="rankchart', 1)
     i = s.index(">") + 1
     return s[:i] + style + s[i:]
@@ -793,11 +800,12 @@ def emit_data(out):
         for r in CROSS["countries"]: w.writerow([r["code"], r["name"], r["exposure"], r["coverage"], r["year"]])
     (d / "cross_country.svg").write_text(chart_standalone(dotplot(CROSS)), encoding="utf-8")
     with (d / "cross_country_adoption.csv").open("w", newline="", encoding="utf-8") as f:
-        w = _csv.writer(f); w.writerow(["code", "country", "pct_enterprises_using_ai", "year"])
-        for r in ADOPT["countries"]: w.writerow([r["code"], r["name"], r["adoption"], r["year"]])
+        w = _csv.writer(f); w.writerow(["code", "country", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])
+        for r in ADOPT["countries"]:
+            w.writerow([r["code"], r["name"], r["adoption"], r["year"], r.get("prev", ""), ADOPT["meta"]["prev_year"]])
     _xmax = 5 * (int(max(r["adoption"] for r in ADOPT["countries"]) // 5) + 1)
     (d / "cross_country_adoption.svg").write_text(
-        chart_standalone(barplot(ADOPT["countries"], ADOPT["meta"]["mean"], _xmax, ADOPT["meta"]["year"])), encoding="utf-8")
+        chart_standalone(barplot(ADOPT["countries"], ADOPT["meta"]["eu_avg"], _xmax, ADOPT["meta"]["year"])), encoding="utf-8")
     with (d / "daioe_most_least.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["occupation", "daioe_genai_score", "group", "daioe_version"])
         for it in DAIOE_EXP["most"]:  w.writerow([it["occ"], it["score"], "most_exposed", f"v{DAIOE_EXP['year']}"])

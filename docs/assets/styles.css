@@ -333,6 +333,7 @@ footer{background:var(--navy);color:var(--navy-ink);margin-top:20px}
 .dotplot .dot.se{fill:var(--c1)}
 .barplot .bar{fill:var(--muted);opacity:.55}
 .barplot .bar.se{fill:var(--c1);opacity:1}
+.rankchart .ddelta{fill:var(--muted);font-size:8.5px}
 
 /* figure download footer (item 10) */
 .figfoot{display:flex;flex-wrap:wrap;align-items:center;gap:7px 14px;margin-top:14px;

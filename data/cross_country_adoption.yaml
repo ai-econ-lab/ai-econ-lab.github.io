@@ -1,43 +1,45 @@
-# Cross-country firm AI-adoption — Monitor View B. Eurostat E_AI_TANY (enterprises using
-# at least one AI technology, % of enterprises 10+ employed). Public data.
+# Cross-country firm AI-adoption — Monitor View B. Auto-refreshed from Eurostat isoc_eb_ai
+# (E_AI_TANY: enterprises using >=1 AI technology, % of enterprises 10+ employed). Freshest wave.
+# Rerun scripts/refresh_cross_country.py to update, then build.py. DO NOT hand-edit.
 meta:
   indicator: "Enterprises using at least one AI technology"
   unit: "% of enterprises (10+ employed)"
-  source: "Eurostat, isoc_eb_ain2 (E_AI_TANY)"
-  year: 2023
-  mean: 7.7
+  source: "Eurostat, isoc_eb_ai (E_AI_TANY)"
+  year: 2025
+  prev_year: 2024
+  eu_avg: 19.9
   n_countries: 33
 countries:
-  - {code: "DK", name: "Denmark", adoption: 15.17, year: 2023, is_se: false}
-  - {code: "FI", name: "Finland", adoption: 15.1, year: 2023, is_se: false}
-  - {code: "LU", name: "Luxembourg", adoption: 14.45, year: 2023, is_se: false}
-  - {code: "NL", name: "Netherlands", adoption: 14.1, year: 2023, is_se: false}
-  - {code: "BE", name: "Belgium", adoption: 13.81, year: 2023, is_se: false}
-  - {code: "MT", name: "Malta", adoption: 13.17, year: 2023, is_se: false}
-  - {code: "DE", name: "Germany", adoption: 11.55, year: 2023, is_se: false}
-  - {code: "SI", name: "Slovenia", adoption: 11.37, year: 2023, is_se: false}
-  - {code: "AT", name: "Austria", adoption: 10.79, year: 2023, is_se: false}
-  - {code: "SE", name: "Sweden", adoption: 10.37, year: 2023, is_se: true}
-  - {code: "ES", name: "Spain", adoption: 9.18, year: 2023, is_se: false}
-  - {code: "NO", name: "Norway", adoption: 9.17, year: 2023, is_se: false}
-  - {code: "IE", name: "Ireland", adoption: 8.01, year: 2023, is_se: false}
-  - {code: "HR", name: "Croatia", adoption: 7.89, year: 2023, is_se: false}
-  - {code: "PT", name: "Portugal", adoption: 7.86, year: 2023, is_se: false}
-  - {code: "SK", name: "Slovakia", adoption: 7.04, year: 2023, is_se: false}
-  - {code: "CZ", name: "Czechia", adoption: 5.9, year: 2023, is_se: false}
-  - {code: "FR", name: "France", adoption: 5.88, year: 2023, is_se: false}
-  - {code: "ME", name: "Montenegro", adoption: 5.61, year: 2023, is_se: false}
-  - {code: "TR", name: "Turkey", adoption: 5.51, year: 2023, is_se: false}
-  - {code: "BA", name: "Bosnia & Herz.", adoption: 5.34, year: 2023, is_se: false}
-  - {code: "EE", name: "Estonia", adoption: 5.19, year: 2023, is_se: false}
-  - {code: "IT", name: "Italy", adoption: 5.05, year: 2023, is_se: false}
-  - {code: "LT", name: "Lithuania", adoption: 4.86, year: 2023, is_se: false}
-  - {code: "CY", name: "Cyprus", adoption: 4.67, year: 2023, is_se: false}
-  - {code: "LV", name: "Latvia", adoption: 4.53, year: 2023, is_se: false}
-  - {code: "EL", name: "Greece", adoption: 3.98, year: 2023, is_se: false}
-  - {code: "HU", name: "Hungary", adoption: 3.68, year: 2023, is_se: false}
-  - {code: "AL", name: "Albania", adoption: 3.67, year: 2021, is_se: false}
-  - {code: "PL", name: "Poland", adoption: 3.67, year: 2023, is_se: false}
-  - {code: "BG", name: "Bulgaria", adoption: 3.62, year: 2023, is_se: false}
-  - {code: "RS", name: "Serbia", adoption: 1.82, year: 2023, is_se: false}
-  - {code: "RO", name: "Romania", adoption: 1.51, year: 2023, is_se: false}
+  - {code: "DK", name: "Denmark", adoption: 42.0, year: 2025, prev: 27.6, is_se: false}
+  - {code: "FI", name: "Finland", adoption: 37.8, year: 2025, prev: 24.4, is_se: false}
+  - {code: "SE", name: "Sweden", adoption: 35.0, year: 2025, prev: 25.1, is_se: true}
+  - {code: "BE", name: "Belgium", adoption: 34.5, year: 2025, prev: 24.7, is_se: false}
+  - {code: "LU", name: "Luxembourg", adoption: 33.6, year: 2025, prev: 23.7, is_se: false}
+  - {code: "NL", name: "Netherlands", adoption: 33.2, year: 2025, prev: 23.1, is_se: false}
+  - {code: "AT", name: "Austria", adoption: 29.9, year: 2025, prev: 20.3, is_se: false}
+  - {code: "NO", name: "Norway", adoption: 28.9, year: 2025, prev: 20.8, is_se: false}
+  - {code: "DE", name: "Germany", adoption: 26.0, year: 2025, prev: 19.8, is_se: false}
+  - {code: "EE", name: "Estonia", adoption: 23.4, year: 2025, prev: 13.9, is_se: false}
+  - {code: "SI", name: "Slovenia", adoption: 21.6, year: 2025, prev: 20.9, is_se: false}
+  - {code: "MT", name: "Malta", adoption: 21.5, year: 2025, prev: 17.3, is_se: false}
+  - {code: "LT", name: "Lithuania", adoption: 21.3, year: 2025, prev: 8.8, is_se: false}
+  - {code: "ES", name: "Spain", adoption: 20.3, year: 2025, prev: 11.3, is_se: false}
+  - {code: "IE", name: "Ireland", adoption: 19.6, year: 2025, prev: 14.9, is_se: false}
+  - {code: "FR", name: "France", adoption: 18.2, year: 2025, prev: 9.9, is_se: false}
+  - {code: "SK", name: "Slovakia", adoption: 18.0, year: 2025, prev: 10.8, is_se: false}
+  - {code: "CZ", name: "Czechia", adoption: 17.6, year: 2025, prev: 11.3, is_se: false}
+  - {code: "IT", name: "Italy", adoption: 16.4, year: 2025, prev: 8.2, is_se: false}
+  - {code: "HR", name: "Croatia", adoption: 15.2, year: 2025, prev: 11.8, is_se: false}
+  - {code: "LV", name: "Latvia", adoption: 12.2, year: 2025, prev: 8.8, is_se: false}
+  - {code: "PT", name: "Portugal", adoption: 11.5, year: 2025, prev: 8.6, is_se: false}
+  - {code: "BA", name: "Bosnia & Herz.", adoption: 10.8, year: 2025, prev: 6.4, is_se: false}
+  - {code: "HU", name: "Hungary", adoption: 10.4, year: 2025, prev: 7.4, is_se: false}
+  - {code: "RS", name: "Serbia", adoption: 10.1, year: 2025, prev: 7.0, is_se: false}
+  - {code: "ME", name: "Montenegro", adoption: 10.1, year: 2025, prev: 7.9, is_se: false}
+  - {code: "CY", name: "Cyprus", adoption: 9.3, year: 2025, prev: 7.9, is_se: false}
+  - {code: "AL", name: "Albania", adoption: 9.0, year: 2025, prev: 8.9, is_se: false}
+  - {code: "EL", name: "Greece", adoption: 8.9, year: 2025, prev: 9.8, is_se: false}
+  - {code: "BG", name: "Bulgaria", adoption: 8.6, year: 2025, prev: 6.5, is_se: false}
+  - {code: "PL", name: "Poland", adoption: 8.4, year: 2025, prev: 5.9, is_se: false}
+  - {code: "TR", name: "Turkey", adoption: 7.4, year: 2025, prev: 4.4, is_se: false}
+  - {code: "RO", name: "Romania", adoption: 5.2, year: 2025, prev: 3.1, is_se: false}
