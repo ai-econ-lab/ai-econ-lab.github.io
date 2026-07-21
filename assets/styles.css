@@ -318,4 +318,19 @@ footer{background:var(--navy);color:var(--navy-ink);margin-top:20px}
 .foot .brand{display:flex;align-items:center;gap:12px}   /* restore lockup (beats .foot a{display:block}) */
 .foot .brand .brandtext small{color:#ffffff9c}
 .footend{border-top:1px solid #ffffff1f;padding:16px 0;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#ffffff8c}
+/* Collapsible year / "previous" toggles (news years, previous seminars) */
+details.yearblock{border-top:1px solid var(--border)}
+details.yearblock>summary{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--blue);cursor:pointer;padding:13px 0;list-style:none;display:inline-flex;align-items:center;gap:9px}
+details.yearblock>summary::-webkit-details-marker{display:none}
+details.yearblock>summary::after{content:"＋";font-family:var(--mono);font-size:13px}
+details.yearblock[open]>summary::after{content:"－"}
+
+/* Conference block: info on the left, Katrinelund photo on the right */
+.conf2028{display:grid;grid-template-columns:1fr 380px;gap:30px;align-items:start;margin-top:6px}
+@media(max-width:760px){.conf2028{grid-template-columns:1fr}}
+.confphoto{margin:0}
+.confphoto img{width:100%;border-radius:12px;border:1px solid var(--border);display:block}
+.confphoto figcaption{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}

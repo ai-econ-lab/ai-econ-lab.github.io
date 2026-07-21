@@ -8,7 +8,7 @@ engine and no third-party deps beyond PyYAML — so it runs the same on your Mac
 and in CI. Edit the YAML, run `python3 build.py`, commit, push.
 """
 from pathlib import Path
-import shutil, yaml, html, re, unicodedata, hashlib
+import shutil, yaml, html, re, unicodedata, hashlib, datetime
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
@@ -28,6 +28,27 @@ NEWS     = load("news.yaml")
 OUT = ROOT / SITE["build"]["out"]
 BASE = SITE["brand"]["base_url"].rstrip("/")
 h = lambda s: html.escape(str(s), quote=True)   # escape plain-text (titles, names)
+
+# Prose helper: escape text but turn [label](url) into a link (for about paragraphs etc.).
+_MDLINK = re.compile(r'\[([^\]]+)\]\((https?://[^)\s]+)\)')
+def linkify(s):
+    out, i = [], 0
+    for m in _MDLINK.finditer(s):
+        out.append(h(s[i:m.start()]))
+        out.append(f'<a href="{h(m.group(2))}">{h(m.group(1))}</a>')
+        i = m.end()
+    out.append(h(s[i:]))
+    return "".join(out)
+
+# Anti-spam e-mail: return (user, domain, obfuscated-display). Rendered with data-attrs;
+# app.js assembles a real mailto at runtime so scrapers never see a live address.
+def email_bits(addr):
+    u, d = addr.split("@")
+    return u, d, f'{u} (at) {d.replace(".", " (dot) ")}'
+
+def assetv(rel):   # cache-busting token for a file under the repo root
+    p = ROOT / rel
+    return hashlib.md5(p.read_bytes()).hexdigest()[:8] if p.exists() else "0"
 
 # ── shared chrome ────────────────────────────────────────────────────────────
 def masthead(active):
@@ -135,10 +156,11 @@ def home():
   <div>
     <div class="eyebrow"><span class="dot"></span> A multi-country, multi-disciplinary research lab</div>
     <h1 class="title">We measure how <em>artificial intelligence</em> is reshaping the world of work.</h1>
-    <p class="lede">An economics-led lab at Örebro University and RATIO, part of the WASP-HS AISCAF cluster.
+    <p class="lede">An economics-led lab at Örebro University and RATIO, part of the
+      <a href="https://wasp-hs.org">WASP-HS</a> cluster <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>.
       Our flagship public good, the <b>AIEL Monitor</b>, tracks how AI is moving through the Swedish
       labour market, openly and honestly, updated as the data arrive.</p>
-    <div class="cta-row"><a class="btn primary" href="/monitor/">Open AI in Demand →</a>
+    <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
       <a class="btn ghost" href="/monitor/#method">How we measure it</a></div>
     <div class="affil">{affils}</div>
   </div>
@@ -169,16 +191,17 @@ def home():
       <p>Sweden at register depth; Denmark, Portugal and Germany through partners; 30 countries via EU-LFS for
         external validity.</p></div>
     <div class="pillar"><div class="n">03 · LENS</div><h3>Multi-disciplinary</h3>
-      <p>Economics, sociology, business administration and computer science, inside the WASP-HS AISCAF cluster
-        and its 10-university network.</p></div>
+      <p>Economics, sociology, business administration and computer science, inside the
+        <a href="https://wasp-hs.org">WASP-HS</a> cluster <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>,
+        co-led with Uppsala and Stockholm.</p></div>
     <div class="pillar"><div class="n">04 · OUTPUT</div><h3>Open public goods</h3>
-      <p>Peer-reviewed research, plus citable, versioned public tools: the AI in Demand monitor and the DAIOE
+      <p>Peer-reviewed research, plus citable, versioned public tools: the AIEL Monitor and the DAIOE
         exposure measure and Explorer.</p></div>
   </div>
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
-  <p class="kicker">Flagship · AI in Demand</p>
+  <p class="kicker">Flagship · The AIEL Monitor</p>
   <h2 class="sec">Four things the Swedish job market is telling us right now.</h2>
   <p class="secintro">Every figure is measured from the ad text with a versioned, citable term list. Where
     something is not yet measured, we say so.</p>
@@ -412,54 +435,74 @@ def events():
     s = SEMINARS; ser = s["series"]
     fmt = "".join(f"<li>{h(x)}</li>" for x in ser["format"])
     def surname(name): return name.split("&")[0].strip().split()[-1] if name and name != "TBD" else name
-    seasons = ""
-    for season in s["seasons"]:
-        rows = ""
-        for e in season["seminars"]:
-            spk_url = next((l["url"] for l in e.get("links", []) if l["label"] != "Paper"), "")
-            paper_url = next((l["url"] for l in e.get("links", []) if l["label"] == "Paper"), "")
-            speaker = h(e["speaker"])
-            if spk_url:   # link the presenter's own name (surname), not a "Speaker" chip
-                speaker = speaker.replace(h(surname(e["speaker"])), f'<a href="{spk_url}">{h(surname(e["speaker"]))}</a>', 1)
-            aff = f' <span class="saff">{h(e["affil"])}</span>' if e.get("affil") else ""
-            if e["title"] and e["title"] != "TBD":
-                title = f'<a href="{paper_url}">{h(e["title"])}</a>' if paper_url else h(e["title"])
-            else:
-                title = '<span class="tbd">To be announced</span>'
-            rows += (f'<div class="semrow"><span class="yr tnum">{h(e["date"])}</span>'
-                     f'<span><span class="rt">{speaker}{aff}</span><span class="ra">{title}</span></span></div>')
-        seasons += f'<div class="grouphdr">{h(season["name"])}</div><div class="rows semlist">{rows}</div>'
+    def sem_row(e):
+        spk_url = next((l["url"] for l in e.get("links", []) if l["label"] != "Paper"), "")
+        paper_url = next((l["url"] for l in e.get("links", []) if l["label"] == "Paper"), "")
+        speaker = h(e["speaker"])
+        if spk_url:   # link the presenter's own name (surname), not a "Speaker" chip
+            speaker = speaker.replace(h(surname(e["speaker"])), f'<a href="{spk_url}">{h(surname(e["speaker"]))}</a>', 1)
+        aff = f' <span class="saff">{h(e["affil"])}</span>' if e.get("affil") else ""
+        if e["title"] and e["title"] != "TBD":
+            title = f'<a href="{paper_url}">{h(e["title"])}</a>' if paper_url else h(e["title"])
+        else:
+            title = '<span class="tbd">To be announced</span>'
+        return (f'<div class="semrow"><span class="yr tnum">{h(e["date"])}</span>'
+                f'<span><span class="rt">{speaker}{aff}</span><span class="ra">{title}</span></span></div>')
+    # Only forthcoming seminars are shown; the rest go behind a toggle (ISO dates sort chronologically).
+    today = datetime.date.today().isoformat()
+    allsem = [e for season in s["seasons"] for e in season["seminars"]]
+    upcoming = sorted((e for e in allsem if e["date"] >= today), key=lambda e: e["date"])
+    past = sorted((e for e in allsem if e["date"] < today), key=lambda e: e["date"], reverse=True)
+    up_html = "".join(sem_row(e) for e in upcoming) or '<p class="psub">No seminars scheduled just now; the series resumes after the summer.</p>'
+    prev_block = (f'<details class="yearblock"><summary>Previous seminars ({len(past)})</summary>'
+                  f'<div class="rows semlist">{"".join(sem_row(e) for e in past)}</div></details>') if past else ""
     def cfp_link(c):
         out = ""
         if c.get("cfp"): out += f' <a class="lchip" href="{c["cfp"]}">Call for papers</a>'
         if c.get("programme"): out += f' <a class="lchip" href="{c["programme"]}">Programme</a>'
         return out
-    past = ""
+    past_conf = ""
     for c in s["conferences"]["past"]:
-        past += (f'<div class="confentry"><div class="confhd"><span class="confedition">{h(c["edition"])} conference</span>'
+        past_conf += (f'<div class="confentry"><div class="confhd"><span class="confedition">{h(c["edition"])} conference</span>'
                  f'<span class="yr tnum">{h(c["when"])}</span></div>'
                  f'<div class="conftitle">{h(c["title"])}</div>'
                  f'<div class="confmeta">{h(c["where"])}. {h(c["note"])}{cfp_link(c)}</div></div>')
     nx = s["conferences"]["next"]
     nxdetails = "".join(f"<li>{h(x)}</li>" for x in nx["details"])
+    kv = assetv("assets/conferences/katrinelund.jpg")
     body = f"""<div class="wrap"><div class="pagehead">
-  <p class="kicker">Events</p><h2 class="sec">Seminars &amp; conferences</h2>
-  <p class="secintro">{h(ser['intro'])}</p></div></div>
+  <p class="kicker">Events</p><h2 class="sec">Conference &amp; seminars</h2>
+  <p class="secintro">The lab runs two things. Its flagship is an annual, interdisciplinary conference on AI and
+    white-collar work, held since 2020 at Katrinelund on Lake Hjälmaren near Örebro. Alongside it runs a monthly
+    online brown-bag seminar series, part of <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>.</p></div></div>
 
 <div class="rule" id="conference-2028"><div class="wrap"><section style="padding-top:20px">
-  <p class="kicker">Next conference · {h(nx['edition'])} AIEL conference</p>
+  <p class="kicker">Flagship · next conference · {h(nx['edition'])} AIEL conference</p>
   <h2 class="sec">{h(nx['title'])}.</h2>
-  <p class="secintro">{h(nx['when'])} · {h(nx['where'])}. Hosted by {h(nx['hosts'])}. Organisers: {h(nx['organisers'])}.</p>
-  <ul class="reslist" style="margin-top:12px;max-width:70ch">{nxdetails}</ul>
+  <div class="conf2028">
+    <div>
+      <p class="secintro">{h(nx['when'])} · {h(nx['where'])}. Hosted by {h(nx['hosts'])}. Organisers: {h(nx['organisers'])}.</p>
+      <ul class="reslist" style="margin-top:12px">{nxdetails}</ul>
+    </div>
+    <figure class="confphoto">
+      <img src="/assets/conferences/katrinelund.jpg?v={kv}" alt="Katrinelund conference venue on Lake Hjälmaren near Örebro" loading="lazy">
+      <figcaption>Katrinelund, on Lake Hjälmaren near Örebro, has hosted the conference since 2020.</figcaption>
+    </figure>
+  </div>
   <div class="grouphdr" style="margin-top:30px">Earlier conferences</div>
-  {past}
+  {past_conf}
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">Seminar series</p>
   <h2 class="sec">{h(ser['title'])}.</h2>
-  <div class="two" style="grid-template-columns:1.5fr 1fr;align-items:start;margin-top:8px">
-    <div>{seasons}</div>
+  <p class="secintro" style="max-width:72ch">{h(ser['intro'])}</p>
+  <div class="two" style="grid-template-columns:1.5fr 1fr;align-items:start;margin-top:14px">
+    <div>
+      <div class="grouphdr">Upcoming</div>
+      <div class="rows semlist">{up_html}</div>
+      {prev_block}
+    </div>
     <div class="card"><div class="charttitle" style="margin-bottom:8px">Attending</div>
       <ul class="reslist">{fmt}</ul>
       <p style="margin:12px 0 0"><a class="btn ghost" style="font-size:12px" href="{ser['zoom']}">Join on Zoom →</a></p>
@@ -467,18 +510,23 @@ def events():
   </div>
 </section></div></div>"""
     return shell(f"Events · {SITE['brand']['name']}",
-                 "The AIEL conference series and the monthly brown-bag seminar series (part of WASP-HS AISCAF).",
+                 "The AIEL conference on AI and white-collar work, and the monthly brown-bag seminar series (part of AISCAF).",
                  "/events/", body)
 
 def news():
     blocks = ""
-    for yr in NEWS["years"]:
+    for i, yr in enumerate(NEWS["years"]):   # newest year first; only it is open
         items = "".join(f'<div class="nrow"><span class="yr tnum">{h(it["date"])}</span>'
                         f'<span class="ntext">{it["text"]}</span></div>' for it in yr["items"])
-        blocks += f'<div class="grouphdr">{h(yr["year"])}</div><div class="rows">{items}</div>'
+        if i == 0:
+            blocks += f'<div class="grouphdr">{h(yr["year"])}</div><div class="rows">{items}</div>'
+        else:
+            blocks += (f'<details class="yearblock"><summary>{h(yr["year"])}</summary>'
+                       f'<div class="rows">{items}</div></details>')
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">News</p><h2 class="sec">What the lab has been up to</h2>
-  <p class="secintro">Publications, media, grants, conferences and people, since the lab was initiated in 2019.</p></div></div>
+  <p class="secintro">Publications, media, grants, conferences and people, since the lab was initiated in 2019.
+    The current year is shown; select any earlier year to expand it.</p></div></div>
 <div class="wrap"><section style="padding-top:8px">{blocks}</section></div>"""
     return shell(f"News · {SITE['brand']['name']}",
                  "News and history of the AI-Econ Lab since 2019: publications, media, grants and events.",
@@ -576,8 +624,11 @@ def monitor():
 
 def about():
     c = SITE["contact"]; bk = SITE["book"]
-    labdesc = "".join(f"<p>{h(p)}</p>" for p in SITE["about_paras"])
+    eu, ed, eobf = email_bits(c["email"])
+    labdesc = "".join(f"<p>{linkify(p)}</p>" for p in SITE["about_paras"])
     clinks = "".join(f'<a href="{l["href"]}">{h(l["label"])}</a> ' for l in c.get("links", []))
+    booktitle = f'<a href="{bk["url"]}">{h(bk["title"])}</a>' if bk.get("url") else h(bk["title"])
+    booklink = f' <a class="lchip" href="{bk["url"]}">View the book →</a>' if bk.get("url") else ""
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">About</p><h2 class="sec">An economics-led lab on AI and the future of work</h2></div>
 <section style="padding-top:14px"><div class="prose">
@@ -595,8 +646,8 @@ def about():
 
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">Book</p>
-  <h2 class="sec">{h(bk['title'])}.</h2>
-  <p class="secintro">{h(bk['author'])} · {h(bk['year'])} · {h(bk['publisher'])}. {h(bk['note'])}</p>
+  <h2 class="sec">{booktitle}.</h2>
+  <p class="secintro">{h(bk['author'])} · {h(bk['year'])} · {h(bk['publisher'])}. {h(bk['note'])}{booklink}</p>
 </section></div></div>
 
 <div class="rule" id="contact"><div class="wrap"><section>
@@ -607,7 +658,7 @@ def about():
       <p>{clinks}</p>
     </div>
     <div class="card">
-      <p style="margin:0 0 8px"><span class="lbl">E-mail</span> <a href="mailto:{c['email']}">{h(c['email'])}</a></p>
+      <p style="margin:0 0 8px"><span class="lbl">E-mail</span> <a class="email" data-u="{h(eu)}" data-d="{h(ed)}" data-reveal="keep" href="#contact">{h(eobf)}</a></p>
       <p style="margin:0 0 8px"><span class="lbl">Phone</span> {h(c['phone'])}</p>
       <p style="margin:0"><span class="lbl">Post</span> {h(c['address'])}</p>
     </div>

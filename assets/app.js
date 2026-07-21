@@ -164,3 +164,13 @@ window.drawTrend();
       circles.forEach((c,i) => { c.style.opacity = idx < 0 ? 1 : (i === idx ? 1 : 0.1); c.setAttribute("r", i === idx ? 6 : r); }); };
   }).catch(() => {});
 })();
+
+/* Anti-spam e-mail: assemble the real address at runtime from data-attributes, so the
+   static HTML only ever carries an obfuscated "(at)"/"(dot)" string for scrapers. */
+(function () {
+  document.querySelectorAll("a.email[data-u][data-d]").forEach(function (a) {
+    var addr = a.getAttribute("data-u") + "@" + a.getAttribute("data-d");
+    a.setAttribute("href", "mailto:" + addr);
+    if (a.dataset.reveal !== "keep") a.textContent = addr;
+  });
+})();

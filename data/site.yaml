@@ -27,7 +27,7 @@ registration:
   - '<span class="lv">● LIVE · LEXICAL LAYER</span>'
   - "2025 <b>PROVISIONAL</b>"
 
-affiliations: ["WASP-HS · AISCAF", "10-university network", "Sweden · Denmark · Portugal · Germany"]
+affiliations: ["Örebro University · RATIO", "WASP-HS · AISCAF", "Sweden · Denmark · Portugal · Germany"]
 
 links:
   monitor: "/monitor/"
@@ -49,7 +49,8 @@ footer:
     - title: "The lab"
       links:
         - {label: "About & contact", href: "/about/"}
-        - {label: "WASP-HS AISCAF", href: "https://wasp-hs.org"}
+        - {label: "AISCAF (WASP-HS cluster)", href: "https://www.aiscaf.se/w/ac/"}
+        - {label: "WASP-HS", href: "https://wasp-hs.org"}
         - {label: "Örebro University", href: "https://www.oru.se"}
         - {label: "RATIO", href: "https://ratio.se"}
   contact: "Örebro University, SE-701 82 Örebro, Sweden"
@@ -58,14 +59,15 @@ footer:
 about_paras:
   - "The AI-Econ Lab was initiated in 2019 and is led by associate professor Magnus Lodefalk in cooperation with professor Hildegunn Kyvik-Nordås. A steering group is tied to the lab (Lodefalk, Kyvik-Nordås, Schroeder and Görg)."
   - "The lab is located at Örebro University, a hub for AI development in Sweden, and is part of the university's Center for AI, Robotics and Cybersecurity (ARC). It has two partner institutions, the Ratio Institute and the Swedish Entrepreneurship Forum."
-  - "The lab is also a partner, and Örebro University a node, for the Swedish research cluster on AI, Structural Change and the Future of Work (AISCAF), funded by the Wallenberg AI, Autonomous Systems and Software Program – Humanity and Society (WASP-HS)."
+  - "The lab is also a partner, and Örebro University a node, for the Swedish research cluster on AI, Structural Change and the Future of Work ([AISCAF](https://www.aiscaf.se/w/ac/)), funded by the Wallenberg AI, Autonomous Systems and Software Program – Humanity and Society ([WASP-HS](https://wasp-hs.org)). AISCAF is co-led with Uppsala University and Stockholm University."
 
 book:
   title: "Artificial Intelligence and Work"
   author: "Magnus Lodefalk"
   year: 2024
   publisher: "Ratio Institute"
-  note: "A book on AI and working life (Swedish; English version pending). During autumn 2026 it becomes a living, updatable source linked to the Monitor."
+  url: "https://www.adlibris.com/se/bok/artificiell-intelligens-och-jobben-9789180598750"
+  note: "A book on AI and working life (in Swedish, as Artificiell intelligens och jobben; English version pending). During autumn 2026 it becomes a living, updatable source linked to the Monitor."
 
 contact:
   email: "magnus.lodefalk@oru.se"

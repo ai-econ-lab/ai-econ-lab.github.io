@@ -11,7 +11,7 @@ series:
     - "12:00–13:00 CET (12:30–13:30 from autumn 2026)"
     - "20–30 minutes presentation, then Q&A"
     - "Slots by invitation, first-come-first-served"
-  contact: "Magnus Lodefalk, firstname.surname[at]oru.se"
+  contact: "Magnus Lodefalk, firstname.surname (at) oru (dot) se"
   zoom: "https://oru-se.zoom.us/j/63703049171?pwd=aEx4Z213VDFxT2NDM1dQY2JwQ3ZtUT09"
 
 # Seasons, newest first. Each seminar: date, speaker, affil, title, desc (optional), links[{label,url}].
@@ -77,7 +77,7 @@ conferences:
     hosts: "AI-Econ Lab · Örebro University · Ratio · WASP-HS AISCAF"
     organisers: "Lodefalk, Kyvik-Nordås, Längkvist, Schroeder, Görg"
     details:
-      - "Call for papers expected September 2027; abstracts (max 300 words) to ai.econlab.event@gmail.com."
+      - "Call for papers expected September 2027; abstracts (max 300 words) to ai.econlab.event (at) gmail (dot) com."
       - "Deadlines: abstracts 17 Apr 2028, decisions 29 Apr, registration 28 May, papers to discussants 1 Jun."
       - "12 papers; 35-min presentations with a 10-min discussant and 15-min discussion; every presenter also discusses."
       - "Sponsors: Handelsbanken Research Foundations (tbc) and WASP-HS."
