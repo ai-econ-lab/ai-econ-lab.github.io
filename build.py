@@ -179,6 +179,7 @@ def home():
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Line chart: AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div>
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", method_href="/monitor/#method")}
     </div>
   </div>
 </div></div></div>
@@ -544,12 +545,14 @@ def news():
                  "News and history of the AI-Econ Lab since 2019: publications, media, grants and events.",
                  "/news/", body)
 
-def figfooter(csv_name, source, svg_name=None):
-    """Item 10: download + provenance under a figure. Source states DAIOE variant + year."""
+def figfooter(csv_name, source, svg_name=None, method_href=None):
+    """Item 10: download + provenance under a figure. Source states DAIOE variant + year.
+    method_href, when given, appends a link to the fuller method/sources note."""
     dl = f'<a class="figdl" href="/assets/data/{csv_name}" download>↓ Data (CSV)</a>'
     if svg_name:
         dl += f'<a class="figdl" href="/assets/data/{svg_name}" download>↓ Chart (SVG)</a>'
-    return f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span></div>'
+    meth = f'<a class="figml" href="{h(method_href)}">Method &amp; sources →</a>' if method_href else ""
+    return f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span>{meth}</div>'
 
 def dotplot(cc):
     """Server-rendered ranked dot plot (Cleveland) — dots, not bars, since the index is
