@@ -24,6 +24,7 @@ DAIOE_EXP = load("daioe_exposure.yaml")
 NEWS     = load("news.yaml")
 CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
+DEMAND   = load("cross_country_demand.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
 # (see app.js occSearch), so it is NOT embedded here. It auto-tracks the latest DAIOE year.
 
@@ -576,15 +577,15 @@ def dotplot(cc):
     p.append("</svg>")
     return "".join(p)
 
-def barplot(data, eu_avg, xmax, hy=0):
+def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f"):
     """Ranked horizontal bar chart (share; meaningful zero). Bar = latest year; a muted delta
-    shows the year-on-year change from the previous wave. Sweden highlighted."""
+    shows the year-on-year change from the previous wave (when present). Sweden highlighted."""
     rows = data; n = len(rows); hy = int(hy)
     W, rowh, top, bot = 640, 15, 18, 34
     H = top + n * rowh + bot
     x0, x1 = 140, 528
     X = lambda v: x0 + v / xmax * (x1 - x0)
-    step = 10 if xmax > 25 else 5
+    step = 10 if xmax > 25 else 5 if xmax > 12 else 1
     p = [f'<svg class="rankchart barplot" viewBox="0 0 {W} {H}" role="img" '
          f'aria-label="Ranked bar chart of firms using AI by country, {n} countries, Sweden highlighted">']
     for t in range(0, int(xmax) + 1, step):
@@ -597,19 +598,22 @@ def barplot(data, eu_avg, xmax, hy=0):
         p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-5}" text-anchor="middle">EU {eu_avg:g}</text>')
     for i, r in enumerate(rows):
         y = top + i * rowh; se = " se" if r["is_se"] else ""
+        v = r[vkey]
         nm = h(r["name"]) + (f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else "")
         p.append(f'<text class="dname{se}" x="128" y="{y+rowh*0.72:.1f}" text-anchor="end">{nm}</text>')
-        p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(r["adoption"])-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
-        p.append(f'<text class="dval{se}" x="574" y="{y+rowh*0.72:.1f}" text-anchor="end">{r["adoption"]:.0f}</text>')
+        p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
+        p.append(f'<text class="dval{se}" x="574" y="{y+rowh*0.72:.1f}" text-anchor="end">{v:{vfmt}}</text>')
         if r.get("prev") is not None:
-            p.append(f'<text class="ddelta" x="632" y="{y+rowh*0.72:.1f}" text-anchor="end">{r["adoption"]-r["prev"]:+.0f}</text>')
+            p.append(f'<text class="ddelta" x="632" y="{y+rowh*0.72:.1f}" text-anchor="end">{v-r["prev"]:+.0f}</text>')
     p.append("</svg>")
     return "".join(p)
 
 def cross_country_section():
     cc = CROSS; mt = cc["meta"]
     ad = ADOPT; amt = ad["meta"]
+    dm = DEMAND; dmt = dm["meta"]
     xmax = 5 * (int(max(r["adoption"] for r in ad["countries"]) // 5) + 1)  # round up to 5
+    dxmax = int(max(r["share"] for r in dm["countries"])) + 1               # demand share, tight axis
     src = f'DAIOE {mt["variant"]} {mt["daioe_version"]} × Eurostat EU-LFS employment {mt["weight_year"]} (a few countries: latest available, marked ’YY)'
     return f"""<div class="rule" id="across-countries"><div class="wrap"><section>
   <p class="kicker">Module · live · across countries</p>
@@ -633,6 +637,14 @@ def cross_country_section():
     need not line up across countries.</p>
   <div class="dotwrap">{barplot(ad['countries'], amt['eu_avg'], xmax, amt['year'])}</div>
   {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg")}
+
+  <div class="grouphdr" style="margin-top:36px">And how much are employers hiring for AI?</div>
+  <p class="secintro" style="margin-top:6px">The demand side: the share of job postings that require AI skills
+    (<b>{h(dmt['year'])}</b>, {h(dmt['source'])}), Sweden marked. {h(dmt['note_prev'])} This is a separate,
+    international source (Lightcast), so its level is not directly comparable to the lab's own live
+    <a href="#ai-in-demand">AI in Demand</a> measure, which reads Swedish job ads (JobTech).</p>
+  <div class="dotwrap">{barplot(dm['countries'], 0, dxmax, 0, 'share', '.1f')}</div>
+  {figfooter("cross_country_demand.csv", f"{dmt['source']}, {dmt['year']} · {dmt['unit']}", "cross_country_demand.svg")}
 </section></div></div>"""
 
 def monitor():
@@ -806,6 +818,12 @@ def emit_data(out):
     _xmax = 5 * (int(max(r["adoption"] for r in ADOPT["countries"]) // 5) + 1)
     (d / "cross_country_adoption.svg").write_text(
         chart_standalone(barplot(ADOPT["countries"], ADOPT["meta"]["eu_avg"], _xmax, ADOPT["meta"]["year"])), encoding="utf-8")
+    with (d / "cross_country_demand.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f); w.writerow(["country", "pct_job_postings_requiring_ai", "year"])
+        for r in DEMAND["countries"]: w.writerow([r["name"], r["share"], r["year"]])
+    _dxmax = int(max(r["share"] for r in DEMAND["countries"])) + 1
+    (d / "cross_country_demand.svg").write_text(
+        chart_standalone(barplot(DEMAND["countries"], 0, _dxmax, 0, "share", ".1f")), encoding="utf-8")
     with (d / "daioe_most_least.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["occupation", "daioe_genai_score", "group", "daioe_version"])
         for it in DAIOE_EXP["most"]:  w.writerow([it["occ"], it["score"], "most_exposed", f"v{DAIOE_EXP['year']}"])

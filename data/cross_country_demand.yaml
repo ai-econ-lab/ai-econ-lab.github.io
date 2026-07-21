@@ -1,0 +1,36 @@
+# Cross-country AI-in-job-ads (demand side) — Monitor View C. The book's Fig 8, refreshed to the
+# FRESHEST wave: share of job postings requiring AI skills, by country, from the Stanford AI Index
+# 2026 (Lightcast data), 2025. This is a SECONDARY source (not the lab's own JobTech measure, which
+# is Sweden-only), so the level is not directly comparable to the lab's Swedish job-ads figure.
+# Annual source (a report, not an API): to update, download the newest AI Index report PDF and read
+# the "AI job postings (% of all job postings) by select geographic areas" figure, then rebuild.
+meta:
+  indicator: "Share of job postings requiring AI skills"
+  unit: "% of all job postings"
+  source: "Stanford AI Index 2026 (Lightcast)"
+  year: 2025
+  note_prev: "Demand roughly doubled in a year for most countries (Sweden 1.3% in 2024 → 2.8% in 2025)."
+  n_countries: 22
+countries:
+  - {name: "Singapore", share: 4.69, year: 2025, is_se: false}
+  - {name: "Hong Kong", share: 3.48, year: 2025, is_se: false}
+  - {name: "Luxembourg", share: 3.43, year: 2025, is_se: false}
+  - {name: "Spain", share: 3.31, year: 2025, is_se: false}
+  - {name: "Canada", share: 3.00, year: 2025, is_se: false}
+  - {name: "Poland", share: 2.92, year: 2025, is_se: false}
+  - {name: "UAE", share: 2.87, year: 2025, is_se: false}
+  - {name: "Sweden", share: 2.77, year: 2025, is_se: true}
+  - {name: "United States", share: 2.56, year: 2025, is_se: false}
+  - {name: "Chile", share: 2.41, year: 2025, is_se: false}
+  - {name: "United Kingdom", share: 1.93, year: 2025, is_se: false}
+  - {name: "Australia", share: 1.78, year: 2025, is_se: false}
+  - {name: "Switzerland", share: 1.59, year: 2025, is_se: false}
+  - {name: "Mexico", share: 1.38, year: 2025, is_se: false}
+  - {name: "Belgium", share: 1.36, year: 2025, is_se: false}
+  - {name: "Italy", share: 1.33, year: 2025, is_se: false}
+  - {name: "Germany", share: 1.13, year: 2025, is_se: false}
+  - {name: "Netherlands", share: 1.04, year: 2025, is_se: false}
+  - {name: "France", share: 0.99, year: 2025, is_se: false}
+  - {name: "Austria", share: 0.84, year: 2025, is_se: false}
+  - {name: "New Zealand", share: 0.81, year: 2025, is_se: false}
+  - {name: "Croatia", share: 0.38, year: 2025, is_se: false}
