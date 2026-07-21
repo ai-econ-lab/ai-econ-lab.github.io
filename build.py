@@ -209,7 +209,7 @@ def home():
   <div class="tiles">{tiles}</div>
   <div class="two">
     <div class="prod"><div class="tag">The Monitor · public data</div><h3>The AI-Econ Lab Monitor</h3>
-      <p>How AI shows up in the Swedish labour market: AI in Demand (live), the Occupations Explorer (live), and
+      <p>How AI shows up in the labour market: AI in Demand (live), the Occupations Explorer (live), AI exposure across countries (live), and
         modules on adoption, augmentation and barriers in development.</p>
       <a class="go" href="/monitor/">Open the monitor →</a></div>
     <div class="prod"><div class="tag">The measure · open &amp; versioned</div><h3>DAIOE</h3>
@@ -638,7 +638,7 @@ def monitor():
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">What the monitor tracks</p>
   <h2 class="sec">Several views on AI in the Swedish labour market.</h2>
-  <p class="secintro">Two modules are live today; more are in development. Everything runs on public data, so it can be
+  <p class="secintro">Three modules are live today; more are in development. Everything runs on public data, so it can be
     citable and refreshed without any funder's data.</p>
   <div class="modules">{mods}</div>
 </section></div></div>
