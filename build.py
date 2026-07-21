@@ -22,6 +22,7 @@ DAIOE    = load("daioe.yaml")
 SEMINARS = load("seminars.yaml")
 DAIOE_EXP = load("daioe_exposure.yaml")
 NEWS     = load("news.yaml")
+CROSS    = load("cross_country.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
 # (see app.js occSearch), so it is NOT embedded here. It auto-tracks the latest DAIOE year.
 
@@ -395,6 +396,7 @@ def daioe():
     <div><div class="exphead"><span class="dotc lo"></span>Least exposed</div>
       <div class="expbars">{least}</div></div>
   </div>
+  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI v{DAIOE_EXP['year']} · ISCO-08")}
   <p class="prov" style="margin-top:16px">Source: DAIOE v{DAIOE_EXP['year']} · ISCO-08 · higher score = more exposed.
     Explore every occupation in the <a href="/monitor/#occupations-explorer">Occupations Explorer</a>.</p>
 </section></div></div>
@@ -536,13 +538,66 @@ def news():
                  "News and history of the AI-Econ Lab since 2019: publications, media, grants and events.",
                  "/news/", body)
 
+def figfooter(csv_name, source, svg_name=None):
+    """Item 10: download + provenance under a figure. Source states DAIOE variant + year."""
+    dl = f'<a class="figdl" href="/assets/data/{csv_name}" download>↓ Data (CSV)</a>'
+    if svg_name:
+        dl += f'<a class="figdl" href="/assets/data/{svg_name}" download>↓ Chart (SVG)</a>'
+    return f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span></div>'
+
+def dotplot(cc):
+    """Server-rendered ranked dot plot (Cleveland) — dots, not bars, since the index is
+    compressed and a bar would imply a false zero baseline. Sweden highlighted; mean marked."""
+    rows = cc["countries"]; n = len(rows)
+    W, rowh, top, bot = 640, 16, 16, 34
+    H = top + n * rowh + bot
+    xmin, xmax, x0, x1 = 1.65, 2.25, 140, 560
+    X = lambda v: x0 + (v - xmin) / (xmax - xmin) * (x1 - x0)
+    p = [f'<svg class="dotplot" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Ranked dot plot of employment-weighted AI exposure by country, {n} countries, Sweden highlighted">']
+    for t in (1.7, 1.8, 1.9, 2.0, 2.1, 2.2):
+        gx = X(t)
+        p.append(f'<line class="grid" x1="{gx:.1f}" y1="{top}" x2="{gx:.1f}" y2="{top+n*rowh}"/>')
+        p.append(f'<text class="tick" x="{gx:.1f}" y="{H-14}" text-anchor="middle">{t:.1f}</text>')
+    mx = X(cc["meta"]["mean"])
+    p.append(f'<line class="meanline" x1="{mx:.1f}" y1="{top-1}" x2="{mx:.1f}" y2="{top+n*rowh}"/>')
+    p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-4}" text-anchor="middle">EU mean</text>')
+    for i, r in enumerate(rows):
+        y = top + i * rowh + rowh * 0.62
+        se = " se" if r["is_se"] else ""
+        vx = X(r["exposure"])
+        p.append(f'<line class="rowguide" x1="{x0}" y1="{y-3:.1f}" x2="{x1}" y2="{y-3:.1f}"/>')
+        p.append(f'<text class="dname{se}" x="128" y="{y:.1f}" text-anchor="end">{h(r["name"])}</text>')
+        p.append(f'<circle class="dot{se}" cx="{vx:.1f}" cy="{y-3:.1f}" r="{4.4 if r["is_se"] else 3.1}"/>')
+        p.append(f'<text class="dval{se}" x="600" y="{y:.1f}" text-anchor="end">{r["exposure"]:.2f}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+def cross_country_section():
+    cc = CROSS; mt = cc["meta"]
+    src = f'DAIOE {mt["variant"]} {mt["daioe_version"]} × Eurostat EU-LFS employment (latest year per country)'
+    return f"""<div class="rule" id="across-countries"><div class="wrap"><section>
+  <p class="kicker">Module · live · across countries</p>
+  <h2 class="sec">How AI-exposed is each country's workforce?</h2>
+  <p class="secintro">Because DAIOE scores occupations (ISCO-08), not just Swedish jobs, we can place Sweden
+    in international context on public data. Each country's score is the employment-weighted average
+    DAIOE <b>{h(mt['variant'])}</b> exposure ({h(mt['daioe_version'])}) across its occupational mix, using
+    Eurostat EU-LFS. <b>Exposure is not displacement</b>: in our cross-country panel, exposure predicts
+    occupational growth as often as decline. It shows where AI <em>overlaps</em> with the work, no more.</p>
+  <div class="dotwrap">{dotplot(cc)}</div>
+  {figfooter("cross_country.csv", src, "cross_country.svg")}
+  <p class="prov" style="margin-top:12px">{h(mt['n_countries'])} countries; employment coverage ≈100%.
+    Swedish register data give the depth this public-data view cannot; the two are complements.</p>
+</section></div></div>"""
+
 def monitor():
     m = MONITOR
     mods = ""
     STCHIP = {"live":"● live", "next":"◑ next", "planned":"◔ planned", "someday":"◌ someday"}
     for mod in m["modules"]:
         live = mod["status"] == "live"
-        anchor = {"AI in Demand": "#ai-in-demand", "Occupations Explorer": "#occupations-explorer"}.get(mod["name"], "")
+        anchor = {"AI in Demand": "#ai-in-demand", "Occupations Explorer": "#occupations-explorer",
+                  "Across countries": "#across-countries"}.get(mod["name"], "")
         chip = f'<span class="mstatus {"live" if live else "planned"}">{STCHIP.get(mod["status"],mod["status"])}</span>'
         name = f'<a href="{anchor}">{h(mod["name"])}</a>' if anchor else h(mod["name"])
         mods += (f'<div class="module {"on" if live else "off"}"><div class="mtop"><h3>{name}</h3>{chip}</div>'
@@ -593,6 +648,7 @@ def monitor():
   <h2 class="sec">AI in Demand.</h2>
   <p class="secintro">{h(m['aiindemand_lede'])}</p>
   <div class="tiles">{tiles}</div>
+  {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical layer (not DAIOE)")}
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
@@ -610,6 +666,8 @@ def monitor():
     <a href="/daioe/">DAIOE</a> AI-exposure overlaid. Built and maintained in-house; yearly and monthly views.</p>
   <div class="explorers">{explorers}</div>
 </section></div></div>
+
+{cross_country_section()}
 
 <div class="rule" id="method"><div class="wrap"><section>
   <p class="kicker">How to read this</p>
@@ -675,6 +733,36 @@ PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.htm
          "research/index.html": research(), "people/index.html": people(),
          "events/index.html": events(), "news/index.html": news(), "about/index.html": about()}
 
+def dotplot_standalone(cc):
+    """Self-contained SVG for download (inline light-theme styles; no page CSS)."""
+    style = ('<style>.dotplot{font-family:ui-monospace,Menlo,monospace}'
+             '.grid,.rowguide{stroke:#e7e4dd}.rowguide{opacity:.6}'
+             '.meanline{stroke:#8a8a8a;stroke-dasharray:3 3}.meanlab,.tick{fill:#6d6a63;font-size:9px}'
+             '.dname{fill:#3f3d39;font-size:10px}.dname.se{fill:#0072b2;font-weight:700}'
+             '.dot{fill:#9a9a9a}.dot.se{fill:#0072b2}'
+             '.dval{fill:#6d6a63;font-size:9.5px}.dval.se{fill:#0072b2;font-weight:700}</style>')
+    s = dotplot(cc).replace('<svg class="dotplot"',
+                            '<svg xmlns="http://www.w3.org/2000/svg" class="dotplot"', 1)
+    i = s.index(">") + 1
+    return s[:i] + style + s[i:]
+
+def emit_data(out):
+    """Item 10: write the CSVs (and the View-A SVG) that the figure footers link to."""
+    import csv as _csv
+    d = out / "assets" / "data"; d.mkdir(parents=True, exist_ok=True)
+    with (d / "cross_country.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f); w.writerow(["code", "country", "exposure_daioe_genai_v2023", "emp_coverage_pct", "lfs_year"])
+        for r in CROSS["countries"]: w.writerow([r["code"], r["name"], r["exposure"], r["coverage"], r["year"]])
+    (d / "cross_country.svg").write_text(dotplot_standalone(CROSS), encoding="utf-8")
+    with (d / "daioe_most_least.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f); w.writerow(["occupation", "daioe_genai_score", "group", "daioe_version"])
+        for it in DAIOE_EXP["most"]:  w.writerow([it["occ"], it["score"], "most_exposed", f"v{DAIOE_EXP['year']}"])
+        for it in DAIOE_EXP["least"]: w.writerow([it["occ"], it["score"], "least_exposed", f"v{DAIOE_EXP['year']}"])
+    t = MONITOR["trend"]
+    with (d / "ai_in_demand_trend.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f); w.writerow(["year", "ai_ad_share_pct"])
+        for y, v in zip(t["years"], t["values"]): w.writerow([y, v])
+
 def build():
     if OUT.exists(): shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
@@ -682,6 +770,7 @@ def build():
         p = OUT / name; p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(htmlstr, encoding="utf-8")
     shutil.copytree(ROOT / "assets", OUT / "assets")   # recurses into assets/people/ etc.
+    emit_data(OUT)   # item 10: downloadable CSVs + View-A SVG
     # infra
     if SITE["build"].get("emit_cname"):   # only at DNS-flip time; otherwise github.io stays previewable
         (OUT / "CNAME").write_text(SITE["brand"]["domain"] + "\n", encoding="utf-8")

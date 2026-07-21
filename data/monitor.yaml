@@ -16,7 +16,7 @@ modules:
   - {name: "Entry-level squeeze", status: "next", desc: "The young/entry-level share of openings in AI-exposed occupations: the canaries signal on vacancies."}
   - {name: "AI adoption & use", status: "planned", desc: "Firm and worker adoption from public SCB data and realized-use task views."}
   - {name: "Augmentation vs automation", status: "planned", desc: "Whether AI adds to or replaces the tasks of each occupation."}
-  - {name: "Across countries", status: "someday", desc: "AI-in-demand compared across countries via ISCO occupations."}
+  - {name: "Across countries", status: "live", desc: "Each country's workforce AI-exposure (DAIOE generative-AI v2023 × EU-LFS employment); Sweden in international context."}
 
 # The AI in Demand module.
 aiindemand_lede: >-
