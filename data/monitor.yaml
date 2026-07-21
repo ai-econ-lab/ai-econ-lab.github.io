@@ -12,10 +12,10 @@ lede: >-
 # Overview-first landing: one door per spine module (Exposure · Demand · Adoption · Outcomes).
 # International-first headline number each; Sweden is the depth cut inside the module. Every figure dated.
 overview:
-  - {k: "Exposure", num: "#2 / 36", lab: "Sweden's workforce ranks 2nd of 36 European countries on AI exposure", foot: "DAIOE genAI v2023 · EU-LFS", anchor: "#exposure", cls: ""}
-  - {k: "Demand",   num: "2.1<span>%</span>", lab: "of Swedish job ads mention AI in 2025, up roughly 140-fold since 2006", foot: "JobTech · 2025 · live", anchor: "#demand", cls: "b"}
-  - {k: "Adoption", num: "35<span>%</span>", lab: "of Swedish firms use AI, 3rd-highest in the EU and up from 25% a year earlier", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
-  - {k: "Outcomes", num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations, a gap widening since 2020", foot: "JobTech · 2020–2025 · live", anchor: "#outcomes", cls: "d"}
+  - {k: "Exposure", num: "1.9<span> avg</span>", lab: "average workforce AI exposure across 36 European countries (DAIOE genAI); Sweden 2nd-highest, at 2.07", foot: "DAIOE genAI v2023 · EU-LFS", anchor: "#exposure", cls: ""}
+  - {k: "Demand",   num: "1.9<span>%</span>", lab: "median share of job ads requiring AI across 22 countries in 2025 (Stanford AI Index); Sweden 2.8%", foot: "AI Index / Lightcast · 2025", anchor: "#demand", cls: "b"}
+  - {k: "Adoption", num: "20<span>%</span>", lab: "of EU firms used AI in 2025, up from 8% in 2023 (Eurostat); Sweden 35%, among the leaders", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
+  - {k: "Outcomes", num: "−5.3<span>pp</span>", lab: "Sweden's entry-level squeeze: fewer entry-level openings in the most AI-exposed jobs since 2020; the pattern echoes international research", foot: "JobTech · 2020–2025", anchor: "#outcomes", cls: "d"}
 
 # The monitor's modules. 'live' has its own section below; 'next'/'planned'/'someday' are honest roadmap.
 modules:

@@ -841,8 +841,8 @@ def stat_overview():
     return f"""<div class="rule" id="overview"><div class="wrap"><section>
   <p class="kicker">The whole picture, in one glance</p>
   <h2 class="sec">Four questions about AI and work.</h2>
-  <p class="secintro">Exposure, demand, adoption and outcomes: one headline number each, international first, with
-    Sweden as the depth cut inside every module. Every figure is public and dated; open a card to jump to the module.</p>
+  <p class="secintro">Exposure, demand, adoption and outcomes: one European headline each, with Sweden as the depth
+    cut inside every module. Every figure is public and dated; open a card to jump to the module.</p>
   <div class="ovgrid">{cards}</div>
 </section></div></div>"""
 
@@ -881,12 +881,15 @@ def monitor():
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
       <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a>
       <a class="btn ghost" href="#method">How we measure it</a></div></div>
-  <div class="panel"><div class="panelhead"><span class="ttl">Sweden · AI in job ads (our live measure)</span>
+  <div class="panel"><div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
     <span class="livechip"><i></i>live</span></div>
-    <div class="panelbody"><p class="psub">Broad measure, any AI-related term, 2006–2025. The Swedish depth cut behind the demand module. Internationally (AI Index / Lightcast, 2025): median <b>1.9%</b> across 22 countries, Sweden <b>2.8%</b>.</p>
+    <div class="panelbody"><p class="psub">Vacancies requesting any AI skill, 2006–2025. About <b>140×</b> higher than twenty years
+        ago, and steepest after 2023. Internationally (AI Index / Lightcast, 2025): a median <b>1.9%</b> of
+        postings across 22 countries require AI skills, Sweden <b>2.8%</b> on that measure.</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
-        <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div></div></div>
+        <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div>
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", svg_name="ai_in_demand_trend.svg", method_href="#method")}</div></div>
 </div></div></div>
 
 {stat_overview()}
@@ -1037,10 +1040,10 @@ def brief(lang="en"):
     th_title = titles[theme]
 
     KSV = {"Exposure": "Exponering", "Demand": "Efterfrågan", "Adoption": "Användning", "Outcomes": "Utfall"}
-    LABSV = {"Exposure": "Sveriges arbetskraft näst mest AI-exponerad av 36 europeiska länder",
-             "Demand": "av svenska jobbannonser nämner AI 2025, ca 140 gånger fler än 2006",
-             "Adoption": "av svenska företag använder AI, tredje högst i EU och upp från 25% året innan",
-             "Outcomes": "färre instegsjobb i de mest AI-exponerade yrkena, ett gap som vuxit sedan 2020"}
+    LABSV = {"Exposure": "genomsnittlig AI-exponering av arbetskraften i 36 europeiska länder (DAIOE genAI); Sverige näst högst, 2,07",
+             "Demand": "medianandel jobbannonser som kräver AI i 22 länder 2025 (Stanford AI Index); Sverige 2,8%",
+             "Adoption": "av EU:s företag använde AI 2025, upp från 8% 2023 (Eurostat); Sverige 35%, bland de ledande",
+             "Outcomes": "Sveriges instegsklämma: färre instegsjobb i de mest AI-exponerade yrkena sedan 2020; mönstret syns även internationellt"}
     cards = ""                                            # at a glance: the four spine numbers
     for o in MONITOR["overview"]:
         cls = f' {o["cls"]}' if o["cls"] else ""
