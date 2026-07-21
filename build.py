@@ -27,6 +27,7 @@ ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
 WORKCOND = load("working_conditions.yaml")
 ELS      = load("entry_level_squeeze.yaml")
+SWEAD    = load("swe_adoption.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
 # (see app.js occSearch), so it is NOT embedded here. It auto-tracks the latest DAIOE year.
 
@@ -737,9 +738,11 @@ def demand_section(tiles, seg):
 </section></div></div>"""
 
 def adoption_section():
-    """Module 3 — Adoption. Cross-country firm AI-adoption (Eurostat), Sweden as depth cut."""
+    """Module 3 — Adoption. Cross-country firm AI-adoption (Eurostat), Sweden by firm size as depth cut."""
     ad = ADOPT; amt = ad["meta"]
     se = next(r for r in ad["countries"] if r["is_se"])
+    swm = SWEAD["meta"]; sm = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
+    swxmax = 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1)    # round up to 10
     xmax = 5 * (int(max(r["adoption"] for r in ad["countries"]) // 5) + 1)  # round up to 5
     return f"""<div class="rule module-sec" id="adoption"><div class="wrap"><section>
   <p class="kicker">Module 3 · Adoption · across countries</p>
@@ -750,10 +753,15 @@ def adoption_section():
     {h(amt['eu_avg'])}% in {h(amt['year'])}. Exposure and adoption need not line up across countries.</p>
   <div class="dotwrap">{barplot(ad['countries'], amt['eu_avg'], xmax, amt['year'])}</div>
   {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg")}
-  <div class="depth"><p class="dk">Sweden, in depth</p>
-    <p class="secintro" style="margin:0">Sweden is among the EU leaders at <b>{se['adoption']:g}%</b> in
-      {h(amt['year'])}, up from {se['prev']:g}% a year earlier. A firm-level and worker-level view from Swedish
-      sources (SCB) is on the roadmap.</p></div>
+  <div class="depth"><p class="dk">Sweden, in depth · by firm size</p>
+    <p class="secintro" style="margin:0 0 14px">Sweden is among the EU leaders at <b>{se['adoption']:g}%</b> in
+      {h(amt['year'])}, up from {se['prev']:g}% a year earlier (Eurostat). SCB's firm survey decomposes that headline
+      by size: adoption climbs steeply with the size of the firm, from <b>{sm['10-49']}%</b> of small firms
+      (10–49 employees) to <b>{sm['250-']}%</b> of large ones (250+), every class up sharply since {h(swm['prev_year'])}.
+      The all-firms figure ({sm['Tot250']}%, highlighted) is the same number the cross-country bar shows.</p>
+    <div class="dotwrap">{barplot(SWEAD['sizes'], 0, swxmax, 0, 'adoption', '.0f')}</div>
+    {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}")}
+  </div>
 </section></div></div>"""
 
 def outcomes_section(explorers):
@@ -762,8 +770,8 @@ def outcomes_section(explorers):
     return f"""<div class="rule module-sec" id="outcomes"><div class="wrap"><section>
   <p class="kicker">Module 4 · Outcomes</p>
   <h2 class="sec">What does it mean for jobs and job quality?</h2>
-  <p class="secintro">Exposure and demand are inputs; outcomes are what happens to workers. Two live views below,
-    and the entry-level "canaries" signal in preview.</p>
+  <p class="secintro">Exposure and demand are inputs; outcomes are what happens to workers. Three views: employment
+    by occupation, working conditions, and the entry-level "canaries" signal on vacancies.</p>
 
   <div class="grouphdr" id="occupations-explorer" style="margin-top:26px">Employment by occupation</div>
   <p class="secintro" style="margin-top:4px">Swedish employment by occupation over time (and, soon, by region), with
@@ -971,6 +979,11 @@ def emit_data(out):
         w = _csv.writer(f)
         w.writerow(["year", "entry_level_share_least_exposed_pct", "entry_level_share_most_exposed_pct", "gap_pp"])
         for r in ELS["series"]: w.writerow([r["year"], r["low"], r["high"], r["gap"]])
+    with (d / "swe_adoption.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["firm_size", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])
+        for r in SWEAD["sizes"]:
+            w.writerow([r["name"], r["adoption"], SWEAD["meta"]["year"], r.get("prev", ""), SWEAD["meta"]["prev_year"]])
 
 def build():
     if OUT.exists(): shutil.rmtree(OUT)

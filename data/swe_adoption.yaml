@@ -1,0 +1,14 @@
+# AI adoption by firm size in Sweden (Adoption module, 'Sweden, in depth').
+# Auto-generated; rerun scripts/refresh_swe_adoption.py then build.py. DO NOT hand-edit.
+meta:
+  indicator: "Enterprises using at least one AI technology, by firm size"
+  unit: "% of enterprises"
+  source: "SCB, ICT usage in enterprises (NV0116)"
+  year: 2025
+  prev_year: 2021
+  total: 35
+sizes:
+  - {code: "250-", name: "250+ employees", adoption: 72, prev: 40, is_se: false}
+  - {code: "50-249", name: "50–249 employees", adoption: 50, prev: 18, is_se: false}
+  - {code: "Tot250", name: "All firms (10+)", adoption: 35, prev: null, is_se: true}
+  - {code: "10-49", name: "10–49 employees", adoption: 31, prev: 8, is_se: false}
