@@ -875,6 +875,11 @@ def monitor():
       (Swedish and English); a semantic layer, now training, will catch AI ads that use no listed term. Exposure,
       adoption and cross-country demand come from DAIOE (generative-AI, v2023), Eurostat and the Stanford AI Index.</p>
     <h3>Caveats, in plain sight</h3><ul style="color:var(--ink-2);font-size:14px;line-height:1.6">{caveats}</ul>
+    <h3>How to cite</h3>
+    <p>The monitor is a citable public good. Please cite the specific version and date, and the underlying source
+      shown in each figure's footer (for example DAIOE generative-AI v2023, or Eurostat 2025).</p>
+    <p class="citebox">AI-Econ Lab (2026). AIEL Monitor: [module]. Örebro University and Ratio. [source and version
+      from the figure footer]. Accessed [date], https://ai-econ-lab.github.io/monitor/</p>
   </div>
 </section></div></div>"""
     return shell(f"The AI-Econ Lab Monitor · {SITE['brand']['name']}",
