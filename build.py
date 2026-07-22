@@ -826,7 +826,8 @@ def akavia_workers_block():
       {sec[0]['adoption'] - sec[-1]['adoption']}pp. Men {a['by_sex']['men']}%, women {a['by_sex']['women']}%.</p>
     <div class="dotwrap">{barplot(prof, 0, xmax, 0, 'adoption', '.0f')}</div>
     {figfooter("akavia_ai_use.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. Bars {m['year']}, change vs {m['first_year']}. {m['population']}", svg_name="akavia_ai_use.svg")}
-    <p class="prov" style="margin-top:10px">{h(m['caveat'])}</p>
+    <p class="prov" style="margin-top:10px">Data shared with the lab by
+      <a href="{m['url']}">Akavia</a>. {h(m['caveat'])}</p>
   </div>"""
 
 def akavia_outcomes_block():
@@ -854,7 +855,8 @@ def akavia_outcomes_block():
     work AI tool, the employer pays for {sh['employer_pays']}% and {sh['self_pays']}% pay themselves. The
     denominator matters here and is easy to overstate.</p>
   {figfooter("akavia_governance.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. {m['population']}")}
-  <p class="prov" style="margin-top:10px">{h(m['caveat'])}</p>"""
+  <p class="prov" style="margin-top:10px">Data shared with the lab by
+    <a href="{m['url']}">Akavia</a>. {h(m['caveat'])}</p>"""
 
 def outcomes_section(explorers):
     """Module 4 — Outcomes. Occupations Explorer + working conditions + entry-level squeeze (all live)."""
@@ -965,11 +967,17 @@ def monitor():
   <p class="kicker">How to read this</p>
   <h2 class="sec">What we measure, and what we don't yet.</h2>
   <div class="prose" style="margin-top:16px">
-    <p>The measure runs on public data throughout. The Swedish demand series reads every open and historical
+    <p>The measure runs on public data with one named exception. The Swedish demand series reads every open and historical
       advertisement in Sweden's public job board (Platsbanken / JobTech), 2006–2025: about <b>10.9 million ads</b>.
       An ad counts as AI-in-demand when its text requests an AI skill, matched by a versioned, citable term list
       (Swedish and English); a semantic layer, now training, will catch AI ads that use no listed term. Exposure,
       adoption and cross-country demand come from DAIOE (generative-AI, v2023), Eurostat and the Stanford AI Index.</p>
+    <p>The exception is the worker-side layer, which comes from
+      <a href="https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/">Akavia</a>, a Swedish
+      professional union that surveys its members through a web panel and shares the de-identified results with
+      the lab. We publish aggregated figures with attribution and keep the underlying records private; cells
+      below 50 respondents are never shown. Akavia does not fund the lab and does not see results before
+      publication. The processing, and any error in it, is ours.</p>
     <h3>Caveats, in plain sight</h3><ul style="color:var(--ink-2);font-size:14px;line-height:1.6">{caveats}</ul>
     <h3>How to cite</h3>
     <p>The monitor is a citable public good. Please cite the specific version and date, and the underlying source
