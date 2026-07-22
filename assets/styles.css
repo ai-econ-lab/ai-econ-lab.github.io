@@ -490,3 +490,11 @@ main [id]{scroll-margin-top:196px}
 .minitab tbody tr:last-child td{border-bottom:none;font-weight:600}
 ul.tight{margin:8px 0 0;padding-left:1.1rem}
 ul.tight li{margin:2px 0}
+/* Related lab research, one block per monitor module. Recessive: it is
+   provenance, not a call to action. */
+.related{margin-top:22px;padding-top:14px;border-top:1px solid var(--hair)}
+.related .rl{margin:0 0 6px;font:600 11px/1.4 var(--mono);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-2)}
+.related ul.tight{margin:0;padding-left:1.05rem;font-size:13.5px;line-height:1.65;color:var(--ink-2)}
+.related ul.tight li{margin:3px 0}
+.related .rw{font:500 12px/1 var(--mono);color:var(--muted)}

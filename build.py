@@ -27,6 +27,7 @@ ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
 WORKCOND = load("working_conditions.yaml")
 AKAVIA   = load("akavia.yaml")
+RELATED  = load("related_research.yaml")
 ELS      = load("entry_level_squeeze.yaml")
 SWEAD    = load("swe_adoption.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
@@ -189,7 +190,7 @@ def home():
 
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">What the lab is</p>
-  <h2 class="sec">A research lab first; the monitor is how we show our work in public.</h2>
+  <h2 class="sec">A research lab first. The monitor is our measurement infrastructure made public: the same data and measures our own research runs on.</h2>
   <p class="secintro">We work across countries on public data and international comparisons, and, rarely for any lab,
     on linked employer–employee register data in several of them: deepest in Sweden, reaching Denmark, Portugal
     and Germany, and expanding to more. Economists work alongside sociologists, business scholars and computer
@@ -753,6 +754,7 @@ def exposure_section():
       countries (EU average {mt['mean_share']:.0f}%).
       The occupation-by-occupation detail lives on the <a href="/daioe/">DAIOE</a> page, and Swedish employment is
       set against exposure over time in the <a href="#occupations-explorer">Occupations Explorer</a> below.</p></div>
+  {related_research("exposure")}
 </section></div></div>"""
 
 def demand_section(tiles, seg):
@@ -779,6 +781,7 @@ def demand_section(tiles, seg):
     <p class="secintro" style="margin-top:4px">{h(MONITOR['segmentation']['intro'])}</p>
     <div class="two" style="grid-template-columns:1fr 1fr 1fr">{seg}</div>
   </div>
+  {related_research("demand")}
 </section></div></div>"""
 
 def adoption_section():
@@ -807,7 +810,21 @@ def adoption_section():
     {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; EU average {amt['eu_avg']:g}% (Eurostat)", svg_name="swe_adoption.svg")}
   </div>
   {akavia_workers_block()}
+  {related_research("adoption")}
 </section></div></div>"""
+
+def related_research(module):
+    """Lab research related to a module. Related, not derived: a paper can date
+    while the theme stays live, and only DAIOE is genuinely a derivation."""
+    items = RELATED.get(module) or []
+    if not items:
+        return ""
+    lis = "".join(
+        f'<li><a href="{i["url"]}">{h(i["title"])}</a> · <span class="rw">{h(i["where"])}</span>'
+        f' · {h(i["note"])}</li>' for i in items)
+    return (f'<div class="related"><p class="rl">Related research from the lab</p>'
+            f'<ul class="tight">{lis}</ul></div>')
+
 
 def akavia_workers_block():
     """Adoption depth, worker side. Firm surveys count employers; this counts people."""
@@ -886,6 +903,7 @@ def outcomes_section(explorers):
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}", svg_name="entry_level_squeeze.svg")}
+  {related_research("outcomes")}
 </section></div></div>"""
 
 def stat_overview():

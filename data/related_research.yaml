@@ -1,0 +1,46 @@
+# Lab research related to each monitor module.
+#
+# "Related", not "behind": a module is not usually derived from one paper, and a
+# paper can date while the theme stays live. The one genuine derivation is
+# DAIOE, which is the measure developed in AI Unboxed, and that is said as such.
+#
+# Rule: only link work that is publicly available. A working-paper link on this
+# site means the paper is released. Never list a module here that has no real
+# lab research attached; the Eurostat, SCB and AI Index figures stay exactly what
+# they say they are.
+
+exposure:
+  - title: "AI Unboxed and Jobs: A Novel Measure and Firm-Level Evidence from Three Countries"
+    note: "DAIOE is the measure developed and validated here"
+    url: "https://docs.iza.org/dp16717.pdf"
+    where: "IZA DP 16717"
+
+demand:
+  - title: "Artificial Intelligence, Hiring and Employment: Job Postings Evidence from Sweden"
+    note: "the same Swedish job-ad evidence base"
+    url: "https://doi.org/10.1080/13504851.2025.2497431"
+    where: "Applied Economics Letters, 2025"
+
+adoption:
+  - title: "Who Adopts AI? Evidence on Firms, Technologies and Workers"
+    note: "which firms and workers actually take AI up"
+    url: "https://docs.iza.org/dp18515.pdf"
+    where: "IZA DP 18515"
+  - title: "The Effects of Artificial Intelligence on Jobs: Evidence from an AI Subsidy Program"
+    note: "what happens to jobs once firms adopt"
+    url: "https://www.iza.org/publications/dp/18267/the-effects-of-artificial-intelligence-on-jobs-evidence-from-an-ai-subsidy-program"
+    where: "IZA DP 18267"
+
+outcomes:
+  - title: "Same Storm, Different Boats: Generative AI and the Age Gradient in Hiring"
+    note: "the register-based version of the entry-level signal shown here"
+    url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2026/wp-2-2026.pdf"
+    where: "ORU WP 2/2026"
+  - title: "Artificial Intelligence and Worker Stress: Evidence from Germany"
+    note: "AI and working conditions, at worker level"
+    url: "https://rdcu.be/d8No5"
+    where: "Digital Society, 2025"
+  - title: "Artificial Intelligence for Public Use"
+    note: "uses the same Akavia member panel shown in this module"
+    url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2025/wp-6-2025.pdf"
+    where: "ORU WP 6/2025 · Digital Society, accepted"
