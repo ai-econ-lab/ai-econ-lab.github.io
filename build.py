@@ -26,6 +26,7 @@ CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
 WORKCOND = load("working_conditions.yaml")
+AKAVIA   = load("akavia.yaml")
 ELS      = load("entry_level_squeeze.yaml")
 SWEAD    = load("swe_adoption.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
@@ -804,7 +805,55 @@ def adoption_section():
     <div class="dotwrap">{barplot(SWEAD['sizes'], amt['eu_avg'], swxmax, 0, 'adoption', '.0f')}</div>
     {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; EU average {amt['eu_avg']:g}% (Eurostat)", svg_name="swe_adoption.svg")}
   </div>
+  {akavia_workers_block()}
 </section></div></div>"""
+
+def akavia_workers_block():
+    """Adoption depth, worker side. Firm surveys count employers; this counts people."""
+    a = AKAVIA; m = a["meta"]; tr = a["trend"]
+    prof = a["by_profession"]; sec = a["by_sector"]
+    xmax = 10 * (max(r["adoption"] for r in prof) // 10 + 1)
+    first, last = tr["values"][0], tr["values"][-1]
+    return f"""<div class="depth"><p class="dk">Sweden, in depth · by worker</p>
+    <p class="secintro" style="margin:0 0 14px">Firm surveys count employers who have started. This counts
+      people: the share of professionals who use AI in their own work rose from <b>{first}%</b> in
+      {h(tr['labels'][0])} to <b>{last}%</b> in {h(tr['labels'][-1])}, and daily use went from 3% to 22% over
+      the same period, so the shift is in intensity as much as reach. Nearly everyone now works somewhere AI
+      is used at all ({a['org_use']['y2024']}% in 2024, {a['org_use']['y2025']}% in {h(m['year'])}). The spread
+      by profession is wide and narrowing: communicators are near saturation while lawyers remain furthest
+      behind, and central government trails the private sector by
+      {sec[0]['adoption'] - sec[-1]['adoption']}pp. Men {a['by_sex']['men']}%, women {a['by_sex']['women']}%.</p>
+    <div class="dotwrap">{barplot(prof, 0, xmax, 0, 'adoption', '.0f')}</div>
+    {figfooter("akavia_ai_use.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. Bars {m['year']}, change vs {m['first_year']}. {m['population']}", svg_name="akavia_ai_use.svg")}
+    <p class="prov" style="margin-top:10px">{h(m['caveat'])}</p>
+  </div>"""
+
+def akavia_outcomes_block():
+    """Outcomes: governance trailing use, the training gap, and who pays for the tools."""
+    a = AKAVIA; m = a["meta"]; g = a["governance"]; tg = a["training"]; sh = a["shadow"]
+    used = a["used_for"]
+    gap = g["use"][-1] - g["policy"][-1]
+    rows = "".join(
+        f"<tr><td>{h(l)}</td><td>{u}%</td><td>{p}%</td><td>{s}%</td></tr>"
+        for l, u, p, s in zip(g["labels"], g["use"], g["policy"], g["strategy"]))
+    uf = "".join(f"<li><b>{r['value']}%</b> {h(r['label'].lower())}</li>" for r in used)
+    return f"""<div class="grouphdr" id="akavia-governance" style="margin-top:36px">Use, governance and who pays</div>
+  <p class="secintro" style="margin-top:4px">Among Swedish professional-union members, workplace governance runs
+    well behind actual use. In {h(m['year'])}, {g['use'][-1]}% used AI at work while only {g['policy'][-1]}% knew
+    of a policy and {g['strategy'][-1]}% of a strategy, a gap of <b>{gap}pp</b>. The figures say <i>knows of</i>
+    rather than <i>has</i>: about a fifth answer that they do not know, which is counted here as not knowing of
+    one. Training runs the same way: {tg['wants_last']}% want to develop their AI skills, {tg['offered_last']}%
+    have been offered it by an employer, against {tg['wants_first']}% and {tg['offered_first']}% in
+    {h(m['first_year'])}.</p>
+  <table class="minitab"><thead><tr><th>Wave</th><th>Uses AI</th><th>Knows of a policy</th><th>Knows of a strategy</th></tr></thead><tbody>{rows}</tbody></table>
+  <p class="secintro" style="margin-top:14px">What the work actually is, among users in {h(m['year'])}:</p>
+  <ul class="tight">{uf}</ul>
+  <p class="secintro" style="margin-top:14px">And who provides the tools. Among those using <b>standalone</b> AI
+    tools, not among all workers, <b>{sh['private_account']}%</b> have a private e-mail account connected to a
+    work AI tool, the employer pays for {sh['employer_pays']}% and {sh['self_pays']}% pay themselves. The
+    denominator matters here and is easy to overstate.</p>
+  {figfooter("akavia_governance.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. {m['population']}")}
+  <p class="prov" style="margin-top:10px">{h(m['caveat'])}</p>"""
 
 def outcomes_section(explorers):
     """Module 4 — Outcomes. Occupations Explorer + working conditions + entry-level squeeze (all live)."""
@@ -821,6 +870,8 @@ def outcomes_section(explorers):
   <div class="explorers">{explorers}</div>
 
   {working_conditions_block()}
+
+  {akavia_outcomes_block()}
 
   <div class="grouphdr" style="margin-top:36px">Entry-level squeeze</div>
   <p class="secintro" style="margin-top:4px">In the most AI-exposed occupations, a smaller share of openings ask for
@@ -1183,6 +1234,34 @@ def emit_data(out):
         for c in WORKCOND["conditions"]:
             for g in ("all", "women", "men"):
                 w.writerow([c["label"], g, c[g]["lo"], c[g]["hi"], WORKCOND["meta"]["daioe_version"], WORKCOND["meta"]["wc_year"]])
+    with (d / "akavia_ai_use.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["cut", "group", "pct_using_ai_2025", "pct_using_ai_2023",
+                    "ci_low_2025", "ci_high_2025", "respondents_2025", "source"])
+        for cut, key in (("profession", "by_profession"), ("sector", "by_sector")):
+            for r in AKAVIA[key]:
+                w.writerow([cut, r["name"], r["adoption"], r["prev"], r["lo"], r["hi"],
+                            r["n"], AKAVIA["meta"]["source"]])
+        for lab, v in zip(AKAVIA["trend"]["labels"], AKAVIA["trend"]["values"]):
+            w.writerow(["all", lab, v, "", "", "", "", AKAVIA["meta"]["source"]])
+    _akx = 10 * (max(r["adoption"] for r in AKAVIA["by_profession"]) // 10 + 1)
+    (d / "akavia_ai_use.svg").write_text(
+        chart_standalone(barplot(AKAVIA["by_profession"], 0, _akx, 0, "adoption", ".0f")),
+        encoding="utf-8")
+    with (d / "akavia_governance.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["wave", "pct_uses_ai", "pct_knows_of_policy", "pct_knows_of_strategy"])
+        g = AKAVIA["governance"]
+        for row in zip(g["labels"], g["use"], g["policy"], g["strategy"]):
+            w.writerow(list(row))
+        w.writerow([])
+        w.writerow(["indicator", "pct", "universe", ""])
+        s = AKAVIA["shadow"]
+        for k in ("private_account", "employer_pays", "self_pays"):
+            w.writerow([k, s[k], s["universe"], ""])
+        for r in AKAVIA["used_for"]:
+            w.writerow([f"used_for_{r['label']}", r["value"], "AI users", ""])
+
     with (d / "daioe_most_least.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["occupation", "daioe_genai_score", "group", "daioe_version"])
         for it in DAIOE_EXP["most"]:  w.writerow([it["occ"], it["score"], "most_exposed", f"v{DAIOE_EXP['year']}"])

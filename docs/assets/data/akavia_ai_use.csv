@@ -1,0 +1,14 @@
+cut,group,pct_using_ai_2025,pct_using_ai_2023,ci_low_2025,ci_high_2025,respondents_2025,source
+profession,Communicators,96,68,90,100,87,Akavia member web panel
+profession,IT academics,88,52,84,91,410,Akavia member web panel
+profession,HR specialists,82,34,76,89,219,Akavia member web panel
+profession,Economists,81,31,79,84,1398,Akavia member web panel
+profession,Social scientists,74,27,70,78,626,Akavia member web panel
+profession,Lawyers,62,19,58,66,731,Akavia member web panel
+sector,Private,87,42,85,89,1684,Akavia member web panel
+sector,Local and regional,80,27,76,84,585,Akavia member web panel
+sector,Central government,57,18,53,60,1202,Akavia member web panel
+all,May 2023,32,,,,,Akavia member web panel
+all,Sep 2023,43,,,,,Akavia member web panel
+all,May 2024,61,,,,,Akavia member web panel
+all,May 2025,77,,,,,Akavia member web panel

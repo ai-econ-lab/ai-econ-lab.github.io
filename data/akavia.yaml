@@ -1,0 +1,137 @@
+meta:
+  source: Akavia member web panel
+  credit: 'Source: Akavia member panel. Own processing.'
+  caveat: Akavia surveys its members through a web panel covering economists, lawyers, IT academics, social
+    scientists, HR specialists and communicators. Between about 3,000 and 3,800 members answer each round,
+    with response rates from a quarter to just under a half. Figures describe Akavia's members in these
+    professions, not the Swedish labour market as a whole, and should be read with care because the sample
+    is not an unrestricted random sample of the population.
+  year: 2025
+  first_year: 2023
+  generated: '2026-07-22'
+  min_cell: 50
+  population: Akavia members in six professions, not the Swedish workforce
+trend:
+  labels:
+  - May 2023
+  - Sep 2023
+  - May 2024
+  - May 2025
+  values:
+  - 32
+  - 43
+  - 61
+  - 77
+by_profession:
+- name: Communicators
+  adoption: 96
+  prev: 68
+  is_se: false
+  lo: 90
+  hi: 100
+  n: 87
+- name: IT academics
+  adoption: 88
+  prev: 52
+  is_se: false
+  lo: 84
+  hi: 91
+  n: 410
+- name: HR specialists
+  adoption: 82
+  prev: 34
+  is_se: false
+  lo: 76
+  hi: 89
+  n: 219
+- name: Economists
+  adoption: 81
+  prev: 31
+  is_se: false
+  lo: 79
+  hi: 84
+  n: 1398
+- name: Social scientists
+  adoption: 74
+  prev: 27
+  is_se: false
+  lo: 70
+  hi: 78
+  n: 626
+- name: Lawyers
+  adoption: 62
+  prev: 19
+  is_se: false
+  lo: 58
+  hi: 66
+  n: 731
+by_sector:
+- name: Private
+  adoption: 87
+  prev: 42
+  is_se: false
+  lo: 85
+  hi: 89
+  n: 1684
+- name: Local and regional
+  adoption: 80
+  prev: 27
+  is_se: false
+  lo: 76
+  hi: 84
+  n: 585
+- name: Central government
+  adoption: 57
+  prev: 18
+  is_se: false
+  lo: 53
+  hi: 60
+  n: 1202
+by_sex:
+  women: 75
+  men: 81
+org_use:
+  y2024: 92
+  y2025: 97
+governance:
+  labels:
+  - May 2023
+  - Sep 2023
+  - May 2024
+  - May 2025
+  use:
+  - 32
+  - 43
+  - 61
+  - 77
+  policy:
+  - 12
+  - 18
+  - 30
+  - 50
+  strategy:
+  - 11
+  - 15
+  - 23
+  - 38
+training:
+  wants_first: 82
+  wants_last: 90
+  offered_first: 6
+  offered_last: 33
+shadow:
+  private_account: 50
+  employer_pays: 33
+  self_pays: 15
+  universe: standalone AI tool users
+used_for:
+- label: Information handling
+  value: 77
+- label: Language and phrasing
+  value: 76
+- label: Creative content
+  value: 18
+- label: Administration and support
+  value: 15
+- label: Service and product development
+  value: 10

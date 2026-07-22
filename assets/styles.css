@@ -482,3 +482,11 @@ main [id]{scroll-margin-top:196px}
 }
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+/* Compact figure table + tight list (Akavia governance block, Outcomes module). */
+.minitab{width:100%;border-collapse:collapse;margin:14px 0 4px;font-size:.92rem}
+.minitab th,.minitab td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--hair)}
+.minitab th:first-child,.minitab td:first-child{text-align:left}
+.minitab thead th{font-weight:600;color:var(--ink-2);border-bottom-width:2px}
+.minitab tbody tr:last-child td{border-bottom:none;font-weight:600}
+ul.tight{margin:8px 0 0;padding-left:1.1rem}
+ul.tight li{margin:2px 0}

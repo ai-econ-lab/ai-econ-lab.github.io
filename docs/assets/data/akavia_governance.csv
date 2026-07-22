@@ -1,0 +1,15 @@
+wave,pct_uses_ai,pct_knows_of_policy,pct_knows_of_strategy
+May 2023,32,12,11
+Sep 2023,43,18,15
+May 2024,61,30,23
+May 2025,77,50,38
+
+indicator,pct,universe,
+private_account,50,standalone AI tool users,
+employer_pays,33,standalone AI tool users,
+self_pays,15,standalone AI tool users,
+used_for_Information handling,77,AI users,
+used_for_Language and phrasing,76,AI users,
+used_for_Creative content,18,AI users,
+used_for_Administration and support,15,AI users,
+used_for_Service and product development,10,AI users,
