@@ -162,11 +162,12 @@ def home():
     body = f"""<div class="wrap"><div class="hero"><div class="herogrid">
   <div>
     <div class="eyebrow"><span class="dot"></span> A multi-country, multi-disciplinary research lab</div>
-    <h1 class="title">We measure how <em>artificial intelligence</em> is reshaping the world of work.</h1>
-    <p class="lede">An economics-led lab at Örebro University and RATIO, part of the
+    <h1 class="title">We study how <em>artificial intelligence</em> is reshaping the world of work.</h1>
+    <p class="lede">An economics-led research lab at Örebro University and RATIO, part of the
       <a href="https://wasp-hs.org">WASP-HS</a> cluster <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>.
-      Our flagship public good, the <b>AIEL Monitor</b>, tracks how AI is reshaping work across
-      countries, with Sweden in uncommon depth, openly and updated as the data arrive.</p>
+      We study how AI changes work, using Swedish administrative registers, job advertisements and
+      survey data. The <b>AIEL Monitor</b> is where part of that work becomes public: open indicators
+      on AI and work across countries, with Sweden in uncommon depth, updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
       <a class="btn ghost" href="/monitor/#method">How we measure it</a></div>
     <div class="affil">{affils}</div>
@@ -988,6 +989,10 @@ def about():
     clinks = "".join(f'<a href="{l["href"]}">{h(l["label"])}</a> ' for l in c.get("links", []))
     booktitle = f'<a href="{bk["url"]}">{h(bk["title"])}</a>' if bk.get("url") else h(bk["title"])
     booklink = f' <a class="lchip" href="{bk["url"]}">View the book →</a>' if bk.get("url") else ""
+    partners = "".join(
+        f'<li><b>{h(p["name"])}</b>' +
+        (f' (<a href="{p["url"]}">site</a>)' if p.get("url") else "") +
+        f' · {h(p["what"])}</li>' for p in SITE.get("data_partners", []))
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">About</p><h2 class="sec">An economics-led lab on AI and the future of work</h2></div>
 <section style="padding-top:14px"><div class="prose">
@@ -1002,6 +1007,15 @@ def about():
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">The lab</p><h2 class="sec">Who we are.</h2>
   <div class="prose" style="margin-top:14px">{labdesc}</div>
+</section></div></div>
+
+<div class="rule" id="data-partners"><div class="wrap"><section>
+  <p class="kicker">Data partners</p><h2 class="sec">Who shares data with us.</h2>
+  <p class="secintro">Several organisations give the lab access to data they collect themselves. None of them
+    fund the lab, none of them see our results before publication, and listing them implies no endorsement.
+    Where we publish figures from their data we say so on the figure, state what we did to it, and keep the
+    underlying records private.</p>
+  <div class="prose" style="margin-top:12px"><ul class="tight">{partners}</ul></div>
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>

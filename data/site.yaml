@@ -24,11 +24,21 @@ nav:
 brief_subscribe: "https://aielmonitor.substack.com/subscribe"
 
 registration:
-  - "SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS"
+  - "SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS · Akavia"
   - "<b>10.9M</b> SWEDISH ADS · 36 COUNTRIES"
   - "UPDATED <b>2026-07-21</b>"
-  - '<span class="lv">● LIVE · PUBLIC DATA</span>'
+  - '<span class="lv">● LIVE · PUBLIC + PARTNER DATA</span>'
   - "MONITOR PROTOTYPE"
+
+# Organisations that share data with the lab. Credit, not funding: none of these
+# fund the lab, and listing them implies no endorsement of our results.
+data_partners:
+  - name: "Akavia"
+    url: "https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/"
+    what: "Member web panel on AI and working life, 2023 onwards. Shared with the lab; we publish aggregates with attribution."
+  - name: "Svea"
+    url: ""
+    what: "Firm survey on AI adoption, run by Novus. Internal use only at present."
 
 affiliations: ["Örebro University · RATIO", "WASP-HS · AISCAF", "Sweden · Denmark · Portugal · Germany"]
 
