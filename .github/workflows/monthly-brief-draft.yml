@@ -1,10 +1,11 @@
 name: Monthly Brief draft
 
 # Drafts NEXT month's AIEL Monitor Brief and emails it to Magnus for review,
-# two weeks ahead of publication. Runs on the 14th; also runnable on demand.
+# ~two weeks ahead of publication. Issues publish on the 12th, so the draft
+# goes out on the 28th of the prior month. Also runnable on demand.
 on:
   schedule:
-    - cron: "0 7 14 * *"      # 14th, 07:00 UTC (~09:00 Europe/Stockholm)
+    - cron: "0 7 28 * *"      # 28th, 07:00 UTC (~09:00 Europe/Stockholm) -> drafts next month, publish 12th
   workflow_dispatch: {}        # manual "Run workflow" button (for testing)
 
 jobs:
