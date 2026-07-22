@@ -981,7 +981,11 @@ def brief(lang="en"):
     through the spine month by month, and the latest lab news. Same data as the site; print-to-PDF
     ready. The news items are shown in their original (English) wording in both editions."""
     from datetime import date
+    import os as _os
     today = date.today()
+    _ov = _os.environ.get("BRIEF_MONTH_OVERRIDE")     # "YYYY-MM" to draft a specific issue (monthly Action)
+    if _ov:
+        _y, _m = _ov.split("-"); today = date(int(_y), int(_m), 1)
     sv = lang == "sv"
     def L(en, se): return se if sv else en
     def svn(x): return str(x).replace(".", ",") if sv else str(x)

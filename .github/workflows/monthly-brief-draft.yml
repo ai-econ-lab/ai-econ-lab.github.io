@@ -1,0 +1,22 @@
+name: Monthly Brief draft
+
+# Drafts NEXT month's AIEL Monitor Brief and emails it to Magnus for review,
+# two weeks ahead of publication. Runs on the 14th; also runnable on demand.
+on:
+  schedule:
+    - cron: "0 7 14 * *"      # 14th, 07:00 UTC (~09:00 Europe/Stockholm)
+  workflow_dispatch: {}        # manual "Run workflow" button (for testing)
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: Build next month's brief and email it
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: python3 scripts/email_brief_draft.py
