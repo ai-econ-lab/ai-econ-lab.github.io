@@ -190,10 +190,11 @@ def home():
 
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">What the lab is</p>
-  <h2 class="sec">A research lab first. The monitor is our measurement infrastructure made public: the same data and measures our own research runs on.</h2>
-  <p class="secintro">We work across countries on public data and international comparisons, and, rarely for any lab,
-    on linked employer–employee register data in several of them: deepest in Sweden, reaching Denmark, Portugal
-    and Germany, and expanding to more. Economists work alongside sociologists, business scholars and computer
+  <h2 class="sec">A research lab first.</h2>
+  <p class="secintro">The monitor is our measurement infrastructure made public: the same data and measures our
+    own research runs on. We work across countries on public data and international comparisons, and, rarely for
+    any lab, on linked employer–employee register data in several of them: deepest in Sweden, reaching Denmark,
+    Portugal and Germany, and expanding to more. Economists work alongside sociologists, business scholars and computer
     scientists, because a labour market changed by AI cannot be read from one discipline or one country alone.</p>
   <div class="pillars">
     <div class="pillar"><div class="n">01 · DATA</div><h3>Register-grade evidence</h3>
