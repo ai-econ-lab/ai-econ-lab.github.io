@@ -14,6 +14,57 @@ ROOT = Path(__file__).parent
 DATA = ROOT / "data"
 def load(name): return yaml.safe_load((DATA / name).read_text(encoding="utf-8"))
 
+# ── data freshness ───────────────────────────────────────────────────────────
+# The masthead strip carries an UPDATED stamp next to a "● LIVE" badge, so it has
+# to mean the DATA, not the prose. It is derived here rather than typed into
+# site.yaml, because a hand-maintained date silently drifts behind the content
+# (it sat at 2026-07-21 while eight commits of new data landed on the 22nd).
+#
+# Only the files that actually carry numbers count. Editing a person's title or
+# adding a news item is not a data refresh and must not move this date.
+DATA_FILES = [
+    "monitor.yaml", "cross_country.yaml", "cross_country_adoption.yaml",
+    "cross_country_demand.yaml", "swe_adoption.yaml", "daioe_exposure.yaml",
+    "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
+]
+
+def data_updated():
+    """Date the newest of the numeric data files last CHANGED, as YYYY-MM-DD.
+
+    Uses the git commit date, not the filesystem mtime: a fresh clone or a branch
+    switch rewrites every mtime, which would make the site claim a refresh that
+    never happened. Falls back to mtime only when git is unavailable (and the
+    caller should treat that as a soft signal).
+
+    Note this is 'when the series behind the figures last moved', which is a
+    different and weaker claim than 'the data are current as of this date'. The
+    per-figure `foot:` vintages carry that stronger claim, source by source.
+    """
+    import subprocess
+    present = [f for f in DATA_FILES if (DATA / f).exists()]
+    paths = [f"data/{f}" for f in present]
+
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True,
+                              text=True, timeout=10, check=True).stdout
+
+    try:
+        # docs/ is built locally and committed, so build.py always runs BEFORE the
+        # commit that carries the data change. An uncommitted edit to a data file
+        # therefore means the data moved today, and git log would report the
+        # previous refresh -- always one behind.
+        if git("status", "--porcelain", "--", *paths).strip():
+            return datetime.date.today().isoformat()
+        out = git("log", "-1", "--format=%cs", "--", *paths).strip()
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", out):
+            return out
+    except Exception:
+        pass
+    newest = max((DATA / f).stat().st_mtime for f in present)
+    return datetime.date.fromtimestamp(newest).isoformat()
+
+DATA_UPDATED = data_updated()
+
 SITE     = load("site.yaml")
 PAPERS   = load("papers.yaml")
 PEOPLE   = load("people.yaml")
@@ -66,7 +117,10 @@ def masthead(active):
         cur = ' aria-current="page"' if (not n.get("cta") and n["href"] == active) else ""
         cls = ' class="cta"' if n.get("cta") else ""
         items += f'<a href="{n["href"]}"{cls}{cur}>{h(n["label"]).replace("&gt;",">")}</a>'
-    reg = "".join(f"<span>{s}</span>" for s in SITE["registration"])
+    # Plain substitution, not str.format: the strip is hand-authored HTML and a
+    # stray brace in a future entry must not raise.
+    reg = "".join(f'<span>{s.replace("{data_updated}", DATA_UPDATED)}</span>'
+                  for s in SITE["registration"])
     return f"""<div class="mast"><div class="wrap"><div class="mastbar">
   <a class="brand" href="/"><span class="plaque"><b>{h(b['monogram'])}</b></span>
     <span class="brandtext"><b>{h(b['name'])}</b><small>{h(b['tagline'])}</small></span></a>

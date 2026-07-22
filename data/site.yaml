@@ -26,7 +26,9 @@ brief_subscribe: "https://aielmonitor.substack.com/subscribe"
 registration:
   - "SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS · Akavia"
   - "<b>10.9M</b> SWEDISH ADS · 36 COUNTRIES"
-  - "UPDATED <b>2026-07-21</b>"
+  # Derived at build time from the numeric data files' last git commit — see
+  # data_updated() in build.py. Do not hand-type a date here; it will drift.
+  - "DATA UPDATED <b>{data_updated}</b>"
   - '<span class="lv">● LIVE · PUBLIC + PARTNER DATA</span>'
   - "MONITOR PROTOTYPE"
 
