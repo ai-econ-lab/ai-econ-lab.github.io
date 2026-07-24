@@ -27,6 +27,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: build.py derives the DATA UPDATED stamp from git log on
+          # the data files. A shallow clone has no history, so the stamp would fall
+          # back to checkout mtime = "today" and churn docs/ every run.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
