@@ -2,3 +2,8 @@
 __pycache__/
 *.pyc
 .venv/
+
+# Working notes: internal, never part of the published site.
+# NB: files already committed must also be untracked (git rm --cached) --
+# .gitignore alone does not stop tracking something git already knows about.
+notes/
