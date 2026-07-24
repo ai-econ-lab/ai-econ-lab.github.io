@@ -179,8 +179,7 @@ def org_ld():
     b = SITE["brand"]
     return json.dumps({"@context":"https://schema.org","@type":"Organization","name":b["name"],
         "url":BASE,"description":b["description"],
-        "parentOrganization":{"@type":"CollegeOrUniversity","name":"Örebro University"},
-        "memberOf":{"@type":"Organization","name":"WASP-HS AISCAF"}}, ensure_ascii=False)
+        "parentOrganization":{"@type":"CollegeOrUniversity","name":"Örebro University"}}, ensure_ascii=False)
 
 def dataset_ld():
     return json.dumps({"@context":"https://schema.org","@type":"Dataset","name":"AI in Demand",
@@ -218,11 +217,13 @@ def home():
   <div>
     <div class="eyebrow"><span class="dot"></span> A multi-country, multi-disciplinary research lab</div>
     <h1 class="title">We study how <em>artificial intelligence</em> is reshaping the world of work.</h1>
-    <p class="lede">An economics-led research lab at Örebro University and RATIO, part of the
-      <a href="https://wasp-hs.org">WASP-HS</a> cluster <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>.
-      We study how AI changes work, using Swedish administrative registers, job advertisements and
-      survey data. The <b>AIEL Monitor</b> is where part of that work becomes public: open indicators
-      on AI and work across countries, with Sweden in uncommon depth, updated as the data arrive.</p>
+    <p class="lede">An economics-led, multi-disciplinary research lab at Örebro University and RATIO,
+      contributing to the <a href="https://wasp-hs.org">WASP-HS</a> research cluster
+      <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>. We combine administrative registers from
+      several European countries with job advertisements, surveys and public cross-country data.
+      The <b>AIEL Monitor</b> is where
+      part of that work becomes public: open indicators on AI and work across countries, with Sweden
+      in uncommon depth, updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
       <a class="btn ghost" href="/monitor/#method">How we measure it</a></div>
     <div class="affil">{affils}</div>
@@ -259,7 +260,7 @@ def home():
       <p>Register-level in Sweden, Denmark, Portugal and Germany, with more countries planned; 30-plus via EU-LFS
         and international job-ad data for external validity.</p></div>
     <div class="pillar"><div class="n">03 · LENS</div><h3>Multi-disciplinary</h3>
-      <p>Economics, sociology, business administration and computer science, inside the
+      <p>Economics, sociology, business administration and computer science, partly through the
         <a href="https://wasp-hs.org">WASP-HS</a> cluster <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>,
         co-led with Uppsala and Stockholm.</p></div>
     <div class="pillar"><div class="n">04 · OUTPUT</div><h3>Open public goods</h3>

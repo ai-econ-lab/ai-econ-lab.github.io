@@ -6,8 +6,8 @@ brand:
   domain: "ai-econlab.com"
   base_url: "https://ai-econlab.com"     # canonical host for <link rel=canonical> + sitemap
   description: >-
-    An economics-led, multi-disciplinary research lab studying how artificial
-    intelligence is reshaping the world of work, within the WASP-HS AISCAF cluster.
+    An economics-led, multi-disciplinary research lab at Örebro University and RATIO,
+    studying how artificial intelligence is reshaping the world of work.
 
 # Top navigation. 'cta' renders as the filled button on the right.
 nav:
