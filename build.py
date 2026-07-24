@@ -859,7 +859,7 @@ def titles_block():
     def lst(block):
         return (f'<div class="prod"><h3>{h(block["label"])}</h3>'
                 f'<p>{h(", ".join(block["items"]))}</p></div>')
-    return f"""<div class="grouphdr" style="margin-top:26px">Who asks? Top occupation names
+    return f"""<div class="grouphdr" style="margin-top:26px">Who asks? Top advertisement titles
       <span class="preview-flag">◔ {h(tt['flag'])}</span></div>
     <p class="secintro" style="margin-top:4px">{h(tt['intro'])}</p>
     <div class="two" style="grid-template-columns:1fr 1fr 1fr">{tops}</div>
