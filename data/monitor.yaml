@@ -28,22 +28,67 @@ modules:
 
 # The AI in Demand module.
 aiindemand_lede: >-
-  How often Swedish employers ask for artificial intelligence in their job ads, by
-  year, by occupation, and soon by whether they want AI built, integrated, or simply used.
+  How often Swedish employers ask for AI skills in their job ads, by year, by occupation, and
+  soon by whether they want AI built, integrated, or simply used. We name the series by what
+  the employer does, never by what the job is: ads that ask for AI skills, ads that name an
+  AI skill. We deliberately avoid the phrase "AI jobs".
 
-# Trend: broad measure (any AI-related term), share of all vacancies (%).
+# Plain-language captions (Harford test). Use verbatim beneath every figure of each series.
+captions:
+  floor: >-
+    The share of Swedish job ads that ask the person being hired to work with AI, naming a
+    specific skill such as machine learning in the job's own requirements.
+  specific: >-
+    The share of Swedish job ads that mention a specific AI skill, such as machine learning,
+    anywhere in the ad.
+  guard: >-
+    Ads that mention AI only when describing the company do not count; an ad counts for what
+    it asks of the person being hired.
+  floor_sv: >-
+    Andelen svenska platsannonser som ber den som anställs att arbeta med AI, med en namngiven
+    färdighet som maskininlärning bland tjänstens egna krav.
+  specific_sv: >-
+    Andelen svenska platsannonser som nämner en specifik AI-färdighet, som maskininlärning,
+    någonstans i annonsen.
+
+# Trend: the frozen-v1 series (fp 2f073672be5d998c). Two lines:
+# values = ads that NAME a specific AI skill (whole text); floor_values = ads that ASK for
+# AI skills in the role's own requirements. 2026 appended as H1-partial when Q1/Q2 land.
 trend:
-  years:  [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
-  values: [0.015, 0.025, 0.016, 0.029, 0.028, 0.036, 0.038, 0.039, 0.047, 0.050, 0.078, 0.177, 0.387, 0.686, 0.794, 0.967, 0.825, 0.760, 1.225, 2.081]
-  provisionalFrom: 19   # 0-based index of the first provisional year (2025)
-  ymax: 2.2
-  yticks: [0, 0.5, 1, 1.5, 2]
+  years:  [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
+  values: [0.058, 0.082, 0.076, 0.092, 0.078, 0.091, 0.096, 0.087, 0.105, 0.126, 0.174, 0.237, 0.402, 0.658, 0.711, 0.696, 0.606, 0.488, 0.752, 0.901, 1.121]
+  floor_values: [0.020, 0.030, 0.028, 0.019, 0.026, 0.031, 0.032, 0.026, 0.035, 0.058, 0.086, 0.113, 0.179, 0.257, 0.301, 0.302, 0.256, 0.209, 0.327, 0.441, 0.500]
+  provisionalFrom: 20   # 0-based index of the first provisional point (2026, when appended)
+  ymax: 1.5
+  yticks: [0, 0.5, 1, 1.5]
 
 tiles:
-  - {num: "1.1<span>%</span>", lab: "of current vacancies name a specific AI skill", foot: "+40% incl. generative-AI terms", cls: ""}
-  - {num: "≈140×", lab: "growth in AI-in-demand since 2006 (0.015% → 2.08%)", foot: "2006–2025 · all Platsbanken ads", cls: "b"}
-  - {num: "4.3", lab: "ads per 10,000 mention generative AI in 2025, from zero before 2023", foot: "post-ChatGPT takeoff", cls: "c"}
-  - {num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations", foot: "gap widening since 2020", cls: "d"}
+  - {num: "0.90<span>%</span>", lab: "of 2025 job ads name a specific AI skill; 0.44% ask for it in the job's own requirements", foot: "frozen v1 · 2025", cls: ""}
+  - {num: "15×", lab: "rise since 2006 in ads naming an AI skill (0.06% → 0.90%); the strict floor rose 22×", foot: "2006–2025 · Platsbanken", cls: "b"}
+  - {num: "24.5", lab: "ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023", foot: "27% of AI demand", cls: "c"}
+  - {num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations", foot: "widening since 2020", cls: "d"}
+
+# Top occupation names among AI-skill ads, plus taxonomy-level churn. Free-text titles: next release.
+titles:
+  flag: "Occupation names · AF taxonomy"
+  intro: >-
+    Where the demand sits, and how the cast changes. Software roles still dominate, but the
+    2023 newcomers tell the diffusion story: leadership, audit and analysis roles clearing
+    the AI-demand bar for the first time.
+  top:
+    - {year: 2025, items: ["Software developer", "Systems developer / Programmer"]}
+    - {year: 2024, items: ["Systems developer / Programmer", "Software developer"]}
+    - {year: 2016, items: ["Systems developer / Programmer", "Communications officer"]}
+  newcomers:
+    label: "New in AI demand, 2023"
+    items: ["CEO / Managing director", "Auditor", "Environmental and climate strategist", "Data analyst", "Biostatistician", "IT coordinator"]
+  cooled:
+    label: "Cooled: no longer clear the bar"
+    items: ["Telemarketer (2018)", "Construction engineer (2022)", "Mathematical statistician (2023)", "Inside sales (2024)", "Network technician (2024)"]
+  caveat: >-
+    An occupation "clears the bar" in a year when at least five of its ads ask for AI skills.
+    Names are our English renderings of the employment service's Swedish taxonomy labels, so entries and exits partly reflect
+    taxonomy revisions; free-text titles (the true neologisms) arrive with the next release.
 
 segmentation:
   flag: "Preview · not yet measured"
@@ -57,7 +102,9 @@ segmentation:
     - {name: "Users",       color: "--c3", text: "Ads where AI is simply a tool of the job: marketing, admin, teaching, sales. The largest, fastest-growing tier."}
 
 caveats:
-  - "<b>2025 is provisional</b>: the current-year bulk file is still filling; the latest point may revise up."
-  - "The lexical measure is a <b>lower bound</b>; roughly three times as many ads mention AI in passing without naming a technique."
-  - "The occupation snapshot is a live sample of open ads, not the full year."
+  - "<b>2026 is partial</b>: the first half comes from the Q1–Q2 archives and the latest weeks from the live feed; the newest point will revise."
+  - "The chart ends with the June archives; the live feed runs to today and joins the chart once the two sources are reconciled."
+  - "<b>The 2022–2023 dip</b> coincides with the global tech-hiring downturn and a sharp expansion of total ad volume: read it as a market swing, not necessarily as falling AI intent per employer."
+  - "The headline lines are deliberately strict: roughly 2.5 times as many ads mention AI in some form. That broad bound mixes genuine demand with company boilerplate in proportions that drift over time, so we publish it only after an era-specific correction, now in progress."
+  - "Ads that mention AI only when describing the company never count; an ad counts for what it asks of the person being hired."
   - "The builder / integrator / user split is a <b>preview</b> and not yet a measured series."

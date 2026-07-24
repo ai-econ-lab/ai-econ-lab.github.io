@@ -161,6 +161,7 @@ def shell(title, desc, path, body, jsonld="", need_chart=False):
     if need_chart:
         t = MONITOR["trend"]
         trend_js = (f'<script>window.AIEL_TREND={{years:{t["years"]},values:{t["values"]},'
+                    f'floor:{t.get("floor_values", [])},'
                     f'provisionalFrom:{t["provisionalFrom"]},ymax:{t["ymax"]},yticks:{t["yticks"]}}};</script>')
     ld = f'<script type="application/ld+json">{jsonld}</script>' if jsonld else ""
     return f"""<!doctype html><html lang="en"><head>
@@ -241,13 +242,15 @@ def home():
     <div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
       <span class="livechip"><i></i>live</span></div>
     <div class="panelbody">
-      <p class="psub">Vacancies requesting any AI skill, 2006–2025. About <b>140×</b> higher than twenty years
-        ago, and steepest after 2023. Internationally (AI Index / Lightcast, 2025): a median <b>1.9%</b> of
+      <p class="psub">Job ads that name a specific AI skill, and the stricter floor: ads that ask for it in the
+        job's own requirements. Fifteen times the 2006 level, with the post-2023 rebound setting records.
+        Internationally (AI Index / Lightcast, 2025): a median <b>1.9%</b> of
         postings across 22 countries require AI skills, Sweden <b>2.8%</b> on that measure.</p>
-      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Line chart: AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
-      <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
-        <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method", next_up="revised and extended series, summer 2026")}
+      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Line chart: share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
+      <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
+        <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
+        <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method", next_up="tier split: built, integrated or simply used")}
     </div>
   </div>
 </div></div></div>
@@ -739,6 +742,13 @@ def trend_svg(t):
         p.append(f'<polygon class="trendarea" points="{area}"/>')
         p.append(f'<polyline class="trendline" points="{" ".join(f"{x:.1f},{y:.1f}" for x,y in pts[:pf])}"/>')
     p.append(f'<polyline class="trenddash" points="{" ".join(f"{x:.1f},{y:.1f}" for x,y in pts[pf-1:])}"/>')
+    fv = t.get("floor_values")
+    if fv and len(fv) == n:
+        fpts = [(X(i), Y(fv[i])) for i in range(n)]
+        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x,y in fpts[:pf])}" '
+                 f'fill="none" stroke="var(--c2)" stroke-width="2"/>')
+        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x,y in fpts[pf-1:])}" '
+                 f'fill="none" stroke="var(--c2)" stroke-width="2" stroke-dasharray="4 3"/>')
     lx, ly = pts[-1]
     p.append(f'<circle class="trenddot" cx="{lx:.1f}" cy="{ly:.1f}" r="4"/>')
     p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-8:.1f}" text-anchor="end">{vs[-1]:.2f}%</text>')
@@ -825,6 +835,26 @@ def exposure_section():
   {related_research("exposure")}
 </section></div></div>"""
 
+def titles_block():
+    """Top occupation names among AI-skill ads + taxonomy-level churn (newcomers/cooled).
+    Free-text titles (true neologisms) wait for the extraction layer; keep the flag honest."""
+    tt = MONITOR.get("titles")
+    if not tt:
+        return ""
+    tops = "".join(
+        f'<div class="prod"><h3>{y["year"]}</h3><p>{h(" · ".join(y["items"]))}</p></div>'
+        for y in tt["top"])
+    def lst(block):
+        return (f'<div class="prod"><h3>{h(block["label"])}</h3>'
+                f'<p>{h(", ".join(block["items"]))}</p></div>')
+    return f"""<div class="grouphdr" style="margin-top:26px">Who asks? Top occupation names
+      <span class="preview-flag">◔ {h(tt['flag'])}</span></div>
+    <p class="secintro" style="margin-top:4px">{h(tt['intro'])}</p>
+    <div class="two" style="grid-template-columns:1fr 1fr 1fr">{tops}</div>
+    <div class="two" style="grid-template-columns:1fr 1fr;margin-top:10px">{lst(tt['newcomers'])}{lst(tt['cooled'])}</div>
+    <p class="psub" style="margin-top:6px">{h(tt['caveat'])}</p>"""
+
+
 def demand_section(tiles, seg):
     """Module 2 — Demand. Headline is the cross-country demand bar; Sweden's live measure is the depth cut."""
     dm = DEMAND; dmt = dm["meta"]
@@ -840,10 +870,12 @@ def demand_section(tiles, seg):
 
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
     <p class="secintro" style="margin:0 0 4px">{h(MONITOR['aiindemand_lede'])} We read every open and historical
-      Swedish job ad (JobTech / Platsbanken, 2006–2025, about <b>10.9 million</b>) with a versioned, citable term
-      list, so the level and its 140-fold rise since 2006 are reproducible.</p>
+      Swedish job ad (JobTech / Platsbanken, 2006 onwards, about <b>10.9 million</b>) with a versioned, citable term
+      list, so the level and its fifteen-fold rise since 2006 are reproducible.</p>
     <div class="tiles">{tiles}</div>
-    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical layer (not DAIOE)", svg_name="ai_in_demand_trend.svg", next_up="revised and extended series, summer 2026")}
+    <p class="psub" style="margin-top:6px">{h(MONITOR['captions']['guard'])}</p>
+    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
+    {titles_block()}
     <div class="grouphdr" style="margin-top:26px">Coming next · who is the AI for?
       <span class="preview-flag">◔ {h(MONITOR['segmentation']['flag'])}</span></div>
     <p class="secintro" style="margin-top:4px">{h(MONITOR['segmentation']['intro'])}</p>
@@ -1028,13 +1060,14 @@ def monitor():
       <a class="btn ghost" href="#method">How we measure it</a></div></div>
   <div class="panel"><div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
     <span class="livechip"><i></i>live</span></div>
-    <div class="panelbody"><p class="psub">Vacancies requesting any AI skill, 2006–2025. About <b>140×</b> higher than twenty years
-        ago, and steepest after 2023. Internationally (AI Index / Lightcast, 2025): a median <b>1.9%</b> of
-        postings across 22 countries require AI skills, Sweden <b>2.8%</b> on that measure.</p>
-      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
-      <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
-        <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", svg_name="ai_in_demand_trend.svg", method_href="#method", next_up="revised and extended series, summer 2026")}</div></div>
+    <div class="panelbody"><p class="psub">Ads naming a specific AI skill reached <b>0.90%</b> in 2025, fifteen times
+        the 2006 level; the strict floor, ads asking for AI in the role itself, reached <b>0.44%</b>. Both
+        set records in the post-2023 rebound, with generative-AI skills now 27% of the demand.</p>
+      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
+      <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
+        <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
+        <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)", svg_name="ai_in_demand_trend.svg", method_href="#method", next_up="tier split: built, integrated or simply used")}</div></div>
 </div></div></div>
 
 {stat_overview()}
@@ -1054,9 +1087,10 @@ def monitor():
   <h2 class="sec">What we measure, and what we don't yet.</h2>
   <div class="prose" style="margin-top:16px">
     <p>The measure runs on public data with one named exception. The Swedish demand series reads every open and historical
-      advertisement in Sweden's public job board (Platsbanken / JobTech), 2006–2025: about <b>10.9 million ads</b>.
-      An ad counts as AI-in-demand when its text requests an AI skill, matched by a versioned, citable term list
-      (Swedish and English); a semantic layer, now training, will catch AI ads that use no listed term. Exposure,
+      advertisement in Sweden's public job board (Platsbanken / JobTech), 2006 onwards: about <b>10.9 million ads</b>.
+      An ad counts when its text names an AI skill; the stricter floor counts it only when the skill sits in the
+      role's own tasks or requirements. The term list is versioned and citable (Swedish and English; frozen v1,
+      fingerprint 2f073672be5d998c), and a semantic layer, now training, will catch AI ads that use no listed term. Exposure,
       adoption and cross-country demand come from DAIOE (generative-AI, v2023), Eurostat and the Stanford AI Index.</p>
     <p>The exception is the worker-side layer, which comes from
       <a href="https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/">Akavia</a>, a Swedish
@@ -1376,8 +1410,11 @@ def emit_data(out):
         for it in DAIOE_EXP["least"]: w.writerow([it["occ"], it["score"], "least_exposed", f"v{DAIOE_EXP['year']}"])
     t = MONITOR["trend"]
     with (d / "ai_in_demand_trend.csv").open("w", newline="", encoding="utf-8") as f:
-        w = _csv.writer(f); w.writerow(["year", "ai_ad_share_pct"])
-        for y, v in zip(t["years"], t["values"]): w.writerow([y, v])
+        w = _csv.writer(f)
+        w.writerow(["year", "names_ai_skill_pct", "asks_for_ai_in_role_pct", "definition"])
+        fv = t.get("floor_values") or [""] * len(t["years"])
+        for y, v, fl in zip(t["years"], t["values"], fv):
+            w.writerow([y, v, fl, "frozen v1 fp 2f073672be5d998c"])
     (d / "ai_in_demand_trend.svg").write_text(chart_standalone(trend_svg(t)), encoding="utf-8")
     with (d / "entry_level_squeeze.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)

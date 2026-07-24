@@ -62,6 +62,16 @@ window.drawTrend = function drawTrend(){
   g += `<path d="${ds}" fill="none" stroke="${col}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
   // dashed provisional tail
   g += `<path d="M${X(YRS[s]).toFixed(1)} ${Y(V[s]).toFixed(1)} L${X(YRS[YRS.length-1]).toFixed(1)} ${Y(V[V.length-1]).toFixed(1)}" fill="none" stroke="${col}" stroke-width="2.4" stroke-dasharray="4 3" stroke-linecap="round"/>`;
+  // floor line (ads that ask for AI in the role itself) — same provisional logic, second colour
+  const F = window.AIEL_TREND.floor;
+  if (F && F.length === YRS.length){
+    const col2 = CSS("--c2");
+    let df = ""; for (let i=0;i<=s;i++){ const x=X(YRS[i]),y=Y(F[i]); df += (df?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" "; }
+    g += `<path d="${df}" fill="none" stroke="${col2}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    g += `<path d="M${X(YRS[s]).toFixed(1)} ${Y(F[s]).toFixed(1)} L${X(YRS[YRS.length-1]).toFixed(1)} ${Y(F[F.length-1]).toFixed(1)}" fill="none" stroke="${col2}" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round"/>`;
+    const fx = X(YRS[YRS.length-1]), fy = Y(F[F.length-1]);
+    g += `<circle cx="${fx}" cy="${fy}" r="3.5" fill="${CSS('--paper')}" stroke="${col2}" stroke-width="2"/>`;
+  }
   // endpoint
   const lx = X(YRS[YRS.length-1]), ly = Y(V[V.length-1]);
   g += `<circle cx="${lx}" cy="${ly}" r="4.5" fill="${CSS('--paper')}" stroke="${col}" stroke-width="2.4"/>`;

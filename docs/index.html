@@ -15,7 +15,7 @@
     <span class="brandtext"><b>AI-Econ Lab</b><small>Örebro University · RATIO</small></span></a>
   <nav class="top"><a href="/monitor/">Monitor</a><a href="/daioe/">DAIOE</a><a href="/research/">Research</a><a href="/people/">People</a><a href="/events/">Events</a><a href="/news/">News</a><a href="/about/">About</a></nav>
   <button class="tbtn" id="themebtn" aria-label="Toggle colour theme">◐ Theme</button>
-</div></div><div class="regstrip"><div class="wrap"><div class="reg"><span>SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS · Akavia</span><span><b>10.9M</b> SWEDISH ADS · 36 COUNTRIES</span><span>DATA UPDATED <b>22 Jul 2026</b> · SOURCES CHECKED WEEKLY</span><span><span class="lv">● LIVE · PUBLIC + PARTNER DATA</span></span><span>MONITOR PROTOTYPE</span></div></div></div></div>
+</div></div><div class="regstrip"><div class="wrap"><div class="reg"><span>SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS · Akavia</span><span><b>10.9M</b> SWEDISH ADS · 36 COUNTRIES</span><span>DATA UPDATED <b>24 Jul 2026</b> · SOURCES CHECKED WEEKLY</span><span><span class="lv">● LIVE · PUBLIC + PARTNER DATA</span></span><span>MONITOR PROTOTYPE</span></div></div></div></div>
 <main id="main"><div class="wrap"><div class="hero"><div class="herogrid">
   <div>
     <div class="eyebrow"><span class="dot"></span> A multi-country, multi-disciplinary research lab</div>
@@ -35,13 +35,15 @@
     <div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
       <span class="livechip"><i></i>live</span></div>
     <div class="panelbody">
-      <p class="psub">Vacancies requesting any AI skill, 2006–2025. About <b>140×</b> higher than twenty years
-        ago, and steepest after 2023. Internationally (AI Index / Lightcast, 2025): a median <b>1.9%</b> of
+      <p class="psub">Job ads that name a specific AI skill, and the stricter floor: ads that ask for it in the
+        job's own requirements. Fifteen times the 2006 level, with the post-2023 rebound setting records.
+        Internationally (AI Index / Lightcast, 2025): a median <b>1.9%</b> of
         postings across 22 countries require AI skills, Sweden <b>2.8%</b> on that measure.</p>
-      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Line chart: AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
-      <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
-        <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div>
-      <div class="figfoot"><a class="figdl" href="/assets/data/ai_in_demand_trend.csv" download>↓ Data (CSV)</a><a class="figdl" href="/assets/data/ai_in_demand_trend.svg" download>↓ SVG</a><button class="figdl figpng" type="button" data-svg="/assets/data/ai_in_demand_trend.svg">↓ PNG</button><span class="figsrc">Source: JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)</span><span class="fignext">Next: revised and extended series, summer 2026</span><a class="figml" href="/monitor/#method">Method &amp; sources →</a></div>
+      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Line chart: share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
+      <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
+        <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
+        <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
+      <div class="figfoot"><a class="figdl" href="/assets/data/ai_in_demand_trend.csv" download>↓ Data (CSV)</a><a class="figdl" href="/assets/data/ai_in_demand_trend.svg" download>↓ SVG</a><button class="figdl figpng" type="button" data-svg="/assets/data/ai_in_demand_trend.svg">↓ PNG</button><span class="figsrc">Source: JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)</span><span class="fignext">Next: tier split: built, integrated or simply used</span><a class="figml" href="/monitor/#method">Method &amp; sources →</a></div>
     </div>
   </div>
 </div></div></div>
@@ -78,7 +80,7 @@
   <p class="secintro">One of the monitor's country cuts, read from Sweden's public job-ad stream (JobTech / Platsbanken).
     Every figure is measured from the ad text with a versioned, citable term list. Where something is not yet
     measured, we say so.</p>
-  <div class="tiles"><div class="tile"><div class="stripe"></div><div class="num">1.1<span>%</span></div><div class="lab">of current vacancies name a specific AI skill</div><div class="foot">+40% incl. generative-AI terms</div></div><div class="tile b"><div class="stripe"></div><div class="num">≈140×</div><div class="lab">growth in AI-in-demand since 2006 (0.015% → 2.08%)</div><div class="foot">2006–2025 · all Platsbanken ads</div></div><div class="tile c"><div class="stripe"></div><div class="num">4.3</div><div class="lab">ads per 10,000 mention generative AI in 2025, from zero before 2023</div><div class="foot">post-ChatGPT takeoff</div></div><div class="tile d"><div class="stripe"></div><div class="num">−5.3<span>pp</span></div><div class="lab">fewer entry-level openings in the most AI-exposed occupations</div><div class="foot">gap widening since 2020</div></div></div>
+  <div class="tiles"><div class="tile"><div class="stripe"></div><div class="num">0.90<span>%</span></div><div class="lab">of 2025 job ads name a specific AI skill; 0.44% ask for it in the job&#x27;s own requirements</div><div class="foot">frozen v1 · 2025</div></div><div class="tile b"><div class="stripe"></div><div class="num">15×</div><div class="lab">rise since 2006 in ads naming an AI skill (0.06% → 0.90%); the strict floor rose 22×</div><div class="foot">2006–2025 · Platsbanken</div></div><div class="tile c"><div class="stripe"></div><div class="num">24.5</div><div class="lab">ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023</div><div class="foot">27% of AI demand</div></div><div class="tile d"><div class="stripe"></div><div class="num">−5.3<span>pp</span></div><div class="lab">fewer entry-level openings in the most AI-exposed occupations</div><div class="foot">widening since 2020</div></div></div>
   <div class="two">
     <div class="prod"><div class="tag">The Monitor · public data</div><h3>The AI-Econ Lab Monitor</h3>
       <p>How AI shows up in the labour market: AI in Demand (live), the Occupations Explorer (live), AI exposure across countries (live), and
@@ -108,5 +110,5 @@
   <span>PUBLIC DATA · MONITOR PROTOTYPE · CITE THE VERSION AND DATE</span>
 </div></div></footer>
 <div class="tip" id="tip"></div>
-<script>window.AIEL_TREND={years:[2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],values:[0.015, 0.025, 0.016, 0.029, 0.028, 0.036, 0.038, 0.039, 0.047, 0.05, 0.078, 0.177, 0.387, 0.686, 0.794, 0.967, 0.825, 0.76, 1.225, 2.081],provisionalFrom:19,ymax:2.2,yticks:[0, 0.5, 1, 1.5, 2]};</script><script src="/assets/app.js?v=74e6dde5"></script>
+<script>window.AIEL_TREND={years:[2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],values:[0.058, 0.082, 0.076, 0.092, 0.078, 0.091, 0.096, 0.087, 0.105, 0.126, 0.174, 0.237, 0.402, 0.658, 0.711, 0.696, 0.606, 0.488, 0.752, 0.901, 1.121],floor:[0.02, 0.03, 0.028, 0.019, 0.026, 0.031, 0.032, 0.026, 0.035, 0.058, 0.086, 0.113, 0.179, 0.257, 0.301, 0.302, 0.256, 0.209, 0.327, 0.441, 0.5],provisionalFrom:20,ymax:1.5,yticks:[0, 0.5, 1, 1.5]};</script><script src="/assets/app.js?v=1f116f78"></script>
 </body></html>
