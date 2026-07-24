@@ -88,26 +88,28 @@ titles:
   flag: "Ad titles · verbatim"
   intro: >-
     Where the demand sits, in the employers' own words. The same titles head the list year
-    after year: machine learning engineer, data scientist, AI/ML developer. The one
-    surprise sits just below them: medicinsk sekreterare, as speech recognition spreads
-    through healthcare administration.
+    after year: machine learning engineer, data scientist, AI/ML developer; the surprise
+    just below them is medicinsk sekreterare, as speech recognition spreads through
+    healthcare administration. The newcomers column is the language at work: job titles
+    crossing three ads in a year for the first time.
   top:
     - {year: "2026 · H1", items: ["Machine learning engineer", "Data scientist"]}
     - {year: 2025, items: ["AI/ML-utvecklare", "Machine learning engineer"]}
     - {year: 2024, items: ["Machine learning engineer", "Data scientist"]}
   newcomers:
-    label: "New in AI demand, 2023"
-    items: ["CEO / Managing director", "Auditor", "Environmental and climate strategist", "Data analyst", "Biostatistician", "IT coordinator"]
+    label: "New titles in AI demand"
+    items: ["AI ambassador (2023)", "AI content producer (2023)", "AI-experter (2024)", "AI lead (2025)", "AI data annotation specialist (2025)", "Senior agentic AI developer (2026)"]
   cooled:
     label: "Cooled: no longer clear the bar"
     items: ["Telemarketer (2018)", "Construction engineer (2022)", "Mathematical statistician (2023)", "Inside sales (2024)", "Network technician (2024)"]
   caveat: >-
-    Top titles are the advertisements' own headlines, as employers wrote them (lightly
-    cleaned: employer and place names removed), counted among ads that ask for AI skills in
-    the role itself; a vacancy posted more than once counts each time. The newcomer and
-    cooled lists still use the employment service's occupation taxonomy (our English
-    renderings), where an occupation "clears the bar" with at least five such ads in a
-    year; free-text neologisms (the AI-steward class) arrive with the next release.
+    Top titles and the newcomer list are the advertisements' own headlines, as employers
+    wrote them (lightly cleaned: employer and place names removed); top titles are counted
+    among ads that ask for AI skills in the role itself, and a newcomer's year is the first
+    in which at least three ads carry that title. The cooled list still uses the employment
+    service's occupation taxonomy (our English renderings), where an occupation "clears the
+    bar" with at least five AI-skill ads in a year. A vacancy posted more than once counts
+    each time.
 
 segmentation:
   flag: "Preview · not yet measured"
