@@ -250,7 +250,7 @@ def home():
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method", next_up="tier split: built, integrated or simply used")}
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method", next_up="tier split: built, integrated or simply used")}
     </div>
   </div>
 </div></div></div>
@@ -886,7 +886,7 @@ def demand_section(tiles, seg):
       list, so the level and its fifteen-fold rise since 2006 are reproducible.</p>
     <div class="tiles">{tiles}</div>
     <p class="psub" style="margin-top:6px">{h(MONITOR['captions']['guard'])}</p>
-    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
+    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
     {livewindow_block()}
     {titles_block()}
     <div class="grouphdr" style="margin-top:26px">Coming next · who is the AI for?
@@ -1080,7 +1080,7 @@ def monitor():
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)", svg_name="ai_in_demand_trend.svg", method_href="#method", next_up="tier split: built, integrated or simply used")}</div></div>
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list", svg_name="ai_in_demand_trend.svg", method_href="#method", next_up="tier split: built, integrated or simply used")}</div></div>
 </div></div></div>
 
 {stat_overview()}
@@ -1099,15 +1099,13 @@ def monitor():
   <p class="kicker">How to read this</p>
   <h2 class="sec">What we measure, and what we don't yet.</h2>
   <div class="prose" style="margin-top:16px">
-    <p>The measure runs on public data with one named exception. The Swedish demand series reads every open and historical
-      advertisement in Sweden's public job board (Platsbanken / JobTech), 2006 onwards: about <b>10.9 million advertisement entries</b> (raw archive unit, reposts included; deduplication analysis under way).
-      An ad counts when its text names an AI skill; the stricter floor counts it only when the skill sits in the
-      role's own tasks or requirements. The term list is versioned and citable (Swedish and English; frozen v1,
-      fingerprint 2f073672be5d998c). A companion layer watches the live feed daily for new AI vocabulary and
-      proposes additions for quarterly review; ads that speak of AI without naming any listed skill are tracked
-      separately, and join the published series once a classifier for them passes validation against our
-      hand-labelled reference set. Exposure,
-      adoption and cross-country demand come from DAIOE (generative-AI, v2023), Eurostat and the Stanford AI Index.</p>
+    <p>The measure runs on public data with one exception, described below. The Swedish demand series reads every
+      open and historical advertisement in Sweden's public job board (Platsbanken), 2006 onwards. An ad counts
+      when its text names an AI skill; the stricter floor counts it only when the skill sits in the role's own
+      tasks or requirements. The term list behind the measure is versioned and kept current against new AI
+      vocabulary, and every chart states which version produced it. The full technical documentation, from the
+      term list to the validation against hand-labelled ads, lives in the lab's methods note, available on
+      request. Exposure, adoption and cross-country demand come from DAIOE, Eurostat and the Stanford AI Index.</p>
     <p>The exception is the worker-side layer, which comes from
       <a href="https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/">Akavia</a>, a Swedish
       professional union that surveys its members through a web panel and shares the de-identified results with

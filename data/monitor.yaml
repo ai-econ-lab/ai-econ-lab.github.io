@@ -121,4 +121,5 @@ caveats:
   - "<b>The 2022–2023 dip</b> coincides with the global tech-hiring downturn and a sharp expansion of total ad volume: read it as a market swing, not necessarily as falling AI intent per employer."
   - "The headline lines are deliberately strict: roughly 2.5 times as many ads mention AI in some form. That broad bound mixes genuine demand with company boilerplate in proportions that drift over time, so we publish it only after an era-specific correction, now in progress."
   - "Ads that mention AI only when describing the company never count; an ad counts for what it asks of the person being hired."
+  - "Counts are advertisement entries as they appear in the public archives; the same vacancy can be posted more than once."
   - "The builder / integrator / user split is a <b>preview</b> and not yet a measured series."

@@ -5,7 +5,7 @@ years:
   - year: 2026
     items:
       - date: "Jul 24"
-        text: 'The AIEL Monitor''s AI-in-Demand series was rebuilt end to end on a frozen, versioned measure: 10.9 million Swedish job ads, 2006 to mid-2026, under one definition (v1), with a strict floor (ads that ask for AI skills in the role itself), a named-skill line, top occupation names among AI ads, and the 2023 newcomers in AI demand. Every figure carries its definition fingerprint.'
+        text: 'The AIEL Monitor''s AI-in-Demand series was rebuilt end to end on a frozen, versioned measure: 10.9 million Swedish job ads, 2006 to mid-2026, under one definition (v1), with a strict floor (ads that ask for AI skills in the role itself), a named-skill line, top occupation names among AI ads, and the 2023 newcomers in AI demand.'
         links: [{label: "The Monitor", url: "/monitor/"}]
       - {date: "Jun 24", text: 'The paper "Artificial Intelligence for Public Use" (Lodefalk, Engberg, Lidskog, Skargren & Tang) was accepted for publication in Digital Society.'}
       - date: "Jun 17"

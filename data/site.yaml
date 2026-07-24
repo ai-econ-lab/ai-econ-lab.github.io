@@ -41,9 +41,6 @@ data_partners:
   - name: "Akavia"
     url: "https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/"
     what: "Member web panel on AI and working life, 2023 onwards. Shared with the lab; we publish aggregates with attribution."
-  - name: "Svea"
-    url: ""
-    what: "Firm survey on AI adoption, run by Novus. Internal use only at present."
 
 affiliations: ["Örebro University · RATIO", "WASP-HS · AISCAF", "Sweden · Denmark · Portugal · Germany"]
 

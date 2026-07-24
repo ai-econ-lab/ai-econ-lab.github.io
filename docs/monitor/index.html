@@ -32,7 +32,7 @@
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      <div class="figfoot"><a class="figdl" href="/assets/data/ai_in_demand_trend.csv" download>↓ Data (CSV)</a><a class="figdl" href="/assets/data/ai_in_demand_trend.svg" download>↓ SVG</a><button class="figdl figpng" type="button" data-svg="/assets/data/ai_in_demand_trend.svg">↓ PNG</button><span class="figsrc">Source: JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)</span><span class="fignext">Next: tier split: built, integrated or simply used</span><a class="figml" href="#method">Method &amp; sources →</a></div></div></div>
+      <div class="figfoot"><a class="figdl" href="/assets/data/ai_in_demand_trend.csv" download>↓ Data (CSV)</a><a class="figdl" href="/assets/data/ai_in_demand_trend.svg" download>↓ SVG</a><button class="figdl figpng" type="button" data-svg="/assets/data/ai_in_demand_trend.svg">↓ PNG</button><span class="figsrc">Source: JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list</span><span class="fignext">Next: tier split: built, integrated or simply used</span><a class="figml" href="#method">Method &amp; sources →</a></div></div></div>
 </div></div></div>
 
 <div class="rule" id="overview"><div class="wrap"><section>
@@ -80,7 +80,7 @@
       list, so the level and its fifteen-fold rise since 2006 are reproducible.</p>
     <div class="tiles"><div class="tile"><div class="stripe"></div><div class="num">0.90<span>%</span></div><div class="lab">of 2025 job ads name a specific AI skill; 0.44% ask for it in the job&#x27;s own requirements</div><div class="foot">frozen v1 · 2025</div></div><div class="tile b"><div class="stripe"></div><div class="num">15×</div><div class="lab">rise since 2006 in ads naming an AI skill (0.06% → 0.90%); the strict floor rose 22×</div><div class="foot">2006–2025 · Platsbanken</div></div><div class="tile c"><div class="stripe"></div><div class="num">24.5</div><div class="lab">ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023</div><div class="foot">27% of AI demand</div></div><div class="tile d"><div class="stripe"></div><div class="num">−5.3<span>pp</span></div><div class="lab">fewer entry-level openings in the most AI-exposed occupations</div><div class="foot">widening since 2020</div></div></div>
     <p class="psub" style="margin-top:6px">Ads that mention AI only when describing the company do not count; an ad counts for what it asks of the person being hired.</p>
-    <div class="figfoot"><a class="figdl" href="/assets/data/ai_in_demand_trend.csv" download>↓ Data (CSV)</a><a class="figdl" href="/assets/data/ai_in_demand_trend.svg" download>↓ SVG</a><button class="figdl figpng" type="button" data-svg="/assets/data/ai_in_demand_trend.svg">↓ PNG</button><span class="figsrc">Source: JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)</span><span class="fignext">Next: tier split: built, integrated or simply used</span></div>
+    <div class="figfoot"><a class="figdl" href="/assets/data/ai_in_demand_trend.csv" download>↓ Data (CSV)</a><a class="figdl" href="/assets/data/ai_in_demand_trend.svg" download>↓ SVG</a><button class="figdl figpng" type="button" data-svg="/assets/data/ai_in_demand_trend.svg">↓ PNG</button><span class="figsrc">Source: JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list</span><span class="fignext">Next: tier split: built, integrated or simply used</span></div>
     <div class="grouphdr" style="margin-top:26px">Right now · the live feed
       <span class="livechip"><i></i>last 60 days, as of 24 Jul 2026</span></div>
     <p class="secintro" style="margin-top:4px">Of the 35,600 most recent job ads, 1.85% name a specific AI skill and 0.89% ask for one in the job itself (each figure give or take about a tenth of a percentage point). These numbers run a little higher than the chart&#x27;s, for two reasons we have measured: the live feed carries a somewhat different mix of ads than the yearly archives, and the archives store slightly shortened ad texts. Once we can calibrate the two against each other, they will join into one line that runs to today.</p>
@@ -207,22 +207,20 @@
   <p class="kicker">How to read this</p>
   <h2 class="sec">What we measure, and what we don't yet.</h2>
   <div class="prose" style="margin-top:16px">
-    <p>The measure runs on public data with one named exception. The Swedish demand series reads every open and historical
-      advertisement in Sweden's public job board (Platsbanken / JobTech), 2006 onwards: about <b>10.9 million advertisement entries</b> (raw archive unit, reposts included; deduplication analysis under way).
-      An ad counts when its text names an AI skill; the stricter floor counts it only when the skill sits in the
-      role's own tasks or requirements. The term list is versioned and citable (Swedish and English; frozen v1,
-      fingerprint 2f073672be5d998c). A companion layer watches the live feed daily for new AI vocabulary and
-      proposes additions for quarterly review; ads that speak of AI without naming any listed skill are tracked
-      separately, and join the published series once a classifier for them passes validation against our
-      hand-labelled reference set. Exposure,
-      adoption and cross-country demand come from DAIOE (generative-AI, v2023), Eurostat and the Stanford AI Index.</p>
+    <p>The measure runs on public data with one exception, described below. The Swedish demand series reads every
+      open and historical advertisement in Sweden's public job board (Platsbanken), 2006 onwards. An ad counts
+      when its text names an AI skill; the stricter floor counts it only when the skill sits in the role's own
+      tasks or requirements. The term list behind the measure is versioned and kept current against new AI
+      vocabulary, and every chart states which version produced it. The full technical documentation, from the
+      term list to the validation against hand-labelled ads, lives in the lab's methods note, available on
+      request. Exposure, adoption and cross-country demand come from DAIOE, Eurostat and the Stanford AI Index.</p>
     <p>The exception is the worker-side layer, which comes from
       <a href="https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/">Akavia</a>, a Swedish
       professional union that surveys its members through a web panel and shares the de-identified results with
       the lab. We publish aggregated figures with attribution and keep the underlying records private; cells
       below 50 respondents are never shown. Akavia does not fund the lab and does not see results before
       publication. The processing, and any error in it, is ours.</p>
-    <h3>Caveats, in plain sight</h3><ul style="color:var(--ink-2);font-size:14px;line-height:1.6"><li><b>2026 is partial</b>: the first half comes from the Q1–Q2 archives and the latest weeks from the live feed; the newest point will revise.</li><li>The chart ends with the June archives; the live feed runs to today and joins the chart once the two sources are reconciled.</li><li><b>The 2022–2023 dip</b> coincides with the global tech-hiring downturn and a sharp expansion of total ad volume: read it as a market swing, not necessarily as falling AI intent per employer.</li><li>The headline lines are deliberately strict: roughly 2.5 times as many ads mention AI in some form. That broad bound mixes genuine demand with company boilerplate in proportions that drift over time, so we publish it only after an era-specific correction, now in progress.</li><li>Ads that mention AI only when describing the company never count; an ad counts for what it asks of the person being hired.</li><li>The builder / integrator / user split is a <b>preview</b> and not yet a measured series.</li></ul>
+    <h3>Caveats, in plain sight</h3><ul style="color:var(--ink-2);font-size:14px;line-height:1.6"><li><b>2026 is partial</b>: the first half comes from the Q1–Q2 archives and the latest weeks from the live feed; the newest point will revise.</li><li>The chart ends with the June archives; the live feed runs to today and joins the chart once the two sources are reconciled.</li><li><b>The 2022–2023 dip</b> coincides with the global tech-hiring downturn and a sharp expansion of total ad volume: read it as a market swing, not necessarily as falling AI intent per employer.</li><li>The headline lines are deliberately strict: roughly 2.5 times as many ads mention AI in some form. That broad bound mixes genuine demand with company boilerplate in proportions that drift over time, so we publish it only after an era-specific correction, now in progress.</li><li>Ads that mention AI only when describing the company never count; an ad counts for what it asks of the person being hired.</li><li>Counts are advertisement entries as they appear in the public archives; the same vacancy can be posted more than once.</li><li>The builder / integrator / user split is a <b>preview</b> and not yet a measured series.</li></ul>
     <h3>How to cite</h3>
     <p>The monitor is a citable public good. Please cite the specific version and date, and the underlying source
       shown in each figure's footer (for example DAIOE generative-AI v2023, or Eurostat 2025).</p>
