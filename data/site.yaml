@@ -28,7 +28,10 @@ registration:
   - "<b>10.9M</b> SWEDISH ADS · 36 COUNTRIES"
   # Derived at build time from the numeric data files' last git commit — see
   # data_updated() in build.py. Do not hand-type a date here; it will drift.
-  - "DATA UPDATED <b>{data_updated}</b>"
+  # The weekly claim is backed by .github/workflows/monitor-refresh.yml (Mondays):
+  # API sources auto-refresh behind sanity gates; report/release sources are watched
+  # and open a GitHub issue. Remove the claim if that Action is ever disabled.
+  - "DATA UPDATED <b>{data_updated}</b> · SOURCES CHECKED WEEKLY"
   - '<span class="lv">● LIVE · PUBLIC + PARTNER DATA</span>'
   - "MONITOR PROTOTYPE"
 
