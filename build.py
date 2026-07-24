@@ -1103,7 +1103,7 @@ def monitor():
   <h2 class="sec">What we measure, and what we don't yet.</h2>
   <div class="prose" style="margin-top:16px">
     <p>The measure runs on public data with one named exception. The Swedish demand series reads every open and historical
-      advertisement in Sweden's public job board (Platsbanken / JobTech), 2006 onwards: about <b>10.9 million ads</b>.
+      advertisement in Sweden's public job board (Platsbanken / JobTech), 2006 onwards: about <b>10.9 million advertisement entries</b> (raw archive unit, reposts included; deduplication analysis under way).
       An ad counts when its text names an AI skill; the stricter floor counts it only when the skill sits in the
       role's own tasks or requirements. The term list is versioned and citable (Swedish and English; frozen v1,
       fingerprint 2f073672be5d998c), and a semantic layer, now training, will catch AI ads that use no listed term. Exposure,
