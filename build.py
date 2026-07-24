@@ -65,6 +65,15 @@ def data_updated():
 
 DATA_UPDATED = data_updated()
 
+MONTHS = ("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")
+def display_date(iso):
+    """'2026-07-22' -> '22 Jul 2026': day-month-year with the month in letters, the
+    unambiguous format for an international audience (the all-caps strip renders it
+    22 JUL 2026). ISO stays in machine-readable places; this is for copy humans read."""
+    d = datetime.date.fromisoformat(iso)
+    return f"{d.day} {MONTHS[d.month-1]} {d.year}"
+DATA_UPDATED_DISPLAY = display_date(DATA_UPDATED)
+
 SITE     = load("site.yaml")
 PAPERS   = load("papers.yaml")
 PEOPLE   = load("people.yaml")
@@ -119,7 +128,7 @@ def masthead(active):
         items += f'<a href="{n["href"]}"{cls}{cur}>{h(n["label"]).replace("&gt;",">")}</a>'
     # Plain substitution, not str.format: the strip is hand-authored HTML and a
     # stray brace in a future entry must not raise.
-    reg = "".join(f'<span>{s.replace("{data_updated}", DATA_UPDATED)}</span>'
+    reg = "".join(f'<span>{s.replace("{data_updated}", DATA_UPDATED_DISPLAY)}</span>'
                   for s in SITE["registration"])
     return f"""<div class="mast"><div class="wrap"><div class="mastbar">
   <a class="brand" href="/"><span class="plaque"><b>{h(b['monogram'])}</b></span>
@@ -238,7 +247,7 @@ def home():
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Line chart: AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method")}
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method", next_up="revised and extended series, summer 2026")}
     </div>
   </div>
 </div></div></div>
@@ -465,7 +474,7 @@ def daioe():
     <div><div class="exphead"><span class="dotc lo"></span>Least exposed</div>
       <div class="expbars">{least}</div></div>
   </div>
-  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI v{DAIOE_EXP['year']} · ISCO-08")}
+  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI v{DAIOE_EXP['year']} · ISCO-08", next_up="with the DAIOE v2024 release")}
   <p class="prov" style="margin-top:16px">Source: DAIOE v{DAIOE_EXP['year']} · ISCO-08 · higher score = more exposed.
     Explore every occupation in the <a href="/monitor/#occupations-explorer">Occupations Explorer</a>.</p>
 </section></div></div>
@@ -607,17 +616,20 @@ def news():
                  "News and history of the AI-Econ Lab since 2019: publications, media, grants and events.",
                  "/news/", body)
 
-def figfooter(csv_name, source, svg_name=None, method_href=None):
+def figfooter(csv_name, source, svg_name=None, method_href=None, next_up=None):
     """Item 10: download + provenance under a figure. Source states DAIOE variant + year.
     Offers the data (CSV) plus, when the figure has a static SVG, the chart as SVG and PNG
     (PNG is rasterised client-side from the SVG, so no build dependency). method_href, when
-    given, appends a link to the fuller method/sources note."""
+    given, appends a link to the fuller method/sources note. next_up states when the figure's
+    source is next expected to move (release-calendar practice, per module: sources publish on
+    their own cadences, so there is no single site-wide next date)."""
     dl = f'<a class="figdl" href="/assets/data/{csv_name}" download>↓ Data (CSV)</a>'
     if svg_name:
         dl += (f'<a class="figdl" href="/assets/data/{svg_name}" download>↓ SVG</a>'
                f'<button class="figdl figpng" type="button" data-svg="/assets/data/{svg_name}">↓ PNG</button>')
+    nxt = f'<span class="fignext">Next: {h(next_up)}</span>' if next_up else ""
     meth = f'<a class="figml" href="{h(method_href)}">Method &amp; sources →</a>' if method_href else ""
-    return f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span>{meth}</div>'
+    return f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span>{nxt}{meth}</div>'
 
 def dotplot(cc):
     """Server-rendered ranked dot plot (Cleveland) — dots, not bars, since the index is
@@ -781,7 +793,7 @@ def working_conditions_block():
     <div class="dotwrap">{views}</div>
     <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   </div>
-  {figfooter("working_conditions.csv", f"{mt['wc_source']} × DAIOE {mt['daioe_variant']} {mt['daioe_version']}", svg_name="working_conditions.svg")}
+  {figfooter("working_conditions.csv", f"{mt['wc_source']} × DAIOE {mt['daioe_variant']} {mt['daioe_version']}", svg_name="working_conditions.svg", next_up="with SCB's next work-environment survey wave")}
   <p class="prov" style="margin-top:10px">Toggle gender: the control gap is the story. In low-exposure jobs women
     report far less influence than men (56% vs 68%); in high-exposure jobs it nearly closes (74% vs 78%).</p>"""
 
@@ -803,7 +815,7 @@ def exposure_section():
     AI-exposed quarter of occupations. <b>Exposure is not displacement</b>: in our panel it predicts occupational
     growth as often as decline, showing only where AI overlaps with the work.</p>
   <div class="dotwrap">{barplot(cc['countries'], mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f')}</div>
-  {figfooter("cross_country.csv", src, "cross_country.svg")}
+  {figfooter("cross_country.csv", src, "cross_country.svg", next_up="with the DAIOE v2024 release")}
   <div class="depth"><p class="dk">Sweden, in depth</p>
     <p class="secintro" style="margin:0"><b>{se['share']:.0f}%</b> of Swedish jobs are in the most AI-exposed
       occupations (the <b>top 25%</b> by generative-AI exposure), the <b>2nd-highest of {h(mt['n_countries'])}</b>
@@ -824,14 +836,14 @@ def demand_section(tiles, seg):
     ({h(dmt['source'])}), Sweden marked. {h(dmt['note_prev'])} This international series (Lightcast) is a separate
     source from the lab's own Swedish measure below, so their levels are not directly comparable.</p>
   <div class="dotwrap">{barplot(dm['countries'], 0, dxmax, 0, 'share', '.1f')}</div>
-  {figfooter("cross_country_demand.csv", f"{dmt['source']}, {dmt['year']} · {dmt['unit']}", "cross_country_demand.svg")}
+  {figfooter("cross_country_demand.csv", f"{dmt['source']}, {dmt['year']} · {dmt['unit']}", "cross_country_demand.svg", next_up="Stanford AI Index 2027 (spring 2027)")}
 
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
     <p class="secintro" style="margin:0 0 4px">{h(MONITOR['aiindemand_lede'])} We read every open and historical
       Swedish job ad (JobTech / Platsbanken, 2006–2025, about <b>10.9 million</b>) with a versioned, citable term
       list, so the level and its 140-fold rise since 2006 are reproducible.</p>
     <div class="tiles">{tiles}</div>
-    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical layer (not DAIOE)", svg_name="ai_in_demand_trend.svg")}
+    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical layer (not DAIOE)", svg_name="ai_in_demand_trend.svg", next_up="revised and extended series, summer 2026")}
     <div class="grouphdr" style="margin-top:26px">Coming next · who is the AI for?
       <span class="preview-flag">◔ {h(MONITOR['segmentation']['flag'])}</span></div>
     <p class="secintro" style="margin-top:4px">{h(MONITOR['segmentation']['intro'])}</p>
@@ -855,7 +867,7 @@ def adoption_section():
     {h(amt['prev_year'])} shown as <b>+pp</b>. Adoption is climbing fast: the EU average rose from 8% in 2023 to
     {h(amt['eu_avg'])}% in {h(amt['year'])}. Exposure and adoption need not line up across countries.</p>
   <div class="dotwrap">{barplot(ad['countries'], amt['eu_avg'], xmax, amt['year'])}</div>
-  {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg")}
+  {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg", next_up="Eurostat 2026 wave (expected around year-end)")}
   <div class="depth"><p class="dk">Sweden, in depth · by firm size</p>
     <p class="secintro" style="margin:0 0 14px">Sweden is among the EU leaders at <b>{se['adoption']:g}%</b> in
       {h(amt['year'])}, up from {se['prev']:g}% a year earlier (Eurostat). SCB's firm survey decomposes that headline
@@ -863,7 +875,7 @@ def adoption_section():
       (10–49 employees) to <b>{sm['250-']}%</b> of large ones (250+), every class up sharply since {h(swm['prev_year'])}.
       The all-firms figure ({sm['Tot250']}%, highlighted) is the same number the cross-country bar shows.</p>
     <div class="dotwrap">{barplot(SWEAD['sizes'], amt['eu_avg'], swxmax, 0, 'adoption', '.0f')}</div>
-    {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; EU average {amt['eu_avg']:g}% (Eurostat)", svg_name="swe_adoption.svg")}
+    {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; EU average {amt['eu_avg']:g}% (Eurostat)", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
   </div>
   {akavia_workers_block()}
   {related_research("adoption")}
@@ -898,7 +910,7 @@ def akavia_workers_block():
       behind, and central government trails the private sector by
       {sec[0]['adoption'] - sec[-1]['adoption']}pp. Men {a['by_sex']['men']}%, women {a['by_sex']['women']}%.</p>
     <div class="dotwrap">{barplot(prof, 0, xmax, 0, 'adoption', '.0f')}</div>
-    {figfooter("akavia_ai_use.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. Bars {m['year']}, change vs {m['first_year']}. {m['population']}", svg_name="akavia_ai_use.svg")}
+    {figfooter("akavia_ai_use.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. Bars {m['year']}, change vs {m['first_year']}. {m['population']}", svg_name="akavia_ai_use.svg", next_up="with the next Akavia panel wave")}
     <p class="prov" style="margin-top:10px">Data shared with the lab by
       <a href="{m['url']}">Akavia</a>. {h(m['caveat'])}</p>
   </div>"""
@@ -927,7 +939,7 @@ def akavia_outcomes_block():
     tools, not among all workers, <b>{sh['private_account']}%</b> have a private e-mail account connected to a
     work AI tool, the employer pays for {sh['employer_pays']}% and {sh['self_pays']}% pay themselves. The
     denominator matters here and is easy to overstate.</p>
-  {figfooter("akavia_governance.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. {m['population']}")}
+  {figfooter("akavia_governance.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. {m['population']}", next_up="with the next Akavia panel wave")}
   <p class="prov" style="margin-top:10px">Data shared with the lab by
     <a href="{m['url']}">Akavia</a>. {h(m['caveat'])}</p>"""
 
@@ -958,7 +970,7 @@ def outcomes_section(explorers):
     "canaries" literature on young workers, though no directly comparable cross-country series exists yet.</p>
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
-  {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}", svg_name="entry_level_squeeze.svg")}
+  {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}", svg_name="entry_level_squeeze.svg", next_up="annually, with the JobTech year files")}
   {related_research("outcomes")}
 </section></div></div>"""
 
@@ -1022,7 +1034,7 @@ def monitor():
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="AI-in-demand share of Swedish job ads, 2006 to 2025"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Broad · any AI-related term</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ 2025 provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", svg_name="ai_in_demand_trend.svg", method_href="#method")}</div></div>
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006–2025 · lexical AI-term list (not DAIOE)", svg_name="ai_in_demand_trend.svg", method_href="#method", next_up="revised and extended series, summer 2026")}</div></div>
 </div></div></div>
 
 {stat_overview()}

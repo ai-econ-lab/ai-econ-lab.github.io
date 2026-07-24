@@ -342,6 +342,7 @@ footer{background:var(--navy);color:var(--navy-ink);margin-top:20px}
 .figdl:hover{border-color:var(--c1);text-decoration:none}
 button.figdl{background:transparent;font-family:var(--mono);font-size:11px;cursor:pointer}
 .figsrc{color:var(--muted);letter-spacing:.02em}
+.fignext{color:var(--muted);letter-spacing:.02em;opacity:.8}
 .figml{color:var(--blue);text-decoration:none;white-space:nowrap}
 .figml:hover{text-decoration:underline}
 .citebox{font-family:var(--mono);font-size:12.5px;line-height:1.65;color:var(--ink-2);background:var(--raise);
