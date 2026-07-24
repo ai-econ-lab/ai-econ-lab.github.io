@@ -68,6 +68,19 @@ tiles:
   - {num: "24.5", lab: "ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023", foot: "27% of AI demand", cls: "c"}
   - {num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations", foot: "widening since 2020", cls: "d"}
 
+# The live 60-day window: its own instrument, never a point on the archive line (no-splice).
+livewindow:
+  asof: "24 Jul 2026"
+  n: "35,600"
+  names_pct: "1.85"
+  names_ci: "1.71–1.99"
+  floor_pct: "0.89"
+  floor_ci: "0.80–0.99"
+  note: >-
+    The live feed is a different flow of ads than the yearly archives and runs higher for
+    composition reasons, so this number is not comparable in level to the chart; a calibrated
+    nowcast that joins them is planned once enough overlap quarters exist.
+
 # Top occupation names among AI-skill ads, plus taxonomy-level churn. Free-text titles: next release.
 titles:
   flag: "Occupation names · AF taxonomy"

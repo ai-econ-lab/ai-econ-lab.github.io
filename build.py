@@ -835,6 +835,21 @@ def exposure_section():
   {related_research("exposure")}
 </section></div></div>"""
 
+def livewindow_block():
+    """The live 60-day window as its own labelled instrument. Never a point on the archive
+    line: the JobStream flow is a different subset of ads and runs higher in level (splice
+    check 2026-07-24), so the honest presentation is side-by-side, not spliced."""
+    lw = MONITOR.get("livewindow")
+    if not lw:
+        return ""
+    return f"""<div class="grouphdr" style="margin-top:26px">Right now · the live feed
+      <span class="livechip"><i></i>last 60 days, as of {h(lw['asof'])}</span></div>
+    <p class="secintro" style="margin-top:4px">Of the {h(lw['n'])} ads in the live JobStream flow:
+      <b>{h(lw['names_pct'])}%</b> name an AI skill (95% CI {h(lw['names_ci'])});
+      <b>{h(lw['floor_pct'])}%</b> ask for it in the role itself (CI {h(lw['floor_ci'])}).
+      {h(lw['note'])}</p>"""
+
+
 def titles_block():
     """Top occupation names among AI-skill ads + taxonomy-level churn (newcomers/cooled).
     Free-text titles (true neologisms) wait for the extraction layer; keep the flag honest."""
@@ -875,6 +890,7 @@ def demand_section(tiles, seg):
     <div class="tiles">{tiles}</div>
     <p class="psub" style="margin-top:6px">{h(MONITOR['captions']['guard'])}</p>
     {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list (fp 2f073672)", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
+    {livewindow_block()}
     {titles_block()}
     <div class="grouphdr" style="margin-top:26px">Coming next · who is the AI for?
       <span class="preview-flag">◔ {h(MONITOR['segmentation']['flag'])}</span></div>
