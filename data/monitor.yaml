@@ -73,14 +73,14 @@ livewindow:
   asof: "24 Jul 2026"
   n: "35,600"
   names_pct: "1.85"
-  names_ci: "1.71–1.99"
   floor_pct: "0.89"
-  floor_ci: "0.80–0.99"
-  note: >-
-    The live feed is not comparable in level to the chart, for two measured reasons: it
-    carries a different mix of ads than the yearly archives, and the archives store shortened
-    ad texts (bidirectional cross-source check: 94–97% verdict agreement, disagreements almost all one-directional).
-    A calibrated nowcast that joins the two is planned once enough overlap quarters exist.
+  sentence: >-
+    Of the 35,600 most recent job ads, 1.85% name a specific AI skill and 0.89% ask for one in
+    the job itself (each figure give or take about a tenth of a percentage point). These numbers
+    run a little higher than the chart's, for two reasons we have measured: the live feed
+    carries a somewhat different mix of ads than the yearly archives, and the archives store
+    slightly shortened ad texts. Once we can calibrate the two against each other, they will
+    join into one line that runs to today.
 
 # Top occupation names among AI-skill ads, plus taxonomy-level churn. Free-text titles: next release.
 titles:

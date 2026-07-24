@@ -844,10 +844,7 @@ def livewindow_block():
         return ""
     return f"""<div class="grouphdr" style="margin-top:26px">Right now · the live feed
       <span class="livechip"><i></i>last 60 days, as of {h(lw['asof'])}</span></div>
-    <p class="secintro" style="margin-top:4px">Of the {h(lw['n'])} ads in the live JobStream flow:
-      <b>{h(lw['names_pct'])}%</b> name an AI skill (95% CI {h(lw['names_ci'])});
-      <b>{h(lw['floor_pct'])}%</b> ask for it in the role itself (CI {h(lw['floor_ci'])}).
-      {h(lw['note'])}</p>"""
+    <p class="secintro" style="margin-top:4px">{h(lw['sentence'])}</p>"""
 
 
 def titles_block():
@@ -1106,7 +1103,10 @@ def monitor():
       advertisement in Sweden's public job board (Platsbanken / JobTech), 2006 onwards: about <b>10.9 million advertisement entries</b> (raw archive unit, reposts included; deduplication analysis under way).
       An ad counts when its text names an AI skill; the stricter floor counts it only when the skill sits in the
       role's own tasks or requirements. The term list is versioned and citable (Swedish and English; frozen v1,
-      fingerprint 2f073672be5d998c), and a semantic layer, now training, will catch AI ads that use no listed term. Exposure,
+      fingerprint 2f073672be5d998c). A companion layer watches the live feed daily for new AI vocabulary and
+      proposes additions for quarterly review; ads that speak of AI without naming any listed skill are tracked
+      separately, and join the published series once a classifier for them passes validation against our
+      hand-labelled reference set. Exposure,
       adoption and cross-country demand come from DAIOE (generative-AI, v2023), Eurostat and the Stanford AI Index.</p>
     <p>The exception is the worker-side layer, which comes from
       <a href="https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/">Akavia</a>, a Swedish
