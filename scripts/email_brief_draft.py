@@ -60,6 +60,8 @@ SVENSKA
 CHECK BEFORE PUBLISHING
 {bar}
 - Are the headline numbers current? (Some sources refresh on their own cadence.)
+- Issue-1 content candidates from the 24 Jul 2026 rebuild (20-year arc / genAI share /
+  title newcomers): lab-infrastructure/ai-monitor/notes/brief-issue1-content-candidates_2026-07-24.md
 - Does this month's in-focus theme have its own chart yet, or is it using a placeholder?
   (See data/brief_calendar.yaml; themes leaning on Akavia need that source live.)
 - Read the Swedish closely and flag anything that reads translated.
