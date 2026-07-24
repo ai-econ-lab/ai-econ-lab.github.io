@@ -1,0 +1,66 @@
+# Weekly Monitor source refresh — keeps the site's promise that sources are
+# checked on a schedule, whether or not anyone is at a keyboard.
+#
+#   auto-apply : scripts/weekly_refresh.py  (Eurostat, SCB pulls + sanity gates)
+#   watchers   : scripts/check_sources.py   (AI Index, DAIOE, EU-LFS, SCB AMU
+#                -> GitHub issue on a new release, state in watch_state.json)
+#
+# Design: refresh and watch both run with continue-on-error so that one flaky
+# API cannot block the other, the rebuild, or the commit of good results; the
+# last step then turns the run red if anything failed, which makes GitHub
+# email the maintainer. A failed sanity gate restores the data file from git,
+# so a broken pull can never publish itself.
+name: monitor-refresh
+on:
+  schedule:
+    - cron: "17 5 * * 1"    # Mondays 05:17 UTC — before the European workday
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency: monitor-refresh
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install pyyaml
+
+      - name: Auto-apply refresh (Eurostat, SCB)
+        id: refresh
+        continue-on-error: true
+        run: python scripts/weekly_refresh.py
+
+      - name: Watch human-step sources (AI Index, DAIOE, EU-LFS, SCB AMU)
+        id: watch
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/check_sources.py
+
+      - name: Rebuild site
+        run: python build.py
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && echo "no changes" || {
+            git commit -m "Weekly source refresh (auto)"
+            git push
+          }
+
+      - name: Fail the run if refresh or watchers failed
+        if: steps.refresh.outcome != 'success' || steps.watch.outcome != 'success'
+        run: |
+          echo "refresh: ${{ steps.refresh.outcome }} · watch: ${{ steps.watch.outcome }}"
+          exit 1
