@@ -82,6 +82,7 @@ DAIOE    = load("daioe.yaml")
 SEMINARS = load("seminars.yaml")
 DAIOE_EXP = load("daioe_exposure.yaml")
 NEWS     = load("news.yaml")
+WAGES    = load("wages.yaml")
 CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
@@ -1016,7 +1017,75 @@ def outcomes_section(explorers):
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}", svg_name="entry_level_squeeze.svg", next_up="annually, with the JobTech year files")}
+  {wages_block()}
   {related_research("outcomes")}
+</section></div></div>"""
+
+
+def wages_svg(c):
+    """Three-line indexed wage series (high/mid/low DAIOE-exposure terciles), one country.
+    Same visual grammar as squeeze_svg; index base 100 = first year."""
+    srs = c["series"]; n = len(srs)
+    vals = [r[g] for r in srs for g in ("high", "mid", "low")]
+    lo10 = 10 * (int(min(vals)) // 10)
+    hi10 = 10 * (int(max(vals)) // 10 + 1)
+    W, H = 640, 292
+    x0, x1, top, bot = 60, 560, 22, 250
+    X = lambda i: x0 + i / (n - 1) * (x1 - x0)
+    Y = lambda v: bot - (v - lo10) / (hi10 - lo10) * (bot - top)
+    p = [f'<svg class="rankchart squeeze" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Median wage by AI-exposure tercile, {c["label"]}, indexed to 100 in {c["base_year"]}">']
+    for t in range(lo10, hi10 + 1, 10):
+        gy = Y(t)
+        p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
+        p.append(f'<text class="tick" x="{x0-6}" y="{gy+3.5:.1f}" text-anchor="end">{t}</text>')
+    for i, r in enumerate(srs):
+        if r["year"] % 2 == 0 or i == n - 1:
+            p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-8}" text-anchor="middle">{r["year"]}</text>')
+    colors = {"high": "var(--c2)", "mid": "var(--c4, #cc79a7)", "low": "var(--c3)"}
+    labels = {"high": "most exposed", "mid": "middle", "low": "least exposed"}
+    for g in ("low", "mid", "high"):
+        pts = " ".join(f'{X(i):.1f},{Y(r[g]):.1f}' for i, r in enumerate(srs))
+        p.append(f'<polyline points="{pts}" fill="none" stroke="{colors[g]}" stroke-width="2.2"/>')
+        p.append(f'<text class="tick" x="{x1+5}" y="{Y(srs[-1][g])+3.5:.1f}" '
+                 f'fill="{colors[g]}">{srs[-1][g]:.0f}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+def wages_block():
+    """Outcomes sub-module: pay by AI-exposure tercile (Sweden + US charts, EU one-liner)."""
+    w = WAGES
+    charts = ""
+    for c in w["countries"]:
+        charts += (f'<div><p class="secintro" style="margin:0 0 4px;font-weight:600">{h(c["label"])}</p>'
+                   f'<div class="dotwrap">{wages_svg(c)}</div>'
+                   f'<p class="psub" style="margin-top:4px">{h(c["source"])}</p></div>')
+    cavs = " ".join(f'<li>{cv}</li>' for cv in w["caveats"])
+    return f"""<div class="grouphdr" id="wages" style="margin-top:36px">Wages in AI-exposed occupations</div>
+  <p class="secintro" style="margin-top:4px">{h(w["intro"])}</p>
+  <p class="secintro"><b>{h(w["headline"])}</b></p>
+  <div class="two" style="grid-template-columns:1fr 1fr">{charts}</div>
+  <div class="dblegend"><span><i class="hi"></i>most AI-exposed third</span><span style="color:var(--c4,#cc79a7)">— middle</span><span><i class="lo"></i>least exposed</span></div>
+  <p class="psub">{h(w["eu_line"])}</p>
+  <ul style="color:var(--ink-2);font-size:13px;line-height:1.55">{cavs}</ul>
+  {figfooter("wages_exposure.csv", "SCB lönestrukturstatistik · BLS OEWS · Eurostat SES × DAIOE genAI v2023", svg_name="wages_sweden.svg", next_up="SCB and OEWS annual releases (spring 2027)")}
+"""
+
+def capability_section():
+    """Module 5 (minor) — AI capability: how fast the technology itself moves. External
+    series, summarised; capability in work-relevant units feeds DAIOE Track B."""
+    c = MONITOR["capability"]
+    tiles = "".join(
+        f'<div class="tile"><div class="stripe"></div><div class="num">{h(t["num"])}</div>'
+        f'<div class="lab">{h(t["lab"])}</div><div class="foot">{h(t["foot"])}</div></div>'
+        for t in c["facts"])
+    links = " · ".join(f'<a href="{h(l["url"])}">{h(l["label"])}</a>' for l in c["links"])
+    return f"""<div class="rule module-sec" id="capability"><div class="wrap"><section>
+  <p class="kicker">Module 5 · AI capability <span class="preview-flag">◔ {h(c["flag"])}</span></p>
+  <h2 class="sec">How fast is the technology itself moving?</h2>
+  <p class="secintro">{h(c["intro"])}</p>
+  <div class="tiles">{tiles}</div>
+  <p class="psub" style="margin-top:8px">Sources: {links}. {h(c["caveat"])}</p>
 </section></div></div>"""
 
 def stat_overview():
@@ -1094,6 +1163,8 @@ def monitor():
 {adoption_section()}
 
 {outcomes_section(explorers)}
+
+{capability_section()}
 
 <div class="rule" id="method"><div class="wrap"><section>
   <p class="kicker">How to read this</p>
@@ -1437,6 +1508,15 @@ def emit_data(out):
     (d / "entry_level_squeeze.svg").write_text(chart_standalone(squeeze_svg(ELS)), encoding="utf-8")
     (d / "working_conditions.svg").write_text(
         chart_standalone(dumbbell_svg(WORKCOND["conditions"], "all", active=True)), encoding="utf-8")
+    with (d / "wages_exposure.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["country", "year", "exposure_tercile", "wage_index_base100"])
+        for c in WAGES["countries"]:
+            for r in c["series"]:
+                for g in ("high", "mid", "low"):
+                    w.writerow([c["key"], r["year"], g, r[g]])
+    for c in WAGES["countries"]:
+        (d / f"wages_{c['key']}.svg").write_text(chart_standalone(wages_svg(c)), encoding="utf-8")
     with (d / "swe_adoption.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["firm_size", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])

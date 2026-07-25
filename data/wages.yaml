@@ -1,0 +1,55 @@
+# Wages by DAIOE generative-AI exposure tercile. Generated from
+# lab-infrastructure/ai-monitor/data/wages/ (wages_build.py there refetches + rebuilds).
+intro: >-
+  Pay as an outcome: are wages in AI-exposed occupations pulling away, or falling behind?
+  Occupations are split into thirds by their DAIOE generative-AI exposure; each line tracks
+  the group's median wage, indexed to 100 in the first year. Nominal wages from public
+  statistics; read the gap between lines, not the level.
+headline: >-
+  Over the past decade the most AI-exposed occupations have NOT pulled away in pay. In the
+  United States they grew more slowly than the least exposed (40% against 49%, 2015 to
+  2025), with a mild reversal after 2022; in Sweden the three groups moved almost in
+  parallel. AI-exposed occupations remain the best paid in level terms in both countries.
+countries:
+  - key: sweden
+    label: "Sweden · median monthly salary"
+    source: "SCB lönestrukturstatistik, SSYK 2012 4-digit, all sectors, 2014–2025; 314 occupations, unweighted"
+    base_year: 2014
+    series:
+      - {year: 2014, high: 100.0, mid: 100.0, low: 100.0}
+      - {year: 2015, high: 101.9, mid: 102.6, low: 102.1}
+      - {year: 2016, high: 104.5, mid: 104.4, low: 104.3}
+      - {year: 2017, high: 106.9, mid: 108.0, low: 106.9}
+      - {year: 2018, high: 109.5, mid: 111.5, low: 109.4}
+      - {year: 2019, high: 111.9, mid: 114.7, low: 111.9}
+      - {year: 2020, high: 113.7, mid: 116.7, low: 112.4}
+      - {year: 2021, high: 117.3, mid: 120.2, low: 115.4}
+      - {year: 2022, high: 120.3, mid: 123.6, low: 118.4}
+      - {year: 2023, high: 124.9, mid: 129.0, low: 123.2}
+      - {year: 2024, high: 129.9, mid: 132.9, low: 128.4}
+      - {year: 2025, high: 134.1, mid: 136.9, low: 132.6}
+  - key: us
+    label: "United States · median annual wage"
+    source: "BLS OEWS national, detailed SOC, May 2015–May 2025; 692 occupations, employment-weighted"
+    base_year: 2015
+    series:
+      - {year: 2015, high: 100.0, mid: 100.0, low: 100.0}
+      - {year: 2016, high: 102.3, mid: 102.8, low: 103.0}
+      - {year: 2017, high: 104.3, mid: 105.3, low: 106.2}
+      - {year: 2018, high: 107.0, mid: 108.5, low: 109.7}
+      - {year: 2019, high: 110.0, mid: 111.8, low: 113.5}
+      - {year: 2020, high: 114.1, mid: 118.4, low: 119.8}
+      - {year: 2021, high: 116.2, mid: 122.8, low: 124.1}
+      - {year: 2022, high: 121.2, mid: 129.3, low: 130.4}
+      - {year: 2023, high: 128.8, mid: 136.4, low: 139.0}
+      - {year: 2024, high: 134.1, mid: 142.4, low: 145.1}
+      - {year: 2025, high: 140.0, mid: 147.1, low: 148.9}
+eu_line: >-
+  EU27 (coarse, ISCO 1-digit, Structure of Earnings Survey): mean hourly earnings grew
+  14.2 per cent in the most exposed third against 16.8 per cent in the least, 2018 to 2022.
+  A finer country-level series is the planned upgrade.
+caveats:
+  - "Nominal wages; inflation affects all groups alike within a country, so the gap between lines is the signal."
+  - "Exposure is DAIOE generative-AI (v2023), fixed over time: the lines answer how pay moved in occupations that are exposed today."
+  - "Sweden is unweighted across occupations (the public table carries no employment counts); the US is employment-weighted."
+  - "Descriptive, not causal: composition, sector and skill mix all move wages too."

@@ -5,6 +5,9 @@ years:
   - year: 2026
     items:
       - date: "Jul 25"
+        text: 'Two new Monitor modules: Wages (pay across differentially AI-exposed occupations in Sweden, the US and the EU, from public wage statistics) and AI capability (how fast frontier AI itself moves: task horizons and compute trends, from METR, Epoch AI and the Stanford AI Index).'
+        links: [{label: "Wages", url: "/monitor/#wages"}, {label: "AI capability", url: "/monitor/#capability"}]
+
         text: 'The Monitor''s builder / integrator / user split goes from preview to measured: all 41,000 AI-candidate ads 2023 to mid-2026 classified against the lab''s labelling rules. Builders hold half of strict AI-skill demand; the user tier (AI as an everyday tool) rises from 1% to 9%.'
         links: [{label: "The Monitor", url: "/monitor/"}]
       - date: "Jul 24"
