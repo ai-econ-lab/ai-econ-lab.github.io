@@ -499,3 +499,22 @@ ul.tight li{margin:2px 0}
 .related ul.tight{margin:0;padding-left:1.05rem;font-size:13.5px;line-height:1.65;color:var(--ink-2)}
 .related ul.tight li{margin:3px 0}
 .related .rw{font:500 12px/1 var(--mono);color:var(--muted)}
+
+/* ── mobile masthead (portrait phones): compact, non-sticky, thumb-scrollable ── */
+@media(max-width:760px){
+  .mast{position:static}
+  .mastbar{flex-wrap:wrap;gap:8px;padding:10px 0}
+  .brand{gap:9px}
+  .plaque{width:42px;height:30px}.plaque b{font-size:12px}
+  .brandtext b{font-size:14.5px}
+  .brandtext small{font-size:8.5px}
+  .tbtn{margin-left:auto;order:2;font-size:10px;padding:5px 9px}
+  nav.top{order:3;flex-basis:100%;margin-left:0;flex-wrap:nowrap;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;gap:0}
+  nav.top::-webkit-scrollbar{display:none}
+  nav.top a{font-size:11.5px;padding:6px 9px;white-space:nowrap}
+  .reg{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;gap:16px;padding:7px 0;font-size:9.5px}
+  .reg::-webkit-scrollbar{display:none}
+  .reg span{white-space:nowrap;flex:0 0 auto}
+}
