@@ -1099,16 +1099,18 @@ def stat_overview():
                   f'<div class="ofoot"><span>{h(o["foot"])}</span><span class="go">Open →</span></div></a>')
     return f"""<div class="rule" id="overview"><div class="wrap"><section>
   <p class="kicker">The whole picture, in one glance</p>
-  <h2 class="sec">Four questions about AI and work.</h2>
+  <h2 class="sec">Four questions about AI and work, and one about the technology itself.</h2>
   <p class="secintro">Exposure, demand, adoption and outcomes: one European headline each, with Sweden as the depth
-    cut inside every module. Every figure is public and dated; open a card to jump to the module.</p>
+    cut inside every module; the fifth card tracks the technology's own pace. Every figure is public and dated;
+    open a card to jump to the module.</p>
   <div class="ovgrid">{cards}</div>
 </section></div></div>"""
 
 def subnav():
     """Sticky spine nav under the masthead; scrollspy in app.js marks the active module."""
     items = [("#exposure", "Exposure"), ("#demand", "Demand"),
-             ("#adoption", "Adoption"), ("#outcomes", "Outcomes")]
+             ("#adoption", "Adoption"), ("#outcomes", "Outcomes"),
+             ("#capability", "Capability")]
     links = "".join(f'<a href="{a}" data-spy="{a[1:]}">{t}</a>' for a, t in items)
     return f'<nav class="subnav" aria-label="Monitor modules"><div class="wrap">{links}</div></nav>'
 
@@ -1336,6 +1338,8 @@ def brief(lang="en"):
              "Outcomes": "Sveriges instegsklämma: färre instegsjobb i de mest AI-exponerade yrkena sedan 2020; mönstret syns även internationellt"}
     cards = ""                                            # at a glance: the four spine numbers
     for o in MONITOR["overview"]:
+        if o["k"] not in KSV:                             # brief keeps the spine only; extra doors (Capability…) stay on the Monitor page
+            continue
         cls = f' {o["cls"]}' if o["cls"] else ""
         k = KSV[o["k"]] if sv else o["k"]
         lab = LABSV[o["k"]] if sv else o["lab"]
