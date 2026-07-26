@@ -630,7 +630,9 @@ def figfooter(csv_name, source, svg_name=None, method_href=None, next_up=None):
     dl = f'<a class="figdl" href="/assets/data/{csv_name}" download>↓ Data (CSV)</a>'
     if svg_name:
         dl += (f'<a class="figdl" href="/assets/data/{svg_name}" download>↓ SVG</a>'
-               f'<button class="figdl figpng" type="button" data-svg="/assets/data/{svg_name}">↓ PNG</button>')
+               f'<button class="figdl figpng" type="button" data-svg="/assets/data/{svg_name}">↓ PNG</button>'
+               f'<button class="figdl figpng" type="button" data-svg="/assets/data/{svg_name}" data-scale="4" '
+               f'title="High-resolution PNG on a white ground, sized for Beamer and PowerPoint slides">↓ PNG (slides)</button>')
     nxt = f'<span class="fignext">Next: {h(next_up)}</span>' if next_up else ""
     meth = f'<a class="figml" href="{h(method_href)}">Method &amp; sources →</a>' if method_href else ""
     return f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span>{nxt}{meth}</div>'

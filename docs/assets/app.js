@@ -247,7 +247,7 @@ window.drawTrend();
         var vb = (svg.match(/viewBox="([\d.\s-]+)"/) || [])[1];
         var w = 640, h = 300;
         if (vb) { var p = vb.trim().split(/\s+/).map(Number); w = p[2]; h = p[3]; }
-        var scale = 2;                                   // crisp on-screen and in print
+        var scale = parseInt(btn.dataset.scale || "2", 10);   // 2 = docs; 4 = slides (Beamer/PowerPoint)
         var img = new Image();
         var blobUrl = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
         img.onload = function () {
@@ -259,7 +259,7 @@ window.drawTrend();
           URL.revokeObjectURL(blobUrl);
           c.toBlob(function (png) {
             var pngUrl = URL.createObjectURL(png);
-            download(pngUrl, url.split("/").pop().replace(".svg", ".png"));
+            download(pngUrl, url.split("/").pop().replace(".svg", scale > 2 ? "_slides.png" : ".png"));
             setTimeout(function () { URL.revokeObjectURL(pngUrl); }, 1000);
             btn.textContent = label;
           }, "image/png");
