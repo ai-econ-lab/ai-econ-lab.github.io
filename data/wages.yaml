@@ -13,21 +13,21 @@ headline: >-
 countries:
   - key: sweden
     label: "Sweden · median monthly salary"
-    source: "SCB lönestrukturstatistik, SSYK 2012 4-digit, all sectors, 2014–2025; 314 occupations, unweighted"
+    source: "SCB lönestrukturstatistik, SSYK 2012 4-digit, all sectors, 2014–2025; 311 occupations, employment-weighted (Yrkesregistret 2023)"
     base_year: 2014
     series:
       - {year: 2014, high: 100.0, mid: 100.0, low: 100.0}
-      - {year: 2015, high: 101.9, mid: 102.6, low: 102.1}
-      - {year: 2016, high: 104.5, mid: 104.4, low: 104.3}
-      - {year: 2017, high: 106.9, mid: 108.0, low: 106.9}
-      - {year: 2018, high: 109.5, mid: 111.5, low: 109.4}
-      - {year: 2019, high: 111.9, mid: 114.7, low: 111.9}
-      - {year: 2020, high: 113.7, mid: 116.7, low: 112.4}
-      - {year: 2021, high: 117.3, mid: 120.2, low: 115.4}
-      - {year: 2022, high: 120.3, mid: 123.6, low: 118.4}
-      - {year: 2023, high: 124.9, mid: 129.0, low: 123.2}
-      - {year: 2024, high: 129.9, mid: 132.9, low: 128.4}
-      - {year: 2025, high: 134.1, mid: 136.9, low: 132.6}
+      - {year: 2015, high: 102.0, mid: 102.4, low: 102.2}
+      - {year: 2016, high: 104.8, mid: 104.7, low: 104.6}
+      - {year: 2017, high: 106.9, mid: 108.2, low: 107.1}
+      - {year: 2018, high: 109.3, mid: 110.9, low: 109.4}
+      - {year: 2019, high: 111.5, mid: 113.5, low: 112.1}
+      - {year: 2020, high: 113.7, mid: 115.0, low: 113.1}
+      - {year: 2021, high: 117.4, mid: 118.5, low: 115.9}
+      - {year: 2022, high: 120.5, mid: 121.8, low: 118.7}
+      - {year: 2023, high: 125.4, mid: 126.8, low: 123.6}
+      - {year: 2024, high: 130.4, mid: 131.0, low: 128.3}
+      - {year: 2025, high: 134.5, mid: 134.8, low: 132.2}
   - key: us
     label: "United States · median annual wage"
     source: "BLS OEWS national, detailed SOC, May 2015–May 2025; 692 occupations, employment-weighted"
