@@ -964,7 +964,7 @@ def akavia_workers_block():
       {h(tr['labels'][0])} to <b>{last}%</b> in {h(tr['labels'][-1])}, and daily use went from 3% to 22% over
       the same period, so the shift is in intensity as much as reach. Nearly everyone now works somewhere AI
       is used at all ({a['org_use']['y2024']}% in 2024, {a['org_use']['y2025']}% in {h(m['year'])}). The spread
-      by profession is wide and narrowing: communicators are near saturation while lawyers remain furthest
+      by profession is wide and narrowing: communication professionals are near saturation while lawyers remain furthest
       behind, and central government trails the private sector by
       {sec[0]['adoption'] - sec[-1]['adoption']}pp. Men {a['by_sex']['men']}%, women {a['by_sex']['women']}%.</p>
     <div class="dotwrap">{barplot(prof, 0, xmax, 0, 'adoption', '.0f')}</div>

@@ -2,8 +2,8 @@ meta:
   source: Akavia member web panel
   url: https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/
   credit: 'Source: Akavia member panel. Own processing.'
-  caveat: Akavia surveys its members through a web panel covering economists, lawyers, IT academics, social
-    scientists, HR specialists and communicators. Between about 3,000 and 3,800 members answer each round,
+  caveat: Akavia surveys its members through a web panel covering business professionals and economists, lawyers, IT professionals, social
+    scientists, HR specialists and communication professionals. Between about 3,000 and 3,800 members answer each round,
     with response rates from a quarter to just under a half. Figures describe Akavia's members in these
     professions, not the Swedish labour market as a whole, and should be read with care because the sample
     is not an unrestricted random sample of the population.
@@ -24,14 +24,14 @@ trend:
   - 61
   - 77
 by_profession:
-- name: Communicators
+- name: Communication professionals
   adoption: 96
   prev: 68
   is_se: false
   lo: 90
   hi: 100
   n: 87
-- name: IT academics
+- name: IT professionals
   adoption: 88
   prev: 52
   is_se: false
@@ -45,7 +45,7 @@ by_profession:
   lo: 76
   hi: 89
   n: 219
-- name: Economists
+- name: Business professionals and economists
   adoption: 81
   prev: 31
   is_se: false
