@@ -1,0 +1,35 @@
+# US individual-level genAI adoption — the international comparison line in the Adoption
+# module's worker block. NOT a module of its own: it exists so the worker-side Swedish
+# numbers (Akavia) have an international reference at the SAME level of measurement.
+#
+# Why the denominator matters more than the number. The cross-country and firm-size bars
+# in this module are FIRM adoption (Eurostat, SCB). These are INDIVIDUAL adoption. Lining
+# them up ("US 58% vs Sweden 35%") is a category error, so the site never prints them in
+# the same comparison.
+#
+# Source review, incl. the ten limitations and the method read from the primary source:
+# lab-infrastructure/ai-monitor/notes/fred-rps-genai_2026-07-27.md
+# Refresh: a new quarter is flagged by scripts/check_sources.py (watch_fred_rps), which
+# opens an issue rather than auto-applying — these series carry caveats a machine should
+# not paper over. Pull with:
+#   curl -s "https://fred.stlouisfed.org/graph/fredgraph.csv?id=<SERIES_ID>"
+meta:
+  source: "Real-Time Population Survey"                     # short label, used inline
+  source_full: "Bick, Blandin & Deming, Management Science 2026, via FRED"
+  url: "https://fred.stlouisfed.org/categories/8"
+  doi: "https://doi.org/10.1287/mnsc.2025.02523"
+  vintage: "Q1 2026"
+  population: "US adults aged 18–64"
+  design: "quota-sampled online panel, raked to demographics and benchmarked against the CPS; not a probability sample"
+  caveat: >-
+    Measures recognised, deliberate use: respondents who had never heard of generative AI
+    are routed past the survey module and counted as non-users.
+values:
+  any_use:
+    series_id: "RPSGENAIUSAGESHAREALL"
+    pct: 57.9
+    of: "adults 18–64, any use of generative AI"
+  work_last_week:
+    series_id: "RPSGENAIUSAGESHARELWWORK"
+    pct: 37.8
+    of: "employed adults, used it for work in the reference week"

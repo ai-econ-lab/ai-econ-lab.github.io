@@ -26,6 +26,7 @@ DATA_FILES = [
     "monitor.yaml", "cross_country.yaml", "cross_country_adoption.yaml",
     "cross_country_demand.yaml", "swe_adoption.yaml", "daioe_exposure.yaml",
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
+    "us_adoption_rps.yaml",
 ]
 
 def data_updated():
@@ -91,6 +92,7 @@ AKAVIA   = load("akavia.yaml")
 RELATED  = load("related_research.yaml")
 ELS      = load("entry_level_squeeze.yaml")
 SWEAD    = load("swe_adoption.yaml")
+USRPS    = load("us_adoption_rps.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
 # (see app.js occSearch), so it is NOT embedded here. It auto-tracks the latest DAIOE year.
 
@@ -959,9 +961,25 @@ def akavia_workers_block():
       {sec[0]['adoption'] - sec[-1]['adoption']}pp. Men {a['by_sex']['men']}%, women {a['by_sex']['women']}%.</p>
     <div class="dotwrap">{barplot(prof, 0, xmax, 0, 'adoption', '.0f')}</div>
     {figfooter("akavia_ai_use.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. Bars {m['year']}, change vs {m['first_year']}. {m['population']}", svg_name="akavia_ai_use.svg", next_up="with the next Akavia panel wave")}
+    {us_rps_line()}
     <p class="prov" style="margin-top:10px">Data shared with the lab by
       <a href="{m['url']}">Akavia</a>. {h(m['caveat'])}</p>
   </div>"""
+
+
+def us_rps_line():
+    """One international reference line for the worker-side numbers, at the same level of
+    measurement. Deliberately NOT a module and never set beside the firm-adoption bars:
+    those count enterprises, these count people, and the comparison a reader makes unaided
+    is the wrong one. Data and caveats: data/us_adoption_rps.yaml."""
+    u = USRPS; m = u["meta"]; a = u["values"]["any_use"]; w = u["values"]["work_last_week"]
+    return (f'<p class="secintro" style="margin:12px 0 0">For international comparison at the '
+            f'same level of measurement: <b>{a["pct"]:g}%</b> of {h(m["population"])} report '
+            f'using generative AI at all, and <b>{w["pct"]:g}%</b> of the employed used it for '
+            f'work in the reference week (<a href="{m["url"]}">{h(m["source"])}</a>, '
+            f'{h(m["vintage"])}). These count people, as the Akavia figures above do and the '
+            f'firm shares earlier in this module do not, so the two sets are not comparable '
+            f'with one another. {h(m["caveat"])}</p>')
 
 def akavia_outcomes_block():
     """Outcomes: governance trailing use, the training gap, and who pays for the tools."""
