@@ -46,8 +46,14 @@ STATE_FILE = Path(__file__).resolve().parent / "watch_state.json"
 UA = {"User-Agent": "AIEL-monitor-watch (python-urllib; research use)"}
 
 
-def get(url, timeout=60):
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
+def get(url, timeout=60, ua=True):
+    """Fetch a URL. ua=False sends no custom User-Agent.
+
+    FRED's edge times out on our identifying UA string but serves the stdlib default
+    fine, so the RPS watcher passes ua=False. Everywhere else we identify ourselves.
+    """
+    headers = UA if ua else {}
+    with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=timeout) as r:
         return r.read()
 
 
@@ -103,6 +109,37 @@ def watch_scb_amu(state):
     return None
 
 
+def watch_fred_rps(state):
+    """New quarterly observation in the US genAI adoption benchmark (FRED category 8).
+
+    The Real-Time Population Survey (Bick, Blandin and Deming, Management Science 2026)
+    is the best-documented US counterpart to our Swedish adoption measures. Detection
+    only: a new quarter is a prompt to decide where, if anywhere, the number belongs —
+    the series carry real caveats (quota-sampled Qualtrics panel, self-reported time
+    savings, an awareness gate) that a machine should not paper over. Full review in
+    lab-infrastructure/ai-monitor/notes/fred-rps-genai_2026-07-27.md.
+    """
+    csv_text = get("https://fred.stlouisfed.org/graph/fredgraph.csv"
+                   "?id=RPSGENAIUSAGESHAREALL", ua=False).decode("utf-8", "replace")
+    rows = [r for r in csv_text.strip().splitlines()[1:] if "," in r]
+    latest_date, latest_val = rows[-1].split(",")[0], rows[-1].split(",")[1]
+    if latest_date > state.get("fred_rps_seen", ""):
+        state["fred_rps_seen"] = latest_date
+        return (f"FRED RPS genAI adoption: new observation {latest_date} — US benchmark refreshed",
+                f"RPSGENAIUSAGESHAREALL now reports {float(latest_val):.1f}% of US adults 18-64 "
+                f"using genAI as of {latest_date}. 130 series in the category (adoption, "
+                "used-for-work-last-week, time savings, work hours assisted; each overall and by "
+                "industry and occupation), all at "
+                "https://fred.stlouisfed.org/graph/fredgraph.csv?id=<SERIES_ID>.\n\n"
+                "Before using any of it, re-read the caveats in "
+                "lab-infrastructure/ai-monitor/notes/fred-rps-genai_2026-07-27.md: denominators "
+                "differ across families (all 18-64s vs employed), time savings is a "
+                "self-reported counterfactual and not measured productivity, the industry and "
+                "occupation cuts are small-cell noisy quarter-on-quarter, and respondents who "
+                "have never heard of genAI are routed past the module and counted as non-users.")
+    return None
+
+
 def open_issue(title, body):
     """Create a GitHub issue unless an open one already has this title."""
     gh = shutil.which("gh")
@@ -119,7 +156,8 @@ def open_issue(title, body):
 def main():
     state = json.loads(STATE_FILE.read_text())
     errors, flags = [], []
-    for w in (watch_ai_index, watch_daioe_dataset, watch_eu_lfs, watch_scb_amu):
+    for w in (watch_ai_index, watch_daioe_dataset, watch_eu_lfs, watch_scb_amu,
+              watch_fred_rps):
         try:
             hit = w(state)
             if hit:
