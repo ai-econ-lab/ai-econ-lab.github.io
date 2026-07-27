@@ -26,7 +26,7 @@ DATA_FILES = [
     "monitor.yaml", "cross_country.yaml", "cross_country_adoption.yaml",
     "cross_country_demand.yaml", "swe_adoption.yaml", "daioe_exposure.yaml",
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
-    "us_adoption_rps.yaml",
+    "us_adoption_rps.yaml", "population_ai.yaml",
 ]
 
 def data_updated():
@@ -93,6 +93,7 @@ RELATED  = load("related_research.yaml")
 ELS      = load("entry_level_squeeze.yaml")
 SWEAD    = load("swe_adoption.yaml")
 USRPS    = load("us_adoption_rps.yaml")
+POPAI    = load("population_ai.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
 # (see app.js occSearch), so it is NOT embedded here. It auto-tracks the latest DAIOE year.
 
@@ -910,8 +911,14 @@ def adoption_section():
     swxmax = 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1)    # round up to 10
     xmax = 5 * (int(max(r["adoption"] for r in ad["countries"]) // 5) + 1)  # round up to 5
     return f"""<div class="rule module-sec" id="adoption"><div class="wrap"><section>
-  <p class="kicker">Module 3 · Adoption · across countries</p>
-  <h2 class="sec">How widely have firms actually adopted AI?</h2>
+  <p class="kicker">Module 3 · Adoption · firms, workers, population</p>
+  <h2 class="sec">How widely has AI actually been adopted?</h2>
+  <p class="secintro" style="margin-bottom:14px"><b>Three levels, three denominators.</b> Firms adopt, workers use
+    AI at work, and the population uses it at all — measured on different populations, so the numbers are not
+    comparable with one another and are never set side by side here. Firms come first (below), then workers, then
+    the population. The weakest of the three is the worker level: Sweden has no representative public statistic for
+    the share of employed people who use AI at work, so what we can show is a professional-union panel, labelled as
+    such.</p>
   <p class="secintro">Exposure is potential; adoption is what firms have done. The share of enterprises using at
     least one AI technology (<b>{h(amt['year'])}</b>, {h(amt['source'])}), with the year-on-year change since
     {h(amt['prev_year'])} shown as <b>+pp</b>. Adoption is climbing fast: the EU average rose from 8% in 2023 to
@@ -928,6 +935,7 @@ def adoption_section():
     {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; EU average {amt['eu_avg']:g}% (Eurostat)", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
   </div>
   {akavia_workers_block()}
+  {population_block()}
   {related_research("adoption")}
 </section></div></div>"""
 
@@ -972,14 +980,52 @@ def us_rps_line():
     measurement. Deliberately NOT a module and never set beside the firm-adoption bars:
     those count enterprises, these count people, and the comparison a reader makes unaided
     is the wrong one. Data and caveats: data/us_adoption_rps.yaml."""
-    u = USRPS; m = u["meta"]; a = u["values"]["any_use"]; w = u["values"]["work_last_week"]
-    return (f'<p class="secintro" style="margin:12px 0 0">For international comparison at the '
-            f'same level of measurement: <b>{a["pct"]:g}%</b> of {h(m["population"])} report '
-            f'using generative AI at all, and <b>{w["pct"]:g}%</b> of the employed used it for '
-            f'work in the reference week (<a href="{m["url"]}">{h(m["source"])}</a>, '
-            f'{h(m["vintage"])}). These count people, as the Akavia figures above do and the '
-            f'firm shares earlier in this module do not, so the two sets are not comparable '
-            f'with one another. {h(m["caveat"])}</p>')
+    u = USRPS; m = u["meta"]; w = u["values"]["work_last_week"]
+    return (f'<p class="secintro" style="margin:12px 0 0">There is no representative Swedish '
+            f'figure to put beside this one. In the US, <b>{w["pct"]:g}%</b> of employed adults '
+            f'used generative AI for work in the reference week '
+            f'(<a href="{m["url"]}">{h(m["source"])}</a>, {h(m["vintage"])}) — a whole-workforce '
+            f'rate, where the Swedish number above is one professional union\'s members. Sweden '
+            f'publishes no equivalent: the national survey asks about work-related use but counts '
+            f'it across the whole population rather than the employed. That gap is the reason this '
+            f'level is the module\'s weakest, and a thing worth measuring rather than citing. '
+            f'{h(m["caveat"])}</p>')
+
+
+def _pop_age_rows():
+    """Age rows for barplot(), which highlights a row via is_se. No row is highlighted
+    here: these are age groups, not countries."""
+    return [dict(r, name=r["group"], is_se=False) for r in POPAI["by_age"]]
+
+
+def population_block():
+    """Adoption depth, population side. Firm surveys count employers and the Akavia panel
+    counts one profession; this counts everybody, from official statistics with published
+    margins of error -- the strongest instrument in the module."""
+    m = POPAI["meta"]; ages = POPAI["by_age"]
+    u = USRPS["values"]["any_use"]; um = USRPS["meta"]
+    xmax = 10 * (max(r["adoption"] for r in ages) // 10 + 1)
+    swing = ages[0]["adoption"] - ages[-1]["adoption"]
+    gap_now = m["men"] - m["women"]
+    gap_then = m["men_first"] - m["women_first"]
+    return f"""<div class="depth"><p class="dk">Sweden, in depth · by person</p>
+    <p class="secintro" style="margin:0 0 14px">Broadest of the three: the share of <b>everyone</b> aged 16–74 who
+      has used generative AI, from SCB's population survey — a probability sample with published margins of error,
+      so this is the firmest number in the module. It rose from <b>{m['headline_first']:g}%</b> in
+      {h(m['first_year'])} to <b>{m['headline']:g}%</b> in {h(m['year'])} (±{m['headline_moe']:g}). Age divides it
+      far more than anything else does: {ages[0]['adoption']:g}% of {h(ages[0]['group'])}-year-olds against
+      {ages[-1]['adoption']:g}% of {h(ages[-1]['group'])}s, a {swing:g}-point span. The gap between men and women
+      is narrowing, from {gap_then:g} points in {h(m['first_year'])} to {gap_now:g}
+      ({m['men']:g}% against {m['women']:g}%). Figures refer to the {h(m['reference_period'])}.</p>
+    <div class="dotwrap">{barplot(_pop_age_rows(), m['headline'], xmax, 0, 'adoption', '.0f')}</div>
+    {figfooter("population_ai.csv", f"{m['source']}, {m['first_year']}–{m['year']} · {m['unit']}; bars {m['year']}, change vs {m['first_year']}. {m['design']}", svg_name="population_ai.svg", next_up="with SCB's next Befolkningens it-användning wave")}
+    <p class="secintro" style="margin:12px 0 0">The US counterpart at this level is
+      <b>{u['pct']:g}%</b> (<a href="{um['url']}">{h(um['source'])}</a>, {h(um['vintage'])}). Read it as a
+      reference point, not a ranking: it covers ages 18–64 where SCB covers 16–74, and Swedish 65–74-year-olds use
+      generative AI far less ({ages[-1]['adoption']:g}%), which pulls the Swedish figure down relative to a
+      US-style base.</p>
+  </div>"""
+
 
 def akavia_outcomes_block():
     """Outcomes: governance trailing use, the training gap, and who pays for the tools."""
@@ -1498,6 +1544,22 @@ def emit_data(out):
     _akx = 10 * (max(r["adoption"] for r in AKAVIA["by_profession"]) // 10 + 1)
     (d / "akavia_ai_use.svg").write_text(
         chart_standalone(barplot(AKAVIA["by_profession"], 0, _akx, 0, "adoption", ".0f")),
+        encoding="utf-8")
+    with (d / "population_ai.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        pm = POPAI["meta"]
+        w.writerow(["group", f"pct_using_genai_{pm['year']}", "moe_pp",
+                    f"pct_using_genai_{pm['first_year']}", "unit", "source"])
+        w.writerow(["all 16-74", pm["headline"], pm["headline_moe"], pm["headline_first"],
+                    pm["unit"], pm["source"]])
+        w.writerow(["men 16-74", pm["men"], "", pm["men_first"], pm["unit"], pm["source"]])
+        w.writerow(["women 16-74", pm["women"], "", pm["women_first"], pm["unit"], pm["source"]])
+        for r in POPAI["by_age"]:
+            w.writerow([r["group"], r["adoption"], r["moe"], r["prev"], pm["unit"], pm["source"]])
+    _popx = 10 * (max(r["adoption"] for r in POPAI["by_age"]) // 10 + 1)
+    (d / "population_ai.svg").write_text(
+        chart_standalone(barplot(_pop_age_rows(), POPAI["meta"]["headline"], _popx, 0,
+                                 "adoption", ".0f")),
         encoding="utf-8")
     with (d / "akavia_governance.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
