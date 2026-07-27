@@ -670,17 +670,26 @@ def dotplot(cc):
     p.append("</svg>")
     return "".join(p)
 
-def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f"):
+def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countries"):
     """Ranked horizontal bar chart (share; meaningful zero). Bar = latest year; a muted delta
-    shows the year-on-year change from the previous wave (when present). Sweden highlighted."""
+    shows the year-on-year change from the previous wave (when present). Sweden highlighted.
+
+    The label gutter is sized to the longest label. It used to be a fixed 128px, which was
+    fine for country names but silently CLIPPED longer ones: Akavia's official profession
+    titles ("Communication professionals", "Business professionals and economists") ran off
+    the left of the viewBox and rendered as "ication professionals". Labels are 10px in the
+    mono face, so ~0.62em per character is a safe advance width; the gutter grows and the
+    bars shorten rather than anything being cut."""
     rows = data; n = len(rows); hy = int(hy)
     W, rowh, top, bot = 640, 15, 18, 34
     H = top + n * rowh + bot
-    x0, x1 = 140, 528
+    longest = max((len(str(r["name"])) for r in rows), default=0)
+    gutter = min(300, max(128, int(longest * 10 * 0.62) + 10))   # cap so bars stay readable
+    x0, x1 = gutter + 12, 528
     X = lambda v: x0 + v / xmax * (x1 - x0)
     step = 10 if xmax > 25 else 5 if xmax > 12 else 1
     p = [f'<svg class="rankchart barplot" viewBox="0 0 {W} {H}" role="img" '
-         f'aria-label="Ranked bar chart of firms using AI by country, {n} countries, Sweden highlighted">']
+         f'aria-label="Ranked bar chart, {n} {h(what)}, latest value with change since the previous wave">']
     for t in range(0, int(xmax) + 1, step):
         gx = X(t)
         p.append(f'<line class="grid" x1="{gx:.1f}" y1="{top}" x2="{gx:.1f}" y2="{top+n*rowh}"/>')
@@ -693,7 +702,7 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f"):
         y = top + i * rowh; se = " se" if r["is_se"] else ""
         v = r[vkey]
         nm = h(r["name"]) + (f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else "")
-        p.append(f'<text class="dname{se}" x="128" y="{y+rowh*0.72:.1f}" text-anchor="end">{nm}</text>')
+        p.append(f'<text class="dname{se}" x="{gutter}" y="{y+rowh*0.72:.1f}" text-anchor="end">{nm}</text>')
         p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
         p.append(f'<text class="dval{se}" x="574" y="{y+rowh*0.72:.1f}" text-anchor="end">{v:{vfmt}}</text>')
         if r.get("prev") is not None:
@@ -931,7 +940,7 @@ def adoption_section():
       by size: adoption climbs steeply with the size of the firm, from <b>{sm['10-49']}%</b> of small firms
       (10–49 employees) to <b>{sm['250-']}%</b> of large ones (250+), every class up sharply since {h(swm['prev_year'])}.
       The all-firms figure ({sm['Tot250']}%, highlighted) is the same number the cross-country bar shows.</p>
-    <div class="dotwrap">{barplot(SWEAD['sizes'], amt['eu_avg'], swxmax, 0, 'adoption', '.0f')}</div>
+    <div class="dotwrap">{barplot(SWEAD['sizes'], amt['eu_avg'], swxmax, 0, 'adoption', '.0f', what='firm-size classes')}</div>
     {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; EU average {amt['eu_avg']:g}% (Eurostat)", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
   </div>
   {akavia_workers_block()}
@@ -967,7 +976,7 @@ def akavia_workers_block():
       by profession is wide and narrowing: communication professionals are near saturation while lawyers remain furthest
       behind, and central government trails the private sector by
       {sec[0]['adoption'] - sec[-1]['adoption']}pp. Men {a['by_sex']['men']}%, women {a['by_sex']['women']}%.</p>
-    <div class="dotwrap">{barplot(prof, 0, xmax, 0, 'adoption', '.0f')}</div>
+    <div class="dotwrap">{barplot(prof, 0, xmax, 0, 'adoption', '.0f', what='professions')}</div>
     {figfooter("akavia_ai_use.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. Bars {m['year']}, change vs {m['first_year']}. {m['population']}", svg_name="akavia_ai_use.svg", next_up="with the next Akavia panel wave")}
     {us_rps_line()}
     <p class="prov" style="margin-top:10px">Data shared with the lab by
@@ -1017,7 +1026,7 @@ def population_block():
       {ages[-1]['adoption']:g}% of {h(ages[-1]['group'])}s, a {swing:g}-point span. The gap between men and women
       is narrowing, from {gap_then:g} points in {h(m['first_year'])} to {gap_now:g}
       ({m['men']:g}% against {m['women']:g}%). Figures refer to the {h(m['reference_period'])}.</p>
-    <div class="dotwrap">{barplot(_pop_age_rows(), m['headline'], xmax, 0, 'adoption', '.0f')}</div>
+    <div class="dotwrap">{barplot(_pop_age_rows(), m['headline'], xmax, 0, 'adoption', '.0f', what='age groups')}</div>
     {figfooter("population_ai.csv", f"{m['source']}, {m['first_year']}–{m['year']} · {m['unit']}; bars {m['year']}, change vs {m['first_year']}. {m['design']}", svg_name="population_ai.svg", next_up="with SCB's next Befolkningens it-användning wave")}
     <p class="secintro" style="margin:12px 0 0">The US counterpart at this level is
       <b>{u['pct']:g}%</b> (<a href="{um['url']}">{h(um['source'])}</a>, {h(um['vintage'])}). Read it as a
@@ -1392,7 +1401,7 @@ def brief(lang="en"):
     elif theme == "demand":
         th_chart = barplot(dm["countries"], 0, int(max(r["share"] for r in dm["countries"])) + 1, 0, "share", ".1f")
     elif theme == "adoption":
-        th_chart = barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f")
+        th_chart = barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f", what="firm-size classes")
     else:
         th_chart = squeeze_svg(ELS)
     th_title = titles[theme]
@@ -1543,7 +1552,7 @@ def emit_data(out):
             w.writerow(["all", lab, v, "", "", "", "", AKAVIA["meta"]["source"]])
     _akx = 10 * (max(r["adoption"] for r in AKAVIA["by_profession"]) // 10 + 1)
     (d / "akavia_ai_use.svg").write_text(
-        chart_standalone(barplot(AKAVIA["by_profession"], 0, _akx, 0, "adoption", ".0f")),
+        chart_standalone(barplot(AKAVIA["by_profession"], 0, _akx, 0, "adoption", ".0f", what="professions")),
         encoding="utf-8")
     with (d / "population_ai.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
@@ -1559,7 +1568,7 @@ def emit_data(out):
     _popx = 10 * (max(r["adoption"] for r in POPAI["by_age"]) // 10 + 1)
     (d / "population_ai.svg").write_text(
         chart_standalone(barplot(_pop_age_rows(), POPAI["meta"]["headline"], _popx, 0,
-                                 "adoption", ".0f")),
+                                 "adoption", ".0f", what="age groups")),
         encoding="utf-8")
     with (d / "akavia_governance.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
@@ -1610,7 +1619,7 @@ def emit_data(out):
             w.writerow([r["name"], r["adoption"], SWEAD["meta"]["year"], r.get("prev", ""), SWEAD["meta"]["prev_year"]])
     _swxmax = 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1)
     (d / "swe_adoption.svg").write_text(
-        chart_standalone(barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], _swxmax, 0, "adoption", ".0f")), encoding="utf-8")
+        chart_standalone(barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], _swxmax, 0, "adoption", ".0f", what="firm-size classes")), encoding="utf-8")
 
 def build():
     if OUT.exists(): shutil.rmtree(OUT)
