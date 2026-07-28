@@ -1515,7 +1515,7 @@ def brief(lang="en"):
     body = f"""<div class="wrap brief"><article class="briefsheet">
   <header class="bhead">
     <div><p class="kicker">{L("AIEL Monitor · monthly brief","AIEL Monitor · månadsbrev")} · {issue}</p>
-      <h1 class="btitle">{L("AI and the labour market","AI och arbetsmarknaden")} — {mname} {today.year}</h1>
+      <h1 class="btitle">{L("AI and the labour market","AI och arbetsmarknaden")}, {mname} {today.year}</h1>
       <p class="bsub">{L("A monthly snapshot from the AI-Econ Lab: international, with Sweden in depth, on public data.", "En månatlig ögonblicksbild från AI-Econ Lab: internationell, med Sverige på djupet, byggd på öppna data.")}
         {L("In focus this month","I fokus denna månad")}: {h(th_title)}.</p></div>
     <div class="bactions">
@@ -1545,7 +1545,7 @@ def brief(lang="en"):
     <span>AI-Econ Lab · AIEL Monitor · {issue}. {L("Public data; cite the version and date.","Öppna data; ange version och datum vid citering.")}</span>
     <span>ai-econ-lab.github.io/monitor</span></footer>
 </article></div>"""
-    return shell(f"{L('AIEL Monitor Brief','AIEL Monitor-brief')} — {mname} {today.year} · {SITE['brand']['name']}",
+    return shell(f"{L('AIEL Monitor Brief','AIEL Monitor-brief')}, {mname} {today.year} · {SITE['brand']['name']}",
                  L(f"A monthly one-page snapshot of AI in the labour market from the AI-Econ Lab: {mname} {today.year}.",
                    f"En månatlig ögonblicksbild av AI på arbetsmarknaden från AI-Econ Lab: {mname} {today.year}."),
                  "/monitor/brief/sv/" if sv else "/monitor/brief/", body)
