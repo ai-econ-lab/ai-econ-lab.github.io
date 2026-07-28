@@ -2,20 +2,23 @@ meta:
   source: Akavia member web panel
   url: https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/
   credit: 'Source: Akavia member panel. Own processing.'
-  caveat: Akavia surveys its members through a web panel covering business professionals and economists, lawyers, IT professionals, social
-    scientists, HR specialists and communication professionals. Between about 3,000 and 3,800 members answer each round,
-    with response rates from a quarter to just under a half. Figures describe Akavia's members in these
-    professions, not the Swedish labour market as a whole, and should be read with care because the sample
-    is not an unrestricted random sample of the population. The question itself also changed twice
-    over the period, so the trend is not a clean time series. The 2023 rounds asked how often
-    members used AI tools (AI-verktyg), 2024 asked how often they actively used any form of AI,
-    and 2025 dropped the word actively. The response scale is identical throughout. Broadening
-    the object and then relaxing the activeness requirement would both tend to raise measured
-    use, so part of the rise from 32 to 77 per cent reflects the instrument rather than
-    behaviour, and the size of that part is not knowable from these data.
-  year: 2025
+  caveat: Akavia surveys its members through a web panel covering business professionals and economists,
+    lawyers, IT professionals, social scientists, HR specialists and communication professionals. Between
+    about 3,000 and 3,800 members answer each round, with response rates from a quarter to just under
+    a half. Figures describe Akavia's members in these professions, not the Swedish labour market as a
+    whole, and should be read with care because the sample is not an unrestricted random sample of the
+    population. The question itself also changed twice over the period, so the trend is not a clean time
+    series. The 2023 rounds asked how often members used AI tools (AI-verktyg), 2024 asked how often they
+    actively used any form of AI, and 2025 dropped the word actively; 2026 returned to the 2024 wording.
+    The response scale is identical throughout, so only May 2023 against September 2023, and May 2024
+    against May 2026, compare like with like. The headline counts regular use, meaning daily or weekly,
+    which is the threshold Akavia use in their own published reporting, and it counts everyone in the
+    base including those who answer that they do not know. Counting use at any frequency instead gives
+    a higher series, shown alongside it. Part of any change over the period reflects the wording rather
+    than behaviour, and the size of that part is not knowable from these data.
+  year: 2026
   first_year: 2023
-  generated: '2026-07-22'
+  generated: '2026-07-28'
   min_cell: 50
   population: Akavia members in six professions, not the Swedish workforce
 trend:
@@ -24,79 +27,95 @@ trend:
   - Sep 2023
   - May 2024
   - May 2025
+  - May 2026
   values:
+  - 13
+  - 15
+  - 28
+  - 48
+  - 68
+  any_use:
   - 32
   - 43
   - 61
   - 77
+  - 89
+  clean_pair:
+    from: May 2024
+    to: May 2026
+    from_value: 28
+    to_value: 68
+  breaks_after:
+  - Sep 2023
+  - May 2024
 by_profession:
 - name: Communication professionals
-  adoption: 96
-  prev: 68
-  is_se: false
-  lo: 90
-  hi: 100
-  n: 87
-- name: IT professionals
-  adoption: 88
-  prev: 52
-  is_se: false
-  lo: 84
-  hi: 91
-  n: 410
-- name: HR specialists
   adoption: 82
-  prev: 34
+  prev: 54
   is_se: false
-  lo: 76
-  hi: 89
-  n: 219
+  lo: 71
+  hi: 93
+  n: 80
+- name: IT professionals
+  adoption: 79
+  prev: 43
+  is_se: false
+  lo: 74
+  hi: 84
+  n: 357
+- name: HR specialists
+  adoption: 79
+  prev: 32
+  is_se: false
+  lo: 71
+  hi: 86
+  n: 165
 - name: Business professionals and economists
-  adoption: 81
-  prev: 31
+  adoption: 72
+  prev: 27
   is_se: false
-  lo: 79
-  hi: 84
-  n: 1398
+  lo: 69
+  hi: 75
+  n: 1202
 - name: Social scientists
-  adoption: 74
-  prev: 27
+  adoption: 59
+  prev: 23
   is_se: false
-  lo: 70
-  hi: 78
-  n: 626
+  lo: 54
+  hi: 63
+  n: 557
 - name: Lawyers
-  adoption: 62
-  prev: 19
-  is_se: false
-  lo: 58
-  hi: 66
-  n: 731
-by_sector:
-- name: Private
-  adoption: 87
-  prev: 42
-  is_se: false
-  lo: 85
-  hi: 89
-  n: 1684
-- name: Local and regional
-  adoption: 80
-  prev: 27
-  is_se: false
-  lo: 76
-  hi: 84
-  n: 585
-- name: Central government
   adoption: 57
   prev: 18
   is_se: false
-  lo: 53
-  hi: 60
-  n: 1202
+  lo: 52
+  hi: 61
+  n: 601
+by_sector:
+- name: Private
+  adoption: 81
+  prev: 38
+  is_se: false
+  lo: 78
+  hi: 83
+  n: 1427
+- name: Local and regional
+  adoption: 62
+  prev: 22
+  is_se: false
+  lo: 57
+  hi: 68
+  n: 405
+- name: Central government
+  adoption: 48
+  prev: 14
+  is_se: false
+  lo: 44
+  hi: 51
+  n: 1130
 by_sex:
-  women: 75
-  men: 81
+  women: 65
+  men: 72
 org_use:
   y2024: 92
   y2025: 97

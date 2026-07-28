@@ -988,18 +988,24 @@ def akavia_workers_block():
     a = AKAVIA; m = a["meta"]; tr = a["trend"]
     prof = a["by_profession"]; sec = a["by_sector"]
     xmax = 10 * (max(r["adoption"] for r in prof) // 10 + 1)
-    first, last = tr["values"][0], tr["values"][-1]
+    cp = tr["clean_pair"]
+    thin = min(prof, key=lambda r: r["n"])
     return f"""<div class="depth"><p class="dk">Sweden, in depth · by worker</p>
     <p class="secintro" style="margin:0 0 14px">Firm surveys count employers who have started. This counts
-      people: the share of professionals who use AI in their own work rose from <b>{first}%</b> in
-      {h(tr['labels'][0])} to <b>{last}%</b> in {h(tr['labels'][-1])}, and daily use went from 3% to 22% over
-      the same period, so the shift is in intensity as much as reach. Nearly everyone now works somewhere AI
-      is used at all ({a['org_use']['y2024']}% in 2024, {a['org_use']['y2025']}% in {h(m['year'])}). The spread
-      by profession is wide and narrowing: communication professionals are near saturation while lawyers remain furthest
+      people, and it counts them the way Akavia do: the share of professionals using AI <b>daily or
+      weekly</b>. Between the only two rounds that asked the question the same way, that share went from
+      <b>{cp['from_value']}%</b> in {h(cp['from'])} to <b>{cp['to_value']}%</b> in {h(cp['to'])}. Counting
+      any use at all, however occasional, gives {tr['any_use'][-1]}% on the same round. Nearly everyone now
+      works somewhere AI is used at all ({a['org_use']['y2024']}% in 2024, {a['org_use']['y2025']}% in 2025).
+      The spread by profession is wide: communication professionals are furthest ahead and lawyers furthest
       behind, and central government trails the private sector by
       {sec[0]['adoption'] - sec[-1]['adoption']}pp. Men {a['by_sex']['men']}%, women {a['by_sex']['women']}%.</p>
     <div class="dotwrap">{barplot(prof, 0, xmax, 0, 'adoption', '.0f', what='professions')}</div>
-    {figfooter("akavia_ai_use.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. Bars {m['year']}, change vs {m['first_year']}. {m['population']}", svg_name="akavia_ai_use.svg", next_up="with the next Akavia panel wave")}
+    <p class="psub" style="margin-top:4px">Bars are {h(cp['to'])}, with the change measured against
+      {h(cp['from'])}, the one earlier round that asked the question identically. Cell sizes differ a great
+      deal: {h(thin['name'].lower())} rest on {thin['n']} respondents ({thin['lo']}–{thin['hi']}% interval),
+      against {max(r['n'] for r in prof)} for the largest group.</p>
+    {figfooter("akavia_ai_use.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. Bars {h(cp['to'])}, change vs {h(cp['from'])}. {m['population']}", svg_name="akavia_ai_use.svg", next_up="with the next Akavia panel wave")}
     {us_rps_line()}
     <p class="prov" style="margin-top:10px">Data shared with the lab by
       <a href="{m['url']}">Akavia</a>. {h(m['caveat'])}</p>

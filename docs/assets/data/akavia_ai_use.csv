@@ -1,14 +1,15 @@
 cut,group,pct_using_ai_2025,pct_using_ai_2023,ci_low_2025,ci_high_2025,respondents_2025,source
-profession,Communication professionals,96,68,90,100,87,Akavia member web panel
-profession,IT professionals,88,52,84,91,410,Akavia member web panel
-profession,HR specialists,82,34,76,89,219,Akavia member web panel
-profession,Business professionals and economists,81,31,79,84,1398,Akavia member web panel
-profession,Social scientists,74,27,70,78,626,Akavia member web panel
-profession,Lawyers,62,19,58,66,731,Akavia member web panel
-sector,Private,87,42,85,89,1684,Akavia member web panel
-sector,Local and regional,80,27,76,84,585,Akavia member web panel
-sector,Central government,57,18,53,60,1202,Akavia member web panel
-all,May 2023,32,,,,,Akavia member web panel
-all,Sep 2023,43,,,,,Akavia member web panel
-all,May 2024,61,,,,,Akavia member web panel
-all,May 2025,77,,,,,Akavia member web panel
+profession,Communication professionals,82,54,71,93,80,Akavia member web panel
+profession,IT professionals,79,43,74,84,357,Akavia member web panel
+profession,HR specialists,79,32,71,86,165,Akavia member web panel
+profession,Business professionals and economists,72,27,69,75,1202,Akavia member web panel
+profession,Social scientists,59,23,54,63,557,Akavia member web panel
+profession,Lawyers,57,18,52,61,601,Akavia member web panel
+sector,Private,81,38,78,83,1427,Akavia member web panel
+sector,Local and regional,62,22,57,68,405,Akavia member web panel
+sector,Central government,48,14,44,51,1130,Akavia member web panel
+all,May 2023,13,,,,,Akavia member web panel
+all,Sep 2023,15,,,,,Akavia member web panel
+all,May 2024,28,,,,,Akavia member web panel
+all,May 2025,48,,,,,Akavia member web panel
+all,May 2026,68,,,,,Akavia member web panel
