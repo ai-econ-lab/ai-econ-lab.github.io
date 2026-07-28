@@ -6,7 +6,13 @@ meta:
     scientists, HR specialists and communication professionals. Between about 3,000 and 3,800 members answer each round,
     with response rates from a quarter to just under a half. Figures describe Akavia's members in these
     professions, not the Swedish labour market as a whole, and should be read with care because the sample
-    is not an unrestricted random sample of the population.
+    is not an unrestricted random sample of the population. The question itself also changed twice
+    over the period, so the trend is not a clean time series. The 2023 rounds asked how often
+    members used AI tools (AI-verktyg), 2024 asked how often they actively used any form of AI,
+    and 2025 dropped the word actively. The response scale is identical throughout. Broadening
+    the object and then relaxing the activeness requirement would both tend to raise measured
+    use, so part of the rise from 32 to 77 per cent reflects the instrument rather than
+    behaviour, and the size of that part is not knowable from these data.
   year: 2025
   first_year: 2023
   generated: '2026-07-22'
