@@ -28,7 +28,7 @@ DATA_FILES = [
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
     "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
     "occupations.yaml", "occupation_tiers.yaml", "barriers.yaml",
-    "monthly_demand.yaml",
+    "monthly_demand.yaml", "job_quality.yaml",
 ]
 
 def data_updated():
@@ -89,6 +89,7 @@ WAGES    = load("wages.yaml")
 OCCUP    = load("occupations.yaml")
 OCCTIER  = load("occupation_tiers.yaml")
 MONTHLY  = load("monthly_demand.yaml")
+JOBQ     = load("job_quality.yaml")
 BARRIERS = load("barriers.yaml")
 CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
@@ -958,6 +959,66 @@ def monthly_block():
                         "monthly_ai_demand.svg"))
 
 
+def jobquality_svg(jq):
+    """Three gap lines in percentage points: AI-skill ads minus everything else, on full-time,
+    permanent and regular employment. Zero is drawn heavy, because the permanent line crosses it."""
+    s = jq["series"]; n = len(s)
+    lo, hi = jq["meta"]["ymin"], jq["meta"]["ymax"]
+    W, H = 640, 300
+    x0, x1, top, bot = 52, 522, 24, 254
+    X = lambda i: x0 + i / (n - 1) * (x1 - x0)
+    Y = lambda v: bot - (v - lo) / (hi - lo) * (bot - top)
+    p = [f'<svg class="rankchart jobq" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Gap in percentage points between AI-skill job ads and all other ads on '
+         f'full-time, permanent and regular employment, {s[0]["year"]} to {s[-1]["year"]}">']
+    t = lo - (lo % 5)
+    while t <= hi:
+        gy = Y(t)
+        p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
+        p.append(f'<text class="tick" x="{x0-7}" y="{gy+3.5:.1f}" text-anchor="end">{t:+g}</text>'.replace(">+0<", ">0<"))
+        t += 5
+    zy = Y(0)
+    p.append(f'<line x1="{x0}" y1="{zy:.1f}" x2="{x1}" y2="{zy:.1f}" stroke="var(--ink)" '
+             f'stroke-width="1.4" opacity=".55"/>')
+    for i, r in enumerate(s):
+        p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-10}" text-anchor="middle">{r["year"]}</text>')
+    for key, colour, lab in (("ft_gap", "var(--c1)", "full-time"),
+                             ("pm_gap", "var(--c2)", "permanent"),
+                             ("rg_gap", "var(--c3)", "regular")):
+        pts = " ".join(f'{X(i):.1f},{Y(r[key]):.1f}' for i, r in enumerate(s))
+        p.append(f'<polyline points="{pts}" fill="none" stroke="{colour}" stroke-width="2.4"/>')
+        ly = Y(s[-1][key])
+        p.append(f'<circle cx="{X(n-1):.1f}" cy="{ly:.1f}" r="3.5" fill="{colour}"/>')
+        p.append(f'<text class="tick" x="{X(n-1)+7:.1f}" y="{ly+3.5:.1f}" text-anchor="start" '
+                 f'fill="{colour}">{lab} {s[-1][key]:+.0f}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
+def jobquality_block():
+    """Job quality in AI-skill ads: the premium is narrowing, and on contracts it has reversed."""
+    m = JOBQ["meta"]
+    return (f'<div class="grouphdr" style="margin-top:26px">Are AI jobs better jobs?</div>\n'
+            f'<p class="secintro" style="margin-top:4px">Job ads carry structured fields describing the post '
+            f'itself, so we can ask whether a vacancy that requires an AI skill offers better terms than '
+            f'everything else advertised the same year. The chart shows the gap in percentage points, '
+            f'AI-skill ads minus all other ads, on three measures.</p>\n'
+            f'<div class="dotwrap">{jobquality_svg(JOBQ)}</div>\n'
+            f'<p class="secintro" style="margin-top:6px">AI-skill posts have always been more often '
+            f'full-time, but the advantage is closing: <b>{m["ft_gap_first"]:+.0f}pp</b> in '
+            f'{m["first_year"]} against <b>{m["ft_gap_last"]:+.0f}pp</b> in {m["last_year"]}. On permanent '
+            f'contracts the advantage has not merely narrowed, it has <b>reversed</b>: AI-skill ads were '
+            f'{m["pm_gap_first"]:+.0f}pp more often open-ended in {m["first_year"]}, and '
+            f'{m["pm_gap_last"]:+.0f}pp less often by {m["last_year"]}, having crossed zero in '
+            f'{m["pm_flip_year"]}. This is descriptive, not causal, and it does not compare like with like: '
+            f'AI-skill ads sit in different occupations from the average vacancy, so part of the change is '
+            f'AI demand spreading out of a specialist niche into ordinary hiring rather than the same jobs '
+            f'getting worse terms.</p>\n'
+            + figfooter("job_quality.csv",
+                        f'{h(m["source"])}, {m["first_year"]} to {m["last_year"]} · complete years only',
+                        "job_quality.svg"))
+
+
 def occupations_block():
     """Where AI demand actually sits. The national share is an average over a very skewed
     distribution; this is the distribution. Reuses barplot with the national floor as the
@@ -1212,6 +1273,7 @@ def outcomes_section(explorers):
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}", svg_name="entry_level_squeeze.svg", next_up="annually, with the JobTech year files")}
+  {jobquality_block()}
   {wages_block()}
   {related_research("outcomes")}
 </section></div></div>"""
@@ -1630,7 +1692,7 @@ PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.htm
 
 def chart_standalone(svg):
     """Self-contained SVG for download (inline light-theme styles; no page CSS). Dot or bar chart."""
-    style = ('<style>:root{--c1:#0072b2;--c2:#d55e00;--ink:#161d2b}'  # monthly series draws with var(); the page CSS is not present in a downloaded file
+    style = ('<style>:root{--c1:#0072b2;--c2:#d55e00;--c3:#009e73;--ink:#161d2b}'  # monthly series draws with var(); the page CSS is not present in a downloaded file
              '.rankchart{font-family:ui-monospace,Menlo,monospace}svg{background:#ffffff}'
              '.grid,.rowguide{stroke:#e7e4dd}.rowguide{opacity:.6}'
              '.meanline{stroke:#8a8a8a;stroke-dasharray:3 3}.meanlab,.tick{fill:#6d6a63;font-size:9px}'
@@ -1674,6 +1736,16 @@ def emit_data(out):
     _dxmax = int(max(r["share"] for r in DEMAND["countries"])) + 1
     (d / "cross_country_demand.svg").write_text(
         chart_standalone(barplot(DEMAND["countries"], 0, _dxmax, 0, "share", ".1f")), encoding="utf-8")
+    with (d / "job_quality.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["year", "pct_full_time_ai", "pct_full_time_other", "gap_pp_full_time",
+                    "pct_permanent_ai", "pct_permanent_other", "gap_pp_permanent",
+                    "pct_regular_ai", "pct_regular_other", "gap_pp_regular", "n_ai_ads"])
+        for r in JOBQ["series"]:
+            w.writerow([r["year"], r["ft_ai"], r["ft_other"], r["ft_gap"],
+                        r["pm_ai"], r["pm_other"], r["pm_gap"],
+                        r["rg_ai"], r["rg_other"], r["rg_gap"], r["n_ai"]])
+    (d / "job_quality.svg").write_text(chart_standalone(jobquality_svg(JOBQ)), encoding="utf-8")
     with (d / "monthly_ai_share.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["year_month", "ads", "ai_any_pct", "ai_any_pct_12m_mean",
