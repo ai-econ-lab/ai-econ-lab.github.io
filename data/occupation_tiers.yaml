@@ -1,0 +1,79 @@
+meta:
+  year: 2025
+  min_ads: 25
+  source: JobTech / Platsbanken job ads (CC0) · tier classifier, rubric v2.1
+  validation: 88.9% agreement with hand-labelled ads on the four-way split, 93.8%
+    on the grouping shown
+lede: The split between building AI, putting it in place and simply using it is not
+  a national constant. It is an occupational structure, and it separates research
+  and software roles from the professions where AI arrives as a tool.
+rows:
+- name: Software and systems developers
+  n: 925
+  builder: 48
+  integrator: 24
+  user: 4
+- name: Doctoral students
+  n: 270
+  builder: 80
+  integrator: 11
+  user: 0
+- name: Research assistants
+  n: 160
+  builder: 68
+  integrator: 16
+  user: 1
+- name: Other IT specialists
+  n: 132
+  builder: 65
+  integrator: 24
+  user: 1
+- name: Electrical engineers and technicians
+  n: 128
+  builder: 52
+  integrator: 20
+  user: 2
+- name: Systems analysts and IT architects
+  n: 108
+  builder: 53
+  integrator: 33
+  user: 1
+- name: University lecturers
+  n: 51
+  builder: 71
+  integrator: 12
+  user: 0
+- name: Medical secretaries and care administrators
+  n: 39
+  builder: 0
+  integrator: 0
+  user: 0
+- name: Mechanical engineers
+  n: 38
+  builder: 47
+  integrator: 24
+  user: 0
+- name: Electrical engineers
+  n: 37
+  builder: 32
+  integrator: 22
+  user: 0
+- name: Marketing analysts and marketers
+  n: 36
+  builder: 0
+  integrator: 14
+  user: 31
+- name: Customer service staff
+  n: 27
+  builder: 7
+  integrator: 4
+  user: 11
+- name: Chemists
+  n: 26
+  builder: 77
+  integrator: 8
+  user: 4
+caveat: 'Occupations with at least 25 AI-skill advertisements in 2025. Rows do not
+  sum to 100: the remainder is advertisements the classifier places in the AI-literacy
+  penumbra or judges not to be AI demand at all, which is how medical secretaries
+  appear at zero on all three tiers despite passing the lexical measure.'
