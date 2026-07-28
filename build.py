@@ -1420,7 +1420,7 @@ def brief(lang="en"):
         lab = LABSV[o["k"]] if sv else o["lab"]
         foot = o["foot"].replace("live", "löpande") if sv else o["foot"]
         cards += (f'<div class="bstat{cls}"><span class="stripe"></span><div class="bk">{h(k)}</div>'
-                  f'<div class="bnum">{o["num"]}</div><div class="blab">{h(lab)}</div>'
+                  f'<div class="bnum">{svn(o["num"])}</div><div class="blab">{h(lab)}</div>'
                   f'<div class="bfoot">{h(foot)}</div></div>')
 
     flat = [(yr["year"], it) for yr in NEWS["years"] for it in yr["items"]]   # newest first
@@ -1438,12 +1438,13 @@ def brief(lang="en"):
         f"Across the EU, firm AI adoption is climbing fast: the average reached <b>{eu_adopt:.0f}%</b> of enterprises in "
         f"{ADOPT['meta']['year']}, up from 8% in 2023 (Eurostat). Sweden is well above, at <b>{total}%</b>, and its "
         f"workforce ranks 2nd of {n_ctry} on generative-AI exposure. The series that moves every month is the Swedish "
-        f"depth cut below, the share of vacancies asking for an AI skill, 2006–2025, now about "
+        f"depth cut below, the share of vacancies asking for an AI skill, {t['years'][0]}–{t['years'][-1]}, now about "
         f"<b>{t['values'][-1]:.2f}%</b> ({t['years'][-1]}, provisional), roughly <b>{round(t['values'][-1] / t['values'][0]):g}×</b> its level twenty years ago.",
         f"I hela EU ökar företagens AI-användning snabbt: genomsnittet nådde <b>{eu_adopt:.0f}%</b> av företagen "
         f"{ADOPT['meta']['year']}, upp från 8% 2023 (Eurostat). Sverige ligger klart över, med <b>{total}%</b>, och "
         f"arbetskraften är näst mest exponerad för generativ AI av {n_ctry} länder. Serien som rör sig varje månad är den "
-        f"svenska fördjupningen nedan, andelen lediga jobb som efterfrågar en AI-kompetens, 2006–2025, nu omkring "
+        f"svenska fördjupningen nedan, andelen lediga jobb som efterfrågar en AI-kompetens, "
+        f"{t['years'][0]}–{t['years'][-1]}, nu omkring "
         f"<b>{svn(round(t['values'][-1], 2))}%</b> ({t['years'][-1]}, preliminärt), ungefär <b>{round(t['values'][-1] / t['values'][0]):g}×</b> nivån för tjugo år sedan.")
 
     body = f"""<div class="wrap brief"><article class="briefsheet">
