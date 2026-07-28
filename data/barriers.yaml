@@ -1,0 +1,42 @@
+meta:
+  year: 2025
+  source: Eurostat, isoc_eb_ain2
+  unit: per cent of all enterprises with 10 or more employees
+  geo: Sweden, with the EU27 average for comparison
+lede: Adoption figures say how many firms use AI. This says what stops the rest. The
+  reasons are reported as a share of all enterprises, not of non-adopters, so they
+  describe how widespread each obstacle is rather than dividing non-adopters between
+  causes.
+rows:
+- name: Lack of relevant expertise
+  share: 5.3
+  eu: 7.8
+  is_se: true
+- name: Data-protection and privacy concerns
+  share: 3.5
+  eu: 5.8
+  is_se: true
+- name: Data availability or quality
+  share: 3.2
+  eu: 4.8
+  is_se: true
+- name: Unclear legal consequences
+  share: 2.8
+  eu: 5.9
+  is_se: true
+- name: Incompatible with existing systems
+  share: 2.7
+  eu: 4.6
+  is_se: true
+- name: Costs seem too high
+  share: 1.8
+  eu: 4.2
+  is_se: true
+- name: Ethical considerations
+  share: 1.7
+  eu: 2.7
+  is_se: true
+- name: Not useful for the enterprise
+  share: 1.2
+  eu: 2.0
+  is_se: true

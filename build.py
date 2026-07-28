@@ -27,7 +27,7 @@ DATA_FILES = [
     "cross_country_demand.yaml", "swe_adoption.yaml", "daioe_exposure.yaml",
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
     "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
-    "occupations.yaml", "occupation_tiers.yaml",
+    "occupations.yaml", "occupation_tiers.yaml", "barriers.yaml",
 ]
 
 def data_updated():
@@ -87,6 +87,7 @@ NEWS     = load("news.yaml")
 WAGES    = load("wages.yaml")
 OCCUP    = load("occupations.yaml")
 OCCTIER  = load("occupation_tiers.yaml")
+BARRIERS = load("barriers.yaml")
 CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
@@ -1427,6 +1428,15 @@ def brief(lang="en"):
             f"{smd['250-']}% of large ones (250+) in {SWEAD['meta']['year']}, every class up sharply since {SWEAD['meta']['prev_year']}.",
             f"Användningen ökar brant med företagsstorlek, från {smd['10-49']}% av småföretagen (10–49 anställda) till "
             f"{smd['250-']}% av de stora (250+) {SWEAD['meta']['year']}, alla storleksklasser kraftigt upp sedan {SWEAD['meta']['prev_year']}."),
+        "barriers": L(
+            f"The obstacle firms name most often is people, not money: {BARRIERS['rows'][0]['share']}% of Swedish "
+            f"enterprises say a lack of relevant expertise stops them using AI, against "
+            f"{BARRIERS['rows'][-1]['share']}% who say AI is simply not useful to them. Cost ranks low. Shares are "
+            f"of all enterprises, not of non-adopters.",
+            f"Hindret företagen nämner oftast är kompetens, inte pengar: {svn(BARRIERS['rows'][0]['share'])}% av de "
+            f"svenska företagen anger brist på relevant kompetens som skäl att inte använda AI, mot "
+            f"{svn(BARRIERS['rows'][-1]['share'])}% som anser att AI inte är användbart för dem. Kostnad hamnar lågt. "
+            f"Andelarna avser samtliga företag, inte enbart de som avstår."),
         "outcomes": L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
             f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
@@ -1441,6 +1451,8 @@ def brief(lang="en"):
         "demand": f"{dm['meta']['source']}, {dm['meta']['year']}",
         "adoption": L(f"{SWEAD['meta']['source']}, {SWEAD['meta']['year']}",
                       f"SCB, IT-användning i företag (NV0116), {SWEAD['meta']['year']}"),
+        "barriers": L(f"{BARRIERS['meta']['source']}, {BARRIERS['meta']['year']}",
+                      f"Eurostat, isoc_eb_ain2, {BARRIERS['meta']['year']}"),
         "outcomes": L(f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}",
                       f"{ELS['meta']['source']} × DAIOE generativ AI {ELS['meta']['daioe_version']}"),
     }
@@ -1449,6 +1461,10 @@ def brief(lang="en"):
                            cc["meta"]["weight_year"], "share", ".0f")
     elif theme == "demand":
         th_chart = barplot(dm["countries"], 0, int(max(r["share"] for r in dm["countries"])) + 1, 0, "share", ".1f")
+    elif theme == "barriers":
+        th_chart = barplot(BARRIERS["rows"], 0,
+                           int(max(r["share"] for r in BARRIERS["rows"])) + 1, 0,
+                           "share", ".1f", what="reasons")
     elif theme == "adoption":
         th_chart = barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f", what="firm-size classes")
     else:
