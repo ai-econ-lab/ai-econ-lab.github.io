@@ -833,7 +833,7 @@ def exposure_section():
     src = (f'DAIOE {mt["variant"]} {mt["daioe_version"]}; most-exposed = top 25% of occupations × Eurostat EU-LFS '
            f'employment {mt["weight_year"]} (a few countries: latest available, marked ’YY)')
     return f"""<div class="rule module-sec" id="exposure"><div class="wrap"><section>
-  <p class="kicker">Module 1 · Exposure · across countries</p>
+  <p class="kicker">Module 1 · Exposure · which jobs sit in AI’s path</p>
   <h2 class="sec">How much of each country's work is AI-exposed?</h2>
   <p class="secintro">DAIOE scores every occupation (ISCO-08) for how far generative AI overlaps with its tasks.
     We label the <b>top 25% of occupations</b> by that score the <b>most AI-exposed</b>; the bars show the share of
@@ -908,7 +908,7 @@ def demand_section(tiles, seg):
     dm = DEMAND; dmt = dm["meta"]
     dxmax = int(max(r["share"] for r in dm["countries"])) + 1  # demand share, tight axis
     return f"""<div class="rule module-sec" id="demand"><div class="wrap"><section>
-  <p class="kicker">Module 2 · Demand · across countries</p>
+  <p class="kicker">Module 2 · Demand · what employers ask for</p>
   <h2 class="sec">How much are employers hiring for AI?</h2>
   <p class="secintro">The share of job postings that require AI skills, by country in <b>{h(dmt['year'])}</b>
     ({h(dmt['source'])}), Sweden marked. {h(dmt['note_prev'])} This international series (Lightcast) is a separate
@@ -942,7 +942,7 @@ def adoption_section():
     swxmax = 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1)    # round up to 10
     xmax = 5 * (int(max(r["adoption"] for r in ad["countries"]) // 5) + 1)  # round up to 5
     return f"""<div class="rule module-sec" id="adoption"><div class="wrap"><section>
-  <p class="kicker">Module 3 · Adoption · firms, workers, population</p>
+  <p class="kicker">Module 3 · Adoption · who is actually using it</p>
   <h2 class="sec">How widely has AI actually been adopted?</h2>
   <p class="secintro" style="margin-bottom:14px"><b>Three levels, three denominators.</b> Firms adopt, workers use
     AI at work, and the population uses it at all — measured on different populations, so the numbers are not
@@ -1090,7 +1090,7 @@ def outcomes_section(explorers):
     """Module 4 — Outcomes. Occupations Explorer + working conditions + entry-level squeeze (all live)."""
     em = ELS["meta"]
     return f"""<div class="rule module-sec" id="outcomes"><div class="wrap"><section>
-  <p class="kicker">Module 4 · Outcomes</p>
+  <p class="kicker">Module 4 · Outcomes · what happens to jobs and pay</p>
   <h2 class="sec">What does it mean for jobs and job quality?</h2>
   <p class="secintro">Exposure and demand are inputs; outcomes are what happens to workers. Three views: employment
     by occupation, working conditions, and the entry-level "canaries" signal on vacancies.</p>
@@ -1178,7 +1178,7 @@ def capability_section():
         for t in c["facts"])
     links = " · ".join(f'<a href="{h(l["url"])}">{h(l["label"])}</a>' for l in c["links"])
     return f"""<div class="rule module-sec" id="capability"><div class="wrap"><section>
-  <p class="kicker">Module 5 · AI capability <span class="preview-flag">◔ {h(c["flag"])}</span></p>
+  <p class="kicker">Module 5 · Capability · what the technology can do <span class="preview-flag">◔ {h(c["flag"])}</span></p>
   <h2 class="sec">How fast is the technology itself moving?</h2>
   <p class="secintro">{h(c["intro"])}</p>
   <div class="tiles">{tiles}</div>
@@ -1196,10 +1196,12 @@ def stat_overview():
                   f'<div class="ofoot"><span>{h(o["foot"])}</span><span class="go">Open →</span></div></a>')
     return f"""<div class="rule" id="overview"><div class="wrap"><section>
   <p class="kicker">The whole picture, in one glance</p>
-  <h2 class="sec">Four questions about AI and work, and one about the technology itself.</h2>
-  <p class="secintro">Exposure, demand, adoption and outcomes: one European headline each, with Sweden as the depth
-    cut inside every module; the fifth card tracks the technology's own pace. Every figure is public and dated;
-    open a card to jump to the module.</p>
+  <h2 class="sec">From what the technology can do to what happens to jobs and pay.</h2>
+  <p class="secintro">The modules follow one chain. Exposure asks which jobs sit in AI's path; demand asks what
+    employers are actually hiring for; adoption asks who is using AI in practice; outcomes asks what happens to
+    employment, entry-level hiring and wages. A fifth module tracks the technology's own pace, which is the
+    shock driving the other four. One international headline each, with Sweden as the depth cut inside every
+    module. Every figure is public and dated; open a card to jump to the module.</p>
   <div class="ovgrid">{cards}</div>
 </section></div></div>"""
 

@@ -18,16 +18,6 @@ overview:
   - {k: "Outcomes", num: "−5.3<span>pp</span>", lab: "Sweden's entry-level squeeze: fewer entry-level openings in the most AI-exposed jobs since 2020; the pattern echoes international research", foot: "JobTech · 2020–2025", anchor: "#outcomes", cls: "d"}
   - {k: "Capability", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents complete at even odds; the length has been doubling every 4–6 months", foot: "METR · May 2026", anchor: "#capability", cls: "e"}
 
-# The monitor's modules. 'live' has its own section below; 'next'/'planned'/'someday' are honest roadmap.
-modules:
-  - {name: "AI in Demand", status: "live", desc: "How often employers ask for AI skills in job ads, by occupation, sector and region over time."}
-  - {name: "Occupations Explorer", status: "live", desc: "Swedish employment by occupation over time (and soon region), with DAIOE AI-exposure overlaid."}
-  - {name: "Entry-level squeeze", status: "next", desc: "The young/entry-level share of openings in AI-exposed occupations: the canaries signal on vacancies."}
-  - {name: "Wages", status: "live", desc: "Pay in more and less AI-exposed occupations over time: Sweden, the US and the EU, from public wage statistics."}
-  - {name: "AI capability", status: "live", desc: "How fast frontier AI itself moves, in work-relevant units: task horizons and compute trends from METR, Epoch AI and the AI Index."}
-  - {name: "AI adoption & use", status: "next", desc: "Adoption now runs at three levels — firms (Eurostat, SCB), workers (Akavia panel) and the population (SCB, official statistics). Still missing: a representative Swedish worker-level rate, and realized-use task views."}
-  - {name: "Augmentation vs automation", status: "planned", desc: "Whether AI adds to or replaces the tasks of each occupation."}
-  - {name: "Across countries", status: "live", desc: "Each country's workforce AI-exposure (DAIOE generative-AI v2023 × EU-LFS employment); Sweden in international context."}
 
 # The AI in Demand module.
 aiindemand_lede: >-
