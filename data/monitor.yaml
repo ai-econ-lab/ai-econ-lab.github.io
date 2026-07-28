@@ -91,10 +91,11 @@ titles:
   flag: "Ad titles · verbatim"
   intro: >-
     Where the demand sits, in the employers' own words. The same titles head the list year
-    after year: machine learning engineer, data scientist, AI/ML developer; the surprise
-    just below them is medicinsk sekreterare, as speech recognition spreads through
-    healthcare administration. The newcomers column is the language at work: job titles
-    crossing three ads in a year for the first time.
+    after year: machine learning engineer, data scientist, AI/ML developer. One entry is a
+    measurement artefact worth naming: medicinsk sekreterare appears because those ads
+    mention speech-recognition software, and our classifier judges almost all of them to be
+    describing a tool the job uses rather than an AI skill it asks for. The newcomers column
+    is the language at work: job titles crossing three ads in a year for the first time.
   top:
     - {year: "2026 · H1", items: ["Machine learning engineer", "Data scientist"]}
     - {year: 2025, items: ["AI/ML-utvecklare", "Machine learning engineer"]}
