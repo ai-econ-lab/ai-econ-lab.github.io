@@ -46,7 +46,7 @@ top:
   ads: 4207
   is_se: false
 zero:
-- name: Personliga assistenter
+- name: Personal care assistants
   share: 0.0
   ads: 25778
   is_se: false
@@ -54,7 +54,7 @@ zero:
   share: 0.0
   ads: 16981
   is_se: false
-- name: Undersköterskor; hemtjänst; hemsjukvård; äldreboende och habilitering
+- name: Assistant nurses, home and elderly care
   share: 0.0
   ads: 11659
   is_se: false

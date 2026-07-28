@@ -7,7 +7,7 @@
 meta:
   indicator: "Persons who have used generative AI tools"
   unit: "% of persons aged 16–74"
-  source: "SCB, Befolkningens it-användning (LE0108T82)"
+  source: "SCB, Befolkningens it-användning / ICT use among the population (LE0108T82)"
   url: "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__LE__LE0108__LE0108Q/"
   year: 2025
   first_year: 2024

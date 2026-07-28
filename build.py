@@ -1049,7 +1049,7 @@ def population_block():
       is narrowing, from {gap_then:g} points in {h(m['first_year'])} to {gap_now:g}
       ({m['men']:g}% against {m['women']:g}%). Figures refer to the {h(m['reference_period'])}.</p>
     <div class="dotwrap">{barplot(_pop_age_rows(), m['headline'], xmax, 0, 'adoption', '.0f', what='age groups')}</div>
-    {figfooter("population_ai.csv", f"{m['source']}, {m['first_year']}–{m['year']} · {m['unit']}; bars {m['year']}, change vs {m['first_year']}. {m['design']}", svg_name="population_ai.svg", next_up="with SCB's next Befolkningens it-användning wave")}
+    {figfooter("population_ai.csv", f"{m['source']}, {m['first_year']}–{m['year']} · {m['unit']}; bars {m['year']}, change vs {m['first_year']}. {m['design']}", svg_name="population_ai.svg", next_up="with SCB's next ICT-use survey wave")}
     <p class="secintro" style="margin:12px 0 0">The US counterpart at this level is
       <b>{u['pct']:g}%</b> (<a href="{um['url']}">{h(um['source'])}</a>, {h(um['vintage'])}). Read it as a
       reference point, not a ranking: it covers ages 18–64 where SCB covers 16–74, and Swedish 65–74-year-olds use
@@ -1165,7 +1165,7 @@ def wages_block():
   <div class="dblegend"><span><i class="hi"></i>most AI-exposed third</span><span style="color:var(--c4,#cc79a7)">— middle</span><span><i class="lo"></i>least exposed</span></div>
   <p class="psub">{h(w["eu_line"])}</p>
   <ul style="color:var(--ink-2);font-size:13px;line-height:1.55">{cavs}</ul>
-  {figfooter("wages_exposure.csv", "SCB lönestrukturstatistik · BLS OEWS · Eurostat SES × DAIOE genAI v2023", svg_name="wages_sweden.svg", next_up="SCB and OEWS annual releases (spring 2027)")}
+  {figfooter("wages_exposure.csv", "SCB wage structure statistics · BLS OEWS · Eurostat SES × DAIOE genAI v2023", svg_name="wages_sweden.svg", next_up="SCB and OEWS annual releases (spring 2027)")}
 """
 
 def capability_section():

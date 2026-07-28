@@ -88,17 +88,18 @@ titles:
     is the language at work: job titles crossing three ads in a year for the first time.
   top:
     - {year: "2026 · H1", items: ["Machine learning engineer", "Data scientist"]}
-    - {year: 2025, items: ["AI/ML-utvecklare", "Machine learning engineer"]}
+    - {year: 2025, items: ["AI/ML-utvecklare (AI/ML developer)", "Machine learning engineer"]}
     - {year: 2024, items: ["Machine learning engineer", "Data scientist"]}
   newcomers:
     label: "New titles in AI demand"
-    items: ["AI ambassador (2023)", "AI content producer (2023)", "AI-experter (2024)", "AI lead (2025)", "AI data annotation specialist (2025)", "Senior agentic AI developer (2026)"]
+    items: ["AI ambassador (2023)", "AI content producer (2023)", "AI-experter / AI experts (2024)", "AI lead (2025)", "AI data annotation specialist (2025)", "Senior agentic AI developer (2026)"]
   cooled:
     label: "Cooled: no longer clear the bar"
     items: ["Telemarketer (2018)", "Construction engineer (2022)", "Mathematical statistician (2023)", "Inside sales (2024)", "Network technician (2024)"]
   caveat: >-
     Top titles and the newcomer list are the advertisements' own headlines, as employers
-    wrote them (lightly cleaned: employer and place names removed); top titles are counted
+    wrote them (lightly cleaned: employer and place names removed), with an English gloss
+    where the employer wrote in Swedish; top titles are counted
     among ads that ask for AI skills in the role itself, and a newcomer's year is the first
     in which at least three ads carry that title. The cooled list still uses the employment
     service's occupation taxonomy (our English renderings), where an occupation "clears the
