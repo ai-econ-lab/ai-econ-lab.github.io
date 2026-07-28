@@ -28,6 +28,7 @@ DATA_FILES = [
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
     "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
     "occupations.yaml", "occupation_tiers.yaml", "barriers.yaml",
+    "monthly_demand.yaml",
 ]
 
 def data_updated():
@@ -87,6 +88,7 @@ NEWS     = load("news.yaml")
 WAGES    = load("wages.yaml")
 OCCUP    = load("occupations.yaml")
 OCCTIER  = load("occupation_tiers.yaml")
+MONTHLY  = load("monthly_demand.yaml")
 BARRIERS = load("barriers.yaml")
 CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
@@ -887,6 +889,75 @@ def titles_block():
 
 
 
+def monthly_svg(md):
+    """The AI-skill share of Swedish vacancies at monthly resolution, 2006 to now.
+
+    Faint line = the raw month, which is genuinely noisy (Swedish hiring collapses every July
+    and again in December). Bold line = the 12-month trailing mean. Both are drawn because
+    showing only the smoothed line would hide how little weight one month carries."""
+    s = md["series"]; n = len(s); ymax = md["meta"]["ymax"]
+    W, H = 640, 300
+    x0, x1, top, bot = 46, 606, 22, 256
+    X = lambda i: x0 + i / (n - 1) * (x1 - x0)
+    Y = lambda v: bot - min(v, ymax) / ymax * (bot - top)
+    p = [f'<svg class="rankchart monthly" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Share of Swedish job ads requiring an AI skill, by month, '
+         f'{md["meta"]["first"]} to {md["meta"]["last"]}">']
+    v = 0.0
+    while v <= ymax + 1e-9:
+        gy = Y(v)
+        p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
+        p.append(f'<text class="tick" x="{x0-6}" y="{gy+3.5:.1f}" text-anchor="end">{v:g}%</text>')
+        v += 0.5
+    for i, r in enumerate(s):
+        yy, mm = r["m"].split("-")
+        if mm == "01" and int(yy) % 3 == 0:
+            p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-8}" text-anchor="middle">{yy}</text>')
+    # November 2022 is dated, not claimed: the marker says when the tool arrived, nothing about cause.
+    for i, r in enumerate(s):
+        if r["m"] == "2022-11":
+            p.append(f'<line x1="{X(i):.1f}" y1="{top}" x2="{X(i):.1f}" y2="{bot}" '
+                     f'stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>')
+            p.append(f'<text class="tick" x="{X(i)+5:.1f}" y="{top+10}" text-anchor="start" '
+                     f'opacity=".65">ChatGPT released</text>')
+            break
+    raw = " ".join(f'{X(i):.1f},{Y(r["ai"]):.1f}' for i, r in enumerate(s))
+    p.append(f'<polyline points="{raw}" fill="none" stroke="var(--c1)" stroke-width="1" opacity=".32"/>')
+    for key, colour in (("floor_ma", "var(--c2)"), ("ai_ma", "var(--c1)")):
+        pts = " ".join(f'{X(i):.1f},{Y(r[key]):.1f}' for i, r in enumerate(s))
+        p.append(f'<polyline points="{pts}" fill="none" stroke="{colour}" stroke-width="2.2"/>')
+    lx, ly = X(n - 1), Y(s[-1]["ai_ma"])
+    p.append(f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="4" fill="var(--c1)"/>')
+    p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-9:.1f}" text-anchor="end">'
+             f'{md["meta"]["last_ma"]:.2f}%</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
+def monthly_block():
+    """The annual series at monthly cadence: what turns a yearbook into a tracker."""
+    m = MONTHLY["meta"]
+    return (f'<div class="grouphdr" style="margin-top:26px">Month by month, {h(m["first"])} to '
+            f'{h(m["last"])}</div>\n'
+            f'<p class="secintro" style="margin-top:4px">The same measure at monthly resolution, '
+            f'{m["n_months"]} months built on <b>{m["total_ads"]:,}</b> ads. The faint line is the raw '
+            f'month and the bold lines are 12-month trailing means: broad AI demand in blue, the narrower '
+            f'skill floor in orange. A single month carries little weight, because Swedish hiring falls '
+            f'sharply every July and again in December, so the trend is the line to read. The broad measure '
+            f'now stands at <b>{m["last_ma"]:.2f}%</b> on that basis, against '
+            f'<b>{m["last_floor_ma"]:.2f}%</b> for the floor.</p>\n'
+            f'<p class="secintro" style="margin-top:6px">The monthly view shows something the annual series '
+            f'hides: AI-skill demand did not turn upward when generative AI arrived. It peaked at 0.75% in '
+            f'early 2021, fell through the hiring boom of 2022 and the slowdown of 2023 to a trough of 0.50% '
+            f'in October 2023, and only then began the climb that has since carried it past the earlier peak. '
+            f'Whatever the release of these tools did to the labour market, it was not a step change in what '
+            f'employers asked for.</p>\n'
+            f'<div class="dotwrap">{monthly_svg(MONTHLY)}</div>\n'
+            + figfooter("monthly_ai_share.csv",
+                        f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · frozen v1 term list',
+                        "monthly_ai_demand.svg"))
+
+
 def occupations_block():
     """Where AI demand actually sits. The national share is an average over a very skewed
     distribution; this is the distribution. Reuses barplot with the national floor as the
@@ -942,6 +1013,7 @@ def demand_section(tiles, seg):
     <div class="tiles">{tiles}</div>
     <p class="psub" style="margin-top:6px">{h(MONITOR['captions']['guard'])}</p>
     {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
+    {monthly_block()}
     {livewindow_block()}
     {occupations_block()}
     {occupation_tiers_block()}
@@ -965,7 +1037,7 @@ def adoption_section():
   <p class="kicker">Module 3 · Adoption · who is actually using it</p>
   <h2 class="sec">How widely has AI actually been adopted?</h2>
   <p class="secintro" style="margin-bottom:14px"><b>Three levels, three denominators.</b> Firms adopt, workers use
-    AI at work, and the population uses it at all — measured on different populations, so the numbers are not
+    AI at work, and the population uses it at all, each measured on a different population, so the numbers are not
     comparable with one another and are never set side by side here. Firms come first (below), then workers, then
     the population. The weakest of the three is the worker level: Sweden has no representative public statistic for
     the share of employed people who use AI at work, so what we can show is a professional-union panel, labelled as
@@ -1558,7 +1630,8 @@ PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.htm
 
 def chart_standalone(svg):
     """Self-contained SVG for download (inline light-theme styles; no page CSS). Dot or bar chart."""
-    style = ('<style>.rankchart{font-family:ui-monospace,Menlo,monospace}svg{background:#ffffff}'
+    style = ('<style>:root{--c1:#0072b2;--c2:#d55e00;--ink:#161d2b}'  # monthly series draws with var(); the page CSS is not present in a downloaded file
+             '.rankchart{font-family:ui-monospace,Menlo,monospace}svg{background:#ffffff}'
              '.grid,.rowguide{stroke:#e7e4dd}.rowguide{opacity:.6}'
              '.meanline{stroke:#8a8a8a;stroke-dasharray:3 3}.meanlab,.tick{fill:#6d6a63;font-size:9px}'
              '.dname{fill:#3f3d39;font-size:10px}.dname.se{fill:#0072b2;font-weight:700}'
@@ -1601,6 +1674,13 @@ def emit_data(out):
     _dxmax = int(max(r["share"] for r in DEMAND["countries"])) + 1
     (d / "cross_country_demand.svg").write_text(
         chart_standalone(barplot(DEMAND["countries"], 0, _dxmax, 0, "share", ".1f")), encoding="utf-8")
+    with (d / "monthly_ai_share.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["year_month", "ads", "ai_any_pct", "ai_any_pct_12m_mean",
+                    "floor_pct", "floor_pct_12m_mean"])
+        for r in MONTHLY["series"]:
+            w.writerow([r["m"], r["ads"], r["ai"], r["ai_ma"], r["floor"], r["floor_ma"]])
+    (d / "monthly_ai_demand.svg").write_text(chart_standalone(monthly_svg(MONTHLY)), encoding="utf-8")
     with (d / "working_conditions.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["condition", "gender", "pct_least_exposed_occ", "pct_most_exposed_occ", "daioe", "wc_year"])
         for c in WORKCOND["conditions"]:
