@@ -14,8 +14,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TO = FROM = "mlodefalk@gmail.com"
 
-# --- next month (roll Dec -> Jan) ---
+# --- day guard ---
+# The workflow fires DAILY rather than monthly, and this guard decides whether to
+# proceed. That inversion is deliberate: GitHub drops rare cron schedules under load,
+# and on 28 Jul 2026 the monthly `0 7 28 * *` schedule simply never ran. A missed
+# monthly fire is expensive here, because the next one is a month later, by which
+# time the issue it was drafting has already published. A daily run costs ~16s and
+# exits immediately on 30 days out of 31.
+TARGET_DAY = 28
 t = date.today()
+_forced = (os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+           or os.environ.get("BRIEF_FORCE") == "1")
+if not _forced and t.day != TARGET_DAY:
+    print(f"Not the {TARGET_DAY}th (today is the {t.day}), nothing to draft.")
+    raise SystemExit(0)
+
+# --- next month (roll Dec -> Jan) ---
 ny, nm = (t.year + 1, 1) if t.month == 12 else (t.year, t.month + 1)
 mname = calendar.month_name[nm]
 override = f"{ny}-{nm:02d}"

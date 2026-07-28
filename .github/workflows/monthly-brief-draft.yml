@@ -5,8 +5,13 @@ name: Monthly Brief draft
 # goes out on the 28th of the prior month. Also runnable on demand.
 on:
   schedule:
-    - cron: "0 7 28 * *"      # 28th, 07:00 UTC (~09:00 Europe/Stockholm) -> drafts next month, publish 12th
-  workflow_dispatch: {}        # manual "Run workflow" button (for testing)
+    # Runs DAILY and exits in ~16s unless it is the 28th; scripts/email_brief_draft.py
+    # holds the day guard. Deliberately not "0 7 28 * *": GitHub drops rare cron
+    # schedules under load, and that monthly form silently failed to fire on
+    # 28 Jul 2026. Missing a monthly slot costs a whole issue, since the retry is a
+    # month later, after publication. Daily is the reliable shape.
+    - cron: "0 7 * * *"        # 07:00 UTC (~09:00 Europe/Stockholm)
+  workflow_dispatch: {}        # manual "Run workflow" button; bypasses the day guard
 
 jobs:
   draft:
