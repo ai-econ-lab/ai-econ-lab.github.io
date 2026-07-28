@@ -1015,7 +1015,7 @@ def us_rps_line():
     return (f'<p class="secintro" style="margin:12px 0 0">There is no representative Swedish '
             f'figure to put beside this one. In the US, <b>{w["pct"]:g}%</b> of employed adults '
             f'used generative AI for work in the reference week '
-            f'(<a href="{m["url"]}">{h(m["source"])}</a>, {h(m["vintage"])}) — a whole-workforce '
+            f'(<a href="{m["url"]}">{h(m["source"])}</a>, {h(m["vintage"])}), a whole-workforce '
             f'rate, where the Swedish number above is one professional union\'s members. Sweden '
             f'publishes no equivalent: the national survey asks about work-related use but counts '
             f'it across the whole population rather than the employed. That gap is the reason this '
@@ -1041,7 +1041,7 @@ def population_block():
     gap_then = m["men_first"] - m["women_first"]
     return f"""<div class="depth"><p class="dk">Sweden, in depth · by person</p>
     <p class="secintro" style="margin:0 0 14px">Broadest of the three: the share of <b>everyone</b> aged 16–74 who
-      has used generative AI, from SCB's population survey — a probability sample with published margins of error,
+      has used generative AI, from SCB's population survey: a probability sample with published margins of error,
       so this is the firmest number in the module. It rose from <b>{m['headline_first']:g}%</b> in
       {h(m['first_year'])} to <b>{m['headline']:g}%</b> in {h(m['year'])} (±{m['headline_moe']:g}). Age divides it
       far more than anything else does: {ages[0]['adoption']:g}% of {h(ages[0]['group'])}-year-olds against
