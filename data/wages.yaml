@@ -13,7 +13,7 @@ headline: >-
 countries:
   - key: sweden
     label: "Sweden · median monthly salary"
-    source: "SCB lönestrukturstatistik, SSYK 2012 4-digit, all sectors, 2014–2025; 311 occupations, employment-weighted (Yrkesregistret 2023)"
+    source: "SCB wage structure statistics (lönestrukturstatistik), SSYK 2012 4-digit, all sectors, 2014–2025; 311 occupations, employment-weighted (Yrkesregistret 2023)"
     base_year: 2014
     series:
       - {year: 2014, high: 100.0, mid: 100.0, low: 100.0}
