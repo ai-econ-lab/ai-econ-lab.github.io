@@ -26,7 +26,8 @@ DATA_FILES = [
     "monitor.yaml", "cross_country.yaml", "cross_country_adoption.yaml",
     "cross_country_demand.yaml", "swe_adoption.yaml", "daioe_exposure.yaml",
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
-    "us_adoption_rps.yaml", "population_ai.yaml",
+    "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
+    "occupations.yaml",
 ]
 
 def data_updated():
@@ -84,6 +85,7 @@ SEMINARS = load("seminars.yaml")
 DAIOE_EXP = load("daioe_exposure.yaml")
 NEWS     = load("news.yaml")
 WAGES    = load("wages.yaml")
+OCCUP    = load("occupations.yaml")
 CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
@@ -882,6 +884,25 @@ def titles_block():
     <p class="psub" style="margin-top:6px">{h(tt['caveat'])}</p>"""
 
 
+
+def occupations_block():
+    """Where AI demand actually sits. The national share is an average over a very skewed
+    distribution; this is the distribution. Reuses barplot with the national floor as the
+    reference line, so every bar is read against the headline number."""
+    o = OCCUP
+    m = o["meta"]
+    xmax = int(max(r["share"] for r in o["top"])) + 1
+    bars = barplot(o["top"] + o["zero"], m["national"], xmax, 0, "share", ".1f")
+    return f"""<div class="grouphdr" id="occupations" style="margin-top:30px">Where the demand sits
+      <span class="preview-flag">◔ Occupations · {h(str(m['year']))}</span></div>
+    <p class="secintro" style="margin-top:4px">{h(o['lede'])}</p>
+    <div class="dotwrap">{bars}</div>
+    <p class="psub" style="margin-top:6px">{h(o['caveat'])} The line marks the national figure,
+      {m['national']}%.</p>
+    {figfooter("occupations_ai_demand.csv", f"{h(m['source'])} · {h(str(m['year']))}",
+               svg_name="occupations_ai_demand.svg",
+               next_up="annually, with the JobTech year files")}"""
+
 def demand_section(tiles, seg):
     """Module 2 — Demand. Headline is the cross-country demand bar; Sweden's live measure is the depth cut."""
     dm = DEMAND; dmt = dm["meta"]
@@ -903,6 +924,7 @@ def demand_section(tiles, seg):
     <p class="psub" style="margin-top:6px">{h(MONITOR['captions']['guard'])}</p>
     {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
     {livewindow_block()}
+    {occupations_block()}
     {titles_block()}
     <div class="grouphdr" style="margin-top:26px">Coming next · who is the AI for?
       <span class="preview-flag">◔ {h(MONITOR['segmentation']['flag'])}</span></div>
@@ -1613,6 +1635,16 @@ def emit_data(out):
                     w.writerow([c["key"], r["year"], g, r[g]])
     for c in WAGES["countries"]:
         (d / f"wages_{c['key']}.svg").write_text(chart_standalone(wages_svg(c)), encoding="utf-8")
+    with (d / "occupations_ai_demand.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["occupation", "asks_for_ai_in_role_pct", "advertisements", "year", "group"])
+        for grp in ("top", "zero"):
+            for r in OCCUP[grp]:
+                w.writerow([r["name"], r["share"], r["ads"], OCCUP["meta"]["year"], grp])
+    _occx = int(max(r["share"] for r in OCCUP["top"])) + 1
+    (d / "occupations_ai_demand.svg").write_text(
+        chart_standalone(barplot(OCCUP["top"] + OCCUP["zero"], OCCUP["meta"]["national"],
+                                 _occx, 0, "share", ".1f")), encoding="utf-8")
     with (d / "swe_adoption.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["firm_size", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])

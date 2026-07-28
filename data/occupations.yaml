@@ -1,0 +1,64 @@
+meta:
+  year: 2025
+  national: 0.44
+  source: JobTech / Platsbanken job ads (CC0), frozen v1 term list
+  measure: share of the occupation's advertisements that ask for AI skills in the
+    role itself (the strict floor)
+  min_ads: 400
+lede: The national figure is an average over a very uneven distribution. In the occupations
+  where AI demand concentrates, one advertisement in seven asks for it; in several
+  of Sweden's largest occupations, essentially none do.
+top:
+- name: Doctoral students
+  share: 14.52
+  ads: 1859
+  is_se: false
+- name: Research assistants
+  share: 11.06
+  ads: 1446
+  is_se: false
+- name: Other IT specialists
+  share: 8.86
+  ads: 1490
+  is_se: false
+- name: Software and systems developers
+  share: 5.05
+  ads: 18317
+  is_se: false
+- name: University lecturers
+  share: 4.81
+  ads: 1061
+  is_se: false
+- name: Physicists and astronomers
+  share: 4.29
+  ads: 466
+  is_se: false
+- name: Chemists
+  share: 3.63
+  ads: 717
+  is_se: false
+- name: Electrical engineers and technicians
+  share: 2.82
+  ads: 4540
+  is_se: false
+- name: Systems analysts and IT architects
+  share: 2.57
+  ads: 4207
+  is_se: false
+zero:
+- name: Personliga assistenter
+  share: 0.0
+  ads: 25778
+  is_se: false
+- name: Primary school teachers
+  share: 0.0
+  ads: 16981
+  is_se: false
+- name: Undersköterskor; hemtjänst; hemsjukvård; äldreboende och habilitering
+  share: 0.0
+  ads: 11659
+  is_se: false
+caveat: Occupations with at least 400 advertisements in 2025. Names are our English
+  renderings of the employment service's Swedish occupational labels. The measure
+  is the strict floor, so an occupation reads zero when no advertisement asks for
+  AI skills in the role itself, not when the word AI never appears.
