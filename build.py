@@ -847,14 +847,18 @@ def exposure_section():
     We label the <b>top 25% of occupations</b> by that score the <b>most AI-exposed</b>; the bars show the share of
     each country's jobs in them (Eurostat EU-LFS employment, <b>{h(mt['weight_year'])}</b>; a few countries use their
     latest year, marked ’YY). So <b>{se['share']:.0f}%</b> means about four in ten Swedish jobs sit in the most
-    AI-exposed quarter of occupations. <b>Exposure is not displacement</b>: in our panel it predicts occupational
-    growth as often as decline, showing only where AI overlaps with the work.</p>
+    AI-exposed quarter of occupations. <b>Exposure is not displacement</b>: in the lab's own firm-level panel for Sweden, Denmark
+    and Portugal, exposure shows no robust association with total firm employment, and within firms what it
+    predicts is a shift away from clerical and administrative work rather than broad job loss (AI Unboxed
+    and Jobs, linked below). Exposure marks where AI overlaps with the work, not what follows.</p>
   <div class="dotwrap">{barplot(cc['countries'], mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f')}</div>
   {figfooter("cross_country.csv", src, "cross_country.svg", next_up="with the DAIOE v2024 release")}
   <div class="depth"><p class="dk">Sweden, in depth</p>
     <p class="secintro" style="margin:0"><b>{se['share']:.0f}%</b> of Swedish jobs are in the most AI-exposed
       occupations (the <b>top 25%</b> by generative-AI exposure), the <b>2nd-highest of {h(mt['n_countries'])}</b>
-      countries (EU average {mt['mean_share']:.0f}%).
+      countries (EU average {mt['mean_share']:.0f}%). The rank depends on where the line is drawn: Sweden is
+      2nd at this quarter cut and at a 30% cut, 3rd at a third, and 5th if only the top 20% of occupations
+      count, so read it as among the most exposed rather than as a precise placing.
       The occupation-by-occupation detail lives on the <a href="/daioe/">DAIOE</a> page, and Swedish employment is
       set against exposure over time in the <a href="#occupations-explorer">Occupations Explorer</a> below.</p></div>
   {related_research("exposure")}
