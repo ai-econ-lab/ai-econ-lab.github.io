@@ -28,7 +28,7 @@ DATA_FILES = [
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
     "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
     "occupations.yaml", "occupation_tiers.yaml", "barriers.yaml",
-    "monthly_demand.yaml", "job_quality.yaml",
+    "monthly_demand.yaml", "job_quality.yaml", "governance.yaml",
 ]
 
 def data_updated():
@@ -90,6 +90,7 @@ OCCUP    = load("occupations.yaml")
 OCCTIER  = load("occupation_tiers.yaml")
 MONTHLY  = load("monthly_demand.yaml")
 JOBQ     = load("job_quality.yaml")
+GOV      = load("governance.yaml")
 BARRIERS = load("barriers.yaml")
 CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
@@ -1019,6 +1020,50 @@ def jobquality_block():
                         "job_quality.svg"))
 
 
+def governance_svg(g):
+    """Counts, not shares: the band is small enough that a share hides the shape."""
+    s = g["series"]; n = len(s); ymax = g["meta"]["ymax"]
+    W, H = 640, 260
+    x0, x1, top, bot = 52, 560, 22, 214
+    bw = (x1 - x0) / n * 0.62
+    Y = lambda v: bot - v / ymax * (bot - top)
+    p = [f'<svg class="rankchart gov" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Job ads in the AI governance and compliance band, '
+         f'{s[0]["year"]} to {s[-1]["year"]}">']
+    for t in range(0, ymax + 1, 50):
+        gy = Y(t)
+        p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
+        p.append(f'<text class="tick" x="{x0-7}" y="{gy+3.5:.1f}" text-anchor="end">{t}</text>')
+    for i, r in enumerate(s):
+        cx = x0 + (i + 0.5) * (x1 - x0) / n
+        y = Y(r["n"])
+        partial = r.get("partial")
+        p.append(f'<rect x="{cx-bw/2:.1f}" y="{y:.1f}" width="{bw:.1f}" height="{bot-y:.1f}" '
+                 f'fill="var(--c1)"{' opacity="0.55"' if partial else ''}/>')
+        p.append(f'<text class="tick" x="{cx:.1f}" y="{y-5:.1f}" text-anchor="middle">{r["n"]}</text>')
+        p.append(f'<text class="tick" x="{cx:.1f}" y="{H-12}" text-anchor="middle">'
+                 f'{r["year"]}{"*" if partial else ""}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
+def governance_block():
+    m = GOV["meta"]
+    return ('<div class="grouphdr" style="margin-top:26px">Who is hired to govern the AI?</div>\n'
+            '<p class="secintro" style="margin-top:4px">Alongside ads that ask for an AI skill '
+            'there is a smaller band that asks for AI <b>governance</b>: compliance with the AI '
+            'Act, model risk, algorithmic accountability, audit. We have counted it since the '
+            'series began and never shown it. It is the fastest-growing thing in the whole '
+            f'build. There were none in 2018 and {m["last_n"]} in the whole of {m["last_year"]}; '
+            f'the first half of 2026 alone has <b>{m["h1_2026_n"]}</b>, which is '
+            f'{m["h1_2026_pct"]:.1f}% of all AI ads against {m["last_pct"]:.1f}% a year earlier. '
+            'Regulation is becoming an occupation.</p>\n'
+            f'<div class="dotwrap">{governance_svg(GOV)}</div>\n'
+            + figfooter("ai_governance.csv",
+                        f'{h(m["source"])}, {m["first_year"]} to first half of 2026',
+                        "ai_governance.svg"))
+
+
 def occupations_block():
     """Where AI demand actually sits. The national share is an average over a very skewed
     distribution; this is the distribution. Reuses barplot with the national floor as the
@@ -1078,6 +1123,7 @@ def demand_section(tiles, seg):
     {livewindow_block()}
     {occupations_block()}
     {occupation_tiers_block()}
+    {governance_block()}
     {titles_block()}
     <div class="grouphdr" style="margin-top:26px">Coming next · who is the AI for?
       <span class="preview-flag">◔ {h(MONITOR['segmentation']['flag'])}</span></div>
@@ -1736,6 +1782,11 @@ def emit_data(out):
     _dxmax = int(max(r["share"] for r in DEMAND["countries"])) + 1
     (d / "cross_country_demand.svg").write_text(
         chart_standalone(barplot(DEMAND["countries"], 0, _dxmax, 0, "share", ".1f")), encoding="utf-8")
+    with (d / "ai_governance.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f); w.writerow(["year", "governance_ads", "pct_of_ai_ads", "partial_year"])
+        for r in GOV["series"]:
+            w.writerow([r["year"], r["n"], r["pct_of_ai"], int(bool(r.get("partial")))])
+    (d / "ai_governance.svg").write_text(chart_standalone(governance_svg(GOV)), encoding="utf-8")
     with (d / "job_quality.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["year", "pct_full_time_ai", "pct_full_time_other", "gap_pp_full_time",
