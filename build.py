@@ -209,7 +209,7 @@ def dataset_ld():
     return json.dumps({"@context":"https://schema.org","@type":"Dataset","name":"AI in Demand",
         "description":MONITOR["lede"],"license":"https://creativecommons.org/publicdomain/zero/1.0/",
         "creator":{"@type":"Organization","name":SITE["brand"]["name"]},
-        "isAccessibleForFree":True,"temporalCoverage":"2006/2025",
+        "isAccessibleForFree":True,"temporalCoverage":"2006/2026",
         "spatialCoverage":"Sweden","url":BASE+"/monitor/"}, ensure_ascii=False)
 
 def daioe_ld():
@@ -281,7 +281,7 @@ def home():
     <div class="pillar"><div class="n">01 · DATA</div><h3>Register-grade evidence</h3>
       <p>Linked employer–employee register data at population scale in Sweden: annual, with 4-digit occupations
         (LISA), and monthly individual employment (AGI); plus comparable access in a handful of other countries.
-        Rare reach, paired with 10.9M public job ads.</p></div>
+        Rare reach, paired with 11.2M public job ads.</p></div>
     <div class="pillar"><div class="n">02 · REACH</div><h3>Multi-country</h3>
       <p>Register-level in Sweden, Denmark, Portugal and Germany, with more countries planned; 30-plus via EU-LFS
         and international job-ad data for external validity.</p></div>
@@ -1179,7 +1179,7 @@ def demand_section(tiles, seg):
 
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
     <p class="secintro" style="margin:0 0 4px">{h(MONITOR['aiindemand_lede'])} We read every open and historical
-      Swedish job ad (JobTech / Platsbanken, 2006 onwards, about <b>10.9 million</b>) with a versioned, citable term
+      Swedish job ad (JobTech / Platsbanken, 2006 onwards, about <b>11.2 million</b>) with a versioned, citable term
       list, so the level and its fifteen-fold rise since 2006 are reproducible.</p>
     <div class="tiles">{tiles}</div>
     <p class="psub" style="margin-top:6px">{h(MONITOR['captions']['guard'])}</p>
