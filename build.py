@@ -1051,15 +1051,24 @@ def governance_svg(g):
 
 def governance_block():
     m = GOV["meta"]
-    return ('<div class="grouphdr" style="margin-top:26px">Who is hired to govern the AI?</div>\n'
-            '<p class="secintro" style="margin-top:4px">Alongside ads that ask for an AI skill '
-            'there is a smaller band that asks for AI <b>governance</b>: compliance with the AI '
-            'Act, model risk, algorithmic accountability, audit. We have counted it since the '
-            'series began and never shown it. It is the fastest-growing thing in the whole '
-            f'build. There were none in 2018 and {m["last_n"]} in the whole of {m["last_year"]}; '
-            f'the first half of 2026 alone has <b>{m["h1_2026_n"]}</b>, which is '
-            f'{m["h1_2026_pct"]:.1f}% of all AI ads against {m["last_pct"]:.1f}% a year earlier. '
-            'Regulation is becoming an occupation.</p>\n'
+    return ('<div class="grouphdr" style="margin-top:26px">How fast is AI-governance language '
+            'entering job ads?</div>\n'
+            '<p class="secintro" style="margin-top:4px">A separate band counts ads that mention '
+            'the vocabulary of AI <b>governance</b>: responsible AI, AI ethics, AI safety, AI '
+            'governance and the AI Act. It has been computed since the series began and never '
+            'shown, and it is the fastest-growing thing in the whole build. There were none in '
+            f'2018 and {m["last_n"]} in the whole of {m["last_year"]}; the first half of 2026 '
+            f'alone has <b>{m["h1_2026_n"]}</b>, which is {m["h1_2026_pct"]:.1f}% of all AI ads '
+            f'against {m["last_pct"]:.1f}% a year earlier.</p>\n'
+            '<p class="secintro" style="margin-top:6px"><b>Read this as language, not as jobs.</b> '
+            'Unlike our headline series, this band counts any mention rather than a requirement '
+            'of the role, and a hand-check of all 199 ads in 2026 found that 95% of them mention '
+            'governance only in passing in the body text, often as an employer\u2019s boilerplate '
+            'about building responsible AI, in posts for engineers, project managers and '
+            'designers. Only ten name it in the headline, and a further 33 of the 199 are repeat '
+            'postings of the same advertisement. What is rising fast is how often the language of '
+            'AI regulation appears in Swedish hiring copy, which is worth knowing. It is not a '
+            'count of governance jobs, and we do not have one.</p>\n'
             f'<div class="dotwrap">{governance_svg(GOV)}</div>\n'
             + figfooter("ai_governance.csv",
                         f'{h(m["source"])}, {m["first_year"]} to first half of 2026',
