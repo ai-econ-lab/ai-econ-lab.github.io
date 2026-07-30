@@ -29,6 +29,7 @@ DATA_FILES = [
     "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
     "occupations.yaml", "occupation_tiers.yaml", "barriers.yaml",
     "monthly_demand.yaml", "job_quality.yaml", "governance.yaml",
+    "vocabulary.yaml",
 ]
 
 def data_updated():
@@ -91,6 +92,7 @@ OCCTIER  = load("occupation_tiers.yaml")
 MONTHLY  = load("monthly_demand.yaml")
 JOBQ     = load("job_quality.yaml")
 GOV      = load("governance.yaml")
+VOCAB    = load("vocabulary.yaml")
 BARRIERS = load("barriers.yaml")
 CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
@@ -1064,6 +1066,69 @@ def governance_block():
                         "ai_governance.svg"))
 
 
+def vocabulary_svg(v):
+    """Four families as a share of all term hits, period by period. The point of the chart is
+    that the early periods are dominated by words nobody uses now."""
+    s = v["series"]; n = len(s)
+    W, H = 640, 300
+    x0, x1, top, bot = 46, 486, 22, 252
+    ymax = 70
+    X = lambda i: x0 + i / (n - 1) * (x1 - x0)
+    Y = lambda val: bot - min(val, ymax) / ymax * (bot - top)
+    p = [f'<svg class="rankchart vocab" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Share of AI term matches by vocabulary family, {s[0]["p"]} to {s[-1]["p"]}">']
+    for t in range(0, ymax + 1, 10):
+        gy = Y(t)
+        p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
+        p.append(f'<text class="tick" x="{x0-6}" y="{gy+3.5:.1f}" text-anchor="end">{t}%</text>')
+    for i, r in enumerate(s):
+        if r["p"].isdigit() and int(r["p"]) % 4 == 0:
+            p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-8}" text-anchor="middle">{r["p"]}</text>')
+    lines = (("ml", "var(--c1)", "machine learning"),
+             ("early", "var(--c2)", "early terms"),
+             ("genai", "var(--c3)", "generative"),
+             ("generic", "var(--c4)", "\u0022AI\u0022 itself"))
+    for key, colour, _ in lines:
+        pts = " ".join(f'{X(i):.1f},{Y(r[key]):.1f}' for i, r in enumerate(s))
+        p.append(f'<polyline points="{pts}" fill="none" stroke="{colour}" stroke-width="2.2"/>')
+        p.append(f'<circle cx="{X(n-1):.1f}" cy="{Y(s[-1][key]):.1f}" r="3.5" fill="{colour}"/>')
+    # end labels collide when two families finish at a similar level; push them apart
+    placed = []
+    for key, colour, lab in sorted(lines, key=lambda L: Y(s[-1][L[0]])):
+        ly = Y(s[-1][key])
+        while any(abs(ly - q) < 12 for q in placed):
+            ly += 12
+        placed.append(ly)
+        p.append(f'<text class="tick" x="{X(n-1)+7:.1f}" y="{ly+3.5:.1f}" text-anchor="start" '
+                 f'fill="{colour}">{lab}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
+def vocabulary_block():
+    m = VOCAB["meta"]
+    return ('<div class="grouphdr" style="margin-top:26px">Is this a 2026 word list applied '
+            'backwards?</div>\n'
+            '<p class="secintro" style="margin-top:4px">The standing objection to any long AI '
+            'series is that today\u2019s vocabulary is being read into yesterday\u2019s ads. The '
+            'ads answer it. In 2006 the words were '
+            f'<b>{m["early_first"]:.0f}%</b> data mining, expert systems and their kin, terms '
+            f'almost nobody advertises for now ({m["early_last"]:.1f}% in the latest period). '
+            'Machine-learning vocabulary took over from about 2016, and the generative vocabulary '
+            f'is absent before 2022 and is <b>{m["genai_last"]:.0f}%</b> of all term matches '
+            'today. The list is not anachronistic; the language turned over, and the measure '
+            'follows it.</p>\n'
+            f'<div class="dotwrap">{vocabulary_svg(VOCAB)}</div>\n'
+            '<p class="psub" style="margin-top:6px">Shares of '
+            f'{m["total_term_hits"]:,} term matches. Up to {m["other_max"]:.0f}% of matches in a '
+            'period fall outside these four families and are not plotted. For display, product '
+            'names and words with an older everyday sense are counted only from the year they '
+            'acquired their AI meaning, so the chart does not show a 2006 ad matching a model '
+            'released in 2023; the published series is frozen and unchanged.</p>\n'
+            + figfooter("vocabulary.csv", f'{h(m["source"])}, {m["first"]} to {m["last"]}',
+                        "vocabulary.svg"))
+
+
 def occupations_block():
     """Where AI demand actually sits. The national share is an average over a very skewed
     distribution; this is the distribution. Reuses barplot with the national floor as the
@@ -1124,6 +1189,7 @@ def demand_section(tiles, seg):
     {occupations_block()}
     {occupation_tiers_block()}
     {governance_block()}
+    {vocabulary_block()}
     {titles_block()}
     <div class="grouphdr" style="margin-top:26px">Coming next · who is the AI for?
       <span class="preview-flag">◔ {h(MONITOR['segmentation']['flag'])}</span></div>
@@ -1744,7 +1810,7 @@ PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.htm
 
 def chart_standalone(svg):
     """Self-contained SVG for download (inline light-theme styles; no page CSS). Dot or bar chart."""
-    style = ('<style>:root{--c1:#0072b2;--c2:#d55e00;--c3:#009e73;--ink:#161d2b}'  # monthly series draws with var(); the page CSS is not present in a downloaded file
+    style = ('<style>:root{--c1:#0072b2;--c2:#d55e00;--c3:#009e73;--c4:#cc79a7;--ink:#161d2b}'  # monthly series draws with var(); the page CSS is not present in a downloaded file
              '.rankchart{font-family:ui-monospace,Menlo,monospace}svg{background:#ffffff}'
              '.grid,.rowguide{stroke:#e7e4dd}.rowguide{opacity:.6}'
              '.meanline{stroke:#8a8a8a;stroke-dasharray:3 3}.meanlab,.tick{fill:#6d6a63;font-size:9px}'
@@ -1788,6 +1854,13 @@ def emit_data(out):
     _dxmax = int(max(r["share"] for r in DEMAND["countries"])) + 1
     (d / "cross_country_demand.svg").write_text(
         chart_standalone(barplot(DEMAND["countries"], 0, _dxmax, 0, "share", ".1f")), encoding="utf-8")
+    with (d / "vocabulary.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["period", "pct_machine_learning", "pct_early_era", "pct_generative",
+                    "pct_generic_ai", "pct_other", "term_matches"])
+        for r in VOCAB["series"]:
+            w.writerow([r["p"], r["ml"], r["early"], r["genai"], r["generic"], r["other"], r["n"]])
+    (d / "vocabulary.svg").write_text(chart_standalone(vocabulary_svg(VOCAB)), encoding="utf-8")
     with (d / "ai_governance.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["year", "governance_ads", "pct_of_ai_ads", "partial_year"])
         for r in GOV["series"]:

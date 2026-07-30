@@ -9,7 +9,9 @@ headline: >-
   Over the past decade the most AI-exposed occupations have NOT pulled away in pay. In the
   United States they grew more slowly than the least exposed (40% against 49%, 2015 to
   2025), with a mild reversal after 2022; in Sweden the three groups moved almost in
-  parallel. AI-exposed occupations remain the best paid in level terms in both countries.
+  parallel. Read the post-2022 turn with care: that window also covers the tightening cycle,
+  which fell hardest on the same professional and technical occupations, so its timing does not
+  identify a cause. AI-exposed occupations remain the best paid in level terms in both countries.
 countries:
   - key: sweden
     label: "Sweden · median monthly salary"
