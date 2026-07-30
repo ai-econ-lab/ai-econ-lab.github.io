@@ -1312,10 +1312,14 @@ def outcomes_section(explorers):
   <div class="grouphdr" style="margin-top:36px">Entry-level squeeze</div>
   <p class="secintro" style="margin-top:4px">In the most AI-exposed occupations, a smaller share of openings ask for
     no prior experience than in the least-exposed occupations, every year since {h(em['first_year'])}, and the gap has
-    widened from −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. An independent,
-    ad-based echo of the Canaries finding; descriptive, not causal (less-exposed work skews lower-skill, so part of the
-    level gap is structural, the widening is the signal). The same entry-level pattern appears in the international AI
-    "canaries" literature on young workers, though no directly comparable cross-country series exists yet.</p>
+    widened from −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. This is
+    consistent with the Canaries finding, but it is not independent evidence for it. Entry-level hiring is more
+    cyclical than experienced hiring, the tightening cycle that began in April 2022 fell hardest on exactly these
+    occupations, and this series starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the
+    cycle. The Canaries paper can, because it observes employers and workers' ages and identifies within employers.
+    Descriptive throughout: less-exposed work also skews lower-skill, so part of the level gap is structural. The same
+    entry-level pattern appears in the international AI "canaries" literature on young workers, though no directly
+    comparable cross-country series exists yet.</p>
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}", svg_name="entry_level_squeeze.svg", next_up="annually, with the JobTech year files")}
@@ -1620,10 +1624,12 @@ def brief(lang="en"):
         "outcomes": L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
             f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
-            f"in {ELS['meta']['last_year']}. Descriptive, not causal.",
+            f"in {ELS['meta']['last_year']}. Descriptive: entry-level hiring is also more cyclical, and "
+            f"the tightening cycle hit these occupations hardest, so this cannot separate AI from the cycle.",
             f"I de mest AI-exponerade yrkena utgör instegsjobb en mindre andel av annonserna än i de minst exponerade, "
             f"ett gap som vuxit från −{svn(abs(ELS['meta']['gap_first']))} till −{svn(abs(ELS['meta']['gap_last']))} "
-            f"procentenheter {ELS['meta']['last_year']}. Beskrivande, inte kausalt."),
+            f"procentenheter {ELS['meta']['last_year']}. Beskrivande: instegsjobb är också mer konjunkturkänsliga, "
+            f"och räntehöjningarna slog hårdast mot just dessa yrken, så AI går inte att skilja från konjunkturen här."),
     }
     srcs = {
         "exposure": L(f"DAIOE generative-AI {dver} × Eurostat EU-LFS {cc['meta']['weight_year']}",
@@ -1655,7 +1661,7 @@ def brief(lang="en"):
     LABSV = {"Exposure": "av de europeiska jobben finns i den mest AI-exponerade fjärdedelen av yrkena (topp 25% efter generativ AI-exponering); Sverige 39%, näst högst av 36",
              "Demand": "medianandel jobbannonser som kräver AI i 22 länder 2025 (Stanford AI Index); Sverige 2,8%",
              "Adoption": "av EU:s företag använde AI 2025, upp från 8% 2023 (Eurostat); Sverige 35%, bland de ledande",
-             "Outcomes": "Sveriges instegsklämma: färre instegsjobb i de mest AI-exponerade yrkena sedan 2020; mönstret syns även internationellt"}
+             "Outcomes": "Sveriges instegsklämma: färre instegsjobb i de mest AI-exponerade yrkena sedan 2020; beskrivande, och går här inte att skilja från konjunkturen"}
     cards = ""                                            # at a glance: the four spine numbers
     for o in MONITOR["overview"]:
         if o["k"] not in KSV:                             # brief keeps the spine only; extra doors (Capability…) stay on the Monitor page
