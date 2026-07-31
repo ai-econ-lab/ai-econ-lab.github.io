@@ -79,9 +79,25 @@ def check_swe(d, prev_year):
     assert prev_year <= y <= prev_year + 5, f"wave year went from {prev_year} to {y}"
 
 
+def check_capability(d, prev_year):
+    """Module 5. Only the Epoch compute trend is auto-applied, so that is what is gated:
+    a refit that lands outside 1.5x-15x per year means the model table changed shape, not
+    that compute growth changed, and the old figure is safer than a wrong new one."""
+    facts = d["facts"]
+    assert len(facts) >= 3, f"only {len(facts)} capability tiles"
+    m = d["meta"]["epoch_multiple"]
+    assert 1.5 <= m <= 15, f"Epoch refit x{m}/year is outside the plausible band"
+    assert d["meta"]["epoch_n_models"] >= 100, \
+        f"only {d['meta']['epoch_n_models']} models in the Epoch fit"
+    assert any(f.get("mode") == "auto" for f in facts), "no auto-applied fact left"
+    y = int(d["meta"]["year"])
+    assert prev_year <= y <= prev_year + 5, f"Epoch vintage went from {prev_year} to {y}"
+
+
 JOBS = [
     ("refresh_cross_country.py", "data/cross_country_adoption.yaml", check_adoption),
     ("refresh_swe_adoption.py", "data/swe_adoption.yaml", check_swe),
+    ("refresh_capability.py", "data/capability.yaml", check_capability),
 ]
 
 

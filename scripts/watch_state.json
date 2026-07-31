@@ -3,5 +3,9 @@
   "daioe_dataset_seen_sha": "df6959004b4196da3855457d12c11057ead6f1a5",
   "lfs_seen": 2025,
   "amu_seen": 2024,
-  "fred_rps_seen": "2026-01-01"
+  "fred_rps_seen": "2026-01-01",
+  "capability_metr_fp": "fcbc582ee0a199f5",
+  "capability_metr_checked": "2026-07-31",
+  "capability_arc_fp": "fda5a8eaf440d140",
+  "capability_arc_checked": "2026-07-31"
 }
