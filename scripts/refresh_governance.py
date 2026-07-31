@@ -15,7 +15,7 @@ import csv
 from pathlib import Path
 
 SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
-       / "data/bulk_v1/derived/series_annual.csv")
+       / "data/bulk_v11/derived/series_annual.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "governance.yaml"
 
 rows = list(csv.DictReader(SRC.open(encoding="utf-8")))

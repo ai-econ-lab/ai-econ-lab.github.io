@@ -21,7 +21,7 @@ import csv
 from pathlib import Path
 
 SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
-       / "data/free_cuts/job_quality.csv")
+       / "data/free_cuts/job_quality_v11.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "job_quality.yaml"
 FIRST = 2018
 

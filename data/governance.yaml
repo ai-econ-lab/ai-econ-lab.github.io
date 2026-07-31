@@ -2,19 +2,19 @@
 meta:
   first_year: 2018
   last_year: 2025
-  last_n: 169
-  last_pct: 3.22
-  h1_2026_n: 199
-  h1_2026_pct: 6.04
-  ymax: 199
+  last_n: 156
+  last_pct: 3.54
+  h1_2026_n: 185
+  h1_2026_pct: 6.31
+  ymax: 185
   source: JobTech historical job ads (Arbetsförmedlingen), CC0
 series:
   - {year: 2018, n: 0, pct_of_ai: 0.0}
-  - {year: 2019, n: 2, pct_of_ai: 0.05}
-  - {year: 2020, n: 7, pct_of_ai: 0.2}
-  - {year: 2021, n: 8, pct_of_ai: 0.16}
-  - {year: 2022, n: 12, pct_of_ai: 0.18}
-  - {year: 2023, n: 23, pct_of_ai: 0.46}
-  - {year: 2024, n: 58, pct_of_ai: 1.08}
-  - {year: 2025, n: 169, pct_of_ai: 3.22}
-  - {year: 2026, n: 199, pct_of_ai: 6.04, partial: true}
+  - {year: 2019, n: 2, pct_of_ai: 0.06}
+  - {year: 2020, n: 7, pct_of_ai: 0.25}
+  - {year: 2021, n: 8, pct_of_ai: 0.21}
+  - {year: 2022, n: 11, pct_of_ai: 0.23}
+  - {year: 2023, n: 19, pct_of_ai: 0.48}
+  - {year: 2024, n: 56, pct_of_ai: 1.35}
+  - {year: 2025, n: 156, pct_of_ai: 3.54}
+  - {year: 2026, n: 185, pct_of_ai: 6.31, partial: true}

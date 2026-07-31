@@ -266,7 +266,7 @@ def home():
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method", next_up="tier split: built, integrated or simply used")}
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.1 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method", next_up="tier split: built, integrated or simply used")}
     </div>
   </div>
 </div></div></div>
@@ -968,7 +968,7 @@ def monthly_block():
             f'pending.</p>\n'
             f'<div class="dotwrap">{monthly_svg(MONTHLY)}</div>\n'
             + figfooter("monthly_ai_share.csv",
-                        f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · frozen v1 term list',
+                        f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · frozen v1.1 term list · distinct advertisements',
                         "monthly_ai_demand.svg"))
 
 
@@ -1023,11 +1023,14 @@ def jobquality_block():
             f'contracts the advantage has not merely narrowed, it has <b>reversed</b>: AI-skill ads were '
             f'{m["pm_gap_first"]:+.0f}pp more often open-ended in {m["first_year"]}, and '
             f'{m["pm_gap_last"]:+.0f}pp less often by {m["last_year"]}, having crossed zero in '
-            f'{m["pm_flip_year"]}. This is descriptive, not causal, and it does not compare like with like: '
-            f'AI-skill ads sit in different occupations from the average vacancy, so part of the change is '
-            f'AI demand spreading out of a specialist niche into ordinary hiring rather than the same jobs '
-            f'getting worse terms.</p>\n'
-            + figfooter("job_quality.csv",
+            f'{m["pm_flip_year"]}. Read this as description, not as a finding about what AI does to job '
+            f'quality. It does not compare like with like: AI-skill ads sit in different occupations from '
+            f'the average vacancy, and <b>composition alone could produce the whole reversal</b>, because AI '
+            f'demand has been spreading out of a specialist niche into ordinary hiring over exactly this '
+            f'period. Nothing here holds occupation fixed. What the series does survive is deduplication: '
+            f'counting each advertisement once rather than once per posting moves every gap by under 2pp, so '
+            f'it is not an artefact of employers reposting.</p>\n'
+            + figfooter("job_quality_v11.csv",
                         f'{h(m["source"])}, {m["first_year"]} to {m["last_year"]} · complete years only',
                         "job_quality.svg"))
 
@@ -1198,11 +1201,14 @@ def demand_section(tiles, seg):
 
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
     <p class="secintro" style="margin:0 0 4px">{h(MONITOR['aiindemand_lede'])} We read every open and historical
-      Swedish job ad (JobTech / Platsbanken, 2006 onwards, about <b>11.2 million</b>) with a versioned, citable term
-      list, so the level and its fifteen-fold rise since 2006 are reproducible.</p>
+      Swedish job ad (JobTech / Platsbanken, 2006 onwards) with a versioned, citable term list, so the level and its
+      roughly twenty-fold rise since 2006 are reproducible. Employers repost, so the archive holds
+      <b>11.2 million</b> records but <b>8.1 million</b> distinct advertisements; we count each advertisement once.
+      Two corrections since the first release both raised the rise rather than lowered it: repeat postings inflated
+      the denominator, and a handful of early ads matched product names that did not yet exist.</p>
     <div class="tiles">{tiles}</div>
     <p class="psub" style="margin-top:6px">{h(MONITOR['captions']['guard'])}</p>
-    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
+    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.1 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
     {monthly_block()}
     {livewindow_block()}
     {occupations_block()}
@@ -1540,14 +1546,14 @@ def monitor():
       <a class="btn ghost" href="#method">How we measure it</a></div></div>
   <div class="panel"><div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
     <span class="livechip"><i></i>live</span></div>
-    <div class="panelbody"><p class="psub">Ads naming a specific AI skill reached <b>0.90%</b> in 2025, fifteen times
-        the 2006 level; the strict floor, ads asking for AI in the role itself, reached <b>0.44%</b>. Both
+    <div class="panelbody"><p class="psub">Ads naming a specific AI skill reached <b>1.07%</b> in 2025, twenty-one times
+        the 2006 level; the strict floor, ads asking for AI in the role itself, reached <b>0.52%</b>. Both
         set records in the post-2023 rebound, with generative-AI skills now 27% of the demand.</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1 term list", svg_name="ai_in_demand_trend.svg", method_href="#method", next_up="tier split: built, integrated or simply used")}</div></div>
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.1 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href="#method", next_up="tier split: built, integrated or simply used")}</div></div>
 </div></div></div>
 
 {stat_overview()}
@@ -1963,7 +1969,7 @@ def emit_data(out):
         w.writerow(["year", "names_ai_skill_pct", "asks_for_ai_in_role_pct", "definition"])
         fv = t.get("floor_values") or [""] * len(t["years"])
         for y, v, fl in zip(t["years"], t["values"], fv):
-            w.writerow([y, v, fl, "frozen v1 fp 2f073672be5d998c"])
+            w.writerow([y, v, fl, "frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements"])
     (d / "ai_in_demand_trend.svg").write_text(chart_standalone(trend_svg(t)), encoding="utf-8")
     with (d / "entry_level_squeeze.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)

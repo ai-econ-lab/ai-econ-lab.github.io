@@ -1,22 +1,22 @@
 year,names_ai_skill_pct,asks_for_ai_in_role_pct,definition
-2006,0.058,0.02,frozen v1 fp 2f073672be5d998c
-2007,0.082,0.03,frozen v1 fp 2f073672be5d998c
-2008,0.076,0.028,frozen v1 fp 2f073672be5d998c
-2009,0.092,0.019,frozen v1 fp 2f073672be5d998c
-2010,0.078,0.026,frozen v1 fp 2f073672be5d998c
-2011,0.091,0.031,frozen v1 fp 2f073672be5d998c
-2012,0.096,0.032,frozen v1 fp 2f073672be5d998c
-2013,0.087,0.026,frozen v1 fp 2f073672be5d998c
-2014,0.105,0.035,frozen v1 fp 2f073672be5d998c
-2015,0.126,0.058,frozen v1 fp 2f073672be5d998c
-2016,0.174,0.086,frozen v1 fp 2f073672be5d998c
-2017,0.237,0.113,frozen v1 fp 2f073672be5d998c
-2018,0.402,0.179,frozen v1 fp 2f073672be5d998c
-2019,0.658,0.257,frozen v1 fp 2f073672be5d998c
-2020,0.711,0.301,frozen v1 fp 2f073672be5d998c
-2021,0.696,0.302,frozen v1 fp 2f073672be5d998c
-2022,0.606,0.256,frozen v1 fp 2f073672be5d998c
-2023,0.488,0.209,frozen v1 fp 2f073672be5d998c
-2024,0.752,0.327,frozen v1 fp 2f073672be5d998c
-2025,0.901,0.441,frozen v1 fp 2f073672be5d998c
-2026,1.121,0.5,frozen v1 fp 2f073672be5d998c
+2006,0.05,0.019,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2007,0.065,0.028,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2008,0.063,0.027,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2009,0.088,0.02,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2010,0.074,0.024,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2011,0.093,0.034,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2012,0.096,0.032,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2013,0.085,0.026,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2014,0.105,0.035,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2015,0.129,0.058,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2016,0.175,0.085,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2017,0.25,0.12,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2018,0.455,0.207,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2019,0.712,0.296,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2020,0.781,0.333,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2021,0.795,0.348,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2022,0.762,0.34,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2023,0.746,0.341,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2024,0.941,0.425,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2025,1.066,0.521,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements
+2026,1.214,0.569,frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements

@@ -2,23 +2,23 @@
 meta:
   first_year: 2018
   last_year: 2025
-  ft_gap_first: 20.58
-  ft_gap_last: 10.07
-  pm_gap_first: 3.88
-  pm_gap_last: -5.8
-  rg_gap_first: 5.02
-  rg_gap_last: 1.86
+  ft_gap_first: 19.12
+  ft_gap_last: 9.64
+  pm_gap_first: 1.9
+  pm_gap_last: -5.54
+  rg_gap_first: 5.09
+  rg_gap_last: 1.06
   pm_flip_year: 2023
   ymin: -7
-  ymax: 23
-  n_ai_last: 5235
+  ymax: 22
+  n_ai_last: 4412
   source: JobTech historical job ads (Arbetsförmedlingen), CC0
 series:
-  - {year: 2018, ft_gap: 20.58, pm_gap: 3.88, rg_gap: 5.02, ft_ai: 98.1, ft_other: 77.52, pm_ai: 73.85, pm_other: 69.97, rg_ai: 98.91, rg_other: 93.89, n_ai: 2746}
-  - {year: 2019, ft_gap: 18.99, pm_gap: 8.09, rg_gap: 5.77, ft_ai: 97.76, ft_other: 78.77, pm_ai: 77.98, pm_other: 69.89, rg_ai: 98.46, rg_other: 92.69, n_ai: 4214}
-  - {year: 2020, ft_gap: 16.88, pm_gap: 4.73, rg_gap: 6.33, ft_ai: 96.84, ft_other: 79.96, pm_ai: 72.76, pm_other: 68.03, rg_ai: 97.84, rg_other: 91.51, n_ai: 3517}
-  - {year: 2021, ft_gap: 14.72, pm_gap: 7.24, rg_gap: 6.34, ft_ai: 96.79, ft_other: 82.07, pm_ai: 77.36, pm_other: 70.12, rg_ai: 98.33, rg_other: 91.99, n_ai: 5127}
-  - {year: 2022, ft_gap: 14.12, pm_gap: 3.05, rg_gap: 5.31, ft_ai: 97.2, ft_other: 83.08, pm_ai: 77.19, pm_other: 74.14, rg_ai: 98.41, rg_other: 93.1, n_ai: 6553}
-  - {year: 2023, ft_gap: 7.37, pm_gap: -3.07, rg_gap: 2.04, ft_ai: 91.62, ft_other: 84.25, pm_ai: 71.0, pm_other: 74.07, rg_ai: 94.14, rg_other: 92.1, n_ai: 5013}
-  - {year: 2024, ft_gap: 8.06, pm_gap: -2.33, rg_gap: -0.36, ft_ai: 90.54, ft_other: 82.48, pm_ai: 71.62, pm_other: 73.95, rg_ai: 91.08, rg_other: 91.44, n_ai: 5370}
-  - {year: 2025, ft_gap: 10.07, pm_gap: -5.8, rg_gap: 1.86, ft_ai: 91.16, ft_other: 81.09, pm_ai: 64.14, pm_other: 69.94, rg_ai: 93.66, rg_other: 91.8, n_ai: 5235}
+  - {year: 2018, ft_gap: 19.12, pm_gap: 1.9, rg_gap: 5.09, ft_ai: 97.82, ft_other: 78.7, pm_ai: 71.89, pm_other: 69.99, rg_ai: 98.82, rg_other: 93.73, n_ai: 2204}
+  - {year: 2019, ft_gap: 18.03, pm_gap: 6.24, rg_gap: 5.95, ft_ai: 97.4, ft_other: 79.37, pm_ai: 75.83, pm_other: 69.59, rg_ai: 98.4, rg_other: 92.45, n_ai: 3249}
+  - {year: 2020, ft_gap: 17.79, pm_gap: 4.2, rg_gap: 6.52, ft_ai: 97.1, ft_other: 79.31, pm_ai: 71.62, pm_other: 67.42, rg_ai: 98.75, rg_other: 92.23, n_ai: 2802}
+  - {year: 2021, ft_gap: 15.61, pm_gap: 6.73, rg_gap: 6.14, ft_ai: 97.07, ft_other: 81.46, pm_ai: 75.77, pm_other: 69.04, rg_ai: 98.74, rg_other: 92.6, n_ai: 3937}
+  - {year: 2022, ft_gap: 14.43, pm_gap: 2.72, rg_gap: 6.05, ft_ai: 97.29, ft_other: 82.86, pm_ai: 74.51, pm_other: 71.79, rg_ai: 98.85, rg_other: 92.8, n_ai: 4779}
+  - {year: 2023, ft_gap: 8.82, pm_gap: -1.85, rg_gap: 1.32, ft_ai: 91.76, ft_other: 82.94, pm_ai: 68.26, pm_other: 70.11, rg_ai: 93.39, rg_other: 92.07, n_ai: 3917}
+  - {year: 2024, ft_gap: 8.18, pm_gap: -1.73, rg_gap: 0.54, ft_ai: 90.34, ft_other: 82.16, pm_ai: 68.67, pm_other: 70.4, rg_ai: 91.71, rg_other: 91.17, n_ai: 4137}
+  - {year: 2025, ft_gap: 9.64, pm_gap: -5.54, rg_gap: 1.06, ft_ai: 91.03, ft_other: 81.39, pm_ai: 63.15, pm_other: 68.69, rg_ai: 93.34, rg_other: 92.28, n_ai: 4412}
