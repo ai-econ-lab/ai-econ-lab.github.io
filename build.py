@@ -1834,7 +1834,7 @@ def brief(lang="en"):
     LABSV = {"Exposure": "av de europeiska jobben finns i den mest AI-exponerade fjärdedelen av yrkena (topp 25% efter generativ AI-exponering); Sverige 39%, bland de högsta av 36",
              "Demand": "medianandel jobbannonser som kräver AI i 22 länder 2025 (Stanford AI Index); Sverige 2,8%",
              "Adoption": "av EU:s företag använde AI 2025, upp från 8% 2023 (Eurostat); Sverige 35%, bland de ledande",
-             "Outcomes": "Sveriges instegsklämma: färre instegsjobb i de mest AI-exponerade yrkena sedan 2020; beskrivande, och går här inte att skilja från konjunkturen"}
+             "Outcomes": "långsammare löneutveckling i de mest AI-exponerade yrkena i USA än i de minst exponerade, 2015–2025 (40% mot 49%); i Sverige följdes de tre exponeringsgrupperna nästan åt. Exponering har inte slagit igenom i lönerna"}
     cards = ""                                            # at a glance: the four spine numbers
     for o in MONITOR["overview"]:
         if o["k"] not in KSV:                             # brief keeps the spine only; extra doors (Capability…) stay on the Monitor page

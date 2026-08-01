@@ -15,7 +15,14 @@ overview:
   - {k: "Exposure", num: "30<span>%</span>", lab: "of European jobs are in the top-25% most AI-exposed occupations (by generative-AI exposure); Sweden 39%, among the highest of 36", foot: "DAIOE genAI v2023 · EU-LFS", anchor: "#exposure", cls: ""}
   - {k: "Demand",   num: "1.9<span>%</span>", lab: "median share of job ads requiring AI across 22 countries in 2025 (Stanford AI Index); Sweden 2.8%", foot: "AI Index / Lightcast · 2025", anchor: "#demand", cls: "b"}
   - {k: "Adoption", num: "20<span>%</span>", lab: "of EU firms used AI in 2025, up from 8% in 2023 (Eurostat); Sweden 35%, among the leaders", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
-  - {k: "Outcomes", num: "−5.3<span>pp</span>", lab: "Sweden's entry-level squeeze: fewer entry-level openings in the most AI-exposed jobs since 2020; descriptive, and not separable here from the interest-rate cycle", foot: "JobTech · 2020–2025", anchor: "#outcomes", cls: "d"}
+  # Swapped 1 Aug 2026 (Magnus). This card carried the entry-level squeeze, which is the
+  # page's most attackable number: the only module on a different instrument, the only one
+  # still counting ad records, and the first thing a competitor goes for. It also left the
+  # grid with five cards that were all league placings or alarming trends, so a reader who
+  # reads only the cards took away the opposite of what the page's evidence supports. The
+  # wages result is the least attackable finding on the page and is deflationary. The
+  # squeeze keeps its module, where its caveats live.
+  - {k: "Outcomes", num: "−9<span>pp</span>", lab: "slower wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (40% against 49%); Sweden's three exposure groups moved almost in parallel. Exposure has not shown up in pay", foot: "BLS OEWS · SCB · 2015–2025", anchor: "#wages", cls: "d"}
   - {k: "Capability", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents complete at even odds; the length has been doubling every 4–6 months", foot: "METR · May 2026", anchor: "#capability", cls: "e"}
 
 
