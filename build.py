@@ -963,9 +963,9 @@ def monthly_block():
             f'2025. Because AI ads are repeated at about half that rate, the denominator swells faster than '
             f'the numerator exactly when the dip appears. Counting each distinct advertisement once, the share '
             f'runs 0.81% in 2021, 0.78% in 2022 and 0.75% in 2023, a drift of 7%, against the 30% collapse the '
-            f'raw series shows. The rise since 2024 survives either way. The chart above still counts records, '
-            f'as our published series always has; correcting it is a change to the frozen definition and is '
-            f'pending.</p>\n'
+            f'raw series shows. The rise since 2024 survives either way. The chart above counts each distinct '
+            f'advertisement once, as the whole Monitor now does; the raw-record series is kept alongside as '
+            f'the robustness line.</p>\n'
             f'<div class="dotwrap">{monthly_svg(MONTHLY)}</div>\n'
             + figfooter("monthly_ai_share.csv",
                         f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · frozen v1.1 term list · distinct advertisements',
@@ -1031,7 +1031,8 @@ def jobquality_block():
             f'counting each advertisement once rather than once per posting moves every gap by under 2pp, so '
             f'it is not an artefact of employers reposting.</p>\n'
             + figfooter("job_quality_v11.csv",
-                        f'{h(m["source"])}, {m["first_year"]} to {m["last_year"]} · complete years only',
+                        f'{h(m["source"])}, {m["first_year"]} to {m["last_year"]} · complete years only'
+                        f' · distinct advertisements',
                         "job_quality.svg"))
 
 
@@ -1084,7 +1085,8 @@ def governance_block():
             'count of governance jobs, and we do not have one.</p>\n'
             f'<div class="dotwrap">{governance_svg(GOV)}</div>\n'
             + figfooter("ai_governance.csv",
-                        f'{h(m["source"])}, {m["first_year"]} to first half of 2026',
+                        f'{h(m["source"])}, {m["first_year"]} to first half of 2026'
+                        f' · distinct advertisements',
                         "ai_governance.svg"))
 
 
@@ -1413,7 +1415,7 @@ def outcomes_section(explorers):
     comparable cross-country series exists yet.</p>
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
-  {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']}", svg_name="entry_level_squeeze.svg", next_up="annually, with the JobTech year files")}
+  {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']} · ad records, not distinct advertisements (see the note)", svg_name="entry_level_squeeze.svg", next_up="annually, with the JobTech year files")}
   {jobquality_block()}
   {wages_block()}
   {related_research("outcomes")}

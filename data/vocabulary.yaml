@@ -3,33 +3,33 @@ meta:
   first: 2006
   last: 2026-Q2
   n_periods: 22
-  early_first: 37.1
-  early_last: 0.39
-  genai_last: 21.65
-  ml_peak: 62.95
-  other_max: 26.9
-  total_term_hits: 73333
+  early_first: 35.04
+  early_last: 0.44
+  genai_last: 20.06
+  ml_peak: 64.2
+  other_max: 27.4
+  total_term_hits: 59635
   source: JobTech historical job ads (Arbetsförmedlingen), CC0, frozen v1.1 term list, distinct advertisements
 series:
-  - {p: '2006', early: 37.1, ml: 27.42, generic: 12.1, genai: 0, other: 23.39, n: 124}
-  - {p: '2007', early: 47.42, ml: 24.88, generic: 7.98, genai: 0, other: 19.72, n: 213}
-  - {p: '2008', early: 43.82, ml: 21.91, generic: 8.43, genai: 0, other: 25.84, n: 178}
-  - {p: '2009', early: 41.27, ml: 34.39, generic: 3.17, genai: 0, other: 21.16, n: 189}
-  - {p: '2010', early: 26.3, ml: 40.74, generic: 8.89, genai: 0, other: 24.07, n: 270}
-  - {p: '2011', early: 21.9, ml: 43.8, generic: 7.39, genai: 0, other: 26.91, n: 379}
-  - {p: '2012', early: 20.74, ml: 47.6, generic: 7.64, genai: 0, other: 24.02, n: 458}
-  - {p: '2013', early: 20.14, ml: 54.07, generic: 5.66, genai: 0, other: 20.14, n: 442}
-  - {p: '2014', early: 14.7, ml: 56.55, generic: 6.39, genai: 0, other: 22.36, n: 626}
-  - {p: '2015', early: 18.8, ml: 49.42, generic: 6.23, genai: 0, other: 25.55, n: 947}
-  - {p: '2016', early: 19.56, ml: 51.31, generic: 6.61, genai: 0, other: 22.51, n: 1559}
-  - {p: '2017', early: 8.75, ml: 60.78, generic: 10.96, genai: 0, other: 19.51, n: 2481}
-  - {p: '2018', early: 4.39, ml: 61.26, generic: 18.76, genai: 0, other: 15.59, n: 4189}
-  - {p: '2019', early: 3.72, ml: 59.97, generic: 20.66, genai: 0.03, other: 15.61, n: 6316}
-  - {p: '2020', early: 2.93, ml: 62.45, generic: 19.41, genai: 0, other: 15.21, n: 5318}
-  - {p: '2021', early: 2.76, ml: 62.89, generic: 20.81, genai: 0.01, other: 13.53, n: 7507}
-  - {p: '2022', early: 2.36, ml: 62.95, generic: 19.42, genai: 1.06, other: 14.21, n: 10046}
-  - {p: '2023', early: 1.71, ml: 60.42, generic: 19.85, genai: 4.28, other: 13.74, n: 7546}
-  - {p: '2024', early: 0.95, ml: 57.25, generic: 16.55, genai: 7.77, other: 17.48, n: 8856}
-  - {p: '2025', early: 1.36, ml: 51.01, generic: 15.57, genai: 14.11, other: 17.96, n: 9590}
-  - {p: '2026-Q1', early: 0.86, ml: 40.58, generic: 17.88, genai: 18.81, other: 21.88, n: 2797}
-  - {p: '2026-Q2', early: 0.39, ml: 39.37, generic: 15.99, genai: 21.65, other: 22.59, n: 3302}
+  - {p: '2006', early: 35.04, ml: 27.35, generic: 12.82, genai: 0, other: 24.79, n: 117}
+  - {p: '2007', early: 48.47, ml: 20.25, generic: 10.43, genai: 0, other: 20.86, n: 163}
+  - {p: '2008', early: 43.9, ml: 20.12, generic: 8.54, genai: 0, other: 27.44, n: 164}
+  - {p: '2009', early: 40.7, ml: 33.72, generic: 3.49, genai: 0, other: 22.09, n: 172}
+  - {p: '2010', early: 24.9, ml: 42.32, generic: 9.13, genai: 0, other: 23.65, n: 241}
+  - {p: '2011', early: 21.94, ml: 44.17, generic: 7.5, genai: 0, other: 26.39, n: 360}
+  - {p: '2012', early: 18.49, ml: 49.39, generic: 6.57, genai: 0, other: 25.55, n: 411}
+  - {p: '2013', early: 20.19, ml: 54.01, generic: 5.6, genai: 0, other: 20.19, n: 411}
+  - {p: '2014', early: 14.6, ml: 56.02, generic: 6.57, genai: 0, other: 22.81, n: 548}
+  - {p: '2015', early: 18.46, ml: 48.42, generic: 6.95, genai: 0, other: 26.17, n: 791}
+  - {p: '2016', early: 19.4, ml: 50.84, generic: 7.59, genai: 0, other: 22.16, n: 1304}
+  - {p: '2017', early: 9.17, ml: 61.49, generic: 11.06, genai: 0, other: 18.28, n: 2062}
+  - {p: '2018', early: 4.4, ml: 61.82, generic: 18.77, genai: 0, other: 15.01, n: 3431}
+  - {p: '2019', early: 3.89, ml: 59.83, generic: 20.92, genai: 0.04, other: 15.33, n: 5044}
+  - {p: '2020', early: 3.24, ml: 63.03, generic: 18.64, genai: 0, other: 15.09, n: 4287}
+  - {p: '2021', early: 2.79, ml: 64.13, generic: 20.46, genai: 0.02, other: 12.59, n: 5947}
+  - {p: '2022', early: 2.52, ml: 64.2, generic: 18.48, genai: 1.14, other: 13.65, n: 7617}
+  - {p: '2023', early: 1.94, ml: 61.52, generic: 18.87, genai: 4.05, other: 13.62, n: 6073}
+  - {p: '2024', early: 1.07, ml: 58.38, generic: 16.38, genai: 7.81, other: 16.36, n: 6991}
+  - {p: '2025', early: 1.26, ml: 50.23, generic: 15.7, genai: 14.58, other: 18.23, n: 7963}
+  - {p: '2026-Q1', early: 0.89, ml: 41.09, generic: 18.13, genai: 18.63, other: 21.26, n: 2582}
+  - {p: '2026-Q2', early: 0.44, ml: 40.76, generic: 16.47, genai: 20.06, other: 22.26, n: 2956}
