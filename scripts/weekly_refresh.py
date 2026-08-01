@@ -93,6 +93,24 @@ def check_capability(d, prev_year):
     y = int(d["meta"]["year"])
     assert prev_year <= y <= prev_year + 5, f"Epoch vintage went from {prev_year} to {y}"
 
+    # THE HUMAN LOOP, ENFORCED. Magnus's decision of 1 Aug 2026: keep all four tiles and
+    # commit to a quarterly re-read of the two watched sources. The machinery for detecting
+    # staleness already worked before that decision -- the watcher flagged that ARC's page had
+    # changed, and refresh_capability.py listed the tile as stale on the page itself. What
+    # failed was that nobody acted, for four months, while the ARC-AGI-3 figure went from
+    # "under 1%" to 30.2%. An honest flag that only ever appears on the page is a flag aimed
+    # at readers, not at us.
+    #
+    # So a stale watched fact now FAILS the weekly run. The workflow commits and pushes before
+    # its failure gate, so this notifies without blocking the Eurostat and SCB auto-refresh.
+    # Clearing it is the re-read itself: read the source, update monitor.yaml, re-run
+    # refresh_capability.py.
+    stale = d.get("stale") or []
+    assert not stale, ("watched capability sources are overdue a human re-read: "
+                       + "; ".join(stale)
+                       + ". Read the source, update the fact in data/monitor.yaml, and re-run "
+                         "scripts/refresh_capability.py.")
+
 
 JOBS = [
     ("refresh_cross_country.py", "data/cross_country_adoption.yaml", check_adoption),
