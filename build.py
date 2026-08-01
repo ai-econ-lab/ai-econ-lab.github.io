@@ -1692,11 +1692,15 @@ def brief(lang="en"):
     takeaways = {
         "exposure": L(
             f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
-            f"DAIOE generative-AI exposure), 2nd-highest of {n_ctry} countries; the EU average is {eu_share:.0f}%. "
-            f"Exposure marks where AI overlaps with the work, not displacement.",
+            f"DAIOE generative-AI exposure), among the highest of {n_ctry} countries; the EU average is "
+            f"{eu_share:.0f}%. The placing depends on where the line is drawn, from 2nd at this quarter cut to 5th "
+            f"if only the top 20% of occupations count. Exposure marks where AI overlaps with the work, not "
+            f"displacement.",
             f"{se_share:.0f}% av de svenska jobben finns i de mest AI-exponerade yrkena (den mest exponerade "
-            f"fjärdedelen, topp 25% efter DAIOE generativ AI-exponering), näst högst av {n_ctry} länder; EU-snittet är "
-            f"{eu_share:.0f}%. Exponering visar var AI överlappar med arbetet, inte förträngning."),
+            f"fjärdedelen, topp 25% efter DAIOE generativ AI-exponering), bland de högsta av {n_ctry} länder; "
+            f"EU-snittet är {eu_share:.0f}%. Placeringen beror på var gränsen dras, från 2:a vid fjärdedelsgränsen "
+            f"till 5:e om bara de 20 procent mest exponerade yrkena räknas. Exponering visar var AI överlappar med "
+            f"arbetet, inte förträngning."),
         "demand": L(
             "Demand roughly doubled in a year for most countries (Sweden 1.3% in 2024 to 2.8% in 2025). The Swedish "
             "live job-ad measure is the pulse shown above.",
