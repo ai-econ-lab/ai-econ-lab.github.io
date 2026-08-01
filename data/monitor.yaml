@@ -22,7 +22,12 @@ overview:
   # reads only the cards took away the opposite of what the page's evidence supports. The
   # wages result is the least attackable finding on the page and is deflationary. The
   # squeeze keeps its module, where its caveats live.
-  - {k: "Outcomes", num: "−9<span>pp</span>", lab: "slower wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (40% against 49%); Sweden's three exposure groups moved almost in parallel. Exposure has not shown up in pay", foot: "BLS OEWS · SCB · 2015–2025", anchor: "#wages", cls: "d"}
+  # Restated in REAL terms 1 Aug 2026. The nominal version of this card read −9pp on
+  # "40% against 49%". Deflation leaves the pay RATIO between groups unchanged but does change
+  # a DIFFERENCE OF GROWTH RATES, which is what this card reports, so the honest figure is
+  # −6.6pp. It also makes the claim harder to wave away: real wages flat in every Swedish
+  # exposure group over eleven years is a starker null than "+34% nominal".
+  - {k: "Outcomes", num: "−6.6<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.6% against 10.2%); in Sweden real wages are flat in all three exposure groups. Exposure has not shown up in pay", foot: "BLS OEWS · SCB · real terms · 2015–2025", anchor: "#wages", cls: "d"}
   - {k: "Capability", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents complete at even odds; the length has been doubling every 4–6 months", foot: "METR · May 2026", anchor: "#capability", cls: "e"}
 
 

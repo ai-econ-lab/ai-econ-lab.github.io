@@ -11,7 +11,7 @@ years:
         text: 'The Monitor''s builder / integrator / user split goes from preview to measured: all 41,000 AI-candidate ads 2023 to mid-2026 classified against the lab''s labelling rules. Builders hold half of strict AI-skill demand; the user tier (AI as an everyday tool) rises from 1% to 9%.'
         links: [{label: "The Monitor", url: "/monitor/"}]
       - date: "Jul 24"
-        text: 'The AIEL Monitor''s AI-in-Demand series was rebuilt end to end on a frozen, versioned measure: 10.9 million Swedish job ads, 2006 to mid-2026, under one definition (v1), with a strict floor (ads that ask for AI skills in the role itself), a named-skill line, top occupation names among AI ads, and the 2023 newcomers in AI demand.'
+        text: 'The AIEL Monitor''s AI-in-Demand series was rebuilt end to end on a frozen, versioned measure: 8.1 million distinct Swedish job advertisements (11.2 million records), 2006 to mid-2026, under one definition, with a strict floor (ads that ask for AI skills in the role itself), a named-skill line, top occupation names among AI ads, and the 2023 newcomers in AI demand.'
         links: [{label: "The Monitor", url: "/monitor/"}]
       - {date: "Jun 24", text: 'The paper "Artificial Intelligence for Public Use" (Lodefalk, Engberg, Lidskog, Skargren & Tang) was accepted for publication in Digital Society.'}
       - date: "Jun 17"

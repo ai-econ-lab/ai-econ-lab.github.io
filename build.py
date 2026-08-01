@@ -1834,7 +1834,7 @@ def brief(lang="en"):
     LABSV = {"Exposure": "av de europeiska jobben finns i den mest AI-exponerade fjärdedelen av yrkena (topp 25% efter generativ AI-exponering); Sverige 39%, bland de högsta av 36",
              "Demand": "medianandel jobbannonser som kräver AI i 22 länder 2025 (Stanford AI Index); Sverige 2,8%",
              "Adoption": "av EU:s företag använde AI 2025, upp från 8% 2023 (Eurostat); Sverige 35%, bland de ledande",
-             "Outcomes": "långsammare löneutveckling i de mest AI-exponerade yrkena i USA än i de minst exponerade, 2015–2025 (40% mot 49%); i Sverige följdes de tre exponeringsgrupperna nästan åt. Exponering har inte slagit igenom i lönerna"}
+             "Outcomes": "långsammare REAL löneutveckling i de mest AI-exponerade yrkena i USA än i de minst exponerade, 2015–2025 (3,6% mot 10,2%); i Sverige är reallönerna oförändrade i alla tre exponeringsgrupperna. Exponering har inte slagit igenom i lönerna"}
     cards = ""                                            # at a glance: the four spine numbers
     for o in MONITOR["overview"]:
         if o["k"] not in KSV:                             # brief keeps the spine only; extra doors (Capability…) stay on the Monitor page
@@ -1863,16 +1863,20 @@ def brief(lang="en"):
         f"{ADOPT['meta']['year']}, up from 8% in 2023 (Eurostat). Sweden is well above, at <b>{total}%</b>, and its "
         f"workforce is among the most exposed to generative AI of {n_ctry} countries; the placing depends on where the "
         f"line is drawn, from 2nd at the quarter cut to 5th at a top-20% cut. The series that moves every month is the Swedish "
-        f"depth cut below, the share of vacancies asking for an AI skill, {t['years'][0]}–{t['years'][-1]}, now about "
-        f"<b>{t['values'][-1]:.2f}%</b> ({t['years'][-1]}, provisional), roughly <b>{round(t['values'][-1] / t['values'][0]):g}×</b> its level twenty years ago.",
+        f"depth cut below, the share of vacancies that NAME an AI skill, {t['years'][0]}–{t['years'][-1]}, now about "
+        f"<b>{t['values'][-1]:.2f}%</b> ({t['years'][-1]}, provisional), against "
+        f"<b>{t['floor_values'][-1]:.2f}%</b> that ask for one in the job itself; roughly "
+        f"<b>{round(t['values'][-2] / t['values'][0]):g}×</b> the {t['years'][0]} level on the last complete year.",
         f"I hela EU ökar företagens AI-användning snabbt: genomsnittet nådde <b>{eu_adopt:.0f}%</b> av företagen "
         f"{ADOPT['meta']['year']}, upp från 8% 2023 (Eurostat). Sverige ligger klart över, med <b>{total}%</b>, och "
         f"arbetskraften är bland de mest exponerade för generativ AI av {n_ctry} länder; placeringen beror på var "
         f"gränsen dras, från 2:a vid fjärdedelsgränsen till 5:e om bara de 20 procent mest exponerade yrkena räknas. "
         f"Serien som rör sig varje månad är den "
-        f"svenska fördjupningen nedan, andelen lediga jobb som efterfrågar en AI-kompetens, "
+        f"svenska fördjupningen nedan, andelen lediga jobb som NÄMNER en AI-kompetens, "
         f"{t['years'][0]}–{t['years'][-1]}, nu omkring "
-        f"<b>{svn(round(t['values'][-1], 2))}%</b> ({t['years'][-1]}, preliminärt), ungefär <b>{round(t['values'][-1] / t['values'][0]):g}×</b> nivån för tjugo år sedan.")
+        f"<b>{svn(round(t['values'][-1], 2))}%</b> ({t['years'][-1]}, preliminärt), mot "
+        f"<b>{svn(round(t['floor_values'][-1], 2))}%</b> som kräver det i själva tjänsten; ungefär "
+        f"<b>{round(t['values'][-2] / t['values'][0]):g}×</b> nivån {t['years'][0]} räknat på senaste hela året.")
 
     body = f"""<div class="wrap brief"><article class="briefsheet">
   <header class="bhead">
