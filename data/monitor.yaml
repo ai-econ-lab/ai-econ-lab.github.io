@@ -125,10 +125,10 @@ segmentation:
 caveats:
   - "<b>2026 is partial</b>: the first half comes from the Q1–Q2 archives and the latest weeks from the live feed; the newest point will revise."
   - "The chart ends with the June archives; the live feed runs to today and joins the chart once the two sources are reconciled."
-  - "<b>The 2022–2023 dip</b> coincides with the global tech-hiring downturn and a sharp expansion of total ad volume: read it as a market swing, not necessarily as falling AI intent per employer."
+  - "<b>The 2022–2023 dip is mostly an artefact of reposting.</b> Repeat postings ran 33% of records in 2021 and 49% in 2023, and AI ads repeat at about half that rate, so the denominator swelled faster than the numerator exactly when the dip appears. Counting each advertisement once, the share drifts 7% from 2021 to 2023 against the 30% fall the raw series shows. A real slowdown remains; a collapse does not."
   - "The headline lines are deliberately strict: roughly 2.5 times as many ads mention AI in some form. That broad bound mixes genuine demand with company boilerplate in proportions that drift over time, so we publish it only after an era-specific correction, now in progress."
   - "Ads that mention AI only when describing the company never count; an ad counts for what it asks of the person being hired."
-  - "Counts are advertisement entries as they appear in the public archives; the same vacancy can be posted more than once."
+  - "Counts are <b>distinct advertisements</b>: employers repost, so the archive holds 11.2 million records but 8.1 million distinct advertisements, and each is counted once. The raw-record series is retained alongside as the robustness line. One module, the entry-level squeeze, still counts records because it reads totals from an API that cannot be deduplicated, and its figure footer says so."
   - "The builder / integrator / user split is classifier-based (validated against hand-labelled ads at 89% on the four-way split); a small share of ads sits in an AI-literacy penumbra outside the three tiers, and a reconciliation of the classifier's strictness against our hand-labelled benchmark is in progress. Shares may move a little; the ranking and trends are robust."
 
 # Module 5 (minor): AI capability — external series, summarised quarterly.

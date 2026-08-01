@@ -25,7 +25,11 @@ brief_subscribe: "https://aielmonitor.substack.com/subscribe"
 
 registration:
   - "SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS · Akavia"
-  - "<b>11.2M</b> SWEDISH ADS · 36 COUNTRIES"
+  # 11.2M is the RECORD count. The page spends a whole module showing that counting
+  # records rather than distinct advertisements manufactured a 30-point artefact, and
+  # the published unit is the distinct advertisement (8.1M). A banner reading "11.2M
+  # SWEDISH ADS" was the page's largest number and the one it tells you not to use.
+  - "<b>8.1M</b> DISTINCT SWEDISH ADS · 36 COUNTRIES"
   # Derived at build time from the numeric data files' last git commit — see
   # data_updated() in build.py. Do not hand-type a date here; it will drift.
   # The weekly claim is backed by .github/workflows/monitor-refresh.yml (Mondays):

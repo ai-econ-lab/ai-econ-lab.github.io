@@ -704,7 +704,8 @@ def dotplot(cc):
     p.append("</svg>")
     return "".join(p)
 
-def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countries"):
+def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countries",
+            mean_label="EU"):
     """Ranked horizontal bar chart (share; meaningful zero). Bar = latest year; a muted delta
     shows the year-on-year change from the previous wave (when present). Sweden highlighted.
 
@@ -731,7 +732,12 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
     if eu_avg:
         mx = X(eu_avg)
         p.append(f'<line class="meanline" x1="{mx:.1f}" y1="{top-1}" x2="{mx:.1f}" y2="{top+n*rowh}"/>')
-        p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-5}" text-anchor="middle">EU {eu_avg:g}</text>')
+        # The reference line is not always the EU average. Two callers pass a SWEDISH figure
+        # (the national floor on the occupations cut, the national rate on the population cut),
+        # and hardcoding "EU" printed "EU 0.52" and "EU 42" over Sweden's own numbers -- on a
+        # chart whose caption directly beneath said "the line marks the national figure".
+        p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-5}" text-anchor="middle">'
+                 f'{h(mean_label)} {eu_avg:g}</text>')
     for i, r in enumerate(rows):
         y = top + i * rowh; se = " se" if r["is_se"] else ""
         v = r[vkey]
@@ -1189,7 +1195,8 @@ def occupations_block():
     o = OCCUP
     m = o["meta"]
     xmax = int(max(r["share"] for r in o["top"])) + 1
-    bars = barplot(o["top"] + o["zero"], m["national"], xmax, 0, "share", ".1f")
+    bars = barplot(o["top"] + o["zero"], m["national"], xmax, 0, "share", ".1f",
+                   mean_label="Sweden")
     return f"""<div class="grouphdr" id="occupations" style="margin-top:30px">Where the demand sits
       <span class="preview-flag">◔ Occupations · {h(str(m['year']))}</span></div>
     <p class="secintro" style="margin-top:4px">{h(o['lede'])}</p>
@@ -1375,7 +1382,7 @@ def population_block():
       {ages[-1]['adoption']:g}% of {h(ages[-1]['group'])}s, a {swing:g}-point span. The gap between men and women
       is narrowing, from {gap_then:g} points in {h(m['first_year'])} to {gap_now:g}
       ({m['men']:g}% against {m['women']:g}%). Figures refer to the {h(m['reference_period'])}.</p>
-    <div class="dotwrap">{barplot(_pop_age_rows(), m['headline'], xmax, 0, 'adoption', '.0f', what='age groups')}</div>
+    <div class="dotwrap">{barplot(_pop_age_rows(), m['headline'], xmax, 0, 'adoption', '.0f', what='age groups', mean_label='Sweden')}</div>
     {figfooter("population_ai.csv", f"{m['source']}, {m['first_year']}–{m['year']} · {m['unit']}; bars {m['year']}, change vs {m['first_year']}. {m['design']}", svg_name="population_ai.svg", next_up="with SCB's next ICT-use survey wave")}
     <p class="secintro" style="margin:12px 0 0">The US counterpart at this level is
       <b>{u['pct']:g}%</b> (<a href="{um['url']}">{h(um['source'])}</a>, {h(um['vintage'])}). Read it as a
@@ -1394,16 +1401,27 @@ def akavia_outcomes_block():
         f"<tr><td>{h(l)}</td><td>{u}%</td><td>{p}%</td><td>{s}%</td></tr>"
         for l, u, p, s in zip(g["labels"], g["use"], g["policy"], g["strategy"]))
     uf = "".join(f"<li><b>{r['value']}%</b> {h(r['label'].lower())}</li>" for r in used)
+    # The governance arrays run a wave behind the headline trend (they stop at May 2025 while
+    # `trend` reaches May 2026), so the vintage must come from THIS block's own labels. Taking
+    # it from meta['year'] printed a May 2025 observation as "In 2026".
+    gy = g["labels"][-1]
+    # Same trap, second instance. akavia.yaml carries `universe` for the shadow-AI block but
+    # NOT for used_for, so the vintage is lost between the survey-db export (which records
+    # "AI users, May 2025") and this page, and meta['year'] filled the gap with 2026. Assert a
+    # vintage only when the data file actually carries one; otherwise say nothing.
+    # PROPER FIX, upstream: have export_monitor.py carry what_ai_is_used_for's universe into
+    # the site feed the way it already does for shadow_ai.
+    uv = f", {h(a['used_for_universe'])}" if a.get("used_for_universe") else ""
     return f"""<div class="grouphdr" id="akavia-governance" style="margin-top:36px">Use, governance and who pays</div>
   <p class="secintro" style="margin-top:4px">Among Swedish professional-union members, workplace governance runs
-    well behind actual use. In {h(m['year'])}, {g['use'][-1]}% used AI at work while only {g['policy'][-1]}% knew
+    well behind actual use. In {h(gy)}, {g['use'][-1]}% used AI at work while only {g['policy'][-1]}% knew
     of a policy and {g['strategy'][-1]}% of a strategy, a gap of <b>{gap}pp</b>. The figures say <i>knows of</i>
     rather than <i>has</i>: about a fifth answer that they do not know, which is counted here as not knowing of
     one. Training runs the same way: {tg['wants_last']}% want to develop their AI skills, {tg['offered_last']}%
     have been offered it by an employer, against {tg['wants_first']}% and {tg['offered_first']}% in
     {h(m['first_year'])}.</p>
   <table class="minitab"><thead><tr><th>Wave</th><th>Uses AI</th><th>Knows of a policy</th><th>Knows of a strategy</th></tr></thead><tbody>{rows}</tbody></table>
-  <p class="secintro" style="margin-top:14px">What the work actually is, among users in {h(m['year'])}:</p>
+  <p class="secintro" style="margin-top:14px">What the work actually is, among AI users{uv}:</p>
   <ul class="tight">{uf}</ul>
   <p class="secintro" style="margin-top:14px">And who provides the tools. Among those using <b>standalone</b> AI
     tools, not among all workers, <b>{sh['private_account']}%</b> have a private e-mail account connected to a
@@ -1985,7 +2003,8 @@ def emit_data(out):
     _popx = 10 * (max(r["adoption"] for r in POPAI["by_age"]) // 10 + 1)
     (d / "population_ai.svg").write_text(
         chart_standalone(barplot(_pop_age_rows(), POPAI["meta"]["headline"], _popx, 0,
-                                 "adoption", ".0f", what="age groups")),
+                                 "adoption", ".0f", what="age groups",
+                                 mean_label="Sweden")),
         encoding="utf-8")
     with (d / "akavia_governance.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
@@ -2044,7 +2063,8 @@ def emit_data(out):
     _occx = int(max(r["share"] for r in OCCUP["top"])) + 1
     (d / "occupations_ai_demand.svg").write_text(
         chart_standalone(barplot(OCCUP["top"] + OCCUP["zero"], OCCUP["meta"]["national"],
-                                 _occx, 0, "share", ".1f")), encoding="utf-8")
+                                 _occx, 0, "share", ".1f",
+                                 mean_label="Sweden")), encoding="utf-8")
     with (d / "swe_adoption.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["firm_size", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])

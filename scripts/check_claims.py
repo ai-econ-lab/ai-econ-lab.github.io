@@ -52,7 +52,11 @@ JOBTECH = ("JobTech", "Platsbanken")
 # Sentences that were true before a migration and false after it. Each is a real one that
 # shipped, or nearly did.
 STALE_ASSERTIONS = [
-    (r"still counts records",
+    # Tightened 1 Aug after a FALSE POSITIVE: the phrase "still counts records" is legitimate
+    # when a caveat names the one module that genuinely does. What was wrong was the monthly
+    # chart claiming it, so anchor the pattern to that claim rather than the bare phrase. A
+    # check that fires on correct text gets ignored, which is worse than not having it.
+    (r"chart above still counts records",
      "the monthly block's pre-migration sentence; the correction it calls pending happened"),
     (r"correcting it is .{0,30}pending",
      "same paragraph, other half"),
