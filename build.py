@@ -1938,11 +1938,11 @@ def chart_standalone(svg, title=None, source=None):
              '.trendarea{fill:#0072b2;opacity:.08}.trendline,.trenddash{fill:none;stroke:#0072b2;stroke-width:2}'
              '.trenddash{stroke-dasharray:4 3}.trenddot{fill:#0072b2}.trendval{fill:#0072b2;font-size:11px;font-weight:700}'
              # entry-level squeeze
-             '.sqband{fill:#0072b2;opacity:.10}.sqlo{fill:none;stroke:#d55e00;stroke-width:2}'
-             '.sqhi{fill:none;stroke:#0072b2;stroke-width:2.6}.sqdot.lo{fill:#d55e00}.sqdot.hi{fill:#0072b2}'
-             '.sqval{font-size:11px;font-weight:700}.sqval.lo{fill:#d55e00}.sqval.hi{fill:#0072b2}'
+             '.sqband{fill:#0072b2;opacity:.10}.sqlo{fill:none;stroke:#009e73;stroke-width:2}'
+             '.sqhi{fill:none;stroke:#0072b2;stroke-width:2.6}.sqdot.lo{fill:#009e73}.sqdot.hi{fill:#0072b2}'
+             '.sqval{font-size:11px;font-weight:700}.sqval.lo{fill:#009e73}.sqval.hi{fill:#0072b2}'
              # working-conditions dumbbell
-             '.dumb{display:block}.dbtrack{stroke:#d9d5cd;stroke-width:3}.dblo{fill:#d55e00}.dbhi{fill:#0072b2}</style>')
+             '.dumb{display:block}.dbtrack{stroke:#d9d5cd;stroke-width:3}.dblo{fill:#009e73}.dbhi{fill:#0072b2}</style>')
     style = style.replace('</style>',
                           '.figttl{fill:#161d2b;font-size:12px;font-weight:700}'
                           '.figsrc{fill:#6d6a63;font-size:8.5px}</style>')

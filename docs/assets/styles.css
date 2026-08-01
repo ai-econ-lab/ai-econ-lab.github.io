@@ -368,12 +368,12 @@ button.figdl{background:transparent;font-family:var(--mono);font-size:11px;curso
 .gbtn.on{background:var(--c1);color:#fff;border-color:var(--c1)}
 .dumb{display:none}.dumb.on{display:block}
 .dumb .dbtrack{stroke:var(--border);stroke-width:3}
-.dumb .dblo{fill:var(--c2)}.dumb .dbhi{fill:var(--c1)}
+.dumb .dblo{fill:var(--c3)}.dumb .dbhi{fill:var(--c1)}
 .dumb .dname{fill:var(--ink-2);font-size:11px}
 .dumb .dval{fill:var(--ink-2);font-size:10.5px;font-weight:700}
 .dblegend{display:flex;gap:18px;margin-top:8px;font-family:var(--mono);font-size:11px;color:var(--muted)}
 .dblegend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
-.dblegend i.lo{background:var(--c2)}.dblegend i.hi{background:var(--c1)}
+.dblegend i.lo{background:var(--c3)}.dblegend i.hi{background:var(--c1)}
 
 /* AI-in-Demand trend (server-rendered static twin, used on the brief) */
 .trend .grid{stroke:var(--border)}.trend .tick{fill:var(--muted);font-size:9px}
@@ -384,7 +384,7 @@ button.figdl{background:transparent;font-family:var(--mono);font-size:11px;curso
 
 /* entry-level squeeze: two-line time series with the widening gap shaded */
 .squeeze .sqband{fill:var(--c1);opacity:.10}
-.squeeze .sqlo{fill:none;stroke:var(--c2);stroke-width:2}
+.squeeze .sqlo{fill:none;stroke:var(--c3);stroke-width:2}
 .squeeze .sqhi{fill:none;stroke:var(--c1);stroke-width:2.6}
 .squeeze .sqdot.lo{fill:var(--muted)}.squeeze .sqdot.hi{fill:var(--c1)}
 .squeeze .sqval{font-family:var(--mono);font-size:11px;font-weight:700}
