@@ -635,6 +635,28 @@ def news():
                  "News and history of the AI-Econ Lab since 2019: publications, media, grants and events.",
                  "/news/", body)
 
+def note(visible, method, label="How this is counted"):
+    """Split a caveat: what changes the reading stays visible, how it was computed collapses.
+
+    The page carried 39 blocks over 180 characters, the longest 926, and each earned its place
+    by defending a claim against a real objection. The problem was never that they were wrong,
+    it was that a reader meets the hedging before the finding, so the page reads as less
+    confident than its evidence.
+
+    The split rule is deliberately NOT about length. `visible` is the caveat that changes how
+    you read the number -- "this cannot separate AI from the rate cycle" belongs there and must
+    never collapse. `method` is the caveat explaining how the number was made: denominators,
+    display gates, comparison groups, which a reader wants on demand rather than in the way.
+
+    Nothing is removed. The text stays in the DOM for search and screen readers, <details> is
+    keyboard-accessible by default, and the print stylesheet expands it so a PDF loses nothing.
+    """
+    if not method:
+        return f'<p class="secintro">{visible}</p>\n'
+    return (f'<p class="secintro">{visible}</p>\n'
+            f'<details class="note"><summary>{h(label)}</summary><p>{method}</p></details>\n')
+
+
 def figfooter(csv_name, source, svg_name=None, method_href=None, next_up=None):
     """Item 10: download + provenance under a figure. Source states DAIOE variant + year.
     Offers the data (CSV) plus, when the figure has a static SVG, the chart as SVG and PNG
@@ -956,17 +978,20 @@ def monthly_block():
             f'sharply every July and again in December, so the trend is the line to read. The broad measure '
             f'now stands at <b>{m["last_ma"]:.2f}%</b> on that basis, against '
             f'<b>{m["last_floor_ma"]:.2f}%</b> for the floor.</p>\n'
-            f'<p class="secintro" style="margin-top:6px"><b>Read the 2022 to 2023 dip with care: most of it '
-            f'is not a fall in AI demand.</b> Swedish employers, mostly staffing, care and door-to-door sales '
-            f'agencies, repost the same advertisement many times, and that practice grew sharply and then '
-            f'receded: repeat postings are 13% of all records in 2008, 33% in 2021, 49% in 2023 and 29% in '
-            f'2025. Because AI ads are repeated at about half that rate, the denominator swells faster than '
-            f'the numerator exactly when the dip appears. Counting each distinct advertisement once, the share '
-            f'runs 0.81% in 2021, 0.78% in 2022 and 0.75% in 2023, a drift of 7%, against the 30% collapse the '
-            f'raw series shows. The rise since 2024 survives either way. The chart above counts each distinct '
-            f'advertisement once, as the whole Monitor now does; the raw-record series is kept alongside as '
-            f'the robustness line.</p>\n'
-            f'<div class="dotwrap">{monthly_svg(MONTHLY)}</div>\n'
+            + note(
+                '<b>Read the 2022 to 2023 dip with care: most of it is not a fall in AI demand.</b> '
+                'Swedish employers, mostly staffing, care and door-to-door sales agencies, repost the '
+                'same advertisement many times, and that practice grew sharply and then receded. '
+                'Counting each distinct advertisement once, the share drifts 7% from 2021 to 2023, '
+                'against the 30% collapse the raw series shows. The rise since 2024 survives either way.',
+                'Repeat postings are 13% of all records in 2008, 33% in 2021, 49% in 2023 and 29% in 2025. '
+                'Because AI ads are repeated at about half that rate, the denominator swells faster than the '
+                'numerator exactly when the dip appears. On distinct advertisements the share runs 0.81% in '
+                '2021, 0.78% in 2022 and 0.75% in 2023. The chart above counts each distinct advertisement '
+                'once, as the whole Monitor now does; the raw-record series is kept alongside as the '
+                'robustness line.',
+                'Where the dip goes when you count each advertisement once')
+            + f'<div class="dotwrap">{monthly_svg(MONTHLY)}</div>\n'
             + figfooter("monthly_ai_share.csv",
                         f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · frozen v1.1 term list · distinct advertisements',
                         "monthly_ai_demand.svg"))
@@ -1017,19 +1042,21 @@ def jobquality_block():
             f'everything else advertised the same year. The chart shows the gap in percentage points, '
             f'AI-skill ads minus all other ads, on three measures.</p>\n'
             f'<div class="dotwrap">{jobquality_svg(JOBQ)}</div>\n'
-            f'<p class="secintro" style="margin-top:6px">AI-skill posts have always been more often '
-            f'full-time, but the advantage is closing: <b>{m["ft_gap_first"]:+.0f}pp</b> in '
-            f'{m["first_year"]} against <b>{m["ft_gap_last"]:+.0f}pp</b> in {m["last_year"]}. On permanent '
-            f'contracts the advantage has not merely narrowed, it has <b>reversed</b>: AI-skill ads were '
-            f'{m["pm_gap_first"]:+.0f}pp more often open-ended in {m["first_year"]}, and '
-            f'{m["pm_gap_last"]:+.0f}pp less often by {m["last_year"]}, having crossed zero in '
-            f'{m["pm_flip_year"]}. Read this as description, not as a finding about what AI does to job '
-            f'quality. It does not compare like with like: AI-skill ads sit in different occupations from '
-            f'the average vacancy, and <b>composition alone could produce the whole reversal</b>, because AI '
-            f'demand has been spreading out of a specialist niche into ordinary hiring over exactly this '
-            f'period. Nothing here holds occupation fixed. What the series does survive is deduplication: '
-            f'counting each advertisement once rather than once per posting moves every gap by under 2pp, so '
-            f'it is not an artefact of employers reposting.</p>\n'
+            + note(
+                f'AI-skill posts have always been more often full-time, but the advantage is closing: '
+                f'<b>{m["ft_gap_first"]:+.0f}pp</b> in {m["first_year"]} against '
+                f'<b>{m["ft_gap_last"]:+.0f}pp</b> in {m["last_year"]}. On permanent contracts the advantage '
+                f'has not merely narrowed, it has <b>reversed</b>: AI-skill ads were '
+                f'{m["pm_gap_first"]:+.0f}pp more often open-ended in {m["first_year"]}, and '
+                f'{m["pm_gap_last"]:+.0f}pp less often by {m["last_year"]}. Read this as description, not as '
+                f'a finding about what AI does to job quality: <b>composition alone could produce the whole '
+                f'reversal</b>, and nothing here holds occupation fixed.',
+                f'The series crossed zero in {m["pm_flip_year"]}. It does not compare like with like, because '
+                f'AI-skill ads sit in different occupations from the average vacancy and AI demand has been '
+                f'spreading out of a specialist niche into ordinary hiring over exactly this period. What the '
+                f'series does survive is deduplication: counting each advertisement once rather than once per '
+                f'posting moves every gap by under 2pp, so it is not an artefact of employers reposting.',
+                'Why composition could explain this, and what it survives')
             + figfooter("job_quality_v11.csv",
                         f'{h(m["source"])}, {m["first_year"]} to {m["last_year"]} · complete years only'
                         f' · distinct advertisements',
@@ -1074,16 +1101,18 @@ def governance_block():
             f'2018 and {m["last_n"]} in the whole of {m["last_year"]}; the first half of 2026 '
             f'alone has <b>{m["h1_2026_n"]}</b>, which is {m["h1_2026_pct"]:.1f}% of all AI ads '
             f'against {m["last_pct"]:.1f}% a year earlier.</p>\n'
-            '<p class="secintro" style="margin-top:6px"><b>Read this as language, not as jobs.</b> '
-            'Unlike our headline series, this band counts any mention rather than a requirement '
-            'of the role, and a hand-check of all 199 ads in 2026 found that 95% of them mention '
-            'governance only in passing in the body text, often as an employer\u2019s boilerplate '
-            'about building responsible AI, in posts for engineers, project managers and '
-            'designers. Only ten name it in the headline, and a further 33 of the 199 are repeat '
-            'postings of the same advertisement. What is rising fast is how often the language of '
-            'AI regulation appears in Swedish hiring copy, which is worth knowing. It is not a '
-            'count of governance jobs, and we do not have one.</p>\n'
-            f'<div class="dotwrap">{governance_svg(GOV)}</div>\n'
+            + note(
+                '<b>Read this as language, not as jobs.</b> Unlike our headline series, this band '
+                'counts any mention rather than a requirement of the role. What is rising fast is how '
+                'often the language of AI regulation appears in Swedish hiring copy, which is worth '
+                'knowing. It is not a count of governance jobs, and we do not have one.',
+                'A hand-check of all 199 ads in 2026 found that 95% of them mention governance only in '
+                'passing in the body text, often as an employer\u2019s boilerplate about building '
+                'responsible AI, in posts for engineers, project managers and designers. Only ten name '
+                'it in the headline, and a further 33 of the 199 are repeat postings of the same '
+                'advertisement.',
+                'What the hand-check of all 199 ads found')
+            + f'<div class="dotwrap">{governance_svg(GOV)}</div>\n'
             + figfooter("ai_governance.csv",
                         f'{h(m["source"])}, {m["first_year"]} to first half of 2026'
                         f' · distinct advertisements',
@@ -1403,16 +1432,20 @@ def outcomes_section(explorers):
   {akavia_outcomes_block()}
 
   <div class="grouphdr" style="margin-top:36px">Entry-level squeeze</div>
-  <p class="secintro" style="margin-top:4px">In the most AI-exposed occupations, a smaller share of openings ask for
-    no prior experience than in the least-exposed occupations, every year since {h(em['first_year'])}, and the gap has
-    widened from −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. This is
-    consistent with the Canaries finding, but it is not independent evidence for it. Entry-level hiring is more
-    cyclical than experienced hiring, the tightening cycle that began in April 2022 fell hardest on exactly these
-    occupations, and this series starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the
-    cycle. The Canaries paper can, because it observes employers and workers' ages and identifies within employers.
-    Descriptive throughout: less-exposed work also skews lower-skill, so part of the level gap is structural. The same
-    entry-level pattern appears in the international AI "canaries" literature on young workers, though no directly
-    comparable cross-country series exists yet.</p>
+  {note(
+    f"""In the most AI-exposed occupations, a smaller share of openings ask for no prior experience than in the
+    least-exposed occupations, every year since {h(em['first_year'])}, and the gap has widened from
+    −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. This is consistent with the
+    Canaries finding, but it is not independent evidence for it: entry-level hiring is more cyclical than experienced
+    hiring, the tightening cycle that began in April 2022 fell hardest on exactly these occupations, and this series
+    starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the cycle.""",
+    """The Canaries paper can separate them, because it observes employers and workers\u2019 ages and identifies
+    within employers. Descriptive throughout: less-exposed work also skews lower-skill, so part of the level gap is
+    structural. The same entry-level pattern appears in the international AI &quot;canaries&quot; literature on young
+    workers, though no directly comparable cross-country series exists yet. This module also counts ad records rather
+    than distinct advertisements, unlike the rest of the page: it reads counts from the JobTech API, which returns
+    totals and so cannot be deduplicated.""",
+    "How this is counted, and what it cannot show")}
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']} · ad records, not distinct advertisements (see the note)", svg_name="entry_level_squeeze.svg", next_up="annually, with the JobTech year files")}

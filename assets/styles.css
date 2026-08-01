@@ -168,6 +168,18 @@ h2.sec{font-size:clamp(23px,3vw,31px);line-height:1.08;max-width:22ch}
 .person .role{font-size:12px;color:var(--blue);font-family:var(--mono);margin-top:4px}
 .person .aff{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.4}
 .person a.pl{font-family:var(--mono);font-size:11.5px;margin-top:9px;display:inline-block}
+/* Progressive disclosure for method caveats. The rule is NOT length: a caveat that changes
+   how you read the number stays visible, a caveat explaining how the number was computed
+   collapses. Nothing is removed and everything stays in the DOM for search and screen
+   readers, so the page can be careful without reading as a wall of hedging. */
+details.note{margin:6px 0 0}
+details.note summary{font-family:var(--mono);font-size:11.5px;color:var(--link);cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px}
+details.note summary::-webkit-details-marker{display:none}
+details.note summary::before{content:"＋";font-size:11px}
+details.note[open] summary::before{content:"－"}
+details.note[open] summary{color:var(--muted)}
+details.note p{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin:8px 0 0;max-width:64ch}
+@media print{details.note{display:block}details.note>*{display:block}details.note summary{display:none}}
 details.bio{margin-top:9px}
 details.bio summary{font-family:var(--mono);font-size:11.5px;color:var(--link);cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px}
 details.bio summary::-webkit-details-marker{display:none}
