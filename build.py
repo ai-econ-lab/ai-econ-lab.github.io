@@ -998,6 +998,15 @@ def monthly_block():
                 'robustness line.',
                 'Where the dip goes when you count each advertisement once')
             + f'<div class="dotwrap">{monthly_svg(MONTHLY)}</div>\n'
+            # Three lines on the flagship chart were identified only in prose, by colour name.
+            # A legend beats "the blue line" for anyone reading out of order, printing, or
+            # colour-blind; the faint raw series needed naming most, since it is the one a
+            # reader mistakes for noise in the data rather than in hiring.
+            + '<div class="dblegend">'
+              '<span><i style="background:var(--c1)"></i>names an AI skill, 12-month mean</span>'
+              '<span><i style="background:var(--c2)"></i>asks for it in the role (floor), 12-month mean</span>'
+              '<span><i style="background:var(--c1);opacity:.32"></i>single month, unsmoothed</span>'
+              '</div>\n'
             + figfooter("monthly_ai_share.csv",
                         f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · frozen v1.1 term list · distinct advertisements',
                         "monthly_ai_demand.svg"))
@@ -1092,6 +1101,11 @@ def governance_svg(g):
         p.append(f'<text class="tick" x="{cx:.1f}" y="{y-5:.1f}" text-anchor="middle">{r["n"]}</text>')
         p.append(f'<text class="tick" x="{cx:.1f}" y="{H-12}" text-anchor="middle">'
                  f'{r["year"]}{"*" if partial else ""}</text>')
+        if partial:
+            # A half-year bar drawn at full height, taller than the full year before it, needs
+            # to say so inside the figure: the asterisk had no key anywhere on the page.
+            p.append(f'<text class="tick" x="{cx:.1f}" y="{top-6:.1f}" text-anchor="middle" '
+                     f'style="font-size:8.5px">part-year (H1)</text>')
     p.append("</svg>")
     return "".join(p)
 
@@ -1109,14 +1123,15 @@ def governance_block():
             f'against {m["last_pct"]:.1f}% a year earlier.</p>\n'
             + note(
                 '<b>Read this as language, not as jobs.</b> Unlike our headline series, this band '
-                'counts any mention rather than a requirement of the role. What is rising fast is how '
-                'often the language of AI regulation appears in Swedish hiring copy, which is worth '
-                'knowing. It is not a count of governance jobs, and we do not have one.',
-                'A hand-check of all 199 ads in 2026 found that 95% of them mention governance only in '
-                'passing in the body text, often as an employer\u2019s boilerplate about building '
-                'responsible AI, in posts for engineers, project managers and designers. Only ten name '
-                'it in the headline, and a further 33 of the 199 are repeat postings of the same '
-                'advertisement.',
+                'counts any mention rather than a requirement of the role, and <b>a hand-check of every '
+                'ad in the 2026 band found that 95% mention governance only in passing</b>, usually an '
+                'employer\u2019s boilerplate about building responsible AI in posts for engineers, project '
+                'managers and designers. What is rising fast is how often the language of AI regulation '
+                'appears in Swedish hiring copy, which is worth knowing. It is not a count of governance '
+                'jobs, and we do not have one.',
+                'Only ten of those ads name governance in the headline. The hand-check covered the 199 '
+                'records underlying the band; the chart plots 185 distinct advertisements, and the two '
+                'have not been reconciled ad by ad.',
                 'What the hand-check of all 199 ads found')
             + f'<div class="dotwrap">{governance_svg(GOV)}</div>\n'
             + figfooter("ai_governance.csv",
@@ -1456,13 +1471,14 @@ def outcomes_section(explorers):
     −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. This is consistent with the
     Canaries finding, but it is not independent evidence for it: entry-level hiring is more cyclical than experienced
     hiring, the tightening cycle that began in April 2022 fell hardest on exactly these occupations, and this series
-    starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the cycle.""",
+    starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the cycle.
+    <b>It is also the one module on the page still counting ad records rather than distinct advertisements</b>,
+    because it reads totals from the JobTech API, which cannot be deduplicated; elsewhere on this page, counting
+    records rather than advertisements manufactured an artefact of about thirty points.""",
     """The Canaries paper can separate them, because it observes employers and workers\u2019 ages and identifies
     within employers. Descriptive throughout: less-exposed work also skews lower-skill, so part of the level gap is
     structural. The same entry-level pattern appears in the international AI &quot;canaries&quot; literature on young
-    workers, though no directly comparable cross-country series exists yet. This module also counts ad records rather
-    than distinct advertisements, unlike the rest of the page: it reads counts from the JobTech API, which returns
-    totals and so cannot be deduplicated.""",
+    workers, though no directly comparable cross-country series exists yet.""",
     "How this is counted, and what it cannot show")}
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
@@ -1471,6 +1487,11 @@ def outcomes_section(explorers):
   {wages_block()}
   {related_research("outcomes")}
 </section></div></div>"""
+
+
+WAGE_COLORS = {"high": "var(--c2)", "mid": "var(--c4, #cc79a7)", "low": "var(--c3)"}
+WAGE_LABELS = {"high": "most exposed", "mid": "middle", "low": "least exposed"}
+SHORT = {"high": "most", "mid": "mid", "low": "least"}
 
 
 def wages_svg(c):
@@ -1493,13 +1514,15 @@ def wages_svg(c):
     for i, r in enumerate(srs):
         if r["year"] % 2 == 0 or i == n - 1:
             p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-8}" text-anchor="middle">{r["year"]}</text>')
-    colors = {"high": "var(--c2)", "mid": "var(--c4, #cc79a7)", "low": "var(--c3)"}
-    labels = {"high": "most exposed", "mid": "middle", "low": "least exposed"}
+    colors, labels = WAGE_COLORS, WAGE_LABELS
     for g in ("low", "mid", "high"):
         pts = " ".join(f'{X(i):.1f},{Y(r[g]):.1f}' for i, r in enumerate(srs))
         p.append(f'<polyline points="{pts}" fill="none" stroke="{colors[g]}" stroke-width="2.2"/>')
-        p.append(f'<text class="tick" x="{x1+5}" y="{Y(srs[-1][g])+3.5:.1f}" '
+        ey = Y(srs[-1][g])
+        p.append(f'<text class="tick" x="{x1+5}" y="{ey:.1f}" '
                  f'fill="{colors[g]}">{srs[-1][g]:.0f}</text>')
+        p.append(f'<text class="tick" x="{x1+5}" y="{ey+10:.1f}" '
+                 f'fill="{colors[g]}" style="font-size:9px">{SHORT[g]}</text>')
     p.append("</svg>")
     return "".join(p)
 
@@ -1516,7 +1539,7 @@ def wages_block():
   <p class="secintro" style="margin-top:4px">{h(w["intro"])}</p>
   <p class="secintro"><b>{h(w["headline"])}</b></p>
   <div class="two" style="grid-template-columns:1fr 1fr">{charts}</div>
-  <div class="dblegend"><span><i class="hi"></i>most AI-exposed third</span><span style="color:var(--c4,#cc79a7)">— middle</span><span><i class="lo"></i>least exposed</span></div>
+  <div class="dblegend">{"".join(f'<span><i style="background:{WAGE_COLORS[g]}"></i>{WAGE_LABELS[g]} third</span>' for g in ("high", "mid", "low"))}</div>
   <p class="psub">{h(w["eu_line"])}</p>
   <ul style="color:var(--ink-2);font-size:13px;line-height:1.55">{cavs}</ul>
   {figfooter("wages_exposure.csv", "SCB wage structure statistics · BLS OEWS · Eurostat SES × DAIOE genAI v2023", svg_name="wages_sweden.svg", next_up="SCB and OEWS annual releases (spring 2027)")}
@@ -1895,8 +1918,14 @@ PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.htm
          "research/index.html": research(), "people/index.html": people(),
          "events/index.html": events(), "news/index.html": news(), "about/index.html": about()}
 
-def chart_standalone(svg):
-    """Self-contained SVG for download (inline light-theme styles; no page CSS). Dot or bar chart."""
+def chart_standalone(svg, title=None, source=None):
+    """Self-contained SVG for download (inline light-theme styles; no page CSS).
+
+    TITLE AND SOURCE TRAVEL WITH THE FILE. These downloads are what end up in other people's
+    slides and papers, detached from the page that explains them, so a figure that leaves here
+    unlabelled is a figure that gets attributed to nobody and dated to nothing. The band is
+    appended below the plot and the viewBox grown to fit, so no existing geometry moves.
+    """
     style = ('<style>:root{--c1:#0072b2;--c2:#d55e00;--c3:#009e73;--c4:#cc79a7;--ink:#161d2b}'  # monthly series draws with var(); the page CSS is not present in a downloaded file
              '.rankchart{font-family:ui-monospace,Menlo,monospace}svg{background:#ffffff}'
              '.grid,.rowguide{stroke:#e7e4dd}.rowguide{opacity:.6}'
@@ -1909,12 +1938,30 @@ def chart_standalone(svg):
              '.trendarea{fill:#0072b2;opacity:.08}.trendline,.trenddash{fill:none;stroke:#0072b2;stroke-width:2}'
              '.trenddash{stroke-dasharray:4 3}.trenddot{fill:#0072b2}.trendval{fill:#0072b2;font-size:11px;font-weight:700}'
              # entry-level squeeze
-             '.sqband{fill:#0072b2;opacity:.10}.sqlo{fill:none;stroke:#9a9a9a;stroke-width:2}'
-             '.sqhi{fill:none;stroke:#0072b2;stroke-width:2.6}.sqdot.lo{fill:#9a9a9a}.sqdot.hi{fill:#0072b2}'
-             '.sqval{font-size:11px;font-weight:700}.sqval.lo{fill:#9a9a9a}.sqval.hi{fill:#0072b2}'
+             '.sqband{fill:#0072b2;opacity:.10}.sqlo{fill:none;stroke:#d55e00;stroke-width:2}'
+             '.sqhi{fill:none;stroke:#0072b2;stroke-width:2.6}.sqdot.lo{fill:#d55e00}.sqdot.hi{fill:#0072b2}'
+             '.sqval{font-size:11px;font-weight:700}.sqval.lo{fill:#d55e00}.sqval.hi{fill:#0072b2}'
              # working-conditions dumbbell
-             '.dumb{display:block}.dbtrack{stroke:#d9d5cd;stroke-width:3}.dblo{fill:#9a9a9a}.dbhi{fill:#0072b2}</style>')
+             '.dumb{display:block}.dbtrack{stroke:#d9d5cd;stroke-width:3}.dblo{fill:#d55e00}.dbhi{fill:#0072b2}</style>')
+    style = style.replace('</style>',
+                          '.figttl{fill:#161d2b;font-size:12px;font-weight:700}'
+                          '.figsrc{fill:#6d6a63;font-size:8.5px}</style>')
     s = svg.replace('<svg class="rankchart', '<svg xmlns="http://www.w3.org/2000/svg" class="rankchart', 1)
+    if title or source:
+        m = re.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', s)
+        if m:
+            w, hgt = float(m.group(1)), float(m.group(2))
+            band = 20 if title else 0
+            band += 13 if source else 0
+            parts = []
+            y = hgt + 14
+            if title:
+                parts.append(f'<text class="figttl" x="8" y="{y:.0f}">{h(title)}</text>')
+                y += 13
+            if source:
+                parts.append(f'<text class="figsrc" x="8" y="{y:.0f}">{h(source)}</text>')
+            s = s.replace(m.group(0), f'viewBox="0 0 {w:g} {hgt + band:g}"', 1)
+            s = s.replace("</svg>", "".join(parts) + "</svg>", 1)
     i = s.index(">") + 1
     return s[:i] + style + s[i:]
 
@@ -1947,12 +1994,14 @@ def emit_data(out):
                     "pct_generic_ai", "pct_other", "term_matches"])
         for r in VOCAB["series"]:
             w.writerow([r["p"], r["ml"], r["early"], r["genai"], r["generic"], r["other"], r["n"]])
-    (d / "vocabulary.svg").write_text(chart_standalone(vocabulary_svg(VOCAB)), encoding="utf-8")
+    (d / "vocabulary.svg").write_text(chart_standalone(vocabulary_svg(VOCAB), "What words the AI ads use, by era",
+                                                             f'JobTech historical job ads (CC0) · distinct advertisements · {VOCAB["meta"]["first"]}-{VOCAB["meta"]["last"]} · AI-Econ Lab'), encoding="utf-8")
     with (d / "ai_governance.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["year", "governance_ads", "pct_of_ai_ads", "partial_year"])
         for r in GOV["series"]:
             w.writerow([r["year"], r["n"], r["pct_of_ai"], int(bool(r.get("partial")))])
-    (d / "ai_governance.svg").write_text(chart_standalone(governance_svg(GOV)), encoding="utf-8")
+    (d / "ai_governance.svg").write_text(chart_standalone(governance_svg(GOV), "Ads mentioning AI-governance language, Sweden",
+                                                                "JobTech historical job ads (CC0) · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     with (d / "job_quality.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["year", "pct_full_time_ai", "pct_full_time_other", "gap_pp_full_time",
@@ -1962,14 +2011,16 @@ def emit_data(out):
             w.writerow([r["year"], r["ft_ai"], r["ft_other"], r["ft_gap"],
                         r["pm_ai"], r["pm_other"], r["pm_gap"],
                         r["rg_ai"], r["rg_other"], r["rg_gap"], r["n_ai"]])
-    (d / "job_quality.svg").write_text(chart_standalone(jobquality_svg(JOBQ)), encoding="utf-8")
+    (d / "job_quality.svg").write_text(chart_standalone(jobquality_svg(JOBQ), "Job quality gap: AI-skill ads minus all others",
+                                                             "JobTech historical job ads (CC0) · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     with (d / "monthly_ai_share.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["year_month", "ads", "ai_any_pct", "ai_any_pct_12m_mean",
                     "floor_pct", "floor_pct_12m_mean"])
         for r in MONTHLY["series"]:
             w.writerow([r["m"], r["ads"], r["ai"], r["ai_ma"], r["floor"], r["floor_ma"]])
-    (d / "monthly_ai_demand.svg").write_text(chart_standalone(monthly_svg(MONTHLY)), encoding="utf-8")
+    (d / "monthly_ai_demand.svg").write_text(chart_standalone(monthly_svg(MONTHLY), "Swedish job ads asking for an AI skill, monthly",
+                         f'JobTech historical job ads (CC0) · frozen v1.1 · distinct advertisements · {MONTHLY["meta"]["first"]}-{MONTHLY["meta"]["last"]} · AI-Econ Lab'), encoding="utf-8")
     with (d / "working_conditions.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["condition", "gender", "pct_least_exposed_occ", "pct_most_exposed_occ", "daioe", "wc_year"])
         for c in WORKCOND["conditions"]:
@@ -2031,12 +2082,14 @@ def emit_data(out):
         fv = t.get("floor_values") or [""] * len(t["years"])
         for y, v, fl in zip(t["years"], t["values"], fv):
             w.writerow([y, v, fl, "frozen v1.1 fp e0efb586f30cfd76 · distinct advertisements"])
-    (d / "ai_in_demand_trend.svg").write_text(chart_standalone(trend_svg(t)), encoding="utf-8")
+    (d / "ai_in_demand_trend.svg").write_text(chart_standalone(trend_svg(t), "Swedish job ads naming an AI skill, 2006 onwards",
+                                                                 "JobTech / Platsbanken job ads (CC0) · frozen v1.1 · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     with (d / "entry_level_squeeze.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["year", "entry_level_share_least_exposed_pct", "entry_level_share_most_exposed_pct", "gap_pp"])
         for r in ELS["series"]: w.writerow([r["year"], r["low"], r["high"], r["gap"]])
-    (d / "entry_level_squeeze.svg").write_text(chart_standalone(squeeze_svg(ELS)), encoding="utf-8")
+    (d / "entry_level_squeeze.svg").write_text(chart_standalone(squeeze_svg(ELS), "Entry-level openings by AI-exposure tercile, Sweden",
+                                                                    "JobTech / Platsbanken (CC0) x DAIOE genAI v2023 · ad records, not distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     (d / "working_conditions.svg").write_text(
         chart_standalone(dumbbell_svg(WORKCOND["conditions"], "all", active=True)), encoding="utf-8")
     with (d / "wages_exposure.csv").open("w", newline="", encoding="utf-8") as f:
@@ -2047,7 +2100,9 @@ def emit_data(out):
                 for g in ("high", "mid", "low"):
                     w.writerow([c["key"], r["year"], g, r[g]])
     for c in WAGES["countries"]:
-        (d / f"wages_{c['key']}.svg").write_text(chart_standalone(wages_svg(c)), encoding="utf-8")
+        (d / f"wages_{c['key']}.svg").write_text(
+            chart_standalone(wages_svg(c), f"Median wage by AI-exposure tercile, {c['label']}",
+                             f"{c['source']} · AI-Econ Lab"), encoding="utf-8")
     with (d / "occupation_tiers.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["occupation", "ai_ads", "builds_pct", "integrates_pct", "uses_pct", "year"])
