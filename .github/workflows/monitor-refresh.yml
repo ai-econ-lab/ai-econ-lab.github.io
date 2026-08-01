@@ -54,6 +54,14 @@ jobs:
       - name: Rebuild site
         run: python build.py
 
+      # After the rebuild, because it reads the BUILT page: that is what a reader sees and
+      # what the Brief inherits. Before the commit, so a page that claims a counting unit it
+      # is not computed on never reaches the live site.
+      - name: Check every module states the unit it is computed on
+        id: claims
+        continue-on-error: true
+        run: python scripts/check_claims.py
+
       - name: Commit and push if anything changed
         run: |
           git config user.name "github-actions[bot]"
@@ -64,8 +72,8 @@ jobs:
             git push
           }
 
-      - name: Fail the run if refresh or watchers failed
-        if: steps.refresh.outcome != 'success' || steps.watch.outcome != 'success'
+      - name: Fail the run if refresh, watchers or claim checks failed
+        if: steps.refresh.outcome != 'success' || steps.watch.outcome != 'success' || steps.claims.outcome != 'success'
         run: |
-          echo "refresh: ${{ steps.refresh.outcome }} · watch: ${{ steps.watch.outcome }}"
+          echo "refresh: ${{ steps.refresh.outcome }} · watch: ${{ steps.watch.outcome }} · claims: ${{ steps.claims.outcome }}"
           exit 1
