@@ -1129,9 +1129,12 @@ def governance_block():
                 'managers and designers. What is rising fast is how often the language of AI regulation '
                 'appears in Swedish hiring copy, which is worth knowing. It is not a count of governance '
                 'jobs, and we do not have one.',
-                'Only ten of those ads name governance in the headline. The hand-check covered the 199 '
-                'records underlying the band; the chart plots 185 distinct advertisements, and the two '
-                'have not been reconciled ad by ad.',
+                'Only ten of those ads name governance in the headline. The hand-check read the 199 '
+                'RECORDS in the band; the chart plots the 185 distinct advertisements they reduce to, '
+                'a difference of 14 repeat postings. The hand-check called 33 of the 199 repeats, which '
+                'is more than the deduplication finds, because it recognised as the same posting some '
+                'advertisements that differ in headline, employer name or opening text \u2014 the fields '
+                'the dedup key uses. The published figure is therefore the conservative one.',
                 'What the hand-check of all 199 ads found')
             + f'<div class="dotwrap">{governance_svg(GOV)}</div>\n'
             + figfooter("ai_governance.csv",
