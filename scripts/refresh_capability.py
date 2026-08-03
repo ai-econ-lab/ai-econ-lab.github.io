@@ -129,6 +129,17 @@ def parse_asof(foot):
     return None
 
 
+def as_date(v):
+    """YAML gives an unquoted 2026-08-03 as a date and a quoted one as a string; the state
+    file always holds strings. Normalise both, and treat anything unparseable as absent."""
+    if isinstance(v, dt.date):
+        return v
+    try:
+        return dt.date.fromisoformat(str(v).strip())
+    except (ValueError, TypeError, AttributeError):
+        return None
+
+
 def watched_asof(cur, key):
     """The as-of date on the tile a watched source feeds, or None if it carries no date.
 
@@ -156,10 +167,20 @@ def main():
     #
     # So capability_{key}_fp is now the ACKNOWLEDGED fingerprint: the page state a human has
     # actually read. A newer observed fingerprint is held as _pending_fp and re-reported every
-    # run until the re-read happens. The evidence of a re-read is the tile's own as-of date
-    # moving past _pending_since_asof, which is the same convention the stale gate uses:
-    # clearing the flag is the re-read itself. A tile with an undated footnote can never
-    # evidence one, so its note persists; that is what the `undated` list is for.
+    # run until the re-read happens. TWO THINGS COUNT AS A RE-READ:
+    #
+    #   the figure moved   the tile's own as-of date passes _pending_since_asof. Same
+    #                      convention the stale gate uses: clearing the flag is the re-read.
+    #   the figure did not a `reviewed: {metr: 2026-08-03}` stamp in monitor.yaml's capability
+    #                      block, dated on or after the change was detected.
+    #
+    # The second route exists because the first cannot express the commonest outcome. On
+    # 3 Aug 2026 METR's page changed while its figures did not: the stamp still read May 2026
+    # and the model table was unchanged, so the only honest re-read was "looked, nothing
+    # moved". With the date route alone, clearing that would have meant redating a May figure
+    # as August — inventing provenance to silence an alarm, which is worse than the alarm.
+    # `reviewed` separates when a figure is from from when we last checked it.
+    reviewed = cur.get("reviewed") or {}
     notes, stale, undated = [], [], []
     for key, url in WATCHED.items():
         fp = page_fingerprint(url)
@@ -167,6 +188,7 @@ def main():
         ack_key = f"capability_{key}_fp"
         pend_key = f"capability_{key}_pending_fp"
         since_key = f"capability_{key}_pending_since_asof"
+        det_key = f"capability_{key}_pending_detected"
 
         if fp.startswith("ERROR:"):
             # Never remember an outage as a fingerprint: the old code stored "ERROR:..." and
@@ -177,21 +199,27 @@ def main():
         ack = state.get(ack_key)
         if ack is None or fp == ack:
             state[ack_key] = fp                    # first sight, or unchanged since the read
-            state.pop(pend_key, None)
-            state.pop(since_key, None)
+            for k in (pend_key, since_key, det_key):
+                state.pop(k, None)
             continue
 
         asof = watched_asof(cur, key)
-        since = state.get(since_key)
-        if since and asof and asof > dt.date.fromisoformat(since):
-            state[ack_key] = fp                    # the tile's date moved: it has been re-read
-            state.pop(pend_key, None)
-            state.pop(since_key, None)
+        moved = bool(state.get(since_key) and asof
+                     and asof > as_date(state[since_key]))
+        signed_off = bool(state.get(det_key) and as_date(reviewed.get(key))
+                          and as_date(reviewed[key]) >= as_date(state[det_key]))
+        if moved or signed_off:
+            state[ack_key] = fp
+            for k in (pend_key, since_key, det_key):
+                state.pop(k, None)
             continue
 
         state[pend_key] = fp
         state.setdefault(since_key, asof.isoformat() if asof else "")
-        notes.append(f"{key}: source page CHANGED since last check — re-read the figure")
+        state.setdefault(det_key, TODAY.isoformat())
+        notes.append(f"{key}: source page CHANGED since last check — re-read the figure "
+                     f"(detected {state[det_key]}; if the figure is unchanged, stamp it in "
+                     f"monitor.yaml as capability.reviewed.{key})")
 
     facts = []
     for f in cur["facts"]:
@@ -238,6 +266,9 @@ def main():
                    "public model table on every refresh; the METR and ARC-AGI figures are "
                    "read by hand when their sources move, and each tile carries its own date."),
         "checked": TODAY.isoformat(),
+        # carried through so the generated file records when a watched source was last
+        # confirmed unchanged, which is not the same thing as when its figure is from
+        "reviewed": {k: str(v) for k, v in sorted(reviewed.items())},
         "stale": stale,
         "undated": undated,
         "notes": notes,
