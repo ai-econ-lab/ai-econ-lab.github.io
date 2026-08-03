@@ -14,12 +14,12 @@ intro: 'Everything above measures AI in the labour market; this small module tra
 facts:
 - num: 12–17 h
   lab: Longest tasks frontier AI agents complete at even odds, in human-expert time
-  foot: METR Time Horizon 1.1 · May 2026
+  foot: METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026
   mode: watched
   asof: '2026-05-01'
-- num: ×2 every 4–6 mo
-  lab: How quickly that task length has been doubling (faster since 2023)
-  foot: METR · doubling time · May 2026
+- num: ×2 every ~4 mo
+  lab: How quickly that task length has been doubling, on the trend since 2023 (95% CI 3.4–5.2 months)
+  foot: METR Time Horizon 1.1 · doubling time · May 2026
   mode: watched
   asof: '2026-05-01'
 - num: ×5.3 per year
