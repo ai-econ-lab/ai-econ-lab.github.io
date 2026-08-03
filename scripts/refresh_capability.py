@@ -203,11 +203,17 @@ def main():
                 state.pop(k, None)
             continue
 
+        # Record when this change was first seen BEFORE testing the sign-off, so a stamp
+        # made the same day takes effect on this run. Testing first cost a run's lag: the
+        # sign-off looked ignored until the next refresh, which reads as a broken gate.
         asof = watched_asof(cur, key)
-        moved = bool(state.get(since_key) and asof
+        state.setdefault(since_key, asof.isoformat() if asof else "")
+        state.setdefault(det_key, TODAY.isoformat())
+
+        moved = bool(as_date(state[since_key]) and asof
                      and asof > as_date(state[since_key]))
-        signed_off = bool(state.get(det_key) and as_date(reviewed.get(key))
-                          and as_date(reviewed[key]) >= as_date(state[det_key]))
+        seen_on, det_on = as_date(reviewed.get(key)), as_date(state[det_key])
+        signed_off = bool(seen_on and det_on and seen_on >= det_on)
         if moved or signed_off:
             state[ack_key] = fp
             for k in (pend_key, since_key, det_key):
@@ -215,8 +221,6 @@ def main():
             continue
 
         state[pend_key] = fp
-        state.setdefault(since_key, asof.isoformat() if asof else "")
-        state.setdefault(det_key, TODAY.isoformat())
         notes.append(f"{key}: source page CHANGED since last check — re-read the figure "
                      f"(detected {state[det_key]}; if the figure is unchanged, stamp it in "
                      f"monitor.yaml as capability.reviewed.{key})")

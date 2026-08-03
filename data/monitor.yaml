@@ -155,6 +155,10 @@ capability:
     system scored under 1% at the benchmark's launch and 30% by July 2026, against 100%
     for humans. Frontier capability is also what our DAIOE exposure measure tracks on the
     technology side.
+  # When a watched source was last confirmed unchanged. Not the same fact as the
+  # figure's own as-of date in its footnote: METR's page moved on 3 Aug 2026 while
+  # its figures did not. Clears the watcher's change note; see refresh_capability.py.
+  reviewed: {metr: 2026-08-03}
   facts:
     - {num: "12–17 h", lab: "Longest tasks frontier AI agents complete at even odds, in human-expert time", foot: "METR Time Horizon 1.1 · May 2026"}
     - {num: "×2 every 4–6 mo", lab: "How quickly that task length has been doubling (faster since 2023)", foot: "METR · doubling time · May 2026"}
