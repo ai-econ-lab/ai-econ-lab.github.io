@@ -98,6 +98,16 @@ def epoch_compute_trend():
 
 # ------------------------------------------------------------------ METR / ARC: watched
 def page_fingerprint(url):
+    """Hash of the source page as this machine sees it.
+
+    THE FINGERPRINT IS VANTAGE-DEPENDENT. On 3 Aug 2026 metr.org served
+    e062b94a30e52db0 to the GitHub runner on three runs across an hour, and
+    ee1baf60ed0bdf5a to a Mac in Sweden on every attempt: a CDN difference, not a
+    change. It is stable per client, which is all the gate needs, since only the
+    runner's view drives it. But running this locally will disagree with CI and
+    record a pending fingerprint of its own. Clear an alert the documented way
+    (re-read the source, update data/monitor.yaml, let the weekly run settle it)
+    rather than by matching hashes between machines."""
     try:
         return hashlib.sha256(get(url)).hexdigest()[:16]
     except Exception as e:                      # a dead source must not kill the build
