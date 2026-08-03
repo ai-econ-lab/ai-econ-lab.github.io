@@ -48,7 +48,8 @@ caveat: These are external research series, quoted with their dates; we summaris
   model table on every refresh; the METR and ARC-AGI figures are read by hand when their sources move,
   and each tile carries its own date.
 checked: '2026-08-03'
+reviewed:
+  metr: '2026-08-03'
 stale: []
 undated: []
-notes:
-- 'metr: source page CHANGED since last check — re-read the figure'
+notes: []
