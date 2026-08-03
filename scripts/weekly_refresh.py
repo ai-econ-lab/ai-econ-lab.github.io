@@ -111,6 +111,17 @@ def check_capability(d, prev_year):
                        + ". Read the source, update the fact in data/monitor.yaml, and re-run "
                          "scripts/refresh_capability.py.")
 
+    # The same argument applies one step earlier. `stale` fires only once STALE_DAYS have
+    # run out; `notes` fires the moment a watched source page moves, which is the first
+    # moment a re-read is worth doing. It was left out of this gate, and nothing else reads
+    # it: build.py never renders notes, so a detected change reached neither the page nor
+    # the run. It went into a YAML file and stopped there.
+    notes = d.get("notes") or []
+    assert not notes, ("watched capability sources need a human re-read: "
+                       + "; ".join(notes)
+                       + ". Read the source, update the fact in data/monitor.yaml, and re-run "
+                         "scripts/refresh_capability.py.")
+
 
 JOBS = [
     ("refresh_cross_country.py", "data/cross_country_adoption.yaml", check_adoption),

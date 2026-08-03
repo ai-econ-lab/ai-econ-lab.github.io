@@ -50,4 +50,5 @@ caveat: These are external research series, quoted with their dates; we summaris
 checked: '2026-08-03'
 stale: []
 undated: []
-notes: []
+notes:
+- 'metr: source page CHANGED since last check — re-read the figure'

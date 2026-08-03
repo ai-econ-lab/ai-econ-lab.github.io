@@ -119,6 +119,17 @@ def parse_asof(foot):
     return None
 
 
+def watched_asof(cur, key):
+    """The as-of date on the tile a watched source feeds, or None if it carries no date.
+
+    Matched the same way the facts loop below picks the Epoch tile: on the source name at
+    the head of the footnote, so 'metr' finds 'METR Time Horizon 1.1 · May 2026'."""
+    for f in cur["facts"]:
+        if f["foot"].split("·")[0].strip().lower().startswith(key):
+            return parse_asof(f["foot"])
+    return None
+
+
 def main():
     state = json.loads(STATE_FILE.read_text()) if STATE_FILE.exists() else {}
     cur = yaml.safe_load((DATA / "monitor.yaml").read_text(encoding="utf-8"))["capability"]
@@ -127,16 +138,50 @@ def main():
     print(f"epoch: x{mult:.2f}/year on {n_models} notable models since 2020, "
           f"file current to {epoch_asof}")
 
+    # A CHANGE NOTE MUST OUTLIVE THE RUN THAT RAISED IT. The first version stored the new
+    # fingerprint on the same run that reported the change, so the note appeared exactly once
+    # and any later run — the next Monday's, or a manual dispatch — erased it. That is the
+    # ARC-AGI failure again in a smaller form: on 3 Aug 2026 the watcher caught METR moving,
+    # and the alert was gone within the hour, unread.
+    #
+    # So capability_{key}_fp is now the ACKNOWLEDGED fingerprint: the page state a human has
+    # actually read. A newer observed fingerprint is held as _pending_fp and re-reported every
+    # run until the re-read happens. The evidence of a re-read is the tile's own as-of date
+    # moving past _pending_since_asof, which is the same convention the stale gate uses:
+    # clearing the flag is the re-read itself. A tile with an undated footnote can never
+    # evidence one, so its note persists; that is what the `undated` list is for.
     notes, stale, undated = [], [], []
     for key, url in WATCHED.items():
         fp = page_fingerprint(url)
-        prev = state.get(f"capability_{key}_fp")
-        if fp.startswith("ERROR:"):
-            notes.append(f"{key}: source unreachable ({fp[6:]})")
-        elif prev and prev != fp:
-            notes.append(f"{key}: source page CHANGED since last check — re-read the figure")
-        state[f"capability_{key}_fp"] = fp
         state[f"capability_{key}_checked"] = TODAY.isoformat()
+        ack_key = f"capability_{key}_fp"
+        pend_key = f"capability_{key}_pending_fp"
+        since_key = f"capability_{key}_pending_since_asof"
+
+        if fp.startswith("ERROR:"):
+            # Never remember an outage as a fingerprint: the old code stored "ERROR:..." and
+            # the next successful run then read that as a source change that never happened.
+            notes.append(f"{key}: source unreachable ({fp[6:]})")
+            continue
+
+        ack = state.get(ack_key)
+        if ack is None or fp == ack:
+            state[ack_key] = fp                    # first sight, or unchanged since the read
+            state.pop(pend_key, None)
+            state.pop(since_key, None)
+            continue
+
+        asof = watched_asof(cur, key)
+        since = state.get(since_key)
+        if since and asof and asof > dt.date.fromisoformat(since):
+            state[ack_key] = fp                    # the tile's date moved: it has been re-read
+            state.pop(pend_key, None)
+            state.pop(since_key, None)
+            continue
+
+        state[pend_key] = fp
+        state.setdefault(since_key, asof.isoformat() if asof else "")
+        notes.append(f"{key}: source page CHANGED since last check — re-read the figure")
 
     facts = []
     for f in cur["facts"]:

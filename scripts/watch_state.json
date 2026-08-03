@@ -4,8 +4,10 @@
   "lfs_seen": 2025,
   "amu_seen": 2024,
   "fred_rps_seen": "2026-01-01",
-  "capability_metr_fp": "e062b94a30e52db0",
+  "capability_metr_fp": "afbca50afcddb9fe",
   "capability_metr_checked": "2026-08-03",
   "capability_arc_fp": "376fd7c922864715",
-  "capability_arc_checked": "2026-08-03"
+  "capability_arc_checked": "2026-08-03",
+  "capability_metr_pending_fp": "ee1baf60ed0bdf5a",
+  "capability_metr_pending_since_asof": "2026-05-01"
 }
