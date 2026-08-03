@@ -37,7 +37,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: pip install pyyaml
+      # PyYAML is the only third-party import in the whole chain (weekly_refresh
+      # and the five refresh_* scripts it shells out to). Pinned: an unpinned
+      # install lets a new major silently take the Monday refresh down.
+      - run: pip install "PyYAML~=6.0"
 
       - name: Auto-apply refresh (Eurostat, SCB)
         id: refresh

@@ -21,7 +21,9 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - run: pip install pyyaml
+      # PyYAML is what build.py needs; pinned so a new major cannot take out a
+      # draft whose retry is a month away, after the issue has published.
+      - run: pip install "PyYAML~=6.0"
       - name: Build next month's brief and email it
         env:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
