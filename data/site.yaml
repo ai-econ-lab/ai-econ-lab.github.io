@@ -69,10 +69,13 @@ support:
     # is a different thing and not ours to give away (Magnus, 4 Aug).
     # If a grant appears in a published acknowledgement and not here, here is wrong.
     #
-    # DELIBERATELY ABSENT: Handelsbanken P26-0234 (1 MSEK, granted, PI time). It is
-    # project-specific to the MYH/YH line (Magnus, 4 Aug), not support for the lab, the
-    # Monitor or DAIOE. This page discloses what funds the work it describes; a grant for
-    # a different project belongs in that project's own acknowledgements. Do not add it.
+    # THE TEST is the one in this group's note: did the grant fund the research THIS PAGE
+    # describes? Not whether it is project-specific. Every grant listed above is
+    # project-specific; that is what research grants are.
+    #
+    # DELIBERATELY ABSENT on that test: Handelsbanken P26-0234 (1 MSEK, granted, PI time),
+    # which funds the MYH/YH line (Magnus, 4 Aug). The Monitor and DAIOE do not draw on it,
+    # so it belongs in that project's own acknowledgements, not here. Do not add it.
     - kind: "Research funding"
       note: "Grants supporting the research the Monitor and DAIOE are built from."
       items:
