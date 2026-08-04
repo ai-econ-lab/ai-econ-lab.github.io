@@ -105,6 +105,10 @@ status:
     - "The labelling conventions with worked examples, and the era-specific correction factors that turn the raw bare-AI band into the published ceiling."
     - "Benchmark levels against Lightcast and the Stanford AI Index. The comparability logic is settled and stated below; the levels themselves are not yet verified against Lightcast's own published material, and we do not publish unverified numbers."
 
+# Funding is disclosed in one place, on the About page, so the list cannot drift between
+# pages. This page links there rather than restating it.
+funding_href: "/about/#support"
+
 benchmark_logic: >-
   Lightcast, which also powers the Stanford AI Index, extracts hand-selected AI skills from the whole
   posting text with no role scoping, and counts generic "artificial intelligence" as a skill in itself. It

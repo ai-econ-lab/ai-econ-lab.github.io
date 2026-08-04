@@ -1778,6 +1778,13 @@ def about():
         f'<li><b>{h(p["name"])}</b>' +
         (f' (<a href="{p["url"]}">site</a>)' if p.get("url") else "") +
         f' · {h(p["what"])}</li>' for p in SITE.get("data_partners", []))
+    sup = SITE.get("support") or {}
+    supgroups = ""
+    for g in sup.get("groups", []):
+        lis = "".join(f"<li>{h(i)}</li>" for i in g["items"])
+        supgroups += (f'<div><div class="grouphdr">{h(g["kind"])}</div>'
+                      f'<p class="psub" style="margin:0 0 8px">{h(g["note"])}</p>'
+                      f'<ul class="tight" style="font-size:13.5px;color:var(--ink-2)">{lis}</ul></div>')
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">About</p><h2 class="sec">An economics-led lab on AI and the future of work</h2></div>
 <section style="padding-top:14px"><div class="prose">
@@ -1792,6 +1799,16 @@ def about():
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">The lab</p><h2 class="sec">Who we are.</h2>
   <div class="prose" style="margin-top:14px">{labdesc}</div>
+</section></div></div>
+
+<div class="rule" id="support"><div class="wrap"><section>
+  <p class="kicker">Support · as of {h(sup.get("asof", ""))}</p>
+  <h2 class="sec">Who funds the work.</h2>
+  <p class="secintro">Hosts, grants and data partners are three different things, and we keep them apart.
+    An independence claim is only worth as much as the disclosure it follows.</p>
+  <div class="two" style="grid-template-columns:1fr 1fr 1fr;margin-top:20px">{supgroups}</div>
+  <div class="depth" style="margin-top:26px"><p class="dk">Independence</p>
+    <p class="secintro" style="margin:0">{h(sup.get("statement", ""))}</p></div>
 </section></div></div>
 
 <div class="rule" id="data-partners"><div class="wrap"><section>
@@ -2077,6 +2094,9 @@ def methods():
       <ul class="reslist">{pend}</ul></div>
   </div>
   <p class="secintro" style="margin-top:22px"><b>On external benchmarks.</b> {h(md["benchmark_logic"])}</p>
+  <p class="secintro" style="margin-top:14px"><b>Who funds this.</b> The Monitor has no dedicated funder.
+    The grants and institutions behind the research it is built from are listed in full on the
+    <a href="{md.get("funding_href", "/about/#support")}">support disclosure</a>.</p>
 </section></div></div>
 
 <div class="wrap"><section>

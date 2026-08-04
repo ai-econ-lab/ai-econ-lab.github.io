@@ -42,6 +42,39 @@ registration:
   - '<span class="lv">● LIVE · PUBLIC + PARTNER DATA</span>'
   - "MONITOR PROTOTYPE"
 
+# Who supports the work. Added 4 Aug 2026.
+#
+# The Monitor claims editorial independence from funders while the site never said who the
+# funders were, which is a weaker position than either statement alone: it invites the
+# question "independent of whom?" and answers nothing. Disclosure first, independence
+# after it, in that order.
+#
+# The three categories are kept apart deliberately. Conflating hosts, grants and data
+# partners is what produced the old "committed to no funder" line, which read as a
+# contradiction one screen from a WASP-HS mention. Dated so a stale list is visibly
+# stale rather than quietly wrong.
+support:
+  asof: "August 2026"
+  groups:
+    - kind: "Host institutions"
+      note: "In-kind support: premises, infrastructure and academic time. Not grant funding."
+      items:
+        - "Örebro University"
+        - "Ratio Institute"
+    - kind: "Research funding"
+      note: "Grants supporting the research the Monitor is built from."
+      items:
+        - "Torsten Söderberg Foundation, ET3/23 (2024–2026). Funded the work in which the Swedish job-advertisement corpus and the DAIOE exposure measure were developed."
+        - "WASP-HS, through the Örebro University node of the AISCAF research cluster. Supports research time; the lab contributes to AISCAF rather than being part of it."
+    - kind: "Data partners"
+      note: "Organisations that share data. No money changes hands in either direction, and listing them implies no endorsement of our results."
+      items:
+        - "Akavia: member web panel on AI and working life, 2023 onwards. Does not fund the lab and does not see results before publication."
+  statement: >-
+    The AIEL Monitor has no dedicated funder. It is built as part of the lab's research
+    infrastructure, on public data. No funder or data partner controls its methods, its results
+    or the timing of publication.
+
 # Organisations that share data with the lab. Credit, not funding: none of these
 # fund the lab, and listing them implies no endorsement of our results.
 data_partners:
