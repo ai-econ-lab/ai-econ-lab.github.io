@@ -77,7 +77,7 @@ working:
   - title: "AI Unboxed and Jobs: A Novel Measure and Firm-Level Evidence from Three Countries"
     authors: "Engberg, E., Görg, H., Hellsten, M., Javed, F., Kyvik-Nordås, H., Lodefalk, M., Längkvist, M., Monteiro, N., Pulito, G., Schroeder, S. & A. Tang"
     year: 2026
-    venue: "In review"
+    venue: "Working paper"
     coverage:
       - {name: "Il Foglio", url: "https://www.ilfoglio.it/tecnologia/2026/02/12/news/l-ai-non-distrugge-i-posti-di-lavoro-li-cambia-uno-studio-tedesco--8647321/"}
       - {name: "Die Zeit", url: "https://www.zeit.de/wirtschaft/2026-05/automatisierungsrisiko-arbeitnehmer-ki-arbeitsmarkt-bedrohung"}
@@ -111,7 +111,7 @@ working:
   - title: "Same Storm, Different Boats: Generative AI and the Age Gradient in Hiring"
     authors: "Lodefalk, M., Löthman, L., Koch, M. & E. Engberg"
     year: 2026
-    venue: "In review"
+    venue: "Revise and resubmit, Economics Letters"
     coverage:
       - {name: "Sveriges Radio", url: "https://www.sverigesradio.se/artikel/blir-allt-svarare-for-unga-att-fa-jobb-efter-sakra-utbildningar"}
       - {name: "SvD", url: "https://www.svd.se/a/9pzVaM/laskigaste-kurvan-visar-ai-tar-jobb-fran-unga-i-sverige"}
