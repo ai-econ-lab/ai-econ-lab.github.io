@@ -49,7 +49,7 @@ registration:
 # question "independent of whom?" and answers nothing. Disclosure first, independence
 # after it, in that order.
 #
-# The three categories are kept apart deliberately. Conflating hosts, grants and data
+# The categories are kept apart deliberately. Conflating hosts, grants and data
 # partners is what produced the old "committed to no funder" line, which read as a
 # contradiction one screen from a WASP-HS mention. Dated so a stale list is visibly
 # stale rather than quietly wrong.
@@ -74,14 +74,11 @@ support:
       note: "The annual AIEL conference on AI and white-collar work is funded separately from the research."
       items:
         - "Jan Wallander and Tom Hedelius Foundation and Tore Browaldh Foundation (Fh25-0082), the Handelsbanken research foundations. Funded the 2026 AIEL conference."
-    - kind: "Data partners"
-      note: "Organisations that share data. No money changes hands in either direction, and listing them implies no endorsement of our results."
-      items:
-        - "Akavia: member web panel on AI and working life, 2023 onwards. Does not fund the lab and does not see results before publication."
   statement: >-
     The AIEL Monitor has no dedicated funder. It is built as part of the lab's research
     infrastructure, on public data. No funder or data partner controls its methods, its results
-    or the timing of publication.
+    or the timing of publication. Organisations that share data with us, who are not funders,
+    are listed separately below.
 
 # Organisations that share data with the lab. Credit, not funding: none of these
 # fund the lab, and listing them implies no endorsement of our results.
