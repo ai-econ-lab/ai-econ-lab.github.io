@@ -83,15 +83,30 @@ window.drawTrend = function drawTrend(){
   hv.setAttribute("y2",m.t+ph); hv.style.opacity=0; hv.style.stroke=CSS("--muted"); svg.appendChild(hv);
   const dot = document.createElementNS(NS,"circle"); dot.setAttribute("r",4.5); dot.setAttribute("fill",CSS("--paper"));
   dot.setAttribute("stroke",col); dot.setAttribute("stroke-width",2.4); dot.style.opacity=0; svg.appendChild(dot);
+  // Second hover dot for the floor. The chart drew two lines but the tooltip only ever read the
+  // whole-text series, so hovering reported the ceiling and silently hid the floor -- on a figure
+  // whose entire point is the distance between them (Magnus, 4 Aug).
+  const dotF = document.createElementNS(NS,"circle"); dotF.setAttribute("r",4);
+  dotF.setAttribute("fill",CSS("--paper")); dotF.setAttribute("stroke",CSS("--c2"));
+  dotF.setAttribute("stroke-width",2); dotF.style.opacity=0; svg.appendChild(dotF);
+  const hasFloor = F && F.length === YRS.length;
   svg.onpointermove = ev => {
     const b = svg.getBoundingClientRect(), sx = (ev.clientX-b.left)/b.width*W;
     let bi=0, bd=1e9; YRS.forEach((yr,i)=>{ const dd=Math.abs(X(yr)-sx); if(dd<bd){bd=dd;bi=i;} });
     const xx=X(YRS[bi]), yy=Y(V[bi]); hv.setAttribute("x1",xx); hv.setAttribute("x2",xx); hv.style.opacity=.5;
     dot.setAttribute("cx",xx); dot.setAttribute("cy",yy); dot.style.opacity=1;
     const prov = bi>=provIdx-1 && bi===YRS.length-1 ? " <span style='color:var(--warn)'>· provisional</span>" : "";
-    showTip(`<b>${YRS[bi]}</b><div class="r"><span>Broad AI share</span><b>${V[bi].toFixed(3)}%</b></div>${prov}`, ev.clientX, ev.clientY);
+    // Series names match the legend and the methods note: "names" is the whole-text measure,
+    // "asks for" is the role-scoped floor. "Broad AI share" matched neither.
+    let rows = `<div class="r"><span>Names an AI skill</span><b>${V[bi].toFixed(3)}%</b></div>`;
+    if (hasFloor){
+      dotF.setAttribute("cx",xx); dotF.setAttribute("cy",Y(F[bi])); dotF.style.opacity=1;
+      rows += `<div class="r"><span>Asks for AI in the role</span><b>${F[bi].toFixed(3)}%</b></div>`;
+      rows += `<div class="r"><span>Penumbra (gap)</span><b>${(V[bi]-F[bi]).toFixed(3)}%</b></div>`;
+    }
+    showTip(`<b>${YRS[bi]}</b>${rows}${prov}`, ev.clientX, ev.clientY);
   };
-  svg.onpointerleave = () => { hv.style.opacity=0; dot.style.opacity=0; hideTip(); };
+  svg.onpointerleave = () => { hv.style.opacity=0; dot.style.opacity=0; dotF.style.opacity=0; hideTip(); };
 };
 window.drawTrend();
 
