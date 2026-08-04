@@ -61,15 +61,19 @@ support:
       items:
         - "Örebro University"
         - "Ratio Institute"
-    # Grant numbers and names are taken from the acknowledgement footnote of the DAIOE
-    # paper and the live book, which are already published and therefore canonical. If a
-    # grant appears there and not here, here is wrong.
+    # Names and grant numbers only, matching the acknowledgement footnote of the DAIOE
+    # paper, which is published and therefore canonical. Deliberately NOT saying what each
+    # grant paid for: a funding disclosure exists so a reader can judge whether money could
+    # have shaped findings, and it does that from the funder's identity alone. Describing
+    # the work each grant covers discloses the research pipeline to anyone reading, which
+    # is a different thing and not ours to give away (Magnus, 4 Aug).
+    # If a grant appears in a published acknowledgement and not here, here is wrong.
     - kind: "Research funding"
       note: "Grants supporting the research the Monitor and DAIOE are built from."
       items:
-        - "Jan Wallander and Tom Hedelius Foundation (P19-0234), one of the Handelsbanken research foundations."
-        - "Torsten Söderberg Foundation (E46/21 and ET3/23, to 2026). ET3/23 funded the work in which the Swedish job-advertisement corpus and the DAIOE exposure measure were developed."
-        - "WASP-HS (grant 805), through the Örebro University node of the AISCAF research cluster. Supports research time; the lab contributes to AISCAF rather than being part of it."
+        - "Jan Wallander and Tom Hedelius Foundation (P19-0234), a Handelsbanken research foundation."
+        - "Torsten Söderberg Foundation (E46/21, ET3/23)."
+        - "WASP-HS (grant 805), through the Örebro University node of the AISCAF research cluster. The lab contributes to AISCAF rather than being part of it."
     # Deliberately not year-by-year. Handelsbanken's foundations have funded several
     # editions but not all, so naming one year both understates the relationship and
     # needs editing every August. "Several editions, most recently" is accurate under
