@@ -36,7 +36,11 @@ overview:
   # −6.6pp. It also makes the claim harder to wave away: real wages flat in every Swedish
   # exposure group over eleven years is a starker null than "+34% nominal".
   - {k: "Outcomes", num: "−6.6<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.6% against 10.2%); in Sweden real wages are flat in all three exposure groups. Exposure has not shown up in pay", foot: "BLS OEWS · SCB · real terms · 2015–2025", anchor: "#wages", cls: "d"}
-  - {k: "Capability", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents complete at even odds; the length has been doubling every 4–6 months", foot: "METR · May 2026", anchor: "#capability", cls: "e"}
+  # role: driver (4 Aug 2026). Capability is not a fifth question, it is the shock that
+  # drives the other four, and rendering it as a fifth peer card is what produced the
+  # "four questions, five cards" contradiction Schroeder caught. stat_overview() pulls
+  # any driver entry out of the card grid and renders it as a full-width band beneath.
+  - {k: "Capability", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents complete at even odds; the length has been doubling every 4–6 months", foot: "METR · May 2026", anchor: "#capability", cls: "e", role: "driver"}
 
 
 # The AI in Demand module.

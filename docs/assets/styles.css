@@ -409,7 +409,9 @@ details.yearblock[open]>summary::after{content:"－"}
 .confphoto figcaption{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45}
 
 /* Monitor overview-first landing (4 doors) + sticky spine sub-nav + "Sweden, in depth" panels */
-.ovgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:26px}
+/* Four doors, not five. Capability left this grid on 4 Aug 2026 for the driver band
+   below: it is the shock acting on the four questions, not a fifth question. */
+.ovgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
 @media(max-width:1020px){.ovgrid{grid-template-columns:1fr 1fr}}
 @media(max-width:460px){.ovgrid{grid-template-columns:1fr}}
 .ovcard{display:flex;flex-direction:column;gap:7px;background:var(--paper);border:1px solid var(--border);
@@ -427,6 +429,30 @@ details.yearblock[open]>summary::after{content:"－"}
 .ovcard .ofoot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px;
   font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--muted)}
 .ovcard .ofoot .go{color:var(--c1)}
+
+/* Driver band: capability, rendered under the four doors rather than beside them. Muted
+   stripe and a flat layout so it reads as context for the grid, not as a fifth peer. */
+.driverband{display:flex;align-items:center;gap:20px;margin-top:14px;padding:16px 20px;
+  background:var(--raise);border:1px solid var(--border);border-left:3px solid var(--muted);
+  border-radius:13px;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.driverband:hover{border-color:var(--c1);transform:translateY(-1px)}
+.driverband .dnum{font-family:var(--serif);font-size:clamp(24px,3vw,31px);font-weight:600;letter-spacing:-.02em;
+  line-height:1;font-variant-numeric:tabular-nums;flex:none}
+.driverband .dnum span{font-size:.6em;font-weight:600;margin-left:1px;color:var(--muted)}
+.driverband .dbody{flex:1;min-width:0}
+.driverband .dbody .dk{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:5px}
+.driverband .dbody p{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.35}
+.driverband .dfoot{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--muted)}
+.driverband .dfoot .go{color:var(--c1)}
+@media(max-width:700px){.driverband{flex-direction:column;align-items:flex-start;gap:10px}
+  .driverband .dfoot{flex-direction:row;align-items:center;gap:12px}}
+
+/* Vintage chip: the hero exposure panel is an annual release, not a live series, so it
+   must not borrow the live chip's pulse. */
+.vint{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);white-space:nowrap}
 
 .subnav{position:sticky;top:var(--mast-h,52px);z-index:20;
   background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(8px);

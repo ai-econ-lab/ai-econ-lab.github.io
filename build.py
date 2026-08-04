@@ -254,21 +254,7 @@ def home():
       <a class="btn ghost" href="/monitor/#method">How we measure it</a></div>
     <div class="affil">{affils}</div>
   </div>
-  <div class="panel">
-    <div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
-      <span class="livechip"><i></i>live</span></div>
-    <div class="panelbody">
-      <p class="psub">Job ads that name a specific AI skill, and the stricter floor: ads that ask for it in the
-        job's own requirements. Fifteen times the 2006 level, with the post-2023 rebound setting records.
-        Internationally (AI Index / Lightcast, 2025): a median <b>1.9%</b> of
-        postings across 22 countries require AI skills, Sweden <b>2.8%</b> on that measure.</p>
-      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Line chart: share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
-      <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
-        <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
-        <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.1 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href="/monitor/#method", next_up="tier split: built, integrated or simply used")}
-    </div>
-  </div>
+  {hero_exposure_panel("/monitor/#method", "/monitor/#exposure")}
 </div></div></div>
 
 <div class="rule"><div class="wrap"><section>
@@ -303,6 +289,7 @@ def home():
   <p class="secintro">One of the monitor's country cuts, read from Sweden's public job-ad stream (JobTech / Platsbanken).
     Every figure is measured from the ad text with a versioned, citable term list. Where something is not yet
     measured, we say so.</p>
+  <div style="margin-top:22px">{sweden_trend_panel("/monitor/#method", "AI in Demand · share of Swedish job ads")}</div>
   <div class="tiles">{tiles}</div>
   <div class="two">
     <div class="prod"><div class="tag">The Monitor · public data</div><h3>The AI-Econ Lab Monitor</h3>
@@ -895,6 +882,56 @@ def exposure_section():
       set against exposure over time in the <a href="#occupations-explorer">Occupations Explorer</a> below.</p></div>
   {related_research("exposure")}
 </section></div></div>"""
+
+def hero_exposure_panel(method_href, all_href):
+    """Compact cross-country exposure chart for the hero. Added 4 Aug 2026.
+
+    Both heroes used to open on the Swedish job-ad series, which taught the eye that this
+    is a Swedish site before the reader reached the cards that say international headline,
+    Sweden inside. The positioning line ("international context, Sweden in depth") was a
+    claim the layout did not support. This figure carries it in one image: the reader sees
+    a ranked field of countries and their eye lands on the highlighted Swedish bar.
+
+    Only the leading dozen appear here. The full ranking is ~590px tall and would unbalance
+    the hero grid, so it stays in Module 1 and this panel links to it. The caption says
+    "among the highest", never a rank: Sweden's placing moves between 2nd and 5th depending
+    on where the exposure cut is drawn, and that sensitivity is stated in Module 1."""
+    cc = CROSS; mt = cc["meta"]
+    rows = cc["countries"][:12]
+    se = next(r for r in cc["countries"] if r["is_se"])
+    xmax = 10 * (int(max(r["share"] for r in rows) // 10) + 1)
+    src = (f'DAIOE {mt["variant"]} {mt["daioe_version"]} × Eurostat EU-LFS employment {mt["weight_year"]} · '
+           f'{mt["n_countries"]} countries, leading 12 shown')
+    return f"""<div class="panel">
+    <div class="panelhead"><span class="ttl">AI exposure · share of jobs in the most exposed occupations</span>
+      <span class="vint">{h(mt['n_countries'])} countries</span></div>
+    <div class="panelbody">
+      <p class="psub"><b>{se['share']:.0f}%</b> of Swedish jobs sit in the most AI-exposed quarter of occupations,
+        among the highest of {h(mt['n_countries'])} countries (EU average {mt['mean_share']:.0f}%). Exposure marks
+        where AI overlaps with the work, not what follows from it.</p>
+      <div class="dotwrap">{barplot(rows, mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f')}</div>
+      {figfooter("cross_country.csv", src, "cross_country.svg", method_href=method_href)}
+      <p style="margin:12px 0 0"><a class="mono" style="font-size:12px" href="{all_href}">All {h(mt['n_countries'])} countries →</a></p>
+    </div></div>"""
+
+def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · share of Swedish job ads"):
+    """The Swedish AI-in-Demand series. Moved out of the hero on 4 Aug 2026 and placed
+    directly beneath it, where it reads as what it is: the depth cut that follows the
+    international opener, and the one series here no other country's monitor can produce.
+
+    The title is overridable because on the home page this panel sits under a heading that
+    already says "Sweden, in depth", and repeating it two lines apart reads as an oversight."""
+    return f"""<div class="panel">
+    <div class="panelhead"><span class="ttl">{h(title)}</span>
+      <span class="livechip"><i></i>live</span></div>
+    <div class="panelbody"><p class="psub">Ads naming a specific AI skill reached <b>1.07%</b> in 2025, twenty-one times
+        the 2006 level; the strict floor, ads asking for AI in the role itself, reached <b>0.52%</b>. Both
+        set records in the post-2023 rebound, with generative-AI skills now 27% of the demand.</p>
+      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
+      <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
+        <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
+        <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.1 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href=method_href, next_up="tier split: built, integrated or simply used")}</div></div>"""
 
 def livewindow_block():
     """The live 60-day window as its own labelled instrument. Never a point on the archive
@@ -1570,23 +1607,39 @@ def capability_section():
 </section></div></div>"""
 
 def stat_overview():
-    """Overview-first landing: one door per spine module. Whole picture in ~20s; detail one click down."""
+    """Overview-first landing: one door per spine module. Whole picture in ~20s; detail one click down.
+
+    Entries marked role: driver are NOT questions about the labour market, they are the
+    shock acting on it, and they render as a full-width band under the grid rather than
+    as another card. Before 4 Aug 2026 capability sat in the grid as a fifth peer, which
+    put five cards under a sentence promising four questions."""
     cards = ""
     for o in MONITOR["overview"]:
+        if o.get("role") == "driver":
+            continue
         cls = f' {o["cls"]}' if o["cls"] else ""
         cards += (f'<a class="ovcard{cls}" href="{o["anchor"]}"><div class="stripe"></div>'
                   f'<div class="ok">{h(o["k"])}</div><div class="onum">{o["num"]}</div>'
                   f'<div class="olab">{h(o["lab"])}</div>'
                   f'<div class="ofoot"><span>{h(o["foot"])}</span><span class="go">Open →</span></div></a>')
+    band = ""
+    for o in MONITOR["overview"]:
+        if o.get("role") != "driver":
+            continue
+        band += (f'<a class="driverband" href="{o["anchor"]}">'
+                 f'<div class="dnum">{o["num"]}</div>'
+                 f'<div class="dbody"><div class="dk">{h(o["k"])} · the shock driving the four</div>'
+                 f'<p>{h(o["lab"])}</p></div>'
+                 f'<div class="dfoot"><span>{h(o["foot"])}</span><span class="go">Open →</span></div></a>')
     return f"""<div class="rule" id="overview"><div class="wrap"><section>
   <p class="kicker">The whole picture, in one glance</p>
   <h2 class="sec">From what the technology can do to what happens to jobs and pay.</h2>
-  <p class="secintro">The modules follow one chain. Exposure asks which jobs sit in AI's path; demand asks what
+  <p class="secintro">The four modules follow one chain. Exposure asks which jobs sit in AI's path; demand asks what
     employers are actually hiring for; adoption asks who is using AI in practice; outcomes asks what happens to
-    employment, entry-level hiring and wages. A fifth module tracks the technology's own pace, which is the
-    shock driving the other four. One international headline each, with Sweden as the depth cut inside every
-    module. Every figure is public and dated; open a card to jump to the module.</p>
+    employment, entry-level hiring and wages. One international headline each, with Sweden as the depth cut inside
+    every module. Every figure is public and dated; open a card to jump to the module.</p>
   <div class="ovgrid">{cards}</div>
+  {band}
 </section></div></div>"""
 
 def subnav():
@@ -1625,17 +1678,10 @@ def monitor():
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
       <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a>
       <a class="btn ghost" href="#method">How we measure it</a></div></div>
-  <div class="panel"><div class="panelhead"><span class="ttl">AI in Demand · share of Swedish job ads</span>
-    <span class="livechip"><i></i>live</span></div>
-    <div class="panelbody"><p class="psub">Ads naming a specific AI skill reached <b>1.07%</b> in 2025, twenty-one times
-        the 2006 level; the strict floor, ads asking for AI in the role itself, reached <b>0.52%</b>. Both
-        set records in the post-2023 rebound, with generative-AI skills now 27% of the demand.</p>
-      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
-      <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
-        <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
-        <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.1 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href="#method", next_up="tier split: built, integrated or simply used")}</div></div>
+  {hero_exposure_panel("#method", "#exposure")}
 </div></div></div>
+
+<div class="wrap" style="padding-bottom:6px">{sweden_trend_panel("#method")}</div>
 
 {stat_overview()}
 
