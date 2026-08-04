@@ -1840,7 +1840,9 @@ def about():
     </div>
   </div>
 </section></div></div>"""
-    return shell(f"About &amp; contact · {SITE['brand']['name']}", SITE["brand"]["description"], "/about/", body)
+    # Plain "&" here, not "&amp;". shell() runs the title through h(), so a pre-escaped
+    # ampersand was escaped twice and the browser tab read "About &amp; contact".
+    return shell(f"About & contact · {SITE['brand']['name']}", SITE["brand"]["description"], "/about/", body)
 
 def brief(lang="en"):
     """Monthly one-page 'AIEL Monitor Brief' (English + Swedish): an auto-generated snapshot (the
