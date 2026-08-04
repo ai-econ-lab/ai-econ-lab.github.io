@@ -283,7 +283,7 @@ def home():
     <div class="pillar"><div class="n">01 · DATA</div><h3>Register-grade evidence</h3>
       <p>Linked employer–employee register data at population scale in Sweden: annual, with 4-digit occupations
         (LISA), and monthly individual employment (AGI); plus comparable access in a handful of other countries.
-        Rare reach, paired with 11.2M public job ads.</p></div>
+        Rare reach, paired with 8.1M distinct public job ads (11.2M ad records).</p></div>
     <div class="pillar"><div class="n">02 · REACH</div><h3>Multi-country</h3>
       <p>Register-level in Sweden, Denmark, Portugal and Germany, with more countries planned; 30-plus via EU-LFS
         and international job-ad data for external validity.</p></div>
@@ -573,7 +573,8 @@ def events():
   <p class="kicker">Events</p><h2 class="sec">Conference &amp; seminars</h2>
   <p class="secintro">The lab runs two things. Its flagship is an annual, interdisciplinary conference on AI and
     white-collar work, held since 2020 at Katrinelund on Lake Hjälmaren near Örebro. Alongside it runs a monthly
-    online brown-bag seminar series, part of <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>.</p></div></div>
+    online brown-bag seminar series, part of <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>.
+    For publications, media, grants and people since 2019, see the <a href="/news/">news archive</a>.</p></div></div>
 
 <div class="rule" id="conference-2028"><div class="wrap"><section style="padding-top:20px">
   <p class="kicker">Flagship · next conference · {h(nx['edition'])} AIEL conference</p>
@@ -629,7 +630,8 @@ def news():
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">News</p><h2 class="sec">What the lab has been up to</h2>
   <p class="secintro">Publications, media, grants, conferences and people, since the lab was initiated in 2019.
-    The current year is shown; select any earlier year to expand it.</p></div></div>
+    The current year is shown; select any earlier year to expand it.
+    For the annual conference and the seminar series, see <a href="/events/">events</a>.</p></div></div>
 <div class="wrap"><section style="padding-top:8px">{blocks}</section></div>"""
     return shell(f"News · {SITE['brand']['name']}",
                  "News and history of the AI-Econ Lab since 2019: publications, media, grants and events.",
@@ -1617,7 +1619,7 @@ def monitor():
     referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
 </div>"""
     body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px"><div class="herogrid">
-  <div><div class="eyebrow"><span class="dot"></span> Public monitor · international first, Sweden in depth · updated as the data arrive</div>
+  <div><div class="eyebrow"><span class="dot"></span> Public monitor · international context, Sweden in depth · updated as the data arrive</div>
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
@@ -1657,9 +1659,12 @@ def monitor():
       open and historical advertisement in Sweden's public job board (Platsbanken), 2006 onwards. An ad counts
       when its text names an AI skill; the stricter floor counts it only when the skill sits in the role's own
       tasks or requirements. The term list behind the measure is versioned and kept current against new AI
-      vocabulary, and every chart states which version produced it. The full technical documentation, from the
-      term list to the validation against hand-labelled ads, lives in the lab's methods note, available on
-      request. Exposure, adoption and cross-country demand come from DAIOE, Eurostat and the Stanford AI Index.</p>
+      vocabulary, and every chart states which version produced it. Every figure here can be downloaded as data,
+      and the advertisements behind the Swedish series are public and openly licensed, so the series can be
+      rebuilt from source. The full technical documentation, from the term list to the validation against
+      hand-labelled ads, is being prepared for publication alongside the first monthly brief; until it appears
+      we send it to anyone who asks. Exposure, adoption and cross-country demand come from DAIOE, Eurostat and
+      the Stanford AI Index.</p>
     <p>The exception is the worker-side layer, which comes from
       <a href="https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/">Akavia</a>, a Swedish
       professional union that surveys its members through a web panel and shares the de-identified results with

@@ -10,13 +10,16 @@ brand:
     studying how artificial intelligence is reshaping the world of work.
 
 # Top navigation. 'cta' renders as the filled button on the right.
+# Revised 4 Aug 2026 (Schroeder review): "DAIOE" alone means nothing to a policymaker,
+# journalist or student, so the nav spells out what it is and keeps the acronym. Events
+# and News collapse to one entry, taking the top level from seven choices to six; both
+# pages still exist and cross-link to each other.
 nav:
   - {label: "Monitor",  href: "/monitor/"}
-  - {label: "DAIOE",    href: "/daioe/"}
+  - {label: "AI exposure (DAIOE)", href: "/daioe/"}
   - {label: "Research", href: "/research/"}
   - {label: "People",   href: "/people/"}
-  - {label: "Events",   href: "/events/"}
-  - {label: "News",     href: "/news/"}
+  - {label: "Events & news", href: "/events/"}
   - {label: "About",    href: "/about/"}
 
 # Instrument registration strip under the masthead (honesty-as-aesthetic).

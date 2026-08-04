@@ -2,12 +2,20 @@
 # The builder/integrator/user split is a PREVIEW (not yet measured) — keep it flagged.
 
 headline: "The AIEL Monitor"
+# Rewritten 4 Aug 2026 after Sarah Schroeder's pre-launch review. Three defects in the
+# previous version: it was one dense block on arrival; it announced "four questions" and
+# the overview below then showed five cards; and "committed to no funder" sat one screen
+# from a page that reports WASP-HS funding, which reads as a contradiction rather than as
+# the independence claim it is meant to be. Capability is now stated as the driver of the
+# four, which is the language the overview paragraph already used.
 lede: >-
-  How artificial intelligence is reshaping work: measured internationally through a portable exposure
-  measure (DAIOE) and public data, and in unusual depth for Sweden via job ads, firm surveys and
-  administrative registers. One spine of four questions: how exposed the work is, how much employers
-  demand AI, how far firms have adopted it, and what it means for jobs. Built on public data so every
-  figure can be cited and refreshed automatically, and committed to no funder.
+  The AIEL Monitor tracks how artificial intelligence is changing work across countries, with Sweden
+  in unusual depth. It organises the evidence around four questions: which jobs are exposed, what
+  employers demand, which firms adopt AI, and how employment and job quality are changing. A fifth
+  module tracks the pace of the technology itself, the shock driving the other four. Every indicator
+  is dated and sourced, and built on public data so it can be cited and refreshed automatically. The
+  Monitor is editorially independent: data partners and funders do not control its methods, its
+  results or the timing of publication.
 
 # Overview-first landing: one door per spine module (Exposure · Demand · Adoption · Outcomes).
 # International-first headline number each; Sweden is the depth cut inside the module. Every figure dated.
