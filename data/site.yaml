@@ -57,15 +57,23 @@ support:
   asof: "August 2026"
   groups:
     - kind: "Host institutions"
-      note: "In-kind support: premises, infrastructure and academic time. Not grant funding."
+      note: "Premises, infrastructure and the research environment. Ratio has also contributed financially to the underlying research."
       items:
         - "Örebro University"
         - "Ratio Institute"
+    # Grant numbers and names are taken from the acknowledgement footnote of the DAIOE
+    # paper and the live book, which are already published and therefore canonical. If a
+    # grant appears there and not here, here is wrong.
     - kind: "Research funding"
-      note: "Grants supporting the research the Monitor is built from."
+      note: "Grants supporting the research the Monitor and DAIOE are built from."
       items:
-        - "Torsten Söderberg Foundation, ET3/23 (2024–2026). Funded the work in which the Swedish job-advertisement corpus and the DAIOE exposure measure were developed."
-        - "WASP-HS, through the Örebro University node of the AISCAF research cluster. Supports research time; the lab contributes to AISCAF rather than being part of it."
+        - "Jan Wallander and Tom Hedelius Foundation (P19-0234), one of the Handelsbanken research foundations."
+        - "Torsten Söderberg Foundation (E46/21 and ET3/23, to 2026). ET3/23 funded the work in which the Swedish job-advertisement corpus and the DAIOE exposure measure were developed."
+        - "WASP-HS (grant 805), through the Örebro University node of the AISCAF research cluster. Supports research time; the lab contributes to AISCAF rather than being part of it."
+    - kind: "Conference and events"
+      note: "The annual AIEL conference on AI and white-collar work is funded separately from the research."
+      items:
+        - "Jan Wallander and Tom Hedelius Foundation and Tore Browaldh Foundation (Fh25-0082), the Handelsbanken research foundations. Funded the 2026 AIEL conference."
     - kind: "Data partners"
       note: "Organisations that share data. No money changes hands in either direction, and listing them implies no endorsement of our results."
       items:

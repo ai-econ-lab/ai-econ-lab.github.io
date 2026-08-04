@@ -1806,7 +1806,7 @@ def about():
   <h2 class="sec">Who funds the work.</h2>
   <p class="secintro">Hosts, grants and data partners are three different things, and we keep them apart.
     An independence claim is only worth as much as the disclosure it follows.</p>
-  <div class="two" style="grid-template-columns:1fr 1fr 1fr;margin-top:20px">{supgroups}</div>
+  <div class="two" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:20px">{supgroups}</div>
   <div class="depth" style="margin-top:26px"><p class="dk">Independence</p>
     <p class="secintro" style="margin:0">{h(sup.get("statement", ""))}</p></div>
 </section></div></div>
