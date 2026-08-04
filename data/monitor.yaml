@@ -6,13 +6,15 @@ headline: "The AIEL Monitor"
 # previous version: it was one dense block on arrival; it announced "four questions" and
 # the overview below then showed five cards; and "committed to no funder" sat one screen
 # from a page that reports WASP-HS funding, which reads as a contradiction rather than as
-# the independence claim it is meant to be. Capability is now stated as the driver of the
-# four, which is the language the overview paragraph already used.
+# the independence claim it is meant to be. Capability is now placed as context the other
+# four are read against. It was briefly worded as "the shock driving the four", which
+# asserts a causal mechanism the Monitor does not measure, on a page whose exposure module
+# insists that exposure is not displacement (Magnus, 4 Aug). Keep this descriptive.
 lede: >-
   The AIEL Monitor tracks how artificial intelligence is changing work across countries, with Sweden
   in unusual depth. It organises the evidence around four questions: which jobs are exposed, what
   employers demand, which firms adopt AI, and how employment and job quality are changing. A fifth
-  module tracks the pace of the technology itself, the shock driving the other four. Every indicator
+  module tracks the pace of the technology itself, which the other four are read against. Every indicator
   is dated and sourced, and built on public data so it can be cited and refreshed automatically. The
   Monitor is editorially independent: data partners and funders do not control its methods, its
   results or the timing of publication.
@@ -36,10 +38,12 @@ overview:
   # −6.6pp. It also makes the claim harder to wave away: real wages flat in every Swedish
   # exposure group over eleven years is a starker null than "+34% nominal".
   - {k: "Outcomes", num: "−6.6<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.6% against 10.2%); in Sweden real wages are flat in all three exposure groups. Exposure has not shown up in pay", foot: "BLS OEWS · SCB · real terms · 2015–2025", anchor: "#wages", cls: "d"}
-  # role: driver (4 Aug 2026). Capability is not a fifth question, it is the shock that
-  # drives the other four, and rendering it as a fifth peer card is what produced the
-  # "four questions, five cards" contradiction Schroeder caught. stat_overview() pulls
-  # any driver entry out of the card grid and renders it as a full-width band beneath.
+  # role: driver (4 Aug 2026). Capability is not a fifth question about the labour market:
+  # it measures the technology rather than the market, which is why it sits apart. Rendering
+  # it as a fifth peer card is what produced the "four questions, five cards" contradiction
+  # Schroeder caught. stat_overview() pulls any entry marked driver out of the card grid and
+  # renders it as a full-width band beneath. The key name is historical; the label shown to
+  # readers is deliberately not causal.
   - {k: "Capability", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents complete at even odds; the length has been doubling every 4–6 months", foot: "METR · May 2026", anchor: "#capability", cls: "e", role: "driver"}
 
 

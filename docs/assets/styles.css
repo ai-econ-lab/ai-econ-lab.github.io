@@ -410,7 +410,7 @@ details.yearblock[open]>summary::after{content:"－"}
 
 /* Monitor overview-first landing (4 doors) + sticky spine sub-nav + "Sweden, in depth" panels */
 /* Four doors, not five. Capability left this grid on 4 Aug 2026 for the driver band
-   below: it is the shock acting on the four questions, not a fifth question. */
+   below: it measures the technology, not the labour market. */
 .ovgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
 @media(max-width:1020px){.ovgrid{grid-template-columns:1fr 1fr}}
 @media(max-width:460px){.ovgrid{grid-template-columns:1fr}}

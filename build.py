@@ -597,9 +597,46 @@ def events():
       <p class="psub" style="margin-top:12px">Contact: {h(ser['contact'])}</p></div>
   </div>
 </section></div></div>"""
-    return shell(f"Events · {SITE['brand']['name']}",
-                 "The AIEL conference on AI and white-collar work, and the monthly brown-bag seminar series (part of AISCAF).",
+    body += recent_news_block()
+    return shell(f"Events & news · {SITE['brand']['name']}",
+                 "The AIEL conference on AI and white-collar work, the monthly brown-bag seminar series "
+                 "(part of AISCAF), and recent lab news.",
                  "/events/", body)
+
+
+def recent_news_block(n=8):
+    """The newest news items, shown on the Events page.
+
+    Merging Events and News into one nav entry (Schroeder's review) pointed that entry at
+    /events/, which holds only the conference and the seminar series. News then had no route
+    from the navigation at all, which Magnus caught the same day. Showing the latest items
+    here makes the merged label honest, while the full archive keeps its own page and its
+    permalinks: a summary, not a second copy of the archive.
+    """
+    items = []
+    for yr in NEWS["years"]:                     # newest year first
+        for it in yr["items"]:
+            items.append((yr["year"], it))
+            if len(items) >= n:
+                break
+        if len(items) >= n:
+            break
+    rows = ""
+    for year, it in items:
+        links = "".join(f'<a class="lchip" href="{l["url"]}">{h(l["label"])}</a>'
+                        for l in it.get("links", []))
+        linkrow = f' <span class="nlinks">{links}</span>' if links else ""
+        rows += (f'<div class="nrow"><span class="yr tnum">{h(it["date"])} {h(year)}</span>'
+                 f'<span class="ntext">{it["text"]}{linkrow}</span></div>')
+    return f"""
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">News</p>
+  <h2 class="sec">Latest from the lab.</h2>
+  <p class="secintro">Publications, media, grants and people. The {len(items)} most recent items;
+    the full record since 2019 is in the <a href="/news/">news archive</a>.</p>
+  <div class="rows" style="margin-top:18px">{rows}</div>
+  <p style="margin-top:20px"><a class="mono" style="font-size:12.5px" href="/news/">All news since 2019 →</a></p>
+</section></div></div>"""
 
 def news():
     def nrow(it):
@@ -1611,7 +1648,7 @@ def stat_overview():
     """Overview-first landing: one door per spine module. Whole picture in ~20s; detail one click down.
 
     Entries marked role: driver are NOT questions about the labour market, they are the
-    shock acting on it, and they render as a full-width band under the grid rather than
+    technology the four are measured against, and they render as a full-width band rather than
     as another card. Before 4 Aug 2026 capability sat in the grid as a fifth peer, which
     put five cards under a sentence promising four questions."""
     cards = ""
@@ -1629,7 +1666,7 @@ def stat_overview():
             continue
         band += (f'<a class="driverband" href="{o["anchor"]}">'
                  f'<div class="dnum">{o["num"]}</div>'
-                 f'<div class="dbody"><div class="dk">{h(o["k"])} · the shock driving the four</div>'
+                 f'<div class="dbody"><div class="dk">{h(o["k"])} · the technology itself, tracked separately</div>'
                  f'<p>{h(o["lab"])}</p></div>'
                  f'<div class="dfoot"><span>{h(o["foot"])}</span><span class="go">Open →</span></div></a>')
     return f"""<div class="rule" id="overview"><div class="wrap"><section>
