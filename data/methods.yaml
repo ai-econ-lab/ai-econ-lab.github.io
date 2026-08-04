@@ -1,0 +1,126 @@
+# Public methods page for the AIEL Monitor's Swedish demand series.
+#
+# Created 4 Aug 2026. The Monitor's method paragraph used to end "available on request",
+# on a page whose pitch is that anyone can check the work. Schroeder caught it in her
+# pre-launch review. This page is the fix: the definition's composition, its version
+# history with fingerprints, and a change log, all public and citable.
+#
+# Numbers here are transcribed from the freeze records in
+# lab-infrastructure/ai-monitor/versions/*.json. Do not hand-edit them: if a number here
+# disagrees with a freeze file, the freeze file is right.
+
+headline: "How the Monitor measures AI demand"
+lede: >-
+  The Swedish demand series reads every advertisement on the public job board and asks one question of
+  each: does the text of the role ask the worker to know or do AI? This page documents how that question
+  is operationalised, which words the measure uses, how well it performs against hand-labelled
+  advertisements, and what has changed between versions. Every published figure names the version that
+  produced it, and every version carries a fingerprint, so two numbers built on different definitions
+  cannot be silently mixed.
+
+# The estimand, stated before anything else. Lifted from method.tex §1.
+estimand:
+  target: >-
+    Advertised AI-skill demand: does the advertisement, in the text of the role, ask the worker to know
+    or do AI?
+  not: >-
+    It is not AI adoption or use by the firm, which requires usage data, and it is not AI exposure, which
+    is a task-based measure of susceptibility. Every published number on the Monitor is the quantity above.
+  naming: >-
+    We name each series by what the employer does, never by what the job is. The floor is "job ads that
+    ask for AI skills", in the role's own tasks or requirements; the broader measure is "job ads that name
+    an AI skill", anywhere in the text. We avoid the phrase "AI jobs": an advertisement asking for an AI
+    skill is usually an ordinary job that now needs some AI, and conflating the two is the most common
+    source of inflated claims in this literature.
+
+# Floor and ceiling, and why the measure is a range rather than a point.
+bounds:
+  - {k: "Floor", what: "The advertisement names a specific AI term in the role's own tasks or requirements, and the role builds, integrates or uses AI. This is hard AI-skill demand, and it is what the headline Swedish series reports."}
+  - {k: "Ceiling", what: "Every advertisement whose role is genuinely AI-related, including those that signal AI only through the surrounding project or field, and those that are about AI rather than doing it. Comparable in kind with whole-text commercial measures."}
+  - {k: "The gap", what: "The AI penumbra: jobs AI touches without requiring the worker to build it. The distance between the bounds is a quantity of interest in its own right, not measurement error."}
+
+# Where the words come from. Every layer cites its source; counts are from the v1.1 freeze.
+lexicon:
+  intro: >-
+    The floor lexicon descends from published, citable sources, and every departure from them is versioned.
+    The core is the deduplicated union of three published keyword lists, which together hold 304 distinct
+    terms. We remove 20 terms that are demonstrably not AI skills (the office and marketing "automation"
+    family, machine code, and four big-data infrastructure tools) and demote four generic robotics terms to
+    a separately reported diagnostic band, leaving a citable core of 280 terms. The removals are a validity
+    call, not a definitional one, and each is enumerated in the note's Appendix A.
+  layers:
+    - {name: "Published core", n: "280 terms", source: "Deming and Noray (2020); Alekseeva et al. (2021); Baruffaldi et al. (2020). The same union was used in Engberg et al. (2025), where all three lists are reproduced in full. The general-purpose term \"Python\" is excluded there and here."}
+    - {name: "Swedish variant layer", n: "23 concepts, 308 effective core patterns", source: "Ours. No published list covers Swedish, and without this layer every translated concept is missed. Tolerates Swedish compounds (maskininlärningsmodeller and similar)."}
+    - {name: "Generative-AI addendum", n: "75 terms", source: "Ours, anchored to the Lightcast fastest-growing AI skills rather than to our own judgement. Covers post-2022 vocabulary: model families, agentic frameworks, MLOps, vector tooling."}
+    - {name: "Governance cluster", n: "17 terms", source: "Ours. The EU AI Act, AI ethics, safety and security. Counts towards the ceiling only, never the floor: such postings are about AI rather than asking the worker to build, integrate or use it."}
+  admission: >-
+    New terms enter only through a fixed sequence. An external anchor, a published taxonomy or benchmark,
+    must motivate the candidate; we compute exact impact counts on a full year of advertisements and require
+    near-zero hits in the labelled negative pool; the revised definition must clear a pre-registered gate on
+    the hand-labelled set, with recall up and precision not below the incumbent. Candidates that fail, or
+    that cannot yet be tested, are staged on a public watch list rather than merged.
+
+# Version history. Transcribed from versions/v1_freeze_2026-07-24.json and
+# versions/v1_1_freeze_2026-07-31.json. Fingerprints are the config checksums.
+versions:
+  - version: "v1.1"
+    frozen: "31 July 2026"
+    fingerprint: "e0efb586f30cfd76"
+    current: true
+    summary: >-
+      The first re-freeze. Folds three corrections into one release, because all three biased the published
+      series in the same direction and shipping them separately would have moved every number twice within
+      a fortnight, once down and once up.
+    changes:
+      - "The published counting unit becomes the distinct advertisement: headline, employer name and the first 400 characters of the body identical, deduplicated within year. Raw records, v1's unit, are retained in every output file as a robustness line. Repeat postings run from 13.1% of records in 2008 to 48.9% in 2023."
+      - "Four bare product names are date-gated to the date the product came into existence: copilot from 29 June 2021, claude from 14 March 2023, llama from 24 February 2023, gemini from 6 December 2023. Before those dates the tokens match an aviation co-pilot, a given name, an animal and a Swedish company. Multiword forms such as github copilot are unambiguous and ungated, and a gated term is dropped only where the advertisement rests on nothing else."
+      - "Four polysemous terms (prompting, finjustering, bare gpt, bare llm) establish an advertisement on their own only from a stated convention date, and only where no negative-context marker appears within 120 characters. Unlike the product names these words existed throughout and merely acquired an AI sense, so the date is an explicit convention rather than a fact. A strict variant, in which those terms never establish an advertisement alone, is computed in the same pass and published as a robustness bound."
+    validation: "90% precision, 34% recall against all AI positives on the 369-advertisement hand-labelled set. The matcher code is byte-identical to v1, so v1.1 is a post-filter over v1's own match sets; every term it touches lies in the generative-AI increment rather than the citable core, leaving core-only results comparable across the freeze."
+    note: "The gold set is entirely 2024 advertisements, so every product gate is open by construction and the anachronism fix cannot be tested on it. Its evidence is the pre-2009 concentration of the affected advertisements: 301 advertisements between 2006 and 2022 had been classified as AI on no other evidence, a fifth of the 2006 series and under one per cent from 2017."
+  - version: "v1"
+    frozen: "24 July 2026"
+    fingerprint: "2f073672be5d998c"
+    current: false
+    summary: >-
+      The first frozen definition. Held core plus the generative-AI addendum, the governance cluster, and
+      three matcher repairs.
+    changes:
+      - "Generative-AI addendum and governance cluster admitted through the admission sequence."
+      - "Matcher repairs: AI/ML folded into the core, multiword plurals, and the glued form generativ-ai."
+      - "Role scoping introduced, restricting the floor to the part of the advertisement describing the role's own tasks and requirements."
+      - "Staged rather than merged: the AI-doing phrase family, the user-tier competence phrases, fleragentssystem, semantic search, edge ai. These remain on the watch list pending validation on a grown gold set."
+    validation: "88% precision and 34% floor recall against the 370-advertisement hand-labelled set, against 83% and 4% for the pre-freeze baseline on the same set. The gate was that recall must rise and precision must not fall: met."
+    note: "Predecessor: held snapshot 23f23bbc32baa0fd."
+
+# What is public, what is not yet, stated plainly. This section is the point of the page:
+# an honest inventory beats a promise that everything is available.
+status:
+  published:
+    - "This page: the estimand, the definition's composition by layer with its published sources, the full version history with fingerprints, and the validation figures for each freeze."
+    - "Every figure on the Monitor as CSV and SVG, from the footer of the figure itself."
+    - "The underlying advertisements: Platsbanken / JobTech, CC0, so the series can be rebuilt from source by anyone."
+  pending:
+    - "The full technical note (13 pages: estimand, data, lexicon provenance, labelling conventions, validation, benchmarks, and the drift policy). Complete in draft and in final review."
+    - "The term list itself, as a citable download with its version history."
+    - "The labelling conventions with worked examples, and the era-specific correction factors that turn the raw bare-AI band into the published ceiling."
+    - "Benchmark levels against Lightcast and the Stanford AI Index. The comparability logic is settled and stated below; the levels themselves are not yet verified against Lightcast's own published material, and we do not publish unverified numbers."
+
+benchmark_logic: >-
+  Lightcast, which also powers the Stanford AI Index, extracts hand-selected AI skills from the whole
+  posting text with no role scoping, and counts generic "artificial intelligence" as a skill in itself. It
+  therefore corresponds to our broad, whole-text ceiling and not to our role-scoped floor: our floor sits
+  deliberately below Lightcast, and comparability is established at the ceiling. Because the Lightcast
+  series is rising fast, any comparison must be period-matched, and because its AI-occupation band captures
+  only a small fraction of skill-level AI demand, our comparisons target its stacked skill total rather than
+  the occupation band.
+
+cite: >-
+  AI-Econ Lab (2026). AIEL Monitor: measuring advertised AI-skill demand, definition v1.1 (fingerprint
+  e0efb586f30cfd76, frozen 31 July 2026). Örebro University and Ratio. Accessed [date].
+
+references:
+  - "Acemoglu, D., Autor, D., Hazell, J. and Restrepo, P. (2022). Artificial Intelligence and Jobs: Evidence from Online Vacancies. Journal of Labor Economics, 40(S1), S293–S340."
+  - "Alekseeva, L., Azar, J., Giné, M., Samila, S. and Taska, B. (2021). The demand for AI skills in the labor market. Labour Economics, 71, 102002."
+  - "Baruffaldi, S., van Beuzekom, B., Dernis, H., Harhoff, D., Rao, N., Rosenfeld, D. and Squicciarini, M. (2020). Identifying and measuring developments in artificial intelligence: Making the impossible possible. OECD Science, Technology and Industry Working Papers 2020/05."
+  - "Deming, D. and Noray, K. (2020). Earnings Dynamics, Changing Job Skills, and STEM Careers. Quarterly Journal of Economics, 135(4), 1965–2005."
+  - "Engberg, E., Hellsten, M., Javed, F., Lodefalk, M., Sabolová, R., Schroeder, S. and Tang, A. (2025). Artificial Intelligence, Hiring and Employment: Job Postings Evidence from Sweden. Applied Economics Letters, early online."

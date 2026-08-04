@@ -64,6 +64,7 @@ footer:
     - title: "Explore"
       links:
         - {label: "The AIEL Monitor", href: "/monitor/"}
+        - {label: "Monitor methods", href: "/monitor/methods/"}
         - {label: "DAIOE measure", href: "/daioe/"}
         - {label: "Research", href: "/research/"}
         - {label: "People", href: "/people/"}

@@ -100,6 +100,7 @@ DEMAND   = load("cross_country_demand.yaml")
 WORKCOND = load("working_conditions.yaml")
 AKAVIA   = load("akavia.yaml")
 RELATED  = load("related_research.yaml")
+METHODS  = load("methods.yaml")
 CAPABILITY = (load("capability.yaml") if (DATA / "capability.yaml").exists()
               else MONITOR["capability"])
 ELS      = load("entry_level_squeeze.yaml")
@@ -251,7 +252,7 @@ def home():
       part of that work becomes public: open indicators on AI and work across countries, with Sweden
       in uncommon depth, updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
-      <a class="btn ghost" href="/monitor/#method">How we measure it</a></div>
+      <a class="btn ghost" href="/monitor/methods/">How we measure it</a></div>
     <div class="affil">{affils}</div>
   </div>
   {hero_exposure_panel("/monitor/#method", "/monitor/#exposure")}
@@ -1677,7 +1678,7 @@ def monitor():
     <p class="lede">{h(m['lede'])}</p>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
       <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a>
-      <a class="btn ghost" href="#method">How we measure it</a></div></div>
+      <a class="btn ghost" href="/monitor/methods/">How we measure it</a></div></div>
   {hero_exposure_panel("#method", "#exposure")}
 </div></div></div>
 
@@ -1707,10 +1708,10 @@ def monitor():
       tasks or requirements. The term list behind the measure is versioned and kept current against new AI
       vocabulary, and every chart states which version produced it. Every figure here can be downloaded as data,
       and the advertisements behind the Swedish series are public and openly licensed, so the series can be
-      rebuilt from source. The full technical documentation, from the term list to the validation against
-      hand-labelled ads, is being prepared for publication alongside the first monthly brief; until it appears
-      we send it to anyone who asks. Exposure, adoption and cross-country demand come from DAIOE, Eurostat and
-      the Stanford AI Index.</p>
+      rebuilt from source. The <a href="/monitor/methods/">methods page</a> documents the estimand, the
+      lexicon layer by layer with its published sources, the full version history with fingerprints, and the
+      validation figures for each freeze; it also states plainly what is not yet published. Exposure, adoption
+      and cross-country demand come from DAIOE, Eurostat and the Stanford AI Index.</p>
     <p>The exception is the worker-side layer, which comes from
       <a href="https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/">Akavia</a>, a Swedish
       professional union that surveys its members through a web panel and shares the de-identified results with
@@ -1971,7 +1972,90 @@ def brief(lang="en"):
                  "/monitor/brief/sv/" if sv else "/monitor/brief/", body)
 
 # ── write ────────────────────────────────────────────────────────────────────
+def methods():
+    """Public documentation of the Swedish demand definition. Added 4 Aug 2026.
+
+    Exists because the Monitor's method paragraph used to end "available on request" on a
+    page selling checkability. The honest inventory in the status block is the point of the
+    page: what is published, and what is not yet, each stated plainly. Do not quietly drop
+    the pending list once items land, move them to the published list."""
+    md = METHODS
+    bounds = "".join(f'<div class="prod"><h3>{h(b["k"])}</h3><p>{h(b["what"])}</p></div>'
+                     for b in md["bounds"])
+    layers = "".join(f'<tr><td><b>{h(l["name"])}</b></td><td class="tnum">{h(l["n"])}</td>'
+                     f'<td>{h(l["source"])}</td></tr>' for l in md["lexicon"]["layers"])
+    vers = ""
+    for v in md["versions"]:
+        chg = "".join(f"<li>{h(c)}</li>" for c in v["changes"])
+        chip = '<span class="vint" style="margin:0">current</span>' if v.get("current") else ""
+        vers += f"""<div class="vblock">
+      <div class="vhead"><span class="vname">{h(v["version"])}</span>
+        <span class="vmeta">frozen {h(v["frozen"])} · fingerprint <code>{h(v["fingerprint"])}</code></span>{chip}</div>
+      <p class="secintro" style="margin:8px 0 0;max-width:80ch">{h(v["summary"])}</p>
+      <ul class="reslist" style="margin-top:10px">{chg}</ul>
+      <p class="psub" style="margin-top:10px"><b>Validation.</b> {h(v["validation"])}</p>
+      <p class="psub" style="margin-top:6px">{h(v["note"])}</p></div>"""
+    pub = "".join(f"<li>{h(x)}</li>" for x in md["status"]["published"])
+    pend = "".join(f"<li>{h(x)}</li>" for x in md["status"]["pending"])
+    refs = "".join(f"<li>{h(r)}</li>" for r in md["references"])
+    body = f"""<div class="wrap"><div class="pagehead">
+  <p class="kicker">The AIEL Monitor · methods</p><h2 class="sec">{h(md["headline"])}</h2>
+  <p class="secintro">{h(md["lede"])}</p></div></div>
+
+<div class="wrap"><section style="padding-top:4px">
+  <div class="depth"><p class="dk">What we are measuring</p>
+    <p class="secintro" style="margin:0"><b>{h(md["estimand"]["target"])}</b> {h(md["estimand"]["not"])}</p>
+    <p class="secintro" style="margin:10px 0 0">{h(md["estimand"]["naming"])}</p></div>
+</section></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">A range, not a point</p>
+  <h2 class="sec">Floor, ceiling, and the gap between them.</h2>
+  <div class="two" style="grid-template-columns:1fr 1fr 1fr">{bounds}</div>
+</section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">The lexicon</p>
+  <h2 class="sec">Where the words come from.</h2>
+  <p class="secintro">{h(md["lexicon"]["intro"])}</p>
+  <div class="tblwrap" style="margin-top:18px"><table class="dtable">
+    <thead><tr><th>Layer</th><th>Size</th><th>Source</th></tr></thead>
+    <tbody>{layers}</tbody></table></div>
+  <p class="secintro" style="margin-top:18px"><b>Admission discipline.</b> {h(md["lexicon"]["admission"])}</p>
+</section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">Version history</p>
+  <h2 class="sec">Every published figure names the version that produced it.</h2>
+  {vers}
+</section></div></div>
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">Public checkability</p>
+  <h2 class="sec">What is published, and what is not yet.</h2>
+  <div class="two">
+    <div><div class="grouphdr">Published</div>
+      <ul class="reslist">{pub}</ul></div>
+    <div><div class="grouphdr">Not yet published</div>
+      <ul class="reslist">{pend}</ul></div>
+  </div>
+  <p class="secintro" style="margin-top:22px"><b>On external benchmarks.</b> {h(md["benchmark_logic"])}</p>
+</section></div></div>
+
+<div class="wrap"><section>
+  <div class="grouphdr">How to cite</div>
+  <p class="citebox">{h(md["cite"])}</p>
+  <div class="grouphdr" style="margin-top:24px">References</div>
+  <ul class="reslist">{refs}</ul>
+  <p style="margin-top:22px"><a class="mono" style="font-size:12.5px" href="/monitor/">← Back to the Monitor</a></p>
+</section></div>"""
+    return shell(f"Methods · The AIEL Monitor · {SITE['brand']['name']}",
+                 "How the AIEL Monitor measures advertised AI-skill demand: estimand, lexicon sources, "
+                 "version history with fingerprints, and validation.",
+                 "/monitor/methods/", body)
+
 PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.html": daioe(),
+         "monitor/methods/index.html": methods(),
          "monitor/brief/index.html": brief("en"), "monitor/brief/sv/index.html": brief("sv"),
          "research/index.html": research(), "people/index.html": people(),
          "events/index.html": events(), "news/index.html": news(), "about/index.html": about()}
@@ -2200,7 +2284,7 @@ def build():
         (OUT / "CNAME").write_text(SITE["brand"]["domain"] + "\n", encoding="utf-8")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
-    urls = ["/", "/monitor/", "/daioe/", "/research/", "/people/", "/events/", "/news/", "/about/"]
+    urls = ["/", "/monitor/", "/monitor/methods/", "/daioe/", "/research/", "/people/", "/events/", "/news/", "/about/"]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:

@@ -530,6 +530,27 @@ main [id]{scroll-margin-top:196px}
 .minitab tbody tr:last-child td{border-bottom:none;font-weight:600}
 ul.tight{margin:8px 0 0;padding-left:1.1rem}
 ul.tight li{margin:2px 0}
+/* Documentation table (methods page). Left-aligned throughout, unlike .minitab: the
+   right-hand column carries prose, not figures, and a wide table must scroll inside its
+   own box rather than push the page sideways on a phone. */
+.tblwrap{overflow-x:auto}
+.dtable{width:100%;min-width:560px;border-collapse:collapse;font-size:13.5px;color:var(--ink-2)}
+.dtable th,.dtable td{text-align:left;vertical-align:top;padding:10px 14px 10px 0;
+  border-bottom:1px solid var(--hair);line-height:1.55}
+.dtable thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);border-bottom-width:2px;white-space:nowrap}
+.dtable td.tnum{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--ink-2)}
+.dtable tbody tr:last-child td{border-bottom:none}
+
+/* Version-history entry. Each freeze is a self-contained record: name, date, fingerprint,
+   what changed, and how it validated. */
+.vblock{padding:20px 0;border-bottom:1px solid var(--hair)}
+.vblock:last-child{border-bottom:none}
+.vhead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.vhead .vname{font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.01em}
+.vhead .vmeta{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.vhead .vmeta code{font-size:11px;background:var(--raise);padding:1px 5px;border-radius:4px}
+
 /* Related lab research, one block per monitor module. Recessive: it is
    provenance, not a call to action. */
 .related{margin-top:22px;padding-top:14px;border-top:1px solid var(--hair)}
