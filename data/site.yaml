@@ -76,8 +76,16 @@ support:
     # DELIBERATELY ABSENT on that test: Handelsbanken P26-0234 (1 MSEK, granted, PI time),
     # which funds the MYH/YH line (Magnus, 4 Aug). The Monitor and DAIOE do not draw on it,
     # so it belongs in that project's own acknowledgements, not here. Do not add it.
+    # Co-authors' own funding is NOT enumerated here, on purpose. Much of the multi-country
+    # work is funded per author at the author's own institution: on the Danish adoption
+    # paper alone, PIREAU and the ROCKWOOL Foundation Berlin support Pulito and a Czech
+    # EU-cofunded project supports Pytlikova. Listing those here would go stale with every
+    # new co-author, would duplicate and eventually contradict the papers' own
+    # acknowledgements, which are the published and authoritative record, and would risk
+    # implying their funders paid the lab. One sentence pointing at the papers is both
+    # honester and more complete than any list this page could keep current.
     - kind: "Research funding"
-      note: "Grants supporting the research the Monitor and DAIOE are built from."
+      note: "Grants supporting the research the Monitor and DAIOE are built from. Collaborators at other institutions are supported by their own funders, named per author in each paper's acknowledgements."
       items:
         - "Jan Wallander and Tom Hedelius Foundation (P19-0234), a Handelsbanken research foundation."
         - "Torsten Söderberg Foundation (E46/21, ET3/23)."
