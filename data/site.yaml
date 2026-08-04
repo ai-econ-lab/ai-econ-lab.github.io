@@ -70,10 +70,14 @@ support:
         - "Jan Wallander and Tom Hedelius Foundation (P19-0234), one of the Handelsbanken research foundations."
         - "Torsten Söderberg Foundation (E46/21 and ET3/23, to 2026). ET3/23 funded the work in which the Swedish job-advertisement corpus and the DAIOE exposure measure were developed."
         - "WASP-HS (grant 805), through the Örebro University node of the AISCAF research cluster. Supports research time; the lab contributes to AISCAF rather than being part of it."
+    # Deliberately not year-by-year. Handelsbanken's foundations have funded several
+    # editions but not all, so naming one year both understates the relationship and
+    # needs editing every August. "Several editions, most recently" is accurate under
+    # either reading and does not go stale.
     - kind: "Conference and events"
       note: "The annual AIEL conference on AI and white-collar work is funded separately from the research."
       items:
-        - "Jan Wallander and Tom Hedelius Foundation and Tore Browaldh Foundation (Fh25-0082), the Handelsbanken research foundations. Funded the 2026 AIEL conference."
+        - "Jan Wallander and Tom Hedelius Foundation and Tore Browaldh Foundation, the Handelsbanken research foundations, have funded several editions of the conference, most recently 2026 (Fh25-0082)."
   statement: >-
     The AIEL Monitor has no dedicated funder. It is built as part of the lab's research
     infrastructure, on public data. No funder or data partner controls its methods, its results
