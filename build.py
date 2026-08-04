@@ -1158,7 +1158,8 @@ def jobquality_block():
 def governance_svg(g):
     """Counts, not shares: the band is small enough that a share hides the shape."""
     s = g["series"]; n = len(s); ymax = g["meta"]["ymax"]
-    W, H = 640, 260
+    # H allows two label rows below the plot: the year, and the part-year note under it.
+    W, H = 640, 276
     x0, x1, top, bot = 52, 560, 22, 214
     bw = (x1 - x0) / n * 0.62
     Y = lambda v: bot - v / ymax * (bot - top)
@@ -1176,12 +1177,15 @@ def governance_svg(g):
         p.append(f'<rect x="{cx-bw/2:.1f}" y="{y:.1f}" width="{bw:.1f}" height="{bot-y:.1f}" '
                  f'fill="var(--c1)"{' opacity="0.55"' if partial else ''}/>')
         p.append(f'<text class="tick" x="{cx:.1f}" y="{y-5:.1f}" text-anchor="middle">{r["n"]}</text>')
-        p.append(f'<text class="tick" x="{cx:.1f}" y="{H-12}" text-anchor="middle">'
+        p.append(f'<text class="tick" x="{cx:.1f}" y="{H-28}" text-anchor="middle">'
                  f'{r["year"]}{"*" if partial else ""}</text>')
         if partial:
             # A half-year bar drawn at full height, taller than the full year before it, needs
-            # to say so inside the figure: the asterisk had no key anywhere on the page.
-            p.append(f'<text class="tick" x="{cx:.1f}" y="{top-6:.1f}" text-anchor="middle" '
+            # to say so inside the figure: the asterisk had no key anywhere on the page. It sits
+            # UNDER THE YEAR it annotates. It used to sit at the top of the plot, where it
+            # collided with the value label of any bar tall enough to reach it -- which the 2026
+            # bar was, exactly (Magnus, 4 Aug).
+            p.append(f'<text class="tick" x="{cx:.1f}" y="{H-13}" text-anchor="middle" '
                      f'style="font-size:8.5px">part-year (H1)</text>')
     p.append("</svg>")
     return "".join(p)
