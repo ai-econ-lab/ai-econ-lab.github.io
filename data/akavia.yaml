@@ -2,20 +2,27 @@ meta:
   source: Akavia member web panel
   url: https://www.akavia.se/politik-paverkan/sakomraden/ai-digitalisering/
   credit: 'Source: Akavia member panel. Own processing.'
-  caveat: Akavia surveys its members through a web panel covering business professionals and economists,
-    lawyers, IT professionals, social scientists, HR specialists and communication professionals. Between
-    about 3,000 and 3,800 members answer each round, with response rates from a quarter to just under
-    a half. Figures describe Akavia's members in these professions, not the Swedish labour market as a
-    whole, and should be read with care because the sample is not an unrestricted random sample of the
-    population. The question itself also changed twice over the period, so the trend is not a clean time
-    series. The 2023 rounds asked how often members used AI tools (AI-verktyg), 2024 asked how often they
-    actively used any form of AI, and 2025 dropped the word actively; 2026 returned to the 2024 wording.
-    The response scale is identical throughout, so only May 2023 against September 2023, and May 2024
-    against May 2026, compare like with like. The headline counts regular use, meaning daily or weekly,
-    which is the threshold Akavia use in their own published reporting, and it counts everyone in the
-    base including those who answer that they do not know. Counting use at any frequency instead gives
-    a higher series, shown alongside it. Part of any change over the period reflects the wording rather
-    than behaviour, and the size of that part is not knowable from these data.
+  # Split 4 Aug 2026. This ran to 225 words and was printed verbatim in TWO places on the
+  # Monitor. note() in build.py exists for exactly this split: `caveat` is what changes how
+  # you read the number and must never collapse; `caveat_method` is how the number was made
+  # and collapses behind a summary. Nothing was deleted.
+  caveat: >-
+    Figures describe Akavia's members in six professions, not the Swedish labour market as a whole,
+    and the sample is not an unrestricted random sample of the population. The question wording also
+    changed twice over the period, so the trend is not a clean time series: part of any change
+    reflects the wording rather than behaviour, and the size of that part is not knowable from these
+    data.
+  caveat_method: >-
+    Akavia surveys its members through a web panel covering business professionals and economists,
+    lawyers, IT professionals, social scientists, HR specialists and communication professionals.
+    Between about 3,000 and 3,800 members answer each round, with response rates from a quarter to
+    just under a half. On wording: the 2023 rounds asked how often members used AI tools (AI-
+    verktyg), 2024 asked how often they actively used any form of AI, and 2025 dropped the word
+    actively; 2026 returned to the 2024 wording. The response scale is identical throughout, so only
+    May 2023 against September 2023, and May 2024 against May 2026, compare like with like. The
+    headline counts regular use, meaning daily or weekly, which is the threshold Akavia use in their
+    own published reporting, and it counts everyone in the base including those who answer that they
+    do not know. Counting use at any frequency instead gives a higher series, shown alongside it.
   year: 2026
   first_year: 2023
   generated: '2026-07-28'

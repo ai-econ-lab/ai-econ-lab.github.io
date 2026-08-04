@@ -684,6 +684,23 @@ def note(visible, method, label="How this is counted"):
             f'<details class="note"><summary>{h(label)}</summary><p>{method}</p></details>\n')
 
 
+def akavia_provenance(m):
+    """Provenance plus the split caveat, rendered identically wherever Akavia data appear.
+
+    The full caveat ran to 225 words and was printed verbatim in two places, so a reader met a
+    wall twice and the second time learned nothing. What changes the reading stays visible; the
+    panel mechanics collapse behind a summary, exactly as note() prescribes. One function so the
+    two sites cannot drift apart.
+    """
+    vis = (f'Data shared with the lab by <a href="{m["url"]}">Akavia</a>. {h(m["caveat"])}')
+    meth = h(m.get("caveat_method", ""))
+    if not meth:
+        return f'<p class="prov" style="margin-top:10px">{vis}</p>'
+    return (f'<p class="prov" style="margin-top:10px">{vis}</p>\n'
+            f'<details class="note"><summary>About the Akavia panel</summary>'
+            f'<p>{meth}</p></details>')
+
+
 def figfooter(csv_name, source, svg_name=None, method_href=None, next_up=None):
     """Item 10: download + provenance under a figure. Source states DAIOE variant + year.
     Offers the data (CSV) plus, when the figure has a static SVG, the chart as SVG and PNG
@@ -1434,8 +1451,7 @@ def akavia_workers_block():
       against {max(r['n'] for r in prof)} for the largest group.</p>
     {figfooter("akavia_ai_use.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. Bars {h(cp['to'])}, change vs {h(cp['from'])}. {m['population']}", svg_name="akavia_ai_use.svg", next_up="with the next Akavia panel wave")}
     {us_rps_line()}
-    <p class="prov" style="margin-top:10px">Data shared with the lab by
-      <a href="{m['url']}">Akavia</a>. {h(m['caveat'])}</p>
+    {akavia_provenance(m)}
   </div>"""
 
 
@@ -1527,8 +1543,7 @@ def akavia_outcomes_block():
     work AI tool, the employer pays for {sh['employer_pays']}% and {sh['self_pays']}% pay themselves. The
     denominator matters here and is easy to overstate.</p>
   {figfooter("akavia_governance.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. {m['population']}", next_up="with the next Akavia panel wave")}
-  <p class="prov" style="margin-top:10px">Data shared with the lab by
-    <a href="{m['url']}">Akavia</a>. {h(m['caveat'])}</p>"""
+  {akavia_provenance(m)}"""
 
 def outcomes_section(explorers):
     """Module 4 — Outcomes. Occupations Explorer + working conditions + entry-level squeeze (all live)."""
