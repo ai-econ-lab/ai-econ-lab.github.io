@@ -70,12 +70,17 @@ support:
     # If a grant appears in a published acknowledgement and not here, here is wrong.
     #
     # THE TEST is the one in this group's note: did the grant fund the research THIS PAGE
-    # describes? Not whether it is project-specific. Every grant listed above is
-    # project-specific; that is what research grants are.
+    # describes? Not whether it is project-specific. Every grant listed is project-specific;
+    # that is what research grants are.
     #
-    # DELIBERATELY ABSENT on that test: Handelsbanken P26-0234 (1 MSEK, granted, PI time),
-    # which funds the MYH/YH line (Magnus, 4 Aug). The Monitor and DAIOE do not draw on it,
-    # so it belongs in that project's own acknowledgements, not here. Do not add it.
+    # P26-0234 was briefly excluded here on the grounds that it funds the MYH/YH line. That
+    # was wrong: the YH work sits inside the same project and runs on the same register
+    # database as the DAIOE work (Magnus, 4 Aug), so it passes the test and is listed.
+    #
+    # NOT LISTED, and not an oversight: applications still under decision. The VR open call
+    # for the YH-RCT was submitted 10 Feb 2026 with a decision due around Nov 2026. A
+    # disclosure lists money received; a pending application shown as funding reads as
+    # support that does not exist. Add it if and when it is granted.
     # Co-authors' own funding is NOT enumerated here, on purpose. Much of the multi-country
     # work is funded per author at the author's own institution: on the Danish adoption
     # paper alone, PIREAU and the ROCKWOOL Foundation Berlin support Pulito and a Czech
@@ -87,7 +92,7 @@ support:
     - kind: "Research funding"
       note: "Grants supporting the research the Monitor and DAIOE are built from. Collaborators at other institutions are supported by their own funders, named per author in each paper's acknowledgements."
       items:
-        - "Jan Wallander and Tom Hedelius Foundation (P19-0234), a Handelsbanken research foundation."
+        - "Jan Wallander and Tom Hedelius Foundation (P19-0234 and P26-0234), a Handelsbanken research foundation."
         - "Torsten Söderberg Foundation (E46/21, ET3/23)."
         - "WASP-HS (grant 805), through the Örebro University node of the AISCAF research cluster. The lab contributes to AISCAF rather than being part of it."
     # Deliberately not year-by-year. Handelsbanken's foundations have funded several
