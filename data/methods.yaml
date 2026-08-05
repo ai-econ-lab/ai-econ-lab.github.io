@@ -63,10 +63,25 @@ lexicon:
 # Version history. Transcribed from versions/v1_freeze_2026-07-24.json and
 # versions/v1_1_freeze_2026-07-31.json. Fingerprints are the config checksums.
 versions:
+  - version: "v1.2"
+    frozen: "4 August 2026"
+    fingerprint: "57f87291a05450a0"
+    current: true
+    summary: >-
+      The second re-freeze, correcting a filter fault that suppressed the floor, and widening the
+      fingerprint to cover the matcher source as well as the configuration. The full twenty-year series
+      was reprocessed on it on 5 August 2026.
+    changes:
+      - "The teaching-about-AI filter tested a hard-coded set of four patterns and, when an advertisement had matched an AI term outside that set, fell through to discarding it. A doctoral post requiring PyTorch, TensorFlow and computer vision was thrown out because its benefits section contained the word kurser. The fault suppressed the floor, so every correction to it adds."
+      - "Exactly one measure moved. Summed over all 22 periods the change is zero, not merely small, for the advertisement count, the whole-text measure and its components, the raw bare band, the adjacent band and the entry-level series: the fault sat only on the role-scoped path. The floor rose in every period, from 16,650 to 17,243 advertisements, +3.6%. The identical denominator in each year confirms the fix reclassifies advertisements and never drops one."
+      - "Because the proportional gain is larger in the sparse early years, the floor's own growth from 2006 to 2025 falls slightly, from 53.9-fold to 52.6-fold on counts. The headline whole-text figure, a 21-fold rise, is untouched."
+      - "The fingerprint now covers the configuration minus the hard-negative evaluation list, plus the matcher source. It previously hashed the configuration alone, which was wrong both ways: editing a marker in the matcher changed every published number while the fingerprint stayed identical, and editing the evaluation list forced re-freezes that changed no number."
+    validation: "88.2% precision [73.4, 95.3] and 36.1% recall [26.6, 46.9] against all AI positives on the 369-advertisement hand-labelled set, with Wilson 95% intervals. No difference between v1, v1.1 and v1.2 survives its interval, so we claim only that successive freezes have not degraded the measure, never that they improved it."
+    note: "A known recall defect is carried openly rather than patched: plural forms are missed on some entries (llm and chatbot match in the singular, not the plural). Its direction is the same as the fault above, inflating the bare band and depressing the floor. Fixing it would change the fingerprint and invalidate this reprocess, so it is scheduled for v1.3 with a corpus count bounding the recall it costs."
   - version: "v1.1"
     frozen: "31 July 2026"
     fingerprint: "e0efb586f30cfd76"
-    current: true
+    current: false
     summary: >-
       The first re-freeze. Folds three corrections into one release, because all three biased the published
       series in the same direction and shipping them separately would have moved every number twice within
@@ -99,10 +114,12 @@ status:
     - "This page: the estimand, the definition's composition by layer with its published sources, the full version history with fingerprints, and the validation figures for each freeze."
     - "Every figure on the Monitor as CSV and SVG, from the footer of the figure itself."
     - "The underlying advertisements: Platsbanken / JobTech, CC0, so the series can be rebuilt from source by anyone."
+    - "The 2025 upper bound, corrected by hand: 60 advertisements drawn from the bare-AI band and read, of which 12 are genuine AI roles, 20% (95% interval 12–32%). That puts the corrected 2025 ceiling at 1.34% (1.23–1.51) against an uncorrected 2.45%, so the published 2025 range is 0.53% to 1.34%."
+    - "The v1.1 to v1.2 revision log, stating direction and magnitude for every number that moved, and recording that only the floor moved."
   pending:
-    - "The full technical note (13 pages: estimand, data, lexicon provenance, labelling conventions, validation, benchmarks, and the drift policy). Complete in draft and in final review."
+    - "The full technical note (17 pages: estimand, data, lexicon provenance, labelling conventions, validation, benchmarks, the three threats to the trend, and the drift policy). Rewritten 5 August on the corrected figures; two pending diagnostics remain inside it, both named on its own pages."
     - "The term list itself, as a citable download with its version history."
-    - "The labelling conventions with worked examples, and the era-specific correction factors that turn the raw bare-AI band into the published ceiling."
+    - "The labelling conventions with worked examples. The era-specific correction that turns the raw bare-AI band into the published ceiling is measured for 2025 and provisional, from a classifier, for earlier years; the 2016, 2019 and 2022 samples are drawn but not yet labelled."
     - "Benchmark levels against Lightcast and the Stanford AI Index. The comparability logic is settled and stated below; the levels themselves are not yet verified against Lightcast's own published material, and we do not publish unverified numbers."
 
 # Funding is disclosed in one place, on the About page, so the list cannot drift between
@@ -119,8 +136,8 @@ benchmark_logic: >-
   the occupation band.
 
 cite: >-
-  AI-Econ Lab (2026). AIEL Monitor: measuring advertised AI-skill demand, definition v1.1 (fingerprint
-  e0efb586f30cfd76, frozen 31 July 2026). Örebro University and Ratio. Accessed [date].
+  AI-Econ Lab (2026). AIEL Monitor: measuring advertised AI-skill demand, definition v1.2 (fingerprint
+  57f87291a05450a0, frozen 4 August 2026). Örebro University and Ratio. Accessed [date].
 
 references:
   - "Acemoglu, D., Autor, D., Hazell, J. and Restrepo, P. (2022). Artificial Intelligence and Jobs: Evidence from Online Vacancies. Journal of Labor Economics, 40(S1), S293–S340."

@@ -5,7 +5,7 @@ Was hand-maintained, which is why it still carried the v1 national figure (0.44%
 v1.1 freeze moved it. Generated now, from the same series the rest of the Monitor uses, so
 it cannot drift again.
 
-Source: ai-monitor/data/bulk_v11/derived/series_ssyk4.csv, DISTINCT ADVERTISEMENTS.
+Source: ai-monitor/data/bulk_v12/derived/series_ssyk4.csv, DISTINCT ADVERTISEMENTS.
 Measure: the strict floor, i.e. the share of an occupation's advertisements that ask for AI
 skills in the role itself. An occupation reads zero when no advertisement asks for AI in the
 role, not when the word AI never appears.
@@ -22,9 +22,9 @@ from pathlib import Path
 import yaml
 
 SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
-       / "data/bulk_v11/derived/series_ssyk4.csv")
+       / "data/bulk_v12/derived/series_ssyk4.csv")
 ANNUAL = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
-          / "data/bulk_v11/derived/series_annual.csv")
+          / "data/bulk_v12/derived/series_annual.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "occupations.yaml"
 PREV = OUT
 YEAR = "2025"
@@ -80,7 +80,7 @@ def main():
 
     doc = {
         "meta": {"year": int(YEAR), "national": round(national, 2),
-                 "source": "JobTech / Platsbanken job ads (CC0), frozen v1.1 term list, "
+                 "source": "JobTech / Platsbanken job ads (CC0), frozen v1.2 term list, "
                            "distinct advertisements",
                  "measure": prev.get("meta", {}).get("measure",
                             "share of the occupation's advertisements that ask for AI skills "
