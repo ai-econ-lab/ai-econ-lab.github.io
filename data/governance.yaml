@@ -6,7 +6,7 @@ meta:
   last_pct: 3.54
   h1_2026_n: 185
   h1_2026_pct: 6.31
-  ymax: 200   # headroom: must exceed the series max (185 in 2026H1) or the bar hits the ceiling
+  ymax: 185
   source: JobTech historical job ads (Arbetsförmedlingen), CC0
 series:
   - {year: 2018, n: 0, pct_of_ai: 0.0}
