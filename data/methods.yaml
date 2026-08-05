@@ -25,7 +25,10 @@ estimand:
     or do AI?
   not: >-
     It is not AI adoption or use by the firm, which requires usage data, and it is not AI exposure, which
-    is a task-based measure of susceptibility. Every published number on the Monitor is the quantity above.
+    is a task-based measure of susceptibility. There is one estimand and it is not directly
+    observable: every published series is a bound on it, not the quantity itself. The floor understates
+    it because its lexicon is finite; the broader measure overstates it because it reads text that is not
+    about the role.
   naming: >-
     We name each series by what the employer does, never by what the job is. The floor is "job ads that
     ask for AI skills", in the role's own tasks or requirements; the broader measure is "job ads that name
@@ -36,7 +39,7 @@ estimand:
 # Floor and ceiling, and why the measure is a range rather than a point.
 bounds:
   - {k: "Floor", what: "The advertisement names a specific AI term in the role's own tasks or requirements, and the role builds, integrates or uses AI. This is hard AI-skill demand, and it is what the headline Swedish series reports."}
-  - {k: "Ceiling", what: "Every advertisement whose role is genuinely AI-related, including those that signal AI only through the surrounding project or field, and those that are about AI rather than doing it. Comparable in kind with whole-text commercial measures."}
+  - {k: "Ceiling", what: "Every advertisement whose role is genuinely AI-related, including those that signal AI only through the surrounding project or field, and those that are about AI rather than doing it. The Lightcast-comparable object is the broader whole-text measure, not this one: the ceiling adds a hand-estimated share of the bare-AI band on top. Note also that the correction reaches only that band and not the whole-text base beneath it, which is 79% of the published figure."}
   - {k: "The gap", what: "The AI penumbra: jobs AI touches without requiring the worker to build it. The distance between the bounds is a quantity of interest in its own right, not measurement error."}
 
 # Where the words come from. Every layer cites its source; counts are from the v1.1 freeze.
@@ -46,7 +49,9 @@ lexicon:
     The core is the deduplicated union of three published keyword lists, which together hold 304 distinct
     terms. We remove 20 terms that are demonstrably not AI skills (the office and marketing "automation"
     family, machine code, and four big-data infrastructure tools) and demote four generic robotics terms to
-    a separately reported diagnostic band, leaving a citable core of 280 terms. The removals are a validity
+    a separately reported diagnostic band, leaving a citable core of 280 terms. That band is large in the
+    early years (78% of the broader measure in 2006, 195% in 2007, 16% by 2025) and the demotion therefore
+    steepens the measured trend; the with-and-without series is published alongside the main one. The removals are a validity
     call, not a definitional one, and each is enumerated in the note's Appendix A.
   layers:
     - {name: "Published core", n: "280 terms", source: "Deming and Noray (2020); Alekseeva et al. (2021); Baruffaldi et al. (2020). The same union was used in Engberg et al. (2025), where all three lists are reproduced in full. The general-purpose term \"Python\" is excluded there and here."}
@@ -77,7 +82,7 @@ versions:
       - "Because the proportional gain is larger in the sparse early years, the floor's own growth from 2006 to 2025 falls slightly, from 53.9-fold to 52.6-fold on counts. The headline whole-text figure, a 21-fold rise, is untouched."
       - "The fingerprint now covers the configuration minus the hard-negative evaluation list, plus the matcher source. It previously hashed the configuration alone, which was wrong both ways: editing a marker in the matcher changed every published number while the fingerprint stayed identical, and editing the evaluation list forced re-freezes that changed no number."
     validation: "88.2% precision [73.4, 95.3] and 36.1% recall [26.6, 46.9] against all AI positives on the 369-advertisement hand-labelled set, with Wilson 95% intervals. No difference between v1, v1.1 and v1.2 survives its interval, so we claim only that successive freezes have not degraded the measure, never that they improved it."
-    note: "A known recall defect is carried openly rather than patched: plural forms are missed on some entries (llm and chatbot match in the singular, not the plural). Its direction is the same as the fault above, inflating the bare band and depressing the floor. Fixing it would change the fingerprint and invalidate this reprocess, so it is scheduled for v1.3 with a corpus count bounding the recall it costs."
+    note: "A known recall defect is carried openly rather than patched: plural forms are missed on many entries: llm and chatbot match in the singular but not the plural, and of 24 English multi-word core terms tested, 12 miss their plural. Measured cost on the 2025 archive is 35 distinct advertisements, about 1.6% of that year's floor. Its direction is the same as the fault above, inflating the bare band and depressing the floor. Fixing it would change the fingerprint and invalidate this reprocess, so it is scheduled for v1.3 with a corpus count bounding the recall it costs."
   - version: "v1.1"
     frozen: "31 July 2026"
     fingerprint: "e0efb586f30cfd76"
