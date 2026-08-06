@@ -7,6 +7,26 @@ which is the August brief's theme. Eurostat publishes eight reasons on a single 
 percentage of ALL enterprises with 10+ employees, so the shares are not shares of non-adopters
 and do not sum to anything meaningful. That is stated on the figure rather than corrected away.
 
+DO NOT TURN THIS INTO A TIME SERIES WITHOUT CHECKING THE ROUTING FIRST.
+This is a single-year cross-section by design, and that is what keeps it honest. In the
+Swedish source register the barrier question's ROUTING changed between the 2021 and 2023
+waves, so the two years describe different universes:
+
+    2021  asked of all non-adopters          3,425 firms answered
+    2023  gated on E_AI_EC == 1 (considered     482 firms answered
+          AI but did not adopt)
+
+A 2021-versus-2023 barrier trend would therefore compare a broad group with a narrow,
+self-selected one, and any movement would be routing rather than a change in what firms
+say. Verified 6 Aug 2026 on P1207 ITFtg_Stora_2021 and _2023; see
+lab-infrastructure/data-notes/variable-semantics.csv (E_AI_B* row) and
+projects/proworker-gov/notes/ai-mode-coding-check_2026-08-06.md.
+
+The Eurostat series here is a separate, harmonised product, so it need not inherit the
+Swedish routing; the point is that this has to be CHECKED against the Eurostat metadata
+before any cross-year claim, not assumed either way. The variable names below are borrowed
+from the SCB register as labels only.
+
 Run: python3 scripts/refresh_barriers.py   ->  data/barriers.yaml
 """
 import json
