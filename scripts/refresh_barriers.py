@@ -22,10 +22,31 @@ say. Verified 6 Aug 2026 on P1207 ITFtg_Stora_2021 and _2023; see
 lab-infrastructure/data-notes/variable-semantics.csv (E_AI_B* row) and
 projects/proworker-gov/notes/ai-mode-coding-check_2026-08-06.md.
 
-The Eurostat series here is a separate, harmonised product, so it need not inherit the
-Swedish routing; the point is that this has to be CHECKED against the Eurostat metadata
-before any cross-year claim, not assumed either way. The variable names below are borrowed
-from the SCB register as labels only.
+CHECKED, 10 Aug 2026. It DOES inherit the routing, and Eurostat says so itself.
+
+Every one of the eight Swedish 2023 barrier cells carries Eurostat flag `b`, break in time
+series, in the JSON-stat `status` block of isoc_eb_ain2. Sweden is the ONLY one of the 27
+reporting countries flagged that year, which rules out an EU-wide methodology change and
+points straight back at the national routing change found in the register. The harmonised
+product did not wash it out.
+
+What that permits, and what it forbids:
+
+  2021 -> 2023 (SE)   FORBIDDEN. Eurostat's own break flag. Exclude 2021, or plot it with
+                      the break marked and say what it is. Do not compute a change.
+  2023 -> 2025 (SE)   PERMITTED. No break flagged on 2024 or 2025, so those three years are
+                      one comparable series: 5.08, 7.73, 5.34 for lack of expertise. The
+                      2024 spike and 2025 fall are large; they are not a flagged break, but
+                      three points is a short series and the swing deserves saying so.
+  cross-country       PERMITTED from 2023, which is where EU27_2020 begins. Note DK has no
+                      2023 value and FI no 2024, so a full 27-country panel exists only for
+                      2023 and 2025.
+
+Verified against the API rather than the metadata prose, because the flag is the
+authoritative statement: isoc_eb_ain2, unit PC_ENT, size_emp GE10, nace C10-S951_X_K,
+dataset updated 2026-06-15. Re-check the flags if Eurostat republishes.
+
+The variable names below are borrowed from the SCB register as labels only.
 
 Run: python3 scripts/refresh_barriers.py   ->  data/barriers.yaml
 """
