@@ -8,7 +8,7 @@ engine and no third-party deps beyond PyYAML — so it runs the same on your Mac
 and in CI. Edit the YAML, run `python3 build.py`, commit, push.
 """
 from pathlib import Path
-import shutil, yaml, html, re, unicodedata, hashlib, datetime
+import shutil, sys, yaml, html, re, unicodedata, hashlib, datetime
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
@@ -1362,6 +1362,12 @@ def demand_section(tiles, seg):
   <div class="dotwrap">{barplot(dm['countries'], 0, dxmax, 0, 'share', '.1f')}</div>
   {figfooter("cross_country_demand.csv", f"{dmt['source']}, {dmt['year']} · {dmt['unit']}", "cross_country_demand.svg", next_up="Stanford AI Index 2027 (spring 2027)")}
 
+  <p class="secintro" style="margin:10px 0 0"><b>The whole picture on one page.</b>
+    A dated infographic with all five modules, generated from this page's own data:
+    <a href="/aiel-monitor-onepager.pdf">download the one-pager (PDF)</a> ·
+    <a href="/aiel-monitor-onepager-sv.pdf">svenska</a>. Each figure on it carries its own
+    vintage, because they do not all move at the same speed.</p>
+
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
     <p class="secintro" style="margin:0 0 4px">{h(MONITOR['aiindemand_lede'])} We read every open and historical
       Swedish job ad (JobTech / Platsbanken, 2006 onwards) with a versioned, citable term list, so the level and its
@@ -2379,6 +2385,21 @@ def build():
         sm.append(f"<url><loc>{BASE}{u}</loc><changefreq>monthly</changefreq></url>")
     sm.append("</urlset>")
     (OUT / "sitemap.xml").write_text("\n".join(sm), encoding="utf-8")
+    # The one-pager is regenerated HERE, at the end of the build, because build() starts by
+    # deleting OUT: a PDF written before it is silently wiped, which is exactly what happened
+    # the first time. Generating it inside the build also means its "sheet generated" date is
+    # always the date the site was last built, which is what the download promises. A failure
+    # is reported but does not take the site down: a missing PDF is a broken link, a failed
+    # build is no site at all.
+    try:
+        import subprocess
+        for args in ([], ["--sv"]):
+            r = subprocess.run([sys.executable, str(ROOT / "scripts" / "build_onepager.py")] + args,
+                               capture_output=True, text=True)
+            print("  " + (r.stdout.strip() or r.stderr.strip().splitlines()[-1]))
+    except Exception as e:                                    # noqa: BLE001
+        print(f"  one-pager NOT built: {e}")
+
     print(f"Built {len(PAGES)} pages + sitemap/robots/CNAME into {OUT}/")
     print(f"  papers: {paper_count()} · people: {sum(len(g['members']) for g in PEOPLE['groups'])}")
 
