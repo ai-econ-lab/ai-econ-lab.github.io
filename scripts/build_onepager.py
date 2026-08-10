@@ -184,6 +184,11 @@ COPY = {
            r"skill and {floor}\% ask for one in the job itself. This is the only figure on the "
            r"sheet that moves daily."),
   cap_q="How fast is the technology moving?",
+  # Taken from the copy table, NOT from monitor.yaml: the yaml is English-only, so pulling
+  # cap["lab"] straight through left a full English sentence in the middle of the Swedish
+  # sheet. Source lines below it stay in English on purpose, being citations.
+  cap_lab=("the longest human-expert tasks frontier AI agents complete at even odds; the "
+           "length has been doubling every 4--6 months"),
   cap_tail=("This is the technology the four questions are read against, not a fifth question "
             "about the labour market."),
   footnote=(r"\textbf{{One thing worth knowing before you quote this.}} The Swedish series counts "
@@ -236,6 +241,8 @@ COPY = {
            r"{floor}\% efterfrågar den i själva jobbet. Det är den enda siffran på bladet som "
            r"ändras dagligen."),
   cap_q="Hur snabbt utvecklas tekniken?",
+  cap_lab=("de längsta expertuppgifter som AI-agenter klarar i hälften av fallen; längden har "
+           "fördubblats var fjärde till sjätte månad"),
   cap_tail=("Det här är tekniken som de fyra frågorna läses mot, inte en femte fråga om "
             "arbetsmarknaden."),
   footnote=(r"\textbf{{En sak värd att veta innan du citerar det här.}} Den svenska serien räknar "
@@ -346,7 +353,7 @@ def main():
   {{\Large\bfseries\textcolor{{ink}}{{{tex(cap['num'])}}}}}
 \end{{minipage}}%
 \begin{{minipage}}[c]{{0.68\textwidth}}\raggedright
-  {{\scriptsize {tex(cap['lab'])}. {C['cap_tail']}}}\\[1pt]
+  {{\scriptsize {C['cap_lab']}. {C['cap_tail']}}}\\[1pt]
   {{\tiny\textcolor{{soft}}{{{tex(cap['foot'])}}}}}
 \end{{minipage}}\\[9pt]
 
