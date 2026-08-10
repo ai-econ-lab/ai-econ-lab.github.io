@@ -64,7 +64,8 @@ TECTONIC = "/opt/homebrew/bin/tectonic"
 SE_HEX, SE = "0072B2", "sweden"      # our own measure / Sweden  (Okabe-Ito blue)
 INTL_HEX, INTL = "D55E00", "intl"    # international comparison  (Okabe-Ito vermillion)
 INK_HEX = "232B65"   # lab navy: headings and rules ONLY, never a data mark
-SOFT_HEX, SOFT = "6B7280", "soft"
+SOFT_HEX, SOFT = "4B5563", "soft"   # darkened from 6B7280: this grey carries the small text,
+                                    # and small + low-contrast is the worst case for low vision
 
 
 def tex(s):
@@ -91,55 +92,99 @@ def grab(pattern, text, what):
     return [float(g) for g in m.groups()]
 
 
-def range_band(years, hi, lo, lab_hi, lab_lo, w=124, h=29):
-    top = max(hi) * 1.12
+def range_band(years, hi, lo, lab_hi, lab_lo, w=118, h=32):
+    """The floor-to-ceiling range as a filled band: one entity, two strictnesses, one hue."""
+    top = max(hi) * 1.14
     X = lambda i: i / (len(years) - 1) * w
     Y = lambda v: v / top * h
     up = " ".join(f"({X(i):.2f},{Y(v):.2f})" for i, v in enumerate(hi))
     dn = " ".join(f"({X(i):.2f},{Y(v):.2f})" for i, v in reversed(list(enumerate(lo))))
     ticks = "".join(
-        f"\\node[anchor=north,font=\\tiny,text={SOFT}] at ({X(years.index(y)):.2f},-1.2) {{{y}}};\n"
+        f"\\node[anchor=north,font=\\tiny,text={SOFT}] at ({X(years.index(y)):.2f},-1.4) {{{y}}};\n"
         for y in (2006, 2010, 2015, 2020, 2025) if y in years)
     grid = "".join(
-        f"\\draw[line width=0.3pt,{SOFT}!30] (0,{Y(g):.2f}) -- ({w},{Y(g):.2f});\n"
-        f"\\node[anchor=east,font=\\tiny,text={SOFT}] at (-1,{Y(g):.2f}) {{{g:.1f}\\%}};\n"
+        f"\\draw[line width=0.3pt,{SOFT}!25] (0,{Y(g):.2f}) -- ({w},{Y(g):.2f});\n"
+        f"\\node[anchor=east,font=\\tiny,text={SOFT}] at (-1.2,{Y(g):.2f}) {{{g:.1f}\\%}};\n"
         for g in (0.5, 1.0))
     return f"""\\begin{{tikzpicture}}[x=1mm,y=1mm]
-{grid}\\fill[{SE}!15] plot coordinates {{{up}}} -- plot coordinates {{{dn}}} -- cycle;
-\\draw[line width=1.1pt,{SE}] plot coordinates {{{up}}};
-\\draw[line width=1.1pt,{SE}!55] plot coordinates {{{dn}}};
-{ticks}\\node[anchor=west,font=\\scriptsize\\bfseries,text={SE}] at ({w+2},{Y(hi[-1]):.2f})
+{grid}\\fill[{SE}!14] plot coordinates {{{up}}} -- plot coordinates {{{dn}}} -- cycle;
+\\draw[line width=1.3pt,{SE}] plot coordinates {{{up}}};
+\\draw[line width=1.3pt,{SE}!50] plot coordinates {{{dn}}};
+\\fill[{SE}] ({w},{Y(hi[-1]):.2f}) circle (0.9);
+\\fill[{SE}!50] ({w},{Y(lo[-1]):.2f}) circle (0.9);
+{ticks}\\node[anchor=west,font=\\scriptsize\\bfseries,text={SE}] at ({w+2.5},{Y(hi[-1]):.2f})
   {{{lab_hi}}};
-\\node[anchor=west,font=\\scriptsize,text={SE}!75] at ({w+2},{Y(lo[-1]):.2f})
+\\node[anchor=west,font=\\scriptsize,text={SE}!70] at ({w+2.5},{Y(lo[-1]):.2f})
   {{{lab_lo}}};
 \\end{{tikzpicture}}"""
 
 
-def pair_bars(a_lab, a_val, b_lab, b_val, unit="\\%", w=40, cols=None):
-    top = max(a_val, b_val) * 1.5
-    bw, gap = 4.2, 1.7
-    def bar(y, val, col, lab):
-        L = max(val / top * w, 0.6)
-        return (f"\\fill[{col}] (0,{y}) rectangle ({L:.2f},{y+bw});\n"
-                # Value labels wear INK, never the series colour: the bar beside them
-                # already carries identity, and a tinted bar's own hue fails contrast
-                # as text (the 10.2% on the light vermillion was unreadable).
-                f"\\node[anchor=west,font=\\scriptsize\\bfseries,text=ink] "
-                f"at ({L+1.3:.2f},{y+bw/2:.2f}) {{{val:g}{unit}}};\n"
-                f"\\node[anchor=east,font=\\tiny,text={SOFT}] at (-1.2,{y+bw/2:.2f}) {{{lab}}};\n")
-    ca, cb = cols or (SE, INTL)
-    return ("\\begin{tikzpicture}[x=1mm,y=1mm]\n"
-            + bar(bw + gap, a_val, ca, a_lab) + bar(0, b_val, cb, b_lab)
-            + "\\end{tikzpicture}")
+# ---- one drawing per data job, rather than the same bar pair four times ------------------
+# The four questions are not four instances of the same measurement, and drawing them alike
+# hid that. Exposure and adoption are shares of a population, so they get a 0-100 track that
+# shows the share IS a minority. Adoption also has a time dimension (the EU was at 8% in 2023),
+# which a single bar threw away, so its earlier value is drawn as a ghost tick. Demand is a
+# share too but two orders smaller, so it gets its own scale with the ceiling stated. Wages is
+# a gap between two groups, and the gap is the finding, so it is a dumbbell.
+
+def _row(y, val, col, lab, track, w, bw=5.0, ghost=None):
+    L = max(val / track * w, 0.8)
+    s = (f"\\fill[{SOFT}!12,rounded corners=0.6pt] (0,{y}) rectangle ({w},{y+bw});\n"
+         f"\\fill[{col},rounded corners=0.6pt] (0,{y}) rectangle ({L:.2f},{y+bw});\n"
+         f"\\node[anchor=west,font=\\small\\bfseries,text=ink] at ({w+2.2},{y+bw/2:.2f}) "
+         f"{{{val:g}\\%}};\n"
+         f"\\node[anchor=east,font=\\tiny,text={SOFT}] at (-1.6,{y+bw/2:.2f}) {{{lab}}};\n")
+    if ghost is not None:
+        g = ghost / track * w
+        s += (f"\\draw[line width=0.8pt,{SOFT}!70] ({g:.2f},{y-1.0}) -- ({g:.2f},{y+bw+0.4});\n"
+              f"\\node[anchor=north,font=\\tiny,text={SOFT}] at ({g:.2f},{y-1.4}) "
+              f"{{{ghost:g}\\% in 2023}};\n")
+    return s
 
 
-def panel(question, viz, reading, vintage, colw):
-    return (f"\\begin{{minipage}}[t]{{{colw}\\textwidth}}\\raggedright\n"
-            f"{{\\footnotesize\\bfseries\\textcolor{{ink}}{{{question}}}}}\\\\[4pt]\n"
-            f"\\hspace*{{20mm}}{viz}\\\\[4pt]\n"
-            f"{{\\scriptsize {reading}}}\\\\[1pt]\n"
-            f"{{\\tiny\\textcolor{{soft}}{{{vintage}}}}}\n"
-            f"\\end{{minipage}}")
+def share_bars(a_lab, a_val, b_lab, b_val, w=44, track=100, ghost=None, note=None):
+    s = "\\begin{tikzpicture}[x=1mm,y=1mm]\n"
+    s += _row(7.2, a_val, SE, a_lab, track, w)
+    s += _row(0, b_val, INTL, b_lab, track, w, ghost=ghost)
+    # The ghost tick already occupies the space under the lower bar, and the two collided.
+    # The scale note is the one that yields: the 0-100 track is visually identical to the card
+    # beside it, which states the convention.
+    if note and ghost is None:
+        s += (f"\\node[anchor=north west,font=\\tiny,text={SOFT}] at (0,-1.6) {{{note}}};\n")
+    return s + "\\end{tikzpicture}"
+
+
+def dumbbell(a_lab, a_val, b_lab, b_val, w=44):
+    """Two groups, one scale, the GAP as the mark: that gap is the finding."""
+    track = max(a_val, b_val) * 1.18
+    xa, xb = a_val / track * w, b_val / track * w
+    return (f"\\begin{{tikzpicture}}[x=1mm,y=1mm]\n"
+            f"\\draw[line width=0.4pt,{SOFT}!30] (0,4) -- ({w},4);\n"
+            f"\\draw[line width=2.2pt,{SOFT}!45] ({xb:.2f},4) -- ({xa:.2f},4);\n"
+            f"\\fill[{INTL}] ({xb:.2f},4) circle (1.5);\n"
+            f"\\fill[{SE}!45] ({xa:.2f},4) circle (1.5);\n"
+            f"\\node[anchor=south,font=\\small\\bfseries,text=ink] at ({xb:.2f},6.2) "
+            f"{{{b_val:g}\\%}};\n"
+            f"\\node[anchor=south,font=\\small\\bfseries,text=ink] at ({xa:.2f},6.2) "
+            f"{{{a_val:g}\\%}};\n"
+            f"\\node[anchor=north,font=\\tiny,text={SOFT}] at ({xb:.2f},2.4) {{{b_lab}}};\n"
+            f"\\node[anchor=north,font=\\tiny,text={SOFT}] at ({xa:.2f},2.4) {{{a_lab}}};\n"
+            f"\\end{{tikzpicture}}")
+
+
+def card(question, viz, reading, vintage, colw, h="48mm"):
+    """A tinted card. tcolorbox rather than a tikz node: a node with `text width` that contains
+    another tikzpicture does not measure it, so the bars escaped the card and every card grew
+    to a different height. tcolorbox handles nested content and gives a fixed height for free."""
+    return (f"\\begin{{minipage}}[t]{{{colw}\\textwidth}}\n"
+            f"\\begin{{tcolorbox}}[enhanced,arc=1.4mm,"
+            f"colback={SOFT}!6,colframe={SOFT}!6,boxrule=0pt,left=3.4mm,right=3.4mm,"
+            f"top=3.2mm,bottom=3.2mm,height={h},valign=top]\n"
+            f"{{\\footnotesize\\bfseries\\textcolor{{ink}}{{{question}}}}}\n\n"
+            f"\\vspace{{2.6mm}}\n\\hspace*{{11mm}}{viz}\n\n"
+            f"\\vspace{{2.8mm}}\n{{\\scriptsize {reading}}}\n\n"
+            f"\\vspace{{1mm}}\n{{\\tiny\\textcolor{{soft}}{{{vintage}}}}}\n"
+            f"\\end{{tcolorbox}}\\end{{minipage}}")
 
 
 # Copy lives here, in both languages, so the layout below has no English baked into it.
@@ -156,34 +201,39 @@ COPY = {
           r"moved over the same years, including interest rates, a pandemic and the ordinary "
           r"business cycle. \textbf{{Read the dates, not the sheet's date:}} the sheet is "
           r"generated on demand, the evidence is not, and every figure carries its own vintage."),
-  four_hd="FOUR QUESTIONS, FOUR DIFFERENT ANSWERS",
+  # "four different answers" editorialised that they conflict. State the structure, not a
+  # reading of it.
+  four_hd="FOUR QUESTIONS, MEASURED SEPARATELY",
   legend_se="Sweden", legend_intl="international comparison",
-  q_exposure="Could AI do parts of the job?",
-  q_demand="Are employers asking for it?",
-  q_adoption="Are firms actually using it?",
-  q_wages="Has it shown up in pay?",
-  r_exposure=("Share of jobs in the quarter of occupations most exposed to generative AI. "
-              "Exposure means a task could be affected, not that anyone has lost work."),
-  r_demand=("Share of job advertisements that require an AI skill. Still a small slice of all "
-            "hiring, but growing fast: see the Swedish series below."),
-  r_adoption=("Share of firms using AI in 2025. Across the EU this was 8\\% in 2023, so "
-              "adoption has more than doubled in two years."),
-  r_wages=("Real wage growth 2015--2025 in US occupations, by exposure. Pay grew more slowly "
-           "where exposure is highest. In Sweden it is flat in every group."),
+  # Was "Could AI do parts of the job?", which imports the automation reading. Exposure is a
+  # property of an occupation's tasks and is silent on whether AI substitutes or assists;
+  # our own pages insist exposure is not displacement, so the question must not say it is.
+  q_exposure="How exposed are jobs to AI?",
+  q_demand="How often do employers ask for AI skills?",
+  # "actually" implied a gap between claim and reality that we have not measured.
+  q_adoption="How many firms use AI?",
+  # "Has it shown up in pay?" presupposes an effect that ought to appear, which is a causal
+  # claim on a descriptive sheet.
+  q_wages="What has happened to pay?",
+  r_exposure=("Jobs in the most AI-exposed quarter of occupations. Exposure is a property of "
+              "the tasks, not a forecast: it says nothing about who loses or gains work."),
+  r_demand=("Advertisements requiring an AI skill: a small share of hiring. The Swedish "
+            "series below shows twenty years of it."),
+  r_adoption=("Firms using AI in 2025. The EU more than doubled in two years."),
+  r_wages=("Real wage growth 2015--2025, US occupations by exposure. In Sweden pay is flat "
+           "in every group."),
   se_hd="SWEDEN IN DEPTH: HOW OFTEN DO JOB ADS ASK FOR AI?",
   se_sub="Every advertisement on the public job board",
   band_hi="mention an AI skill", band_lo="ask for it in the job itself",
-  se_body=(r"We report a \textbf{{range}} rather than a single number, because it depends on how "
-           r"strictly you count. The upper line counts an advertisement whenever it mentions an "
-           r"AI skill anywhere, including the blurb about the company. The lower line counts it "
-           r"only when the skill is asked of the person being hired. Both have risen sharply: "
-           r"the broader count went from {v0:.2f}\% of advertisements in {y0} to {v1:.2f}\% in "
-           r"{y1}, about {rise:.0f} times higher. For {y1} the honest range is "
-           r"\textbf{{{fl:.2f}\% to {ceiling}\%}}."),
+  se_body=(r"A \textbf{{range}}, not a single number: the upper line counts an advertisement that "
+           r"mentions an AI skill anywhere, the lower one only when the skill is asked of the "
+           r"person being hired. Both rose steeply. The broader count went from {v0:.2f}\% of "
+           r"advertisements in {y0} to {v1:.2f}\% in {y1}, about {rise:.0f} times higher, and the "
+           r"honest {y1} range is \textbf{{{fl:.2f}\% to {ceiling}\%}}."),
   se_live=(r"Right now ({asof}): of the {n} most recent advertisements, {names}\% mention an AI "
            r"skill and {floor}\% ask for one in the job itself. This is the only figure on the "
            r"sheet that moves daily."),
-  cap_q="How fast is the technology moving?",
+  cap_q="How capable are AI systems?",
   # Taken from the copy table, NOT from monitor.yaml: the yaml is English-only, so pulling
   # cap["lab"] straight through left a full English sentence in the middle of the Swedish
   # sheet. Source lines below it stay in English on purpose, being citations.
@@ -191,18 +241,21 @@ COPY = {
            "length has been doubling every 4--6 months"),
   cap_tail=("This is the technology the four questions are read against, not a fifth question "
             "about the labour market."),
-  footnote=(r"\textbf{{One thing worth knowing before you quote this.}} The Swedish series counts "
-            r"what employers \emph{{write down when hiring}}. It is not a count of jobs, and it is "
-            r"not a count of firms using AI; those are two of the panels above, and they are "
-            r"different things measured different ways. Not all hiring is advertised either. So a "
-            r"rising line means employers ask for AI skills more often than they used to, and "
-            r"nothing more than that."),
+  footnote=(r"\textbf{{Before you quote this.}} The Swedish series counts what employers "
+            r"\emph{{write down when hiring}}: not jobs, and not firms using AI, which are two of "
+            r"the panels above. Not all hiring is advertised. A rising line means employers ask "
+            r"for AI skills more often than they used to, and nothing more."),
   colophon=(r"AI-Econ Lab, Örebro University and the Ratio Institute. Built on public data: "
             r"Platsbanken/JobTech (CC0), Eurostat, SCB, BLS, METR, Epoch AI, ARC Prize. Every "
             r"figure is reproducible from the source named beside it. Method, version history and "
             r"change log: \href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
   lab_se="Sweden", lab_eu="Europe", lab_eu2="EU", lab_med="22-country median",
   lab_least="Least exposed", lab_most="Most exposed",
+  of_all_jobs="bar spans all jobs", of_all_ads="bar spans 0--4\\% of ads",
+  of_all_firms="bar spans all firms",
+  pdftitle="AI and the labour market — AIEL Monitor one-pager",
+  a11y=("Hard to read? Every figure here is also on the web page as selectable text at any "
+        "zoom, with the underlying numbers downloadable as CSV: ai-econlab.com/monitor."),
  ),
  "sv": dict(
   title="AI och arbetsmarknaden",
@@ -213,16 +266,16 @@ COPY = {
           r"räntor, en pandemi och en vanlig konjunktur. \textbf{{Läs datumen, inte bladets "
           r"datum:}} bladet skapas när du hämtar det, men underlaget gör det inte, och varje "
           r"siffra bär sitt eget årtal."),
-  four_hd="FYRA FRÅGOR, FYRA OLIKA SVAR",
+  four_hd="FYRA FRÅGOR, MÄTTA VAR FÖR SIG",
   legend_se="Sverige", legend_intl="internationell jämförelse",
-  q_exposure="Skulle AI kunna göra delar av jobbet?",
-  q_demand="Efterfrågar arbetsgivarna det?",
-  q_adoption="Använder företagen det faktiskt?",
-  q_wages="Syns det i lönerna?",
-  r_exposure=("Andel jobb i den fjärdedel av yrkena som är mest exponerad för generativ AI. "
-              "Exponering betyder att en arbetsuppgift kan beröras, inte att någon förlorat jobbet."),
-  r_demand=("Andel jobbannonser som kräver AI-kompetens. Fortfarande en liten del av all "
-            "rekrytering, men den växer snabbt: se den svenska serien nedan."),
+  q_exposure="Hur exponerade är jobben för AI?",
+  q_demand="Hur ofta efterfrågar arbetsgivare AI-kompetens?",
+  q_adoption="Hur många företag använder AI?",
+  q_wages="Vad har hänt med lönerna?",
+  r_exposure=("Jobb i den mest AI-exponerade fjärdedelen av yrkena. Exponering är en egenskap "
+              "hos uppgifterna, inte en prognos: den säger inget om vem som förlorar arbete."),
+  r_demand=("Annonser som kräver AI-kompetens: en liten del av rekryteringen. Den svenska "
+            "serien nedan visar tjugo år."),
   r_adoption=("Andel företag som använde AI 2025. I EU var siffran 8\\% 2023, så användningen "
               "har mer än fördubblats på två år."),
   r_wages=("Reallöneutveckling 2015--2025 i amerikanska yrken, efter exponering. Lönerna växte "
@@ -230,33 +283,34 @@ COPY = {
   se_hd="SVERIGE PÅ DJUPET: HUR OFTA EFTERFRÅGAR ANNONSERNA AI?",
   se_sub="Varje annons på Platsbanken",
   band_hi="nämner en AI-färdighet", band_lo="efterfrågar den i själva jobbet",
-  se_body=(r"Vi redovisar ett \textbf{{intervall}} i stället för en enda siffra, eftersom svaret "
-           r"beror på hur strikt man räknar. Den övre linjen räknar en annons så snart den nämner "
-           r"en AI-färdighet någonstans, även i texten om företaget. Den nedre räknar den bara när "
-           r"färdigheten efterfrågas av den som ska anställas. Båda har stigit kraftigt: den "
-           r"bredare räkningen gick från {v0:.2f}\% av annonserna {y0} till {v1:.2f}\% {y1}, "
-           r"ungefär {rise:.0f} gånger högre. För {y1} är det ärliga intervallet "
-           r"\textbf{{{fl:.2f}\% till {ceiling}\%}}."),
+  se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: den övre linjen räknar en annons som "
+           r"nämner en AI-färdighet någonstans, den nedre bara när färdigheten efterfrågas av den "
+           r"som ska anställas. Båda har stigit kraftigt. Den bredare räkningen gick från "
+           r"{v0:.2f}\% av annonserna {y0} till {v1:.2f}\% {y1}, ungefär {rise:.0f} gånger högre, "
+           r"och det ärliga intervallet för {y1} är \textbf{{{fl:.2f}\% till {ceiling}\%}}."),
   se_live=(r"Just nu ({asof}): av de {n} senaste annonserna nämner {names}\% en AI-färdighet och "
            r"{floor}\% efterfrågar den i själva jobbet. Det är den enda siffran på bladet som "
            r"ändras dagligen."),
-  cap_q="Hur snabbt utvecklas tekniken?",
+  cap_q="Hur kapabla är AI-systemen?",
   cap_lab=("de längsta expertuppgifter som AI-agenter klarar i hälften av fallen; längden har "
            "fördubblats var fjärde till sjätte månad"),
   cap_tail=("Det här är tekniken som de fyra frågorna läses mot, inte en femte fråga om "
             "arbetsmarknaden."),
-  footnote=(r"\textbf{{En sak värd att veta innan du citerar det här.}} Den svenska serien räknar "
-            r"vad arbetsgivare \emph{{skriver ned när de rekryterar}}. Det är inte en räkning av "
-            r"jobb, och inte av företag som använder AI; det är två av panelerna ovan, och de "
-            r"mäter olika saker på olika sätt. All rekrytering annonseras inte heller. En stigande "
-            r"linje betyder alltså att arbetsgivare efterfrågar AI-kompetens oftare än förr, "
-            r"varken mer eller mindre."),
+  footnote=(r"\textbf{{Innan du citerar det här.}} Den svenska serien räknar vad arbetsgivare "
+            r"\emph{{skriver ned när de rekryterar}}: inte jobb, och inte företag som använder AI, "
+            r"vilket är två av panelerna ovan. All rekrytering annonseras inte. En stigande linje "
+            r"betyder att arbetsgivare efterfrågar AI-kompetens oftare än förr, inget mer."),
   colophon=(r"AI-Econ Lab, Örebro universitet och Ratio. Byggt på öppna data: Platsbanken/JobTech "
             r"(CC0), Eurostat, SCB, BLS, METR, Epoch AI, ARC Prize. Varje siffra går att återskapa "
             r"från källan som anges intill. Metod, versionshistorik och ändringslogg: "
             r"\href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
   lab_se="Sverige", lab_eu="Europa", lab_eu2="EU", lab_med="medianland av 22",
   lab_least="Minst exponerade", lab_most="Mest exponerade",
+  of_all_jobs="stapeln rymmer alla jobb", of_all_ads="stapeln rymmer 0--4\\% av annonserna",
+  of_all_firms="stapeln rymmer alla företag",
+  pdftitle="AI och arbetsmarknaden — AIEL Monitor, ett blad",
+  a11y=("Svårt att läsa? Varje siffra finns också på webbsidan som markerbar text i valfri "
+        "förstoring, med underliggande data att ladda ner som CSV: ai-econlab.com/monitor."),
  ),
 }
 
@@ -267,6 +321,7 @@ SV_MONTH = {1:"januari",2:"februari",3:"mars",4:"april",5:"maj",6:"juni",7:"juli
 def main():
     landscape = "--landscape" in sys.argv
     lang = "sv" if "--sv" in sys.argv else "en"
+    big = "--large" in sys.argv
     C = COPY[lang]
     m = yaml.safe_load((DATA / "monitor.yaml").read_text(encoding="utf-8"))
     today = date.today()
@@ -281,89 +336,108 @@ def main():
     dem_se, = grab(r"Sweden (\d+(?:\.\d+)?)%", ov["Demand"]["lab"], "Swedish AI-ad share")
     ado_eu, = grab(r"^(\d+(?:\.\d+)?)", plain(ov["Adoption"]["num"]), "EU adoption")
     ado_se, = grab(r"Sweden (\d+(?:\.\d+)?)%", ov["Adoption"]["lab"], "Swedish adoption")
+    ado_prev, = grab(r"up from (\d+(?:\.\d+)?)% in 2023", ov["Adoption"]["lab"], "EU adoption 2023")
     out_hi, out_lo = grab(r"\((\d+(?:\.\d+)?)% against (\d+(?:\.\d+)?)%\)",
                           ov["Outcomes"]["lab"], "US real wage growth by exposure")
     ceiling = next((h.group(1) for note in m.get("notes", [])
                     for h in [re.search(r"corrected ceiling at <b>([\d.]+)%", note)] if h), "1.36")
 
-    colw = "0.30" if landscape else "0.465"
-    P = [
-        panel(C["q_exposure"], pair_bars(C["lab_se"], exp_se, C["lab_eu"], exp_eu),
-              C["r_exposure"], tex(ov["Exposure"]["foot"]), colw),
-        panel(C["q_demand"], pair_bars(C["lab_se"], dem_se, C["lab_med"], dem_med),
-              C["r_demand"], tex(ov["Demand"]["foot"]), colw),
-        panel(C["q_adoption"], pair_bars(C["lab_se"], ado_se, C["lab_eu2"], ado_eu),
-              C["r_adoption"], tex(ov["Adoption"]["foot"]), colw),
-        panel(C["q_wages"], pair_bars(C["lab_least"], out_lo, C["lab_most"], out_hi,
-                              cols=(f"{INTL}!55", INTL)),
-              C["r_wages"], tex(ov["Outcomes"]["foot"]), colw),
+    colw = "0.31" if landscape else "0.485"
+    cards = [
+        card(C["q_exposure"],
+             share_bars(C["lab_se"], exp_se, C["lab_eu"], exp_eu, note=C["of_all_jobs"]),
+             C["r_exposure"], tex(ov["Exposure"]["foot"]), colw),
+        card(C["q_demand"],
+             share_bars(C["lab_se"], dem_se, C["lab_med"], dem_med, track=4, note=C["of_all_ads"]),
+             C["r_demand"], tex(ov["Demand"]["foot"]), colw),
+        card(C["q_adoption"],
+             share_bars(C["lab_se"], ado_se, C["lab_eu2"], ado_eu, ghost=ado_prev,
+                        note=C["of_all_firms"]),
+             C["r_adoption"], tex(ov["Adoption"]["foot"]), colw),
+        card(C["q_wages"], dumbbell(C["lab_least"], out_lo, C["lab_most"], out_hi),
+             C["r_wages"], tex(ov["Outcomes"]["foot"]), colw),
     ]
-    grid = P[0] + "\\hfill" + P[1] + "\\\\[11pt]\n" + P[2] + "\\hfill" + P[3]
+    grid = (cards[0] + "\\hfill" + cards[1] + "\\\\[4mm]\n"
+            + cards[2] + "\\hfill" + cards[3])
 
     cap = ov["Capability"]
-    hero = range_band(tr["years"], tr["values"], tr["floor_values"],
-                      C["band_hi"], C["band_lo"])
+    hero = range_band(tr["years"], tr["values"], tr["floor_values"], C["band_hi"], C["band_lo"])
     se_body = C["se_body"].format(v0=tr["values"][0], y0=tr["years"][0],
                                   v1=tr["values"][-2], y1=tr["years"][-2],
                                   rise=tr["values"][-2] / tr["values"][0],
                                   fl=tr["floor_values"][-2], ceiling=ceiling)
     se_live = C["se_live"].format(asof=tex(lw["asof"]), n=tex(lw["n"]),
                                   names=lw["names_pct"], floor=lw["floor_pct"])
-    geom = "a4paper,landscape,margin=12mm" if landscape else "a4paper,margin=13mm"
+    geom = "a4paper,landscape,margin=11mm" if landscape else "a4paper,margin=13mm"
+    base = "12pt" if big else "11pt"
 
     doc = rf"""
-\documentclass[10pt]{{article}}
+\documentclass[{base}]{{article}}
 \usepackage{{fontspec}}
 \usepackage[{geom}]{{geometry}}
 \usepackage{{xcolor}}
 \usepackage{{tikz}}
-\usepackage[colorlinks=true,urlcolor=link,linkcolor=link]{{hyperref}}
+\usetikzlibrary{{calc}}
+\usepackage[most]{{tcolorbox}}
+\usepackage[colorlinks=true,urlcolor=link,linkcolor=link,
+            pdftitle={{{C['pdftitle']}}},pdfauthor={{AI-Econ Lab}},
+            pdflang={{{'sv-SE' if lang == 'sv' else 'en-GB'}}},
+            pdfsubject={{{C['standfirst_sub']}}}]{{hyperref}}
+
+% Avenir Next rather than the LaTeX default. A serif academic face was signalling "working
+% paper" on a sheet meant for a student or a journalist, and geometric sans is also the more
+% legible choice at the small sizes the vintages need.
+\setmainfont{{Avenir Next}}[
+  UprightFont={{* Regular}}, BoldFont={{* Demi Bold}}, ItalicFont={{* Italic}}]
+
 \definecolor{{ink}}{{HTML}}{{{INK_HEX}}}
 \definecolor{{soft}}{{HTML}}{{{SOFT_HEX}}}
 \definecolor{{link}}{{HTML}}{{{SE_HEX}}}
 \definecolor{{{SE}}}{{HTML}}{{{SE_HEX}}}
 \definecolor{{{INTL}}}{{HTML}}{{{INTL_HEX}}}
-\definecolor{{hair}}{{HTML}}{{E5E7EB}}
+\definecolor{{hair}}{{HTML}}{{D9DCE1}}
 \pagestyle{{empty}}\setlength{{\parindent}}{{0pt}}
 
 \begin{{document}}
 
-{{\LARGE\bfseries\textcolor{{ink}}{{{C['title']}}}}}\hfill
-{{\footnotesize\textcolor{{soft}}{{{C['kicker'].format(stamp=stamp)}}}}}\\[1pt]
-{{\small\textcolor{{soft}}{{{C['standfirst_sub']}}}}}\\[3pt]
-\textcolor{{ink}}{{\rule{{\textwidth}}{{1.1pt}}}}\\[5pt]
+{{\Huge\bfseries\textcolor{{ink}}{{{C['title']}}}}}\hfill
+\raisebox{{2mm}}{{\parbox{{64mm}}{{\raggedleft
+  {{\footnotesize\bfseries\textcolor{{{SE}}}{{ai-econlab.com}}}}\\[0.4mm]
+  {{\scriptsize\textcolor{{soft}}{{{C['kicker'].format(stamp=stamp)}}}}}}}}}\\[0.6mm]
+{{\large\textcolor{{soft}}{{{C['standfirst_sub']}}}}}\\[2.4mm]
+\textcolor{{ink}}{{\rule{{\textwidth}}{{1.4pt}}}}\\[2.6mm]
 
-{{\scriptsize\textcolor{{soft}}{{{C['caveat']}}}}}\\[9pt]
+{{\scriptsize\textcolor{{soft}}{{{C['caveat']}}}}}\\[4mm]
 
-{{\footnotesize\bfseries\textcolor{{ink}}{{{C['four_hd']}}}}}\hfill
-{{\tiny\textcolor{{soft}}{{\textcolor{{{SE}}}{{\rule{{1.7mm}}{{1.7mm}}}}~{C['legend_se']} \quad
-\textcolor{{{INTL}}}{{\rule{{1.7mm}}{{1.7mm}}}}~{C['legend_intl']}}}}}\\[8pt]
-{grid}\\[11pt]
+{{\normalsize\bfseries\textcolor{{ink}}{{{C['four_hd']}}}}}\hfill
+{{\scriptsize\textcolor{{soft}}{{\textcolor{{{SE}}}{{\rule{{2.2mm}}{{2.2mm}}}}~{C['legend_se']}
+\quad \textcolor{{{INTL}}}{{\rule{{2.2mm}}{{2.2mm}}}}~{C['legend_intl']}}}}}\\[3.4mm]
+{grid}\\[4mm]
 
-\textcolor{{hair}}{{\rule{{\textwidth}}{{0.5pt}}}}\\[8pt]
-{{\footnotesize\bfseries\textcolor{{ink}}{{{C['se_hd']}}}}}\hfill
-{{\scriptsize\textcolor{{soft}}{{{C['se_sub']}}}}}\\[7pt]
-\hspace*{{7mm}}{hero}\\[7pt]
-{{\scriptsize {se_body}}}\\[3pt]
-{{\tiny\textcolor{{soft}}{{{se_live}}}}}\\[10pt]
+{{\normalsize\bfseries\textcolor{{ink}}{{{C['se_hd']}}}}}\hfill
+{{\scriptsize\textcolor{{soft}}{{{C['se_sub']}}}}}\\[4.5mm]
+\hspace*{{9mm}}{hero}\\[3.5mm]
+{{\scriptsize {se_body}}}\\[1.6mm]
+{{\scriptsize\textcolor{{soft}}{{{se_live}}}}}\\[3.5mm]
 
-\textcolor{{hair}}{{\rule{{\textwidth}}{{0.5pt}}}}\\[7pt]
-\noindent\begin{{minipage}}[c]{{0.30\textwidth}}
-  {{\footnotesize\bfseries\textcolor{{ink}}{{{C['cap_q']}}}}}\\[3pt]
-  {{\Large\bfseries\textcolor{{ink}}{{{tex(cap['num'])}}}}}
+\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.8mm]
+\noindent\begin{{minipage}}[c]{{0.32\textwidth}}
+  {{\footnotesize\bfseries\textcolor{{ink}}{{{C['cap_q']}}}}}\\[1.4mm]
+  {{\huge\bfseries\textcolor{{ink}}{{{tex(cap['num'])}}}}}
 \end{{minipage}}%
-\begin{{minipage}}[c]{{0.68\textwidth}}\raggedright
-  {{\scriptsize {C['cap_lab']}. {C['cap_tail']}}}\\[1pt]
-  {{\tiny\textcolor{{soft}}{{{tex(cap['foot'])}}}}}
-\end{{minipage}}\\[9pt]
+\begin{{minipage}}[c]{{0.66\textwidth}}\raggedright
+  {{\scriptsize {C['cap_lab']}. {C['cap_tail']}}}\\[0.8mm]
+  {{\scriptsize\textcolor{{soft}}{{{tex(cap['foot'])}}}}}
+\end{{minipage}}\\[3.2mm]
 
-\textcolor{{hair}}{{\rule{{\textwidth}}{{0.5pt}}}}\\[4pt]
-{{\scriptsize\textcolor{{soft}}{{{C['footnote']}}}}}\\[4pt]
-{{\tiny\textcolor{{soft}}{{{C['colophon']}}}}}
+\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.6mm]
+{{\scriptsize\textcolor{{soft}}{{{C['footnote']}}}}}\\[2mm]
+{{\scriptsize\textcolor{{soft}}{{{C['a11y']} \quad {C['colophon']}}}}}
 
 \end{{document}}
 """
-    out = OUT if lang == "en" else OUT.with_name("aiel-monitor-onepager-sv.pdf")
+    suffix = {"en": "", "sv": "-sv"}[lang] + ("-large" if big else "")
+    out = OUT.with_name(f"aiel-monitor-onepager{suffix}.pdf")
     with tempfile.TemporaryDirectory() as td:
         src = Path(td) / "onepager.tex"
         src.write_text(doc, encoding="utf-8")
@@ -374,7 +448,7 @@ def main():
         out.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(Path(td) / "onepager.pdf", out)
     print(f"wrote {out.relative_to(ROOT)} ({out.stat().st_size/1024:.0f} kB, {lang}, "
-          f"{'landscape' if landscape else 'portrait'}, generated {stamp})")
+          f"{'landscape' if landscape else 'portrait'}{', large print' if big else ''}, {stamp})")
 
 
 if __name__ == "__main__":
