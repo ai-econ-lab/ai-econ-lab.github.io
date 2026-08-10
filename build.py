@@ -261,6 +261,7 @@ def home():
       part of that work becomes public: open indicators on AI and work across countries, with Sweden
       in uncommon depth, updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
+      <a class="btn ghost" href="/aiel-monitor-onepager.pdf">The whole picture, 2 pages (PDF) →</a>
       <a class="btn ghost" href="/monitor/methods/">How we measure it</a></div>
     <div class="affil">{affils}</div>
   </div>
@@ -1749,6 +1750,7 @@ def monitor():
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
+      <a class="btn ghost" href="/aiel-monitor-onepager.pdf">The whole picture, 2 pages (PDF) →</a>
       <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a>
       <a class="btn ghost" href="/monitor/methods/">How we measure it</a></div></div>
   {hero_exposure_panel("#method", "#exposure")}
