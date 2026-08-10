@@ -63,6 +63,20 @@ captions:
   # Reworded 5 Aug 2026. This caption sits under a chart carrying BOTH lines, and it was true
   # of only one of them: the lower line excludes company-only mentions, the upper line counts
   # them wherever they appear. Stating it of both made the upper line look stricter than it is.
+  # Added 10 Aug 2026 after Moa Tivell read the page and came away thinking this module
+  # measures EMPLOYMENT by occupation, and that it could not see competence requirements.
+  # Both halves are the wrong way round, and the page invited it: the top lede offers "what
+  # employers demand" and "how employment and job quality are changing" as two of four
+  # questions, and this module never said which one it is. Her second point, that a reader
+  # needs help not to over-read causality, is answered in the same paragraph.
+  scope: >-
+    What this measures, and what it does not. This is demand written down in advertisements:
+    whether the employer asks the person being hired to know or do AI, in the role's own
+    requirements. It is not employment, which the outcomes module reports separately, and it is
+    not AI use inside firms, which the adoption module reports. A rising line means employers
+    ask for AI skills more often than they did; on its own it says nothing about whether AI
+    created or removed any job. Not all hiring is advertised, so this is the advertised margin
+    of demand rather than demand itself.
   guard: >-
     The two lines differ in where we read. The lower line counts an ad only when AI is named in
     the job's own requirements, so ads that mention AI while describing the company are left

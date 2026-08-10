@@ -14,6 +14,15 @@ ROOT = Path(__file__).parent
 DATA = ROOT / "data"
 def load(name): return yaml.safe_load((DATA / name).read_text(encoding="utf-8"))
 
+# ── the frozen definition, in ONE place ──────────────────────────────────────
+# Five figure footers and two CSV exports each carried their own "frozen v1.2" literal, so a
+# re-freeze meant finding all seven and the monitor served a mix until someone did. Twice it
+# was missed. Keep the version and its fingerprint here and interpolate; methods.yaml remains
+# the citable record, this is only the label the figures wear.
+DEF_VERSION = "v1.3"
+DEF_FP = "8654fe27a3724d06"
+DEF_LABEL = f"frozen {DEF_VERSION} term list"
+
 # ── data freshness ───────────────────────────────────────────────────────────
 # The masthead strip carries an UPDATED stamp next to a "● LIVE" badge, so it has
 # to mean the DATA, not the prose. It is derived here rather than typed into
@@ -986,7 +995,7 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.2 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href=method_href, next_up="tier split: built, integrated or simply used")}</div></div>"""
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.3 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href=method_href, next_up="tier split: built, integrated or simply used")}</div></div>"""
 
 def livewindow_block():
     """The live 60-day window as its own labelled instrument. Never a point on the archive
@@ -1102,7 +1111,7 @@ def monthly_block():
               '<span><i style="background:var(--c1);opacity:.32"></i>single month, unsmoothed</span>'
               '</div>\n'
             + figfooter("monthly_ai_share.csv",
-                        f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · frozen v1.2 term list · distinct advertisements',
+                        f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · {DEF_LABEL} · distinct advertisements',
                         "monthly_ai_demand.svg"))
 
 
@@ -1356,13 +1365,14 @@ def demand_section(tiles, seg):
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
     <p class="secintro" style="margin:0 0 4px">{h(MONITOR['aiindemand_lede'])} We read every open and historical
       Swedish job ad (JobTech / Platsbanken, 2006 onwards) with a versioned, citable term list, so the level and its
-      21-fold rise since 2006 are reproducible. Employers repost, so the archive holds
+      22-fold rise since 2006 are reproducible. Employers repost, so the archive holds
       <b>11.2 million</b> records but <b>8.1 million</b> distinct advertisements; we count each advertisement once.
       Two corrections since the first release both raised the rise rather than lowered it: repeat postings inflated
       the denominator, and a handful of early ads matched product names that did not yet exist.</p>
+    <p class="psub" style="margin:8px 0 0"><b>{h(MONITOR['captions']['scope'].split('.')[0])}.</b>{h(MONITOR['captions']['scope'].split('.', 1)[1])}</p>
     <div class="tiles">{tiles}</div>
     <p class="psub" style="margin-top:6px">{h(MONITOR['captions']['guard'])}</p>
-    {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.2 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
+    {figfooter("ai_in_demand_trend.csv", f"JobTech / Platsbanken job ads (CC0), 2006 onwards · {DEF_LABEL} · distinct advertisements", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
     {monthly_block()}
     {livewindow_block()}
     {occupations_block()}
@@ -2240,7 +2250,7 @@ def emit_data(out):
         for r in MONTHLY["series"]:
             w.writerow([r["m"], r["ads"], r["ai"], r["ai_ma"], r["floor"], r["floor_ma"]])
     (d / "monthly_ai_demand.svg").write_text(chart_standalone(monthly_svg(MONTHLY), "Swedish job ads asking for an AI skill, monthly",
-                         f'JobTech historical job ads (CC0) · frozen v1.2 · distinct advertisements · {MONTHLY["meta"]["first"]}-{MONTHLY["meta"]["last"]} · AI-Econ Lab'), encoding="utf-8")
+                         f'JobTech historical job ads (CC0) · frozen {DEF_VERSION} · distinct advertisements · {MONTHLY["meta"]["first"]}-{MONTHLY["meta"]["last"]} · AI-Econ Lab'), encoding="utf-8")
     with (d / "working_conditions.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["condition", "gender", "pct_least_exposed_occ", "pct_most_exposed_occ", "daioe", "wc_year"])
         for c in WORKCOND["conditions"]:
@@ -2301,9 +2311,9 @@ def emit_data(out):
         w.writerow(["year", "names_ai_skill_pct", "asks_for_ai_in_role_pct", "definition"])
         fv = t.get("floor_values") or [""] * len(t["years"])
         for y, v, fl in zip(t["years"], t["values"], fv):
-            w.writerow([y, v, fl, "frozen v1.2 fp 57f87291a05450a0 · distinct advertisements"])
+            w.writerow([y, v, fl, f"frozen {DEF_VERSION} fp {DEF_FP} · distinct advertisements"])
     (d / "ai_in_demand_trend.svg").write_text(chart_standalone(trend_svg(t), "Swedish job ads naming an AI skill, 2006 onwards",
-                                                                 "JobTech / Platsbanken job ads (CC0) · frozen v1.2 · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
+                                                                 f"JobTech / Platsbanken job ads (CC0) · frozen {DEF_VERSION} · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     with (d / "entry_level_squeeze.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["year", "entry_level_share_least_exposed_pct", "entry_level_share_most_exposed_pct", "gap_pp"])
