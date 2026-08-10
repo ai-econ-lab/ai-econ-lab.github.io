@@ -68,10 +68,26 @@ lexicon:
 # Version history. Transcribed from versions/v1_freeze_2026-07-24.json and
 # versions/v1_1_freeze_2026-07-31.json. Fingerprints are the config checksums.
 versions:
+  - version: "v1.3"
+    frozen: "7 August 2026"
+    fingerprint: "8654fe27a3724d06"
+    current: true
+    summary: >-
+      The third re-freeze. It closes the two lexicon defects v1.2 carried openly, and widens the
+      fingerprint again to cover the pipeline source. The full twenty-year series was reprocessed
+      on it on 7–8 August 2026.
+    changes:
+      - "Plural forms are now matched. Coverage in v1.2 was an accident of which plurals the three source lists happened to duplicate: neural networks matched because the plural is a separate literal entry, while 12 of 24 English multi-word core terms missed theirs. Plurals are generated for every multi-word term plus the named singles llm and chatbot. Multi-word phrases are safe to pluralise mechanically, since a phrase that does not occur in the plural simply never matches; single tokens are not, so they are enumerated instead."
+      - "Bare boosting and bare torch are gone. A parenthetical in the source lists is now split only when it is an acronym: X (machine learning) is a disambiguator, and splitting it had made bare boosting a term matching boosting traffic and boosting sales. Separately, torch is Alekseeva et al.'s entry for the Lua machine-learning framework and matches welding equipment in Swedish advertisements, so it is removed as a corpus false friend. PyTorch is unaffected."
+      - "Both lines move, unlike v1.2 which moved the floor alone. The floor rises from 17,243 to 17,659 advertisements (+2.4%) and the whole-text measure from 37,283 to 38,281 (+2.7%); the raw bare band falls by 136, because an advertisement asking for LLMs was sitting in it purely because the lexicon could not see the inflection. The advertisement count, the adjacent band and the entry-level series move by exactly zero."
+      - "2006 to 2009 do not move at all, in any measure, which is why the growth figures rise only at their recent end: the whole-text rise since 2006 goes from 21.4-fold to 21.8-fold and the floor from 26.8 to 27.5. This is a change of SHAPE as well as level: 2020 loses 84 whole-text advertisements, the largest single-year fall, while 2022 gains 258, almost all autonomous vehicles."
+      - "The fingerprint now also covers the pipeline source, which holds the deduplication key, the negative-context window and the entry-level regex — all printed as rules the reader is told they can reproduce the number from. A reviewer had changed two of them by mutation with the fingerprint staying green. The pipeline also carries the fingerprint stamp itself, so the hash deliberately excludes those two lines: it covers the rules, not the record of what the rules hash to."
+    validation: "88.6% precision [74.0, 95.5] and 37.3% recall [27.7, 48.1] against all AI positives on the 369-advertisement hand-labelled set, with Wilson 95% intervals. The pre-registered gate — recall up, precision not below the incumbent — is met, but both moves sit well inside their intervals, so we claim only that the freeze has not degraded the measure, never that it improved it."
+    note: "The hand-labelled set is still drawn entirely from 2024 advertisements, so every validation figure describes one year of a twenty-year series. An early-period batch of 120 advertisements from 2006–2013 is drawn across three strata and awaiting labelling; until it is done, the left edge is unvalidated and said to be."
   - version: "v1.2"
     frozen: "4 August 2026"
     fingerprint: "57f87291a05450a0"
-    current: true
+    current: false
     summary: >-
       The second re-freeze, correcting a filter fault that suppressed the floor, and widening the
       fingerprint to cover the matcher source as well as the configuration. The full twenty-year series
@@ -82,7 +98,7 @@ versions:
       - "Because the proportional gain is larger in the sparse early years, the floor's own growth from 2006 to 2025 falls slightly, from 53.9-fold to 52.6-fold on counts. The headline whole-text figure, a 21-fold rise, is untouched."
       - "The fingerprint now covers the configuration minus the hard-negative evaluation list, plus the matcher source. It previously hashed the configuration alone, which was wrong both ways: editing a marker in the matcher changed every published number while the fingerprint stayed identical, and editing the evaluation list forced re-freezes that changed no number."
     validation: "88.2% precision [73.4, 95.3] and 36.1% recall [26.6, 46.9] against all AI positives on the 369-advertisement hand-labelled set, with Wilson 95% intervals. No difference between v1, v1.1 and v1.2 survives its interval, so we claim only that successive freezes have not degraded the measure, never that they improved it."
-    note: "A known recall defect is carried openly rather than patched: plural forms are missed on many entries: llm and chatbot match in the singular but not the plural, and of 24 English multi-word core terms tested, 12 miss their plural. Measured cost on the 2025 archive is 35 distinct advertisements, about 1.6% of that year's floor. Its direction is the same as the fault above, inflating the bare band and depressing the floor. Fixing it would change the fingerprint and invalidate this reprocess, so it is scheduled for v1.3 with a corpus count bounding the recall it costs."
+    note: "A known recall defect is carried openly rather than patched: plural forms are missed on many entries: llm and chatbot match in the singular but not the plural, and of 24 English multi-word core terms tested, 12 miss their plural. Measured cost on the 2025 archive is 35 distinct advertisements, about 1.6% of that year's floor. Its direction is the same as the fault above, inflating the bare band and depressing the floor. Fixing it would have changed the fingerprint and invalidated this reprocess, so it was deferred; v1.3 fixes it."
   - version: "v1.1"
     frozen: "31 July 2026"
     fingerprint: "e0efb586f30cfd76"
@@ -119,7 +135,7 @@ status:
     - "This page: the estimand, the definition's composition by layer with its published sources, the full version history with fingerprints, and the validation figures for each freeze."
     - "Every figure on the Monitor as CSV and SVG, from the footer of the figure itself."
     - "The underlying advertisements: Platsbanken / JobTech, CC0, so the series can be rebuilt from source by anyone."
-    - "The 2025 upper bound, corrected by hand: 60 advertisements drawn from the bare-AI band and read, of which 12 are genuine AI roles, 20% (95% interval 12–32%). That puts the corrected 2025 ceiling at 1.34% (1.23–1.51) against an uncorrected 2.45%, so the published 2025 range is 0.53% to 1.34%."
+    - "The 2025 upper bound, corrected by hand: 60 advertisements drawn from the bare-AI band and read, of which 12 are genuine AI roles, 20% (95% interval 12–32%). That puts the corrected 2025 ceiling at 1.36% (1.25–1.52) against an uncorrected 2.46%, so the published 2025 range is 0.55% to 1.36%."
     - "The v1.1 to v1.2 revision log, stating direction and magnitude for every number that moved, and recording that only the floor moved."
   pending:
     - "The full technical note (17 pages: estimand, data, lexicon provenance, labelling conventions, validation, benchmarks, the three threats to the trend, and the drift policy). Rewritten 5 August on the corrected figures; two pending diagnostics remain inside it, both named on its own pages."
@@ -141,8 +157,8 @@ benchmark_logic: >-
   the occupation band.
 
 cite: >-
-  AI-Econ Lab (2026). AIEL Monitor: measuring advertised AI-skill demand, definition v1.2 (fingerprint
-  57f87291a05450a0, frozen 4 August 2026). Örebro University and Ratio. Accessed [date].
+  AI-Econ Lab (2026). AIEL Monitor: measuring advertised AI-skill demand, definition v1.3 (fingerprint
+  8654fe27a3724d06, frozen 7 August 2026). Örebro University and Ratio. Accessed [date].
 
 references:
   - "Acemoglu, D., Autor, D., Hazell, J. and Restrepo, P. (2022). Artificial Intelligence and Jobs: Evidence from Online Vacancies. Journal of Labor Economics, 40(S1), S293–S340."
