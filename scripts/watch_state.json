@@ -3,9 +3,15 @@
   "daioe_dataset_seen_sha": "df6959004b4196da3855457d12c11057ead6f1a5",
   "lfs_seen": 2025,
   "amu_seen": 2024,
-  "fred_rps_seen": "2026-01-01",
+  "fred_rps_seen": "2026-04-01",
   "capability_metr_fp": "a17ff8a5c23331f9",
-  "capability_metr_checked": "2026-08-03",
+  "capability_metr_checked": "2026-08-10",
   "capability_arc_fp": "376fd7c922864715",
-  "capability_arc_checked": "2026-08-03"
+  "capability_arc_checked": "2026-08-10",
+  "capability_metr_pending_since_asof": "2026-05-01",
+  "capability_metr_pending_detected": "2026-08-10",
+  "capability_metr_pending_fp": "d633fb684c01b05f",
+  "capability_arc_pending_since_asof": "2026-07-01",
+  "capability_arc_pending_detected": "2026-08-10",
+  "capability_arc_pending_fp": "e5d575d07a0751c0"
 }
