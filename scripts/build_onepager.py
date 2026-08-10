@@ -69,7 +69,7 @@ SOFT_HEX, SOFT = "4B5563", "soft"   # darkened from 6B7280: this grey carries th
 
 
 def tex(s):
-    s = html.unescape(re.sub(r"<[^>]+>", "", s or ""))
+    s = html.unescape(re.sub(r"<[^>]+>", "", str(s) if s is not None else ""))
     for a, b in [("\\", r"\textbackslash{}"), ("&", r"\&"), ("%", r"\%"), ("$", r"\$"),
                  ("#", r"\#"), ("_", r"\_"), ("{", r"\{"), ("}", r"\}"),
                  ("~", r"\textasciitilde{}"), ("^", r"\textasciicircum{}")]:
@@ -92,7 +92,7 @@ def grab(pattern, text, what):
     return [float(g) for g in m.groups()]
 
 
-def range_band(years, hi, lo, lab_hi, lab_lo, w=118, h=32):
+def range_band(years, hi, lo, lab_hi, lab_lo, w=118, h=23):
     """The floor-to-ceiling range as a filled band: one entity, two strictnesses, one hue."""
     top = max(hi) * 1.14
     X = lambda i: i / (len(years) - 1) * w
@@ -172,7 +172,7 @@ def dumbbell(a_lab, a_val, b_lab, b_val, w=44):
             f"\\end{{tikzpicture}}")
 
 
-def card(question, viz, reading, vintage, colw, h="48mm"):
+def card(question, viz, reading, vintage, colw, h="37mm"):
     """A tinted card. tcolorbox rather than a tikz node: a node with `text width` that contains
     another tikzpicture does not measure it, so the bars escaped the card and every card grew
     to a different height. tcolorbox handles nested content and gives a fixed height for free."""
@@ -185,6 +185,61 @@ def card(question, viz, reading, vintage, colw, h="48mm"):
             f"\\vspace{{2.8mm}}\n{{\\scriptsize {reading}}}\n\n"
             f"\\vspace{{1mm}}\n{{\\tiny\\textcolor{{soft}}{{{vintage}}}}}\n"
             f"\\end{{tcolorbox}}\\end{{minipage}}")
+
+
+# ---- page two -----------------------------------------------------------------------------
+
+def rank_bars(rows, key, w=23, n=6):
+    """Ranked shares. One hue: these are all the same entity (Swedish occupations), so the
+    ordering carries the message and a categorical palette would only add noise."""
+    rows = rows[:n]
+    top = max(r["share"] for r in rows) * 1.05
+    bw, gap = 3.4, 1.5
+    s = "\\begin{tikzpicture}[x=1mm,y=1mm]\n"
+    for i, r in enumerate(reversed(rows)):
+        y = i * (bw + gap)
+        L = max(r["share"] / top * w, 0.5)
+        s += (f"\\fill[{SE},rounded corners=0.5pt] (0,{y}) rectangle ({L:.2f},{y+bw});\n"
+              f"\\node[anchor=west,font=\\scriptsize\\bfseries,text=ink] at ({L+1.4:.2f},{y+bw/2:.2f}) "
+              f"{{{r['share']:.1f}\\%}};\n"
+              f"\\node[anchor=east,font=\\tiny,text=ink] at (-1.4,{y+bw/2:.2f}) "
+              f"{{{tex(r[key])}}};\n")
+    return s + "\\end{tikzpicture}"
+
+
+def zero_rows(rows, key, C, n=3):
+    """The occupations that ask for AI in NONE of their advertisements. Deliberately NOT a
+    chart: a bar of length zero communicates nothing, and the point is the advertisement
+    volume sitting behind the zero."""
+    out = []
+    for r in rows[:n]:
+        out.append(f"{{\\scriptsize\\bfseries\\textcolor{{ink}}{{0.0\\%}}}}~"
+                   f"{{\\scriptsize {tex(r[key])}}}~"
+                   f"{{\\tiny\\textcolor{{soft}}{{({r['ads']:,} {C['ads_word']})}}}}")
+    return "\\\\[1.3mm]\n".join(out)
+
+
+def barrier_bars(rows, w=20, n=6):
+    """Sweden against the EU, same hue mapping as page one."""
+    rows = rows[:n]
+    top = max(max(r["share"], r["eu"]) for r in rows) * 1.08
+    bw, gap, grp = 2.5, 0.7, 3.4
+    s = "\\begin{tikzpicture}[x=1mm,y=1mm]\n"
+    for i, r in enumerate(reversed(rows)):
+        y = i * (2 * bw + gap + grp)
+        for j, (val, col) in enumerate(((r["eu"], INTL), (r["share"], SE))):
+            yy = y + j * (bw + gap)
+            L = max(val / top * w, 0.4)
+            s += (f"\\fill[{col}] (0,{yy}) rectangle ({L:.2f},{yy+bw});\n"
+                  f"\\node[anchor=west,font=\\tiny,text=ink] at ({L+1:.2f},{yy+bw/2:.2f}) "
+                  f"{{{val:g}}};\n")
+        s += (f"\\node[anchor=east,font=\\tiny,text=ink,align=right,text width=32mm] "
+              f"at (-1.4,{y+bw+gap/2:.2f}) {{{tex(r['name'])}}};\n")
+    return s + "\\end{tikzpicture}"
+
+
+def chips(items, n=8):
+    return "  ".join(f"\\colorbox{{{SOFT}!10}}{{\\vphantom{{Ag}}{tex(i)}}}" for i in items[:n])
 
 
 # Copy lives here, in both languages, so the layout below has no English baked into it.
@@ -245,17 +300,47 @@ COPY = {
             r"\emph{{write down when hiring}}: not jobs, and not firms using AI, which are two of "
             r"the panels above. Not all hiring is advertised. A rising line means employers ask "
             r"for AI skills more often than they used to, and nothing more."),
-  colophon=(r"AI-Econ Lab, Örebro University and the Ratio Institute. Built on public data: "
-            r"Platsbanken/JobTech (CC0), Eurostat, SCB, BLS, METR, Epoch AI, ARC Prize. Every "
-            r"figure is reproducible from the source named beside it. Method, version history and "
-            r"change log: \href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
+  colophon=(r"AI-Econ Lab, Örebro University and the Ratio Institute. Public data throughout; "
+            r"every figure is reproducible from the source named beside it. Method and version "
+            r"history: \href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
   lab_se="Sweden", lab_eu="Europe", lab_eu2="EU", lab_med="22-country median",
   lab_least="Least exposed", lab_most="Most exposed",
   of_all_jobs="bar spans all jobs", of_all_ads="bar spans 0--4\\% of ads",
   of_all_firms="bar spans all firms",
+  p2_hd="WHERE THE DEMAND ACTUALLY SITS",
+  p2_sub="Swedish occupations, 2025, ranked by the share of their advertisements asking for AI",
+  p2_top="Asks most often",
+  p2_zero="And these ask in none of them",
+  p2_zero_note=("These are among the largest occupations on the board. The demand is real and it "
+                "is concentrated: most of the labour market is not being asked for AI at all."),
+  ads_word="ads",
+  words_hd="IN THE EMPLOYERS' OWN WORDS",
+  words_sub="Advertisement headlines, as written",
+  words_new="New titles appearing",
+  words_cooled="Titles that stopped clearing the bar",
+  words_note=("One entry is a measurement artefact worth naming: medicinsk sekreterare appears "
+              "because those advertisements mention speech-recognition software, which our "
+              "classifier judges to be a tool the job uses rather than an AI skill it asks for."),
+  bar_hd="WHY FIRMS SAY THEY DO NOT USE AI",
+  bar_sub="Per cent of all firms with 10+ employees, 2025",
+  bar_note=("Shares are of ALL firms, not of non-adopters, so they do not sum to anything. "
+            "Sweden is below the EU on every barrier, which is what a high-adoption country "
+            "looks like. Not comparable with 2021: Eurostat flags a break in the Swedish series."),
+  gaps_hd="WHAT THIS CANNOT SEE",
+  gaps=[("No task-level data.", "We see what employers write in advertisements, not how work is "
+         "actually done, nor how tasks and responsibilities shift inside a job that keeps its name."),
+        ("Not all hiring is advertised.", "This is the advertised margin. Occupations that hire "
+         "through networks or internal moves are under-represented, and that varies by sector."),
+        ("One job board.", "Platsbanken is large and stable but it is not the whole market, and "
+         "its reach has fallen relative to surveyed vacancies since 2006."),
+        ("Validated on one year.", "Precision and recall are measured on 2024 advertisements. "
+         "An early-period check covering 2006 to 2013 is drawn and not yet done."),
+        ("Exposure is not displacement.", "The exposure measure on page one describes tasks AI "
+         "could affect. It is not a prediction that anyone loses work.")],
+  p2_kicker="page 2 of 2",
   pdftitle="AI and the labour market — AIEL Monitor one-pager",
-  a11y=("Hard to read? Every figure here is also on the web page as selectable text at any "
-        "zoom, with the underlying numbers downloadable as CSV: ai-econlab.com/monitor."),
+  a11y=("Hard to read? Every figure is on the web page as selectable text at any zoom, with "
+        "the numbers as CSV: ai-econlab.com/monitor."),
  ),
  "sv": dict(
   title="AI och arbetsmarknaden",
@@ -300,17 +385,48 @@ COPY = {
             r"\emph{{skriver ned när de rekryterar}}: inte jobb, och inte företag som använder AI, "
             r"vilket är två av panelerna ovan. All rekrytering annonseras inte. En stigande linje "
             r"betyder att arbetsgivare efterfrågar AI-kompetens oftare än förr, inget mer."),
-  colophon=(r"AI-Econ Lab, Örebro universitet och Ratio. Byggt på öppna data: Platsbanken/JobTech "
-            r"(CC0), Eurostat, SCB, BLS, METR, Epoch AI, ARC Prize. Varje siffra går att återskapa "
-            r"från källan som anges intill. Metod, versionshistorik och ändringslogg: "
-            r"\href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
+  colophon=(r"AI-Econ Lab, Örebro universitet och Ratio. Öppna data genomgående; varje siffra går "
+            r"att återskapa från källan intill. Metod: \href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
   lab_se="Sverige", lab_eu="Europa", lab_eu2="EU", lab_med="medianland av 22",
   lab_least="Minst exponerade", lab_most="Mest exponerade",
   of_all_jobs="stapeln rymmer alla jobb", of_all_ads="stapeln rymmer 0--4\\% av annonserna",
   of_all_firms="stapeln rymmer alla företag",
+  p2_hd="VAR EFTERFRÅGAN FAKTISKT FINNS",
+  p2_sub="Svenska yrken 2025, rangordnade efter andelen annonser som efterfrågar AI",
+  p2_top="Efterfrågar oftast",
+  p2_zero="Och dessa i ingen enda",
+  p2_zero_note=("Det här är några av de största yrkena på Platsbanken. Efterfrågan är verklig och "
+                "koncentrerad: största delen av arbetsmarknaden får inte frågan alls."),
+  ads_word="annonser",
+  words_hd="MED ARBETSGIVARNAS EGNA ORD",
+  words_sub="Annonsrubriker, så som de skrevs",
+  words_new="Nya titlar som dyker upp",
+  words_cooled="Titlar som inte längre når över tröskeln",
+  words_note=("En post är en mätartefakt värd att nämna: medicinsk sekreterare dyker upp för att "
+              "de annonserna nämner taligenkänningsprogram, vilket vår klassificerare bedömer som "
+              "ett verktyg jobbet använder snarare än en AI-färdighet det efterfrågar."),
+  bar_hd="VARFÖR FÖRETAG SÄGER ATT DE INTE ANVÄNDER AI",
+  bar_sub="Procent av alla företag med minst 10 anställda, 2025",
+  bar_note=("Andelarna avser ALLA företag, inte bara de som avstått, så de summerar inte till "
+            "något. Sverige ligger under EU på varje hinder, vilket är hur ett land med hög "
+            "användning ser ut. Inte jämförbart med 2021: Eurostat flaggar ett serieavbrott."),
+  gaps_hd="VAD DET HÄR INTE KAN SE",
+  gaps=[("Inga data om arbetsuppgifter.", "Vi ser vad arbetsgivare skriver i annonser, inte hur "
+         "arbetet faktiskt utförs, och inte hur uppgifter och ansvar förskjuts inom ett yrke som "
+         "behåller sitt namn."),
+        ("All rekrytering annonseras inte.", "Det här är den annonserade marginalen. Yrken som "
+         "rekryterar via nätverk eller internt är underrepresenterade, och det varierar mellan "
+         "branscher."),
+        ("En enda jobbtavla.", "Platsbanken är stor och stabil men inte hela marknaden, och dess "
+         "räckvidd har minskat i förhållande till mätta vakanser sedan 2006."),
+        ("Validerat på ett år.", "Precision och täckning är uppmätta på annonser från 2024. En "
+         "kontroll av 2006 till 2013 är uttagen men ännu inte gjord."),
+        ("Exponering är inte utslagning.", "Exponeringsmåttet på sidan ett beskriver uppgifter "
+         "som AI kan påverka. Det är ingen förutsägelse om att någon förlorar arbete.")],
+  p2_kicker="sida 2 av 2",
   pdftitle="AI och arbetsmarknaden — AIEL Monitor, ett blad",
-  a11y=("Svårt att läsa? Varje siffra finns också på webbsidan som markerbar text i valfri "
-        "förstoring, med underliggande data att ladda ner som CSV: ai-econlab.com/monitor."),
+  a11y=("Svårt att läsa? Varje siffra finns på webbsidan som markerbar text i valfri "
+        "förstoring, med data som CSV: ai-econlab.com/monitor."),
  ),
 }
 
@@ -329,6 +445,10 @@ def main():
              else today.strftime("%-d %B %Y"))
     ov = {o["k"]: o for o in m["overview"]}
     tr, lw = m["trend"], m["livewindow"]
+    occ = yaml.safe_load((DATA / "occupations.yaml").read_text(encoding="utf-8"))
+    bar = yaml.safe_load((DATA / "barriers.yaml").read_text(encoding="utf-8"))
+    ttl = m["titles"]
+    namekey = "name_sv" if lang == "sv" else "name"
 
     exp_eu, = grab(r"^(\d+(?:\.\d+)?)", plain(ov["Exposure"]["num"]), "European exposure")
     exp_se, = grab(r"Sweden (\d+(?:\.\d+)?)%", ov["Exposure"]["lab"], "Swedish exposure")
@@ -368,7 +488,56 @@ def main():
                                   fl=tr["floor_values"][-2], ceiling=ceiling)
     se_live = C["se_live"].format(asof=tex(lw["asof"]), n=tex(lw["n"]),
                                   names=lw["names_pct"], floor=lw["floor_pct"])
-    geom = "a4paper,landscape,margin=11mm" if landscape else "a4paper,margin=13mm"
+    gaps = "\\\\[1.6mm]\n".join(
+        f"{{\\scriptsize\\bfseries\\textcolor{{ink}}{{{tex(h)}}}}} "
+        f"{{\\scriptsize\\textcolor{{soft}}{{{tex(b)}}}}}" for h, b in C["gaps"])
+    page2 = rf"""
+\newpage
+{{\large\bfseries\textcolor{{ink}}{{{C['title']}}}}}\hfill
+{{\scriptsize\textcolor{{soft}}{{{C['p2_kicker']} · \textcolor{{{SE}}}{{\textbf{{ai-econlab.com}}}}}}}}\\[1.4mm]
+\textcolor{{ink}}{{\rule{{\textwidth}}{{1.4pt}}}}\\[2.8mm]
+
+{{\normalsize\bfseries\textcolor{{ink}}{{{C['p2_hd']}}}}}\hfill
+{{\scriptsize\textcolor{{soft}}{{{C['p2_sub']}}}}}\\[3mm]
+\noindent\begin{{minipage}}[t]{{0.50\textwidth}}
+  {{\footnotesize\bfseries\textcolor{{ink}}{{{C['p2_top']}}}}}\\[3mm]
+  \hspace*{{26mm}}{rank_bars(occ['top'], namekey)}
+\end{{minipage}}\hfill
+\begin{{minipage}}[t]{{0.44\textwidth}}
+  {{\footnotesize\bfseries\textcolor{{ink}}{{{C['p2_zero']}}}}}\\[3mm]
+  {zero_rows(occ['zero'], namekey, C)}\\[3mm]
+  {{\scriptsize\textcolor{{soft}}{{{C['p2_zero_note']}}}}}
+\end{{minipage}}\\[3.5mm]
+{{\tiny\textcolor{{soft}}{{{tex(occ['meta']['source'])}}}}}\\[3mm]
+
+\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[4mm]
+\noindent\begin{{minipage}}[t]{{0.47\textwidth}}
+  {{\normalsize\bfseries\textcolor{{ink}}{{{C['bar_hd']}}}}}\\[1mm]
+  {{\scriptsize\textcolor{{soft}}{{{C['bar_sub']}}}}}\\[1.4mm]
+  {{\tiny\textcolor{{soft}}{{\textcolor{{{SE}}}{{\rule{{2mm}}{{2mm}}}}~{C['legend_se']} \quad
+  \textcolor{{{INTL}}}{{\rule{{2mm}}{{2mm}}}}~EU}}}}\\[3mm]
+  \hspace*{{33mm}}{barrier_bars(bar['rows'])}\\[3.4mm]
+  {{\scriptsize\textcolor{{soft}}{{{C['bar_note']}}}}}
+\end{{minipage}}\hfill
+\begin{{minipage}}[t]{{0.49\textwidth}}
+  {{\normalsize\bfseries\textcolor{{ink}}{{{C['words_hd']}}}}}\\[1mm]
+  {{\scriptsize\textcolor{{soft}}{{{C['words_sub']}}}}}\\[3.4mm]
+  {{\scriptsize\bfseries\textcolor{{ink}}{{{tex(ttl['top'][-1]['year'])}}}}}
+  {{\scriptsize {tex(' · '.join(ttl['top'][-1]['items']))}}}\\[2.6mm]
+  {{\scriptsize\bfseries\textcolor{{ink}}{{{C['words_new']}}}}}\\[1.6mm]
+  {chips(ttl['newcomers']['items'], 6)}\\[2.6mm]
+  {{\scriptsize\bfseries\textcolor{{ink}}{{{C['words_cooled']}}}}}\\[1.6mm]
+  {chips(ttl['cooled']['items'], 5)}\\[3mm]
+  {{\scriptsize\textcolor{{soft}}{{{C['words_note']}}}}}
+\end{{minipage}}\\[3mm]
+
+\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.4mm]
+{{\normalsize\bfseries\textcolor{{ink}}{{{C['gaps_hd']}}}}}\\[2.2mm]
+{gaps}\\[2mm]
+{{\scriptsize\textcolor{{soft}}{{{C['a11y']} \quad {C['colophon']}}}}}
+"""
+
+    geom = "a4paper,landscape,margin=11mm" if landscape else "a4paper,margin=11mm"
     base = "12pt" if big else "11pt"
 
     doc = rf"""
@@ -400,40 +569,39 @@ def main():
 
 \begin{{document}}
 
-{{\Huge\bfseries\textcolor{{ink}}{{{C['title']}}}}}\hfill
+{{\LARGE\bfseries\textcolor{{ink}}{{{C['title']}}}}}\hfill
 \raisebox{{2mm}}{{\parbox{{64mm}}{{\raggedleft
   {{\footnotesize\bfseries\textcolor{{{SE}}}{{ai-econlab.com}}}}\\[0.4mm]
   {{\scriptsize\textcolor{{soft}}{{{C['kicker'].format(stamp=stamp)}}}}}}}}}\\[0.6mm]
-{{\large\textcolor{{soft}}{{{C['standfirst_sub']}}}}}\\[2.4mm]
+{{\normalsize\textcolor{{soft}}{{{C['standfirst_sub']}}}}}\\[2.4mm]
 \textcolor{{ink}}{{\rule{{\textwidth}}{{1.4pt}}}}\\[2.6mm]
 
-{{\scriptsize\textcolor{{soft}}{{{C['caveat']}}}}}\\[4mm]
+{{\scriptsize\textcolor{{soft}}{{{C['caveat']}}}}}\\[3mm]
 
 {{\normalsize\bfseries\textcolor{{ink}}{{{C['four_hd']}}}}}\hfill
 {{\scriptsize\textcolor{{soft}}{{\textcolor{{{SE}}}{{\rule{{2.2mm}}{{2.2mm}}}}~{C['legend_se']}
 \quad \textcolor{{{INTL}}}{{\rule{{2.2mm}}{{2.2mm}}}}~{C['legend_intl']}}}}}\\[3.4mm]
-{grid}\\[4mm]
+{grid}\\[2.4mm]
 
 {{\normalsize\bfseries\textcolor{{ink}}{{{C['se_hd']}}}}}\hfill
 {{\scriptsize\textcolor{{soft}}{{{C['se_sub']}}}}}\\[4.5mm]
-\hspace*{{9mm}}{hero}\\[3.5mm]
+\hspace*{{9mm}}{hero}\\[3mm]
 {{\scriptsize {se_body}}}\\[1.6mm]
-{{\scriptsize\textcolor{{soft}}{{{se_live}}}}}\\[3.5mm]
+{{\scriptsize\textcolor{{soft}}{{{se_live}}}}}\\[3mm]
 
-\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.8mm]
+\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.2mm]
 \noindent\begin{{minipage}}[c]{{0.32\textwidth}}
   {{\footnotesize\bfseries\textcolor{{ink}}{{{C['cap_q']}}}}}\\[1.4mm]
-  {{\huge\bfseries\textcolor{{ink}}{{{tex(cap['num'])}}}}}
+  {{\LARGE\bfseries\textcolor{{ink}}{{{tex(cap['num'])}}}}}
 \end{{minipage}}%
 \begin{{minipage}}[c]{{0.66\textwidth}}\raggedright
   {{\scriptsize {C['cap_lab']}. {C['cap_tail']}}}\\[0.8mm]
   {{\scriptsize\textcolor{{soft}}{{{tex(cap['foot'])}}}}}
-\end{{minipage}}\\[3.2mm]
+\end{{minipage}}\\[2.4mm]
 
 \textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.6mm]
-{{\scriptsize\textcolor{{soft}}{{{C['footnote']}}}}}\\[2mm]
-{{\scriptsize\textcolor{{soft}}{{{C['a11y']} \quad {C['colophon']}}}}}
-
+{{\scriptsize\textcolor{{soft}}{{{C['footnote']}}}}}
+{page2}
 \end{{document}}
 """
     suffix = {"en": "", "sv": "-sv"}[lang] + ("-large" if big else "")

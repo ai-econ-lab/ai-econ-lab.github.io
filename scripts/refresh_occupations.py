@@ -87,9 +87,12 @@ def main():
                             "in the role itself (the strict floor)"),
                  "min_ads": MIN_ADS},
         "lede": prev.get("lede", ""),
-        "top": [{"name": names.get(x["label"], x["label"]), "share": x["share"],
+        # name_sv carries the employment service's own Swedish label alongside our English
+        # rendering, so the Swedish one-pager can print Swedish occupation names instead of
+        # glosses. Added 10 Aug 2026.
+        "top": [{"name": names.get(x["label"], x["label"]), "name_sv": x["label"], "share": x["share"],
                  "ads": x["ads"], "is_se": False} for x in top],
-        "zero": [{"name": names.get(x["label"], x["label"]), "share": 0.0,
+        "zero": [{"name": names.get(x["label"], x["label"]), "name_sv": x["label"], "share": 0.0,
                   "ads": x["ads"], "is_se": False} for x in zero],
         "caveat": prev.get("caveat", ""),
     }
