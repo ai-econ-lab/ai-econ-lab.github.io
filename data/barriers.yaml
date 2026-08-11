@@ -9,34 +9,42 @@ lede: Adoption figures say how many firms use AI. This says what stops the rest.
   causes.
 rows:
 - name: Lack of relevant expertise
+  name_sv: Brist på relevant kompetens
   share: 5.3
   eu: 7.8
   is_se: true
 - name: Data-protection and privacy concerns
+  name_sv: Oro för dataskydd och integritet
   share: 3.5
   eu: 5.8
   is_se: true
 - name: Data availability or quality
+  name_sv: Datatillgång eller datakvalitet
   share: 3.2
   eu: 4.8
   is_se: true
 - name: Unclear legal consequences
+  name_sv: Oklara rättsliga konsekvenser
   share: 2.8
   eu: 5.9
   is_se: true
 - name: Incompatible with existing systems
+  name_sv: Oförenligt med befintliga system
   share: 2.7
   eu: 4.6
   is_se: true
 - name: Costs seem too high
+  name_sv: Kostnaderna verkar för höga
   share: 1.8
   eu: 4.2
   is_se: true
 - name: Ethical considerations
+  name_sv: Etiska överväganden
   share: 1.7
   eu: 2.7
   is_se: true
 - name: Not useful for the enterprise
+  name_sv: Inte användbart för företaget
   share: 1.2
   eu: 2.0
   is_se: true

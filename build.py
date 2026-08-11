@@ -262,6 +262,7 @@ def home():
       in uncommon depth, updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
       <a class="btn ghost" href="/aiel-monitor-onepager.pdf">The whole picture, 2 pages (PDF) →</a>
+      <a class="btn ghost" href="/aiel-monitor-onepager-sv.pdf">svenska (PDF)</a>
       <a class="btn ghost" href="/monitor/methods/">How we measure it</a></div>
     <div class="affil">{affils}</div>
   </div>
@@ -986,12 +987,20 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
 
     The title is overridable because on the home page this panel sits under a heading that
     already says "Sweden, in depth", and repeating it two lines apart reads as an oversight."""
+    # The headline sentence is computed from the same trend data the chart draws, never typed
+    # in: hardcoded values here survived two freezes unchanged (still v1.1's 1.07%/0.52% after
+    # the v1.3 move) until an external reviewer caught the mismatch against the stat tiles.
+    t = MONITOR["trend"]; pf = t["provisionalFrom"]
+    yr_c, ai_c, fl_c = t["years"][pf - 1], t["values"][pf - 1], t["floor_values"][pf - 1]
+    yr_p, ai_p, fl_p = t["years"][-1], t["values"][-1], t["floor_values"][-1]
+    fold = round(ai_c / t["values"][0])
     return f"""<div class="panel">
     <div class="panelhead"><span class="ttl">{h(title)}</span>
       <span class="livechip"><i></i>live</span></div>
-    <div class="panelbody"><p class="psub">Ads naming a specific AI skill reached <b>1.07%</b> in 2025, twenty-one times
-        the 2006 level; the strict floor, ads asking for AI in the role itself, reached <b>0.52%</b>. Both
-        set records in the post-2023 rebound, with generative-AI skills now 27% of the demand.</p>
+    <div class="panelbody"><p class="psub">Ads naming a specific AI skill anywhere in the ad reached <b>{ai_c:.2f}%</b> in {yr_c},
+        {fold} times the {t["years"][0]} level; the strict floor, ads asking for AI in the job's own requirements, reached
+        <b>{fl_c:.2f}%</b>. Both set records in the post-2023 rebound, with generative-AI skills now 27% of the demand,
+        and {yr_p} so far runs higher still ({ai_p:.2f}%, floor {fl_p:.2f}%, provisional).</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
@@ -1751,6 +1760,7 @@ def monitor():
     <p class="lede">{h(m['lede'])}</p>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
       <a class="btn ghost" href="/aiel-monitor-onepager.pdf">The whole picture, 2 pages (PDF) →</a>
+      <a class="btn ghost" href="/aiel-monitor-onepager-sv.pdf">svenska (PDF)</a>
       <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a>
       <a class="btn ghost" href="/monitor/methods/">How we measure it</a></div></div>
   {hero_exposure_panel("#method", "#exposure")}
@@ -1969,7 +1979,11 @@ def brief(lang="en"):
     elif theme == "demand":
         th_chart = barplot(dm["countries"], 0, int(max(r["share"] for r in dm["countries"])) + 1, 0, "share", ".1f")
     elif theme == "barriers":
-        th_chart = barplot(BARRIERS["rows"], 0,
+        # The SV edition must not carry English bar labels (the one-pager shipped with the same
+        # class of bug); rows with a name_sv swap it in, others fall back to the English name.
+        rows_b = ([{**r, "name": r.get("name_sv", r["name"])} for r in BARRIERS["rows"]]
+                  if sv else BARRIERS["rows"])
+        th_chart = barplot(rows_b, 0,
                            int(max(r["share"] for r in BARRIERS["rows"])) + 1, 0,
                            "share", ".1f", what="reasons")
     elif theme == "adoption":
