@@ -14,6 +14,8 @@ faq:
   - {q: "Does “exposure” mean automation or job loss?", a: "No. DAIOE captures the potential applicability of AI capabilities to occupational content. Whether this changes jobs depends on adoption, complements and organisational choices."}
   - {q: "Is it a forecast of AI adoption?", a: "No. DAIOE captures potential applicability. If, when and how AI is applied in an occupation depends on the cost of acquiring, adapting and using the technology, the institutional setting (laws and regulations), and more."}
   - {q: "What is different about DAIOE versus prior indices?", a: "DAIOE is dynamic and grounded in measured AI benchmark progress. It tracks nine subdomains over time and explicitly adjusts for social interaction."}
+  - {q: "How do I read the raw score values?", a: "The index has no natural units: a value is meaningful only relative to other occupation-years. For cross-sectional standing, use the shipped percentile ranks (more exposed than X per cent of occupations that year). Percentiles are ordinal, so they do not show how much exposure has grown; for level and growth, rescale as in the next question."}
+  - {q: "Can I express scores relative to the most exposed occupation?", a: "Yes: divide by the highest value in the frozen 2010 to 2023 panel you use and multiply by 100 (score_rel_max = 100 x value / max). A score then reads as per cent of the most exposed occupation-year, and growth survives: an occupation at 31 in 2015 and 62 in 2023 doubled its exposure. Keep the 2010 to 2023 maximum as the denominator for later vintages too; values above 100 then mean exposure beyond the frozen-window peak. We document this transformation rather than shipping it, so the raw values remain the single citable version; details are in the technical documentation below."}
   - {q: "Which occupations tend to score highest?", a: "Cognitive, non-physical roles with lower social-interaction intensity, often white-collar, tend to rank higher."}
   - {q: "Do the data say anything about employment outcomes?", a: "Higher DAIOE relates to up-skilling: higher high- to low-skill ratios, and a shift from low-skill clerical toward high-skill work."}
   - {q: "How do you handle interpersonal-heavy work?", a: "We compute a social-skills index from O*NET (importance × level across six social skills) and discount exposure accordingly."}
@@ -36,6 +38,7 @@ explorers:
 
 resources:
   - {label: "DAIOE datasets (all versions)", href: "https://github.com/ai-econ-lab/daioe_dataset", note: "SOC / ISCO / SSYK, versioned"}
+  - {label: "Technical documentation (construction, vintages, reading the scores)", href: "https://github.com/Magnus-L/daioe-pipeline/blob/main/DOCUMENTATION.md", note: "the release's public reference"}
   - {label: "SSYK 2012 & SSYK 96 translation utility", href: "https://github.com/ai-econ-lab/daioe_translations", note: "crosswalk helper"}
 
 paper:
