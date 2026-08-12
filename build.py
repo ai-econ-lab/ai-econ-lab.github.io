@@ -1942,7 +1942,6 @@ def brief(lang="en"):
     mname = MO[lang][today.month - 1]; issue = f"{today.year}-{today.month:02d}"
     sub = SITE.get("brief_subscribe", "")
 
-    t = MONITOR["trend"]                                  # the pulse: the always-fresh vacancy series
     cc = CROSS; dm = DEMAND; smd = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
     n_ctry = cc["meta"]["n_countries"]; dver = cc["meta"]["daioe_version"]
     se_share = next(r["share"] for r in cc["countries"] if r["is_se"]); eu_share = cc["meta"]["mean_share"]
@@ -1976,12 +1975,12 @@ def brief(lang="en"):
         "barriers": L(
             f"The obstacle firms name most often is people, not money: {BARRIERS['rows'][0]['share']}% of Swedish "
             f"enterprises say a lack of relevant expertise stops them using AI, against "
-            f"{BARRIERS['rows'][-1]['share']}% who say AI is simply not useful to them. Cost ranks low. Shares are "
-            f"of all enterprises, not of non-adopters.",
+            f"{BARRIERS['rows'][-1]['share']}% who say AI is simply not useful to them. Cost ranks low, at "
+            f"{next(r['share'] for r in BARRIERS['rows'] if r['name'].lower().startswith('cost'))}%.",
             f"Hindret företagen nämner oftast är kompetens, inte pengar: {svn(BARRIERS['rows'][0]['share'])}% av de "
             f"svenska företagen anger brist på relevant kompetens som skäl att inte använda AI, mot "
-            f"{svn(BARRIERS['rows'][-1]['share'])}% som anser att AI inte är användbart för dem. Kostnad hamnar lågt. "
-            f"Andelarna avser samtliga företag, inte enbart de som avstår."),
+            f"{svn(BARRIERS['rows'][-1]['share'])}% som anser att AI inte är användbart för dem. Kostnad hamnar lågt, "
+            f"på {svn(next(r['share'] for r in BARRIERS['rows'] if r['name'].lower().startswith('cost')))}%."),
         "outcomes": L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
             f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
@@ -2003,6 +2002,138 @@ def brief(lang="en"):
         "outcomes": L(f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}",
                       f"{ELS['meta']['source']} × DAIOE generativ AI {ELS['meta']['daioe_version']}"),
     }
+
+    # ── the month's argument ──────────────────────────────────────────────────────────────
+    # REBUILT 12 Aug 2026, on Magnus's reading of the August issue. The brief used to open
+    # with the four spine numbers and a Sweden-in-international-context paragraph, both of
+    # which the Monitor landing page already carries, then give the month's actual theme one
+    # paragraph, then close with lab news. Three quarters of it was therefore either the
+    # Monitor restated or not about the theme at all. A brief that restates the thing it links
+    # to has no reason to exist, so this is now only the month's argument, in three moves:
+    # the question, the chart that answers it, and what the answer cannot show. No spine
+    # cards, no pulse, no news.
+    #
+    # `setups` poses the question and `limits` states the honest boundary; `takeaways` above
+    # already held the finding. Every figure is read from the data files, never typed in: the
+    # demand lede carried v1.1 numbers for two freezes because it was typed, which is the
+    # defect this pattern exists to prevent.
+    import statistics as _stats
+    total_se = SWEAD["meta"]["total"]; eu_adopt = ADOPT["meta"]["eu_avg"]
+    dem_med = _stats.median(r["share"] for r in dm["countries"])
+    se_dem = next(r["share"] for r in dm["countries"] if r.get("is_se"))
+    # The METR task-horizon tile, read from the generated file rather than restated. Matched on
+    # the source name at the head of the footnote, the same way the facts loop below matches it.
+    metr_h = next((f["num"] for f in CAPABILITY["facts"]
+                   if f["foot"].split("·")[0].strip().lower().startswith("metr")), "12–17 h")
+    # The tile says "12–17 h" because a tile has no room for a word; prose does.
+    metr_en = metr_h.replace(" h", " hours"); metr_sv = metr_h.replace(" h", " timmar")
+    epoch_x = CAPABILITY["meta"]["epoch_multiple"]
+    # Multiple-response, and asked of ALL enterprises, so the shares cannot be divided between
+    # non-adopters. What they DO bound is the share of non-adopters naming any obstacle at all:
+    # even if no firm named two, the sum over reasons is the ceiling.
+    b_sum = sum(r["share"] for r in BARRIERS["rows"])
+    nonad = 100 - total_se
+    b_ceiling = b_sum / nonad * 100
+
+    setups = {
+        "exposure": L(
+            "Which jobs sit closest to what today's AI can already do? Exposure measures the overlap "
+            "between an occupation's tasks and the capabilities of generative AI, occupation by "
+            "occupation, then weights it by how many people actually hold those jobs in each country. "
+            "It is a map of where AI meets the work.",
+            "Vilka jobb ligger närmast det som dagens AI redan klarar? Exponering mäter överlappet "
+            "mellan ett yrkes uppgifter och generativ AI:s förmågor, yrke för yrke, och viktas sedan "
+            "med hur många som faktiskt har de jobben i varje land. Det är en karta över var AI möter "
+            "arbetet."),
+        "demand": L(
+            "Exposure is what AI could touch. Demand is what employers actually ask for, written down "
+            "in their own advertisements, and it is the one series here that moves month by month.",
+            "Exponering är vad AI skulle kunna beröra. Efterfrågan är vad arbetsgivarna faktiskt ber "
+            "om, skrivet i deras egna annonser, och det är den enda serien här som rör sig månad för "
+            "månad."),
+        "adoption": L(
+            "Which firms have actually started using AI, and which have not? Adoption is measured by "
+            "asking them, so it records use rather than intent, and it turns out to depend far more on "
+            "how big a firm is than on what it does.",
+            "Vilka företag har faktiskt börjat använda AI, och vilka har inte? Användning mäts genom "
+            "att fråga dem, så det som fångas är faktisk användning snarare än avsikt, och det beror "
+            "långt mer på hur stort företaget är än på vad det gör."),
+        "barriers": L(
+            f"Capability is no longer the obvious constraint. Frontier AI agents now finish tasks of up "
+            f"to {metr_en} of human-expert work about half the time, a length that has been doubling roughly "
+            f"every four months, and the computing power behind notable models has grown about "
+            f"{epoch_x:.1f}-fold a year since 2020. Studies of individual tasks find the gains are "
+            f"real: 15% more customer-support issues resolved per hour in one firm (Brynjolfsson, Li "
+            f"and Raymond, 2025); 40% less time and 18% higher quality on professional writing (Noy "
+            f"and Zhang, 2023); 12% more consulting tasks, completed 25% faster, but 19% less "
+            f"accurately on one task chosen to sit outside the frontier (Dell'Acqua et al., 2026). Yet "
+            f"in {ADOPT['meta']['year']} only {eu_adopt:.0f}% of EU enterprises used AI, {total_se}% in "
+            f"Sweden, and AI skills were required in a median {dem_med:.1f}% of job postings across "
+            f"{dm['meta']['n_countries']} countries, {se_dem:.1f}% in Sweden. So why is a technology "
+            f"that demonstrably helps still so little used? Firms were asked.",
+            f"Förmågan är inte längre den självklara begränsningen. Dagens AI-agenter klarar uppgifter på "
+            f"upp till {metr_sv} mänskligt expertarbete ungefär hälften av gångerna, en längd som ungefär "
+            f"fördubblats var fjärde månad, och beräkningskraften bakom de uppmärksammade modellerna "
+            f"har vuxit omkring {svn(round(epoch_x, 1))} gånger per år sedan 2020. Studier av "
+            f"enskilda arbetsuppgifter visar att vinsterna är verkliga: 15% fler kundärenden lösta per "
+            f"timme i ett företag (Brynjolfsson, Li och Raymond, 2025); 40% kortare tid och 18% högre "
+            f"kvalitet på professionellt skrivande (Noy och Zhang, 2023); 12% fler konsultuppgifter, "
+            f"utförda 25% snabbare, men 19% mindre träffsäkert på en uppgift som medvetet valts utanför "
+            f"det AI behärskar (Dell'Acqua m.fl., 2026). Ändå använde bara {svn(round(eu_adopt))}% av "
+            f"EU:s företag AI {ADOPT['meta']['year']}, {total_se}% i Sverige, och AI-kompetens krävdes "
+            f"i medianen {svn(round(dem_med, 1))}% av jobbannonserna i "
+            f"{dm['meta']['n_countries']} länder, {svn(round(se_dem, 1))}% i Sverige. Varför används "
+            f"då en teknik som bevisligen hjälper fortfarande så lite? Företagen fick frågan."),
+        "outcomes": L(
+            "If AI were already reshaping work, it should show up in what happens to jobs and pay. So "
+            "far the clearest signal is not in wages but in who gets hired.",
+            "Om AI redan formade om arbetet borde det synas i vad som händer med jobb och löner. "
+            "Hittills är den tydligaste signalen inte lönerna utan vem som blir anställd."),
+    }
+    limits = {
+        "exposure": L(
+            "Exposure says nothing about whether AI substitutes for a worker or assists one, and the "
+            "country ranking shifts with where the cut is drawn.",
+            "Exponering säger ingenting om huruvida AI ersätter eller hjälper den som arbetar, och "
+            "ländernas ordning ändras med var gränsen dras."),
+        "demand": L(
+            "This is the advertised margin of demand, not demand itself: not all hiring is advertised, "
+            "and a rising line says employers ask for AI skills more often than they did, not that AI "
+            "created or removed a job.",
+            "Detta är den annonserade delen av efterfrågan, inte efterfrågan i sig: allt anställande "
+            "annonseras inte, och en stigande linje betyder att arbetsgivarna oftare efterfrågar "
+            "AI-kompetens, inte att AI skapat eller tagit bort ett jobb."),
+        "adoption": L(
+            "Use is not intensity. A firm counts here if it uses one AI technology anywhere in the "
+            "business, which says nothing about how much of the work it touches.",
+            "Användning är inte omfattning. Ett företag räknas här om det använder en AI-teknik "
+            "någonstans i verksamheten, vilket inte säger något om hur stor del av arbetet den rör."),
+        "barriers": L(
+            f"Read this as how widespread each obstacle is, not as a division of non-adopters between "
+            f"causes. Eurostat asks all enterprises with ten or more employees and allows several "
+            f"answers, so the shares neither sum to a total nor rebase onto the {nonad:.0f}% of Swedish "
+            f"firms not using AI. That bound is worth stating: even if no firm named two obstacles, at "
+            f"most {b_ceiling:.0f}% of non-adopters named any obstacle at all. Most firms not using AI "
+            f"report nothing standing in the way, which reads less like a barrier firms are pushing "
+            f"against than an absence of reasons to start. Note too that EU firms report every obstacle "
+            f"more often than Swedish firms do, and adopt less.",
+            f"Läs detta som hur utbrett varje hinder är, inte som en uppdelning av de som avstår efter "
+            f"orsak. Eurostat frågar samtliga företag med tio eller fler anställda och tillåter flera "
+            f"svar, så andelarna summerar inte till en helhet och kan inte räknas om till de "
+            f"{svn(round(nonad))}% av de svenska företagen som inte använder AI. Den gränsen är värd att "
+            f"nämna: även om inget företag angav två hinder, angav högst {svn(round(b_ceiling))}% av dem "
+            f"som avstår något hinder alls. De flesta företag som inte använder AI uppger att ingenting "
+            f"står i vägen, vilket låter mindre som ett hinder att övervinna än som avsaknad av skäl att "
+            f"börja. Notera också att företagen i EU uppger varje hinder oftare än de svenska, och "
+            f"använder AI i mindre utsträckning."),
+        "outcomes": L(
+            "Descriptive, not causal. Entry-level hiring is also more cyclical, and the tightening "
+            "cycle hit these occupations hardest, so this cannot separate AI from the cycle.",
+            "Beskrivande, inte kausalt. Instegsjobb är dessutom mer konjunkturkänsliga, och "
+            "räntehöjningarna slog hårdast mot just dessa yrken, så AI går inte att skilja från "
+            "konjunkturen här."),
+    }
+
     if theme == "exposure":
         th_chart = barplot(cc["countries"], eu_share, 10 * (int(max(r["share"] for r in cc["countries"]) // 10) + 1),
                            cc["meta"]["weight_year"], "share", ".0f")
@@ -2022,53 +2153,9 @@ def brief(lang="en"):
         th_chart = squeeze_svg(ELS)
     th_title = titles[theme]
 
-    KSV = {"Exposure": "Exponering", "Demand": "Efterfrågan", "Adoption": "Användning", "Outcomes": "Utfall"}
-    LABSV = {"Exposure": "av de europeiska jobben finns i den mest AI-exponerade fjärdedelen av yrkena (topp 25% efter generativ AI-exponering); Sverige 39%, bland de högsta av 36 länder.",
-             "Demand": "medianandel jobbannonser som kräver AI i 22 länder 2025 (Stanford AI Index); Sverige 2,8%.",
-             "Adoption": "av EU:s företag använde AI 2025, upp från 8% 2023 (Eurostat); Sverige 35%, bland de ledande.",
-             "Outcomes": "långsammare REAL löneutveckling i de mest AI-exponerade yrkena i USA än i de minst exponerade, 2015–2025 (3,6% mot 10,2%); i Sverige är reallönerna oförändrade i alla tre exponeringsgrupperna. Exponering har inte slagit igenom i lönerna."}
-    cards = ""                                            # at a glance: the four spine numbers
-    for o in MONITOR["overview"]:
-        if o["k"] not in KSV:                             # brief keeps the spine only; extra doors (Capability…) stay on the Monitor page
-            continue
-        cls = f' {o["cls"]}' if o["cls"] else ""
-        k = KSV[o["k"]] if sv else o["k"]
-        lab = LABSV[o["k"]] if sv else o["lab"]
-        foot = o["foot"].replace("live", "löpande") if sv else o["foot"]
-        cards += (f'<div class="bstat{cls}"><span class="stripe"></span><div class="bk">{h(k)}</div>'
-                  f'<div class="bnum">{svn(o["num"])}</div><div class="blab">{h(lab)}</div>'
-                  f'<div class="bfoot">{h(foot)}</div></div>')
-
-    flat = [(yr["year"], it) for yr in NEWS["years"] for it in yr["items"]]   # newest first
-    news_html = ""
-    for yr, it in flat[:5]:
-        links = "".join(f'<a class="lchip" href="{l["url"]}">{h(l["label"])}</a>' for l in it.get("links", []))
-        lr = f' <span class="nlinks">{links}</span>' if links else ""
-        news_html += f'<li><span class="bnd">{h(it["date"])} {h(yr)}</span> {it["text"]}{lr}</li>'
-
     en_cur = '' if sv else ' aria-current="page"'
     sv_cur = ' aria-current="page"' if sv else ''
     subscribe = f'<a class="btn ghost" href="{sub}">{L("Subscribe monthly","Prenumerera")}</a>' if sub else ""
-    total = SWEAD["meta"]["total"]; eu_adopt = ADOPT["meta"]["eu_avg"]
-    pulse_p = L(
-        f"Across the EU, firm AI adoption is climbing fast: the average reached <b>{eu_adopt:.0f}%</b> of enterprises in "
-        f"{ADOPT['meta']['year']}, up from 8% in 2023 (Eurostat). Sweden is well above, at <b>{total}%</b>, and its "
-        f"workforce is among the most exposed to generative AI of {n_ctry} countries; the placing depends on where the "
-        f"line is drawn, from 2nd at the quarter cut to 5th at a top-20% cut. The series that moves every month is the Swedish "
-        f"depth cut below, the share of vacancies that NAME an AI skill, {t['years'][0]}–{t['years'][-1]}, now about "
-        f"<b>{t['values'][-1]:.2f}%</b> ({t['years'][-1]}, provisional), against "
-        f"<b>{t['floor_values'][-1]:.2f}%</b> that ask for one in the job itself; roughly "
-        f"<b>{round(t['values'][-2] / t['values'][0]):g}×</b> the {t['years'][0]} level on the last complete year.",
-        f"I hela EU ökar företagens AI-användning snabbt: genomsnittet nådde <b>{eu_adopt:.0f}%</b> av företagen "
-        f"{ADOPT['meta']['year']}, upp från 8% 2023 (Eurostat). Sverige ligger klart över, med <b>{total}%</b>, och "
-        f"arbetskraften är bland de mest exponerade för generativ AI av {n_ctry} länder; placeringen beror på var "
-        f"gränsen dras, från 2:a vid fjärdedelsgränsen till 5:e om bara de 20 procent mest exponerade yrkena räknas. "
-        f"Serien som rör sig varje månad är den "
-        f"svenska fördjupningen nedan, andelen lediga jobb som NÄMNER en AI-kompetens, "
-        f"{t['years'][0]}–{t['years'][-1]}, nu omkring "
-        f"<b>{svn(round(t['values'][-1], 2))}%</b> ({t['years'][-1]}, preliminärt), mot "
-        f"<b>{svn(round(t['floor_values'][-1], 2))}%</b> som kräver det i själva tjänsten; ungefär "
-        f"<b>{round(t['values'][-2] / t['values'][0]):g}×</b> nivån {t['years'][0]} räknat på senaste hela året.")
 
     body = f"""<div class="wrap brief"><article class="briefsheet">
   <header class="bhead">
@@ -2083,21 +2170,16 @@ def brief(lang="en"):
       <a class="bback" href="/monitor/">{L("← the live monitor","← den levande monitorn")}</a></div>
   </header>
 
-  <section class="bsec"><h2 class="bh2">{L("At a glance","I korthet")}</h2>
-    <div class="bstats">{cards}</div></section>
+  <section class="bsec"><h2 class="bh2">{L("The question","Frågan")}</h2>
+    <p class="bp">{setups[theme]}</p></section>
 
-  <section class="bsec"><h2 class="bh2">{L("The pulse · Sweden in international context","Pulsen · Sverige i internationellt sammanhang")}</h2>
-    <p class="bp">{pulse_p}</p>
-    <div class="bchart">{trend_svg(t)}</div>
-    <p class="bsrc">{L("International benchmark","Internationell jämförelse")} (AI Index / Lightcast, 2025): {L("AI skills are required in a median 1.9% of postings across 22 countries; Sweden 2.8% on that measure. Not directly comparable to the Swedish JobTech series above (a narrower, live measure).","AI-kompetens krävs i medianen 1,9% av annonserna i 22 länder; Sverige 2,8% på det måttet. Ej direkt jämförbart med den svenska JobTech-serien ovan (ett smalare, löpande mått).")}</p></section>
-
-  <section class="bsec"><h2 class="bh2">{L("In focus","I fokus")} · {h(th_title)}</h2>
-    <p class="bp">{takeaways[theme]}</p>
+  <section class="bsec"><h2 class="bh2">{L("What the data show","Vad data visar")}</h2>
     <div class="bchart">{th_chart}</div>
+    <p class="bp">{takeaways[theme]}</p>
     <p class="bsrc">{L("Source","Källa")}: {h(srcs[theme])}. {L("Full method at","Fullständig metod på")} ai-econ-lab.github.io/monitor/#method.</p></section>
 
-  <section class="bsec bnews"><h2 class="bh2">{L("Lab news","Nyheter från labbet")}</h2>
-    <ul class="blist">{news_html}</ul></section>
+  <section class="bsec"><h2 class="bh2">{L("What it does not show","Vad det inte visar")}</h2>
+    <p class="bp">{limits[theme]}</p></section>
 
   <footer class="bfooter">
     <span>AI-Econ Lab · AIEL Monitor · {issue}. {L("Public data; cite the version and date.","Öppna data; ange version och datum vid citering.")}</span>
