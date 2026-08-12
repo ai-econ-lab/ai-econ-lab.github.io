@@ -145,6 +145,26 @@ def assetv(rel):   # cache-busting token for a file under the repo root
     return hashlib.md5(p.read_bytes()).hexdigest()[:8] if p.exists() else "0"
 
 # ── shared chrome ────────────────────────────────────────────────────────────
+def sheet_pair(label="The whole picture, 2 pages"):
+    """The two-page sheet, offered in both languages as ONE control.
+
+    Lydia's review asked for the Swedish edition to be reachable from both "whole picture"
+    buttons, and it was: as a second ghost button reading "svenska (PDF)". Two adjacent
+    buttons of equal weight read as two different downloads, so the Swedish edition looked
+    like an afterthought bolted onto the English one rather than the same sheet in another
+    language. A segmented control says what is actually true — one sheet, two languages —
+    and English carries the wash because it is the default.
+
+    Rendered as a single inline-flex item so that on a narrow screen the label never wraps
+    away from the buttons it labels.
+    """
+    return (f'<span class="sheet"><span class="lab">{label}</span>'
+            f'<span class="seg">'
+            f'<a class="on" href="/aiel-monitor-onepager.pdf">English (PDF)</a>'
+            f'<a href="/aiel-monitor-onepager-sv.pdf">Svenska (PDF)</a>'
+            f'</span></span>')
+
+
 def masthead(active):
     b = SITE["brand"]
     items = ""
@@ -261,9 +281,8 @@ def home():
       part of that work becomes public: open indicators on AI and work across countries, with Sweden
       in uncommon depth, updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
-      <a class="btn ghost" href="/aiel-monitor-onepager.pdf">The whole picture, 2 pages (PDF) →</a>
-      <a class="btn ghost" href="/aiel-monitor-onepager-sv.pdf">svenska (PDF)</a>
-      <a class="btn ghost" href="/monitor/methods/">How we measure it</a></div>
+      <a class="btn ghost" href="/monitor/methods/">How we measure it</a>
+      {sheet_pair()}</div>
     <div class="affil">{affils}</div>
   </div>
   {hero_exposure_panel("/monitor/#method", "/monitor/#exposure")}
@@ -1381,8 +1400,8 @@ def demand_section(tiles, seg):
 
   <p class="secintro" style="margin:10px 0 0"><b>The whole picture on one page.</b>
     A dated infographic with all five modules, generated from this page's own data:
-    <a href="/aiel-monitor-onepager.pdf">download the two-page sheet (PDF)</a> ·
-    <a href="/aiel-monitor-onepager-sv.pdf">svenska</a>. The figures on it come from different
+    <a href="/aiel-monitor-onepager.pdf">download the two-page sheet (PDF)</a>, or the
+    <a href="/aiel-monitor-onepager-sv.pdf">Swedish edition</a>. The figures on it come from different
     years and survey waves, so each states its own year.</p>
 
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
@@ -1771,10 +1790,9 @@ def monitor():
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
-      <a class="btn ghost" href="/aiel-monitor-onepager.pdf">The whole picture, 2 pages (PDF) →</a>
-      <a class="btn ghost" href="/aiel-monitor-onepager-sv.pdf">svenska (PDF)</a>
       <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a>
-      <a class="btn ghost" href="/monitor/methods/">How we measure it</a></div></div>
+      <a class="btn ghost" href="/monitor/methods/">How we measure it</a>
+      {sheet_pair()}</div></div>
   {hero_exposure_panel("#method", "#exposure")}
 </div></div></div>
 
