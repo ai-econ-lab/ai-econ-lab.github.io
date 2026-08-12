@@ -15,12 +15,11 @@
 years:
   - year: 2026
     items:
-      # UNCOMMENT ON FRIDAY 14 AUG, AT THE CUTOVER. Written 12 Aug and deliberately not live:
-      # the site is already public at ai-econ-lab.github.io, so publishing "launched" two days
-      # early would put a false statement on a public page.
-      # - date: "Aug 14"
-      #   text: 'The AIEL Monitor launched, on the lab''s own domain and with a rebuilt website: open, dated indicators on AI and work across countries, with Sweden in depth, refreshed from public data. The first issue of the monthly AIEL Monitor Brief went out the same day, on barriers to AI use.'
-      #   links: [{label: "The Monitor", url: "/monitor/"}, {label: "Monthly brief", url: "/monitor/brief/"}]
+      # Written 12 Aug, dated 14 Aug, and live from the start: the github.io address is not
+      # linked from anywhere yet, so no reader reaches it before the cutover (Magnus, 12 Aug).
+      - date: "Aug 14"
+        text: 'The AIEL Monitor launched, on the lab''s own domain and with a rebuilt website: open, dated indicators on AI and work across countries, with Sweden in depth, refreshed from public data. The first issue of the monthly AIEL Monitor Brief went out the same day, on barriers to AI use.'
+        links: [{label: "The Monitor", url: "/monitor/"}, {label: "Monthly brief", url: "/monitor/brief/"}]
       - {date: "Jun 24", text: 'The paper "Artificial Intelligence for Public Use" (Lodefalk, Engberg, Lidskog, Skargren & Tang) was accepted for publication in Digital Society.'}
       - date: "Jun 17"
         text: 'A column was published in ProMarket (Stigler Center, Chicago Booth), "AI Is Not Reducing Employment but Rather Who Gets Hired" (Lodefalk, Löthman, Koch & Engberg), drawing on the "Same Storm, Different Boats" paper.'
