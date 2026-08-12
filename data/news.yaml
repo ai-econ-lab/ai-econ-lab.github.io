@@ -1,23 +1,32 @@
 # News / lab history — ported from ai-econlab.com (2026-07-20); links restored from the live
 # Google site (2026-07-21). Each year: list of {date, text, links?:[{label,url}]}.
 # text renders raw (may contain inline HTML); links render as chips after the text.
+#
+# WHAT BELONGS HERE (Magnus, 12 Aug 2026). Research and the lab's standing: papers published or
+# accepted, working papers released, columns and op-eds, conferences held, grants and awards,
+# appointments, media, and being cited or drawn on by government or the EU. Launches count, so the
+# Monitor's own launch belongs here.
+#
+# WHAT DOES NOT. Routine revisions to the Monitor or the website: new modules, re-freezes, version
+# bumps, redesigns. Three such items had accumulated in 2026 and were removed on 12 Aug; they made
+# a research lab's news page read like a changelog. The Monitor's version history already has a
+# home, with fingerprints, in data/methods.yaml under `versions`, rendered on /monitor/methods/.
+# Talks and seminars belong in the CV, not here, unless the audience is itself the news.
 years:
   - year: 2026
     items:
-      - date: "Jul 25"
-        text: 'Two new Monitor modules: Wages (pay across differentially AI-exposed occupations in Sweden, the US and the EU, from public wage statistics) and AI capability (how fast frontier AI itself moves: task horizons and compute trends, from METR, Epoch AI and the Stanford AI Index).'
-        links: [{label: "Wages", url: "/monitor/#wages"}, {label: "AI capability", url: "/monitor/#capability"}]
-      - date: "Jul 25"
-        text: 'The Monitor''s builder / integrator / user split goes from preview to measured: all 41,000 AI-candidate ads 2023 to mid-2026 classified against the lab''s labelling rules. Builders hold half of strict AI-skill demand; the user tier (AI as an everyday tool) rises from 1% to 9%.'
-        links: [{label: "The Monitor", url: "/monitor/"}]
-      - date: "Jul 24"
-        text: 'The AIEL Monitor''s AI-in-Demand series was rebuilt end to end on a frozen, versioned measure: 8.1 million distinct Swedish job advertisements (11.2 million records), 2006 to mid-2026, under one definition, with a strict floor (ads that ask for AI skills in the role itself), a named-skill line, top occupation names among AI ads, and the 2023 newcomers in AI demand.'
-        links: [{label: "The Monitor", url: "/monitor/"}]
+      # UNCOMMENT ON FRIDAY 14 AUG, AT THE CUTOVER. Written 12 Aug and deliberately not live:
+      # the site is already public at ai-econ-lab.github.io, so publishing "launched" two days
+      # early would put a false statement on a public page.
+      # - date: "Aug 14"
+      #   text: 'The AIEL Monitor launched, on the lab''s own domain and with a rebuilt website: open, dated indicators on AI and work across countries, with Sweden in depth, refreshed from public data. The first issue of the monthly AIEL Monitor Brief went out the same day, on barriers to AI use.'
+      #   links: [{label: "The Monitor", url: "/monitor/"}, {label: "Monthly brief", url: "/monitor/brief/"}]
       - {date: "Jun 24", text: 'The paper "Artificial Intelligence for Public Use" (Lodefalk, Engberg, Lidskog, Skargren & Tang) was accepted for publication in Digital Society.'}
       - date: "Jun 17"
         text: 'A column was published in ProMarket (Stigler Center, Chicago Booth), "AI Is Not Reducing Employment but Rather Who Gets Hired" (Lodefalk, Löthman, Koch & Engberg), drawing on the "Same Storm, Different Boats" paper.'
         links: [{label: "ProMarket", url: "https://www.promarket.org/2026/06/17/ai-is-not-reducing-employment-but-rather-who-gets-hired/"}]
       - {date: "Jun 10–11", text: 'The fourth conference on AI and white-collar work was held at Katrinelund outside Örebro: 27 participants, 12 papers, keynotes by Michael Lechner (St. Gallen) and Christina Gathmann (LISER / Luxembourg). Dates set for the AIEL/AISCAF 2028 conference, 14–15 June 2028.'}
+      - {date: "Apr", text: 'Research grant from Jan Wallanders och Tom Hedelius Stiftelse.'}
       - date: "Mar 27"
         text: 'ORU working paper released: "Who Adopts AI? Evidence on Firms, Technologies and Workers" (Pulito, Pytlikova, Schroeder & Lodefalk).'
         links: [{label: "ORU WP", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2026/wp-3-2026.pdf"}]
@@ -27,6 +36,7 @@ years:
       - date: "Mar 7"
         text: 'A one-page summary released of the forthcoming "Same Storm, Different Boats" working paper on AI and workers across age groups.'
         links: [{label: "One-pager", url: "https://magnus-l.github.io/canaries-sweden/onepager/onepager.pdf"}]
+      - {date: "Jan", text: 'Lodefalk received the Outstanding Research Communication Award from the Hamrin Foundation and Örebro University.'}
   - year: 2025
     items:
       - date: "Dec 29"
