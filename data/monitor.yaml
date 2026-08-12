@@ -119,7 +119,7 @@ tiles:
 
 # The live 60-day window: its own instrument, never a point on the archive line (no-splice).
 livewindow:
-  # Refreshed 10 Aug 2026 from ai-monitor/data/jobstream/livewindow.json, emitted by
+  # Refreshed 12 Aug 2026 from ai-monitor/data/jobstream/livewindow.json, emitted by
   # `jobstream_ingest.py --emit-livewindow`. It had been hand-copied and sat at 24 Jul for a
   # fortnight, publishing 1.85 and 0.89 while the feed said 1.64 and 0.81.
   #
@@ -127,12 +127,12 @@ livewindow:
   # ingest and never re-scored, so the 60-day window had 71% of rows on the v1 definition and
   # 29% on v1.1, averaged into one number with nothing saying so. It has since been re-seeded
   # and is 100.0% on v1.3, matching the archive series for the first time since v1.1.
-  asof: "8 Aug 2026"
-  n: "33,655"
-  names_pct: "1.64"
-  floor_pct: "0.81"
+  asof: "12 Aug 2026"
+  n: "32,022"
+  names_pct: "1.57"
+  floor_pct: "0.80"
   sentence: >-
-    Of the 33,655 most recent job ads, 1.64% name a specific AI skill and 0.81% ask for one in
+    Of the 32,022 most recent job ads, 1.57% name a specific AI skill and 0.80% ask for one in
     the job itself (each figure give or take about a tenth of a percentage point). These numbers
     run a little higher than the chart's, for two reasons we have measured: the live feed
     carries a somewhat different mix of ads than the yearly archives, and the archives store
