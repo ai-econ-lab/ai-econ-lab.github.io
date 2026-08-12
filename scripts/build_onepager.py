@@ -318,9 +318,10 @@ COPY = {
   words_sub="Advertisement headlines, as written",
   words_new="New titles appearing",
   words_cooled="Titles that stopped clearing the bar",
-  words_note=("One entry is a measurement artefact worth naming: medicinsk sekreterare appears "
-              "because those advertisements mention speech-recognition software, which our "
-              "classifier judges to be a tool the job uses rather than an AI skill it asks for."),
+  words_note=("One entry is a measurement artefact worth naming: medical secretary (medicinsk "
+              "sekreterare) appears because those advertisements mention speech-recognition "
+              "software, which our classifier judges to be a tool the job uses rather than an "
+              "AI skill it asks for."),
   bar_hd="WHY FIRMS SAY THEY DO NOT USE AI",
   bar_sub="Per cent of all firms with 10+ employees, 2025",
   bar_note=("Shares are of ALL firms, not of non-adopters, so they do not sum to anything. "

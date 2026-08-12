@@ -148,7 +148,7 @@ titles:
   intro: >-
     Where the demand sits, in the employers' own words. The same titles head the list year
     after year: machine learning engineer, data scientist, AI/ML developer. One entry is a
-    measurement artefact worth naming: medicinsk sekreterare appears because those ads
+    measurement artefact worth naming: medical secretary (medicinsk sekreterare) appears because those ads
     mention speech-recognition software, and our classifier judges almost all of them to be
     describing a tool the job uses rather than an AI skill it asks for. The newcomers column
     is the language at work: job titles crossing three ads in a year for the first time.
