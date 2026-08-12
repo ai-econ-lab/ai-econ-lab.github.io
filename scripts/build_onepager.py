@@ -301,7 +301,7 @@ COPY = {
   se_body=(r"A \textbf{{range}}, not a single number: the upper line counts an advertisement that "
            r"mentions an AI skill anywhere, the lower one only when the skill is asked of the "
            r"person being hired. Both rose steeply. The broader count went from {v0:.2f}\% of "
-           r"advertisements in {y0} to {v1:.2f}\% in {y1}, about {rise:.0f} times higher, and the "
+           r"advertisements in {y0} to {v1:.2f}\% in {y1}, about {rise:.0f} times as high, and the "
            r"honest {y1} range is \textbf{{{fl:.2f}\% to {ceiling}\%}}."),
   se_live=(r"Right now ({asof}): of the {n} most recent advertisements, {names}\% mention an AI "
            r"skill and {floor}\% ask for one in the job itself. This is the only figure on the "
@@ -393,7 +393,7 @@ COPY = {
   se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: den övre linjen räknar en annons som "
            r"nämner en AI-färdighet någonstans, den nedre bara när färdigheten efterfrågas av den "
            r"som ska anställas. Båda har stigit kraftigt. Den bredare räkningen gick från "
-           r"{v0:.2f}\% av annonserna {y0} till {v1:.2f}\% {y1}, ungefär {rise:.0f} gånger högre, "
+           r"{v0:.2f}\% av annonserna {y0} till {v1:.2f}\% {y1}, ungefär {rise:.0f} gånger så mycket, "
            r"och det ärliga intervallet för {y1} är \textbf{{{fl:.2f}\% till {ceiling}\%}}."),
   se_live=(r"Just nu ({asof}): av de {n} senaste annonserna nämner {names}\% en AI-färdighet och "
            r"{floor}\% efterfrågar den i själva jobbet. Det är den enda siffran på bladet som "
