@@ -1949,6 +1949,7 @@ def brief(lang="en"):
     sub = SITE.get("brief_subscribe", "")
 
     cc = CROSS; dm = DEMAND; smd = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
+    tr = MONITOR["trend"]          # our own Swedish series: the floor-to-ceiling range
     n_ctry = cc["meta"]["n_countries"]; dver = cc["meta"]["daioe_version"]
     se_share = next(r["share"] for r in cc["countries"] if r["is_se"]); eu_share = cc["meta"]["mean_share"]
     CAL = load("brief_calendar.yaml")["months"]            # confirmed 12-month theme calendar
@@ -1956,6 +1957,14 @@ def brief(lang="en"):
                                "title_sv": "AI-exponering i Europa"})
     theme = cm["theme"]                                    # which built chart+takeaway to show
     titles = {theme: (cm["title_sv"] if sv else cm["title_en"])}   # displayed monthly theme
+    # EU first, Sweden in depth: the house order, and Magnus's steer for this theme. Every
+    # figure below is picked from the data rather than typed, and the EU ordering is read
+    # separately because it is not identical to the Swedish one.
+    b_rows = BARRIERS["rows"]
+    b_eu_top = max(b_rows, key=lambda r: r["eu"])
+    b_eu_low = min(b_rows, key=lambda r: r["eu"])
+    b_cost = next(r for r in b_rows if r["name"].lower().startswith("cost"))
+    b_se_top = max(b_rows, key=lambda r: r["share"])
     takeaways = {
         "exposure": L(
             f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
@@ -1979,14 +1988,18 @@ def brief(lang="en"):
             f"Användningen ökar brant med företagsstorlek, från {smd['10-49']}% av småföretagen (10–49 anställda) till "
             f"{smd['250-']}% av de stora (250+) {SWEAD['meta']['year']}, alla storleksklasser kraftigt upp sedan {SWEAD['meta']['prev_year']}."),
         "barriers": L(
-            f"The obstacle firms name most often is people, not money: {BARRIERS['rows'][0]['share']}% of Swedish "
-            f"enterprises say a lack of relevant expertise stops them using AI, against "
-            f"{BARRIERS['rows'][-1]['share']}% who say AI is simply not useful to them. Cost ranks low, at "
-            f"{next(r['share'] for r in BARRIERS['rows'] if r['name'].lower().startswith('cost'))}%.",
-            f"Hindret företagen nämner oftast är kompetens, inte pengar: {svn(BARRIERS['rows'][0]['share'])}% av de "
-            f"svenska företagen anger brist på relevant kompetens som skäl att inte använda AI, mot "
-            f"{svn(BARRIERS['rows'][-1]['share'])}% som anser att AI inte är användbart för dem. Kostnad hamnar lågt, "
-            f"på {svn(next(r['share'] for r in BARRIERS['rows'] if r['name'].lower().startswith('cost')))}%."),
+            f"Across the EU the obstacle enterprises name most often is people, not money: "
+            f"{b_eu_top['eu']}% name a lack of relevant expertise, against {b_eu_low['eu']}% who say AI is "
+            f"simply not useful to them, and cost sits low at {b_cost['eu']}%. Sweden has the same ordering "
+            f"at lower levels, {b_se_top['share']}% for expertise and {b_cost['share']}% for cost. The Swedish "
+            f"figures are not comparable with years before 2023: the question is now put only to firms that "
+            f"considered AI and decided against it, and Eurostat flags the break.",
+            f"I EU är hindret företagen oftast nämner kompetens, inte pengar: {svn(b_eu_top['eu'])}% anger "
+            f"brist på relevant kompetens, mot {svn(b_eu_low['eu'])}% som anser att AI inte är användbart för "
+            f"dem, och kostnad hamnar lågt på {svn(b_cost['eu'])}%. Sverige har samma ordning på lägre nivåer, "
+            f"{svn(b_se_top['share'])}% för kompetens och {svn(b_cost['share'])}% för kostnad. De svenska "
+            f"siffrorna är inte jämförbara med åren före 2023: frågan ställs nu bara till företag som övervägt "
+            f"AI och valt bort det, och Eurostat flaggar brottet."),
         "outcomes": L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
             f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
@@ -2075,8 +2088,11 @@ def brief(lang="en"):
             f"accurately on one task chosen to sit outside the frontier (Dell'Acqua et al., 2026). Yet "
             f"in {ADOPT['meta']['year']} only {eu_adopt:.0f}% of EU enterprises used AI, {total_se}% in "
             f"Sweden, and AI skills were required in a median {dem_med:.1f}% of job postings across "
-            f"{dm['meta']['n_countries']} countries, {se_dem:.1f}% in Sweden. So why is a technology "
-            f"that demonstrably helps still so little used? Firms were asked.",
+            f"{dm['meta']['n_countries']} countries, {se_dem:.1f}% in Sweden. Our own Swedish series puts "
+            f"it between {tr['floor_values'][-1]:.2f}% of advertisements that ask for AI in the role itself "
+            f"and {tr['values'][-1]:.2f}% that name an AI skill anywhere. So why is a technology that "
+            f"demonstrably helps still so little used? Eurostat put the question to firms across the EU, "
+            f"Sweden among them.",
             f"Förmågan är inte längre den självklara begränsningen. Dagens AI-agenter klarar uppgifter på "
             f"upp till {metr_sv} mänskligt expertarbete ungefär hälften av gångerna, en längd som ungefär "
             f"fördubblats var fjärde månad, och beräkningskraften bakom de uppmärksammade modellerna "
@@ -2088,8 +2104,11 @@ def brief(lang="en"):
             f"det AI behärskar (Dell'Acqua m.fl., 2026). Ändå använde bara {svn(round(eu_adopt))}% av "
             f"EU:s företag AI {ADOPT['meta']['year']}, {total_se}% i Sverige, och AI-kompetens krävdes "
             f"i medianen {svn(round(dem_med, 1))}% av jobbannonserna i "
-            f"{dm['meta']['n_countries']} länder, {svn(round(se_dem, 1))}% i Sverige. Varför används "
-            f"då en teknik som bevisligen hjälper fortfarande så lite? Företagen fick frågan."),
+            f"{dm['meta']['n_countries']} länder, {svn(round(se_dem, 1))}% i Sverige. Vår egen svenska serie "
+            f"lägger den mellan {svn(round(tr['floor_values'][-1], 2))}% av annonserna som efterfrågar AI i "
+            f"själva tjänsten och {svn(round(tr['values'][-1], 2))}% som nämner en AI-färdighet någonstans. "
+            f"Varför används då en teknik som bevisligen hjälper fortfarande så lite? Eurostat ställde frågan "
+            f"till företag i hela EU, Sverige inräknat."),
         "outcomes": L(
             "If AI were already reshaping work, it should show up in what happens to jobs and pay. So "
             "far the clearest signal is not in wages but in who gets hired.",
