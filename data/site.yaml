@@ -170,4 +170,8 @@ contact:
 # Where finished pages are written (GitHub Pages serves from this folder).
 build:
   out: "docs"
-  emit_cname: false   # false = previewable at ai-econ-lab.github.io. Set true ONLY at the DNS-flip step.
+  emit_cname: true    # flipped 12 Aug 2026, AFTER Crossnet moved the DNS (ticket #318784) and the
+                      # apex resolved to GitHub's four addresses from two independent resolvers.
+                      # Order matters: setting this before the DNS moves makes Pages redirect
+                      # ai-econ-lab.github.io to a domain still pointing elsewhere, and the site
+                      # becomes unreachable from both addresses.
