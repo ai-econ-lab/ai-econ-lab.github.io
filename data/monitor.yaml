@@ -10,9 +10,14 @@ headline: "The AIEL Monitor"
 # four are read against. It was briefly worded as "the shock driving the four", which
 # asserts a causal mechanism the Monitor does not measure, on a page whose exposure module
 # insists that exposure is not displacement (Magnus, 4 Aug). Keep this descriptive.
+# Rewritten 12 Aug 2026. The opening sentence said the Monitor "tracks how artificial
+# intelligence IS CHANGING work", which presupposes the causation the one-pager's standfirst
+# spends a paragraph denying it can show, and it is the same defect the note above records
+# catching on 4 Aug in a different sentence. "In unusual depth" was a claim about us. The
+# wording now mirrors the sheet's own subtitle, so the two say the same thing in the same words.
 lede: >-
-  The AIEL Monitor tracks how artificial intelligence is changing work across countries, with Sweden
-  in unusual depth. It organises the evidence around four questions: which jobs are exposed, what
+  The AIEL Monitor reports the evidence on artificial intelligence and work, internationally and
+  for Sweden in depth. It is organised around four questions: which jobs are exposed, what
   employers demand, which firms adopt AI, and how employment and job quality are changing. A fifth
   module tracks the pace of the technology itself, which the other four are read against. Every indicator
   is dated and sourced, and built on public data so it can be cited and refreshed automatically.

@@ -285,7 +285,7 @@ def home():
       several European countries with job advertisements, surveys and public cross-country data.
       The <b>AIEL Monitor</b> is where
       part of that work becomes public: open indicators on AI and work across countries, with Sweden
-      in uncommon depth, updated as the data arrive.</p>
+      in depth, updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
       {sheet_pair()}</div>
     <div class="cta-row"><a class="btn ghost" href="/monitor/methods/">How we measure it</a></div>
