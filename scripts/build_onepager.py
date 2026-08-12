@@ -288,8 +288,8 @@ COPY = {
   q_wages="What has happened to pay?",
   r_exposure=("Jobs in the most AI-exposed quarter of occupations. Exposure describes the "
               "tasks, not who loses work."),
-  r_demand=("Advertisements requiring an AI skill: a small share of hiring. The series in "
-            "the figure below covers twenty years."),
+  r_demand=("Advertisements asking for an AI skill: a small part of hiring. The Swedish "
+            "series in the figure below is stricter and reads lower."),
   r_adoption=("Firms using AI in 2025. The EU more than doubled in two years."),
   r_wages=("Real wage growth 2015--2025, US occupations by exposure. In Sweden it is flat "
            "in every group."),
@@ -379,8 +379,8 @@ COPY = {
   q_wages="Vad har hänt med lönerna?",
   r_exposure=("Jobb i den mest AI-exponerade fjärdedelen av yrkena. Exponering beskriver "
               "uppgifterna, inte vem som förlorar arbete."),
-  r_demand=("Annonser som kräver AI-kompetens: en liten del av rekryteringen. Serien i "
-            "figuren nedan täcker tjugo år."),
+  r_demand=("Annonser som kräver AI-kompetens: en liten del av rekryteringen. Serien "
+            "i figuren nedan är striktare och ligger lägre."),
   r_adoption=("Andel företag som använde AI 2025. I EU 8\\% 2023, alltså mer än en "
               "fördubbling på två år."),
   r_wages=("Reallöner 2015--2025, amerikanska yrken efter exponering. I Sverige platta i "

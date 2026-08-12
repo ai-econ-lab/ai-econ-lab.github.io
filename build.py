@@ -1858,7 +1858,7 @@ def monitor():
     <p>The monitor is a citable public good. Please cite the specific version and date, and the underlying source
       shown in each figure's footer (for example DAIOE generative-AI v2023, or Eurostat 2025).</p>
     <p class="citebox">AI-Econ Lab (2026). AIEL Monitor: [module]. Örebro University and Ratio. [source and version
-      from the figure footer]. Accessed [date], https://ai-econ-lab.github.io/monitor/</p>
+      from the figure footer]. Accessed [date], https://ai-econlab.com/monitor/</p>
   </div>
 </section></div></div>"""
     return shell(f"The AI-Econ Lab Monitor · {SITE['brand']['name']}",
@@ -2110,9 +2110,11 @@ def brief(lang="en"):
             f"evidence that AI pays at the level of the firm is much thinner than the task evidence. Yet "
             f"in {ADOPT['meta']['year']} only {eu_adopt:.0f}% of EU enterprises used AI, {total_se}% in "
             f"Sweden, and AI skills were required in a median {dem_med:.1f}% of job postings across "
-            f"{dm['meta']['n_countries']} countries, {se_dem:.1f}% in Sweden. Our own Swedish series puts "
-            f"it between {tr['floor_values'][-1]:.2f}% of advertisements that ask for AI in the role itself "
-            f"and {tr['values'][-1]:.2f}% that name an AI skill anywhere. So why does a technology that "
+            f"{dm['meta']['n_countries']} countries, {se_dem:.1f}% in Sweden. Our own Swedish series counts "
+            f"more strictly, matching a frozen term list rather than extracting skills from the whole "
+            f"advertisement, and so reads lower: between {tr['floor_values'][-1]:.2f}% of advertisements "
+            f"that ask for AI in the role itself and {tr['values'][-1]:.2f}% that name an AI skill "
+            f"anywhere. So why does a technology that "
             f"performs this well on assigned tasks see so little use? Eurostat put the question to firms "
             f"across the EU, Sweden among them.",
             f"Förmågan är inte längre den självklara begränsningen. Dagens AI-agenter klarar uppgifter på "
@@ -2130,8 +2132,10 @@ def brief(lang="en"):
             f"EU:s företag AI {ADOPT['meta']['year']}, {total_se}% i Sverige, och AI-kompetens krävdes "
             f"i medianen {svn(round(dem_med, 1))}% av jobbannonserna i "
             f"{dm['meta']['n_countries']} länder, {svn(round(se_dem, 1))}% i Sverige. Vår egen svenska serie "
-            f"lägger den mellan {svn(round(tr['floor_values'][-1], 2))}% av annonserna som efterfrågar AI i "
-            f"själva tjänsten och {svn(round(tr['values'][-1], 2))}% som nämner en AI-färdighet någonstans. "
+            f"räknar striktare, mot en fryst termlista i stället för att extrahera kompetenser ur hela "
+            f"annonstexten, och ligger därför lägre: mellan {svn(round(tr['floor_values'][-1], 2))}% av "
+            f"annonserna som efterfrågar AI i själva tjänsten och {svn(round(tr['values'][-1], 2))}% som "
+            f"nämner en AI-färdighet någonstans. "
             f"Varför används då en teknik som presterar så här bra på tilldelade uppgifter fortfarande så "
             f"lite? Eurostat ställde frågan till företag i hela EU, Sverige inräknat."),
         "outcomes": L(
@@ -2184,8 +2188,8 @@ def brief(lang="en"):
             f"Swedish firms not using AI. The ranking is the part that travels, since every reason shares a "
             f"denominator; the levels are not comparable across years, and for Sweden not across the 2023 "
             f"break either. Nor is any of this cut by firm size, which is where the variation sits: "
-            f"{smd['10-49']}% of firms with 10 to 49 employees use AI against {smd['250-']}% of those with "
-            f"250 or more, so a national average describes no one in particular. An obstacle named is "
+            f"in Sweden {smd['10-49']}% of firms with 10 to 49 employees use AI against {smd['250-']}% of "
+            f"those with 250 or more, so a national average describes no one in particular. An obstacle named is "
             f"also not a benefit forgone: the survey records what firms say stopped them, not whether "
             f"adopting would have paid.",
             f"Läs detta som hur utbrett varje hinder är, inte som en uppdelning av de som avstår efter "
@@ -2194,8 +2198,9 @@ def brief(lang="en"):
             f"{svn(round(nonad))}% av de svenska företagen som inte använder AI. Rangordningen är det som "
             f"bär, eftersom alla skäl delar nämnare; nivåerna är inte jämförbara mellan år, och för Sverige "
             f"inte heller över brottet 2023. Ingenting av detta är dessutom uppdelat efter företagsstorlek, "
-            f"vilket är där variationen finns: {smd['10-49']}% av företagen med 10 till 49 anställda använder "
-            f"AI mot {smd['250-']}% av dem med 250 eller fler, så ett riksgenomsnitt beskriver ingen särskild. "
+            f"vilket är där variationen finns: i Sverige använder {smd['10-49']}% av företagen med 10 till 49 "
+            f"anställda AI mot {smd['250-']}% av dem med 250 eller fler, så ett riksgenomsnitt beskriver "
+            f"ingen särskild. "
             f"Ett nämnt hinder är inte heller en utebliven vinst: undersökningen registrerar vad "
             f"företagen uppger stoppade dem, inte om det hade lönat sig att införa AI."),
         "outcomes": L(
@@ -2251,14 +2256,14 @@ def brief(lang="en"):
     <div class="bchart">{th_chart}</div>
     <p class="bp">{takeaways[theme]}</p>
     {f'<p class="bp">{extras[theme]}</p>' if theme in extras else ''}
-    <p class="bsrc">{L("Source","Källa")}: {h(srcs[theme])}. {L("Full method at","Fullständig metod på")} ai-econ-lab.github.io/monitor/#method.</p></section>
+    <p class="bsrc">{L("Source","Källa")}: {h(srcs[theme])}. {L("Full method at","Fullständig metod på")} ai-econlab.com/monitor/#method.</p></section>
 
   <section class="bsec"><h2 class="bh2">{L("What it does not show","Vad det inte visar")}</h2>
     <p class="bp">{limits[theme]}</p></section>
 
   <footer class="bfooter">
     <span>AI-Econ Lab · AIEL Monitor · {issue}. {L("Public data; cite the version and date.","Öppna data; ange version och datum vid citering.")}</span>
-    <span>ai-econ-lab.github.io/monitor</span></footer>
+    <span>ai-econlab.com/monitor</span></footer>
 </article></div>"""
     return shell(f"{L('AIEL Monitor Brief','AIEL Monitor-brief')}, {mname} {today.year} · {SITE['brand']['name']}",
                  L(f"A monthly one-page snapshot of AI in the labour market from the AI-Econ Lab: {mname} {today.year}.",

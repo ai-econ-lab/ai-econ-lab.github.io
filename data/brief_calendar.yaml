@@ -11,7 +11,7 @@ months:
   5:  {title_en: "Who is adopting AI? Firms",                title_sv: "Vem använder AI? Företagen",                theme: adoption}
   6:  {title_en: "How professionals really use AI",          title_sv: "Hur yrkesverksamma använder AI",            theme: adoption}
   7:  {title_en: "AI exposure across Europe",                title_sv: "AI-exponering i Europa",                    theme: exposure}
-  8:  {title_en: "Barriers: why AI is not used yet",         title_sv: "Hinder: varför AI inte används",            theme: barriers}
+  8:  {title_en: "Barriers: what firms say stops them",     title_sv: "Hinder: vad företagen anger stoppar dem",    theme: barriers}
   9:  {title_en: "Sectors and industries",                   title_sv: "Sektorer och branscher",                    theme: adoption}
   10: {title_en: "Reskilling and the competence gap",        title_sv: "Omställning och kompetensgap",              theme: demand}
   11: {title_en: "Job quality and the work environment",     title_sv: "Jobbkvalitet och arbetsmiljö",              theme: outcomes}
