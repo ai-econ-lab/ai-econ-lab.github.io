@@ -43,6 +43,7 @@ Run:  python3 scripts/build_onepager.py              -> docs/aiel-monitor-onepag
 """
 
 import html
+import os
 import re
 import shutil
 import subprocess
@@ -92,7 +93,7 @@ def grab(pattern, text, what):
     return [float(g) for g in m.groups()]
 
 
-def range_band(years, hi, lo, lab_hi, lab_lo, w=118, h=23):
+def range_band(years, hi, lo, lab_hi, lab_lo, w=118, h=17):
     """The floor-to-ceiling range as a filled band: one entity, two strictnesses, one hue."""
     top = max(hi) * 1.14
     X = lambda i: i / (len(years) - 1) * w
@@ -172,17 +173,25 @@ def dumbbell(a_lab, a_val, b_lab, b_val, w=44):
             f"\\end{{tikzpicture}}")
 
 
-def card(question, viz, reading, vintage, colw, h="37mm", srclab=""):
+def card(question, viz, reading, vintage, colw, grp="A", srclab=""):
     """A tinted card. tcolorbox rather than a tikz node: a node with `text width` that contains
     another tikzpicture does not measure it, so the bars escaped the card and every card grew
-    to a different height. tcolorbox handles nested content and gives a fixed height for free."""
+    to a different height. tcolorbox handles nested content and measures it.
+
+    Height comes from `equal height group`, not a hand-set `height=`. A fixed height was tried
+    first and is a trap: the two languages set the same four readings in different numbers of
+    lines, so any value that fits English clips Swedish (or the reverse), and the overflow is
+    silent, escaping *behind* the card below it rather than raising an error. The group makes
+    both cards in a row as tall as the taller one's own content, so nothing can be clipped by
+    construction. It costs a second LaTeX pass (heights go via the .aux), which tectonic runs
+    on its own. Pass a different group per row, not one group for all four."""
     return (f"\\begin{{minipage}}[t]{{{colw}\\textwidth}}\n"
             f"\\begin{{tcolorbox}}[enhanced,arc=1.4mm,"
             f"colback={SOFT}!6,colframe={SOFT}!6,boxrule=0pt,left=3.4mm,right=3.4mm,"
-            f"top=3.2mm,bottom=3.2mm,height={h},valign=top]\n"
+            f"top=2.2mm,bottom=2.0mm,valign=top]\n"
             f"{{\\footnotesize\\bfseries\\textcolor{{ink}}{{{question}}}}}\n\n"
-            f"\\vspace{{2.6mm}}\n\\hspace*{{11mm}}{viz}\n\n"
-            f"\\vspace{{2.8mm}}\n{{\\scriptsize {reading}}}\n\n"
+            f"\\vspace{{1.9mm}}\n\\hspace*{{11mm}}{viz}\n\n"
+            f"\\vspace{{1.9mm}}\n{{\\scriptsize {reading}}}\n\n"
             f"\\vspace{{1mm}}\n{{\\tiny\\textcolor{{soft}}{{{srclab}}}{{{vintage}}}}}\n"
             f"\\end{{tcolorbox}}\\end{{minipage}}")
 
@@ -253,9 +262,9 @@ COPY = {
   standfirst_sub="What the evidence shows, internationally and for Sweden in depth",
   caveat=(r"\textbf{{This page describes; it does not explain.}} Everything here is measured, "
           r"but none of it shows that AI \emph{{caused}} what you are looking at. Other things "
-          r"moved over the same years, including interest rates, a pandemic and the ordinary "
-          r"business cycle. \textbf{{Read the dates, not the sheet's date:}} the sheet is "
-          r"generated on demand, the evidence is not, and every figure carries its own vintage."),
+          r"moved over the same years: interest rates, a pandemic, the ordinary business cycle. "
+          r"\textbf{{Read the dates, not the sheet's date:}} the sheet is generated on demand, "
+          r"the evidence is not, and every figure carries its own vintage."),
   # "four different answers" editorialised that they conflict. State the structure, not a
   # reading of it.
   four_hd="FOUR QUESTIONS, MEASURED SEPARATELY",
@@ -270,17 +279,16 @@ COPY = {
   # "Has it shown up in pay?" presupposes an effect that ought to appear, which is a causal
   # claim on a descriptive sheet.
   q_wages="What has happened to pay?",
-  r_exposure=("Jobs in the most AI-exposed quarter of occupations. Exposure is a property of "
-              "the tasks, not a forecast: it says nothing about who loses or gains work."),
-  r_demand=("Advertisements requiring an AI skill: a small share of hiring. The Swedish "
-            "series in the figure below shows twenty years of it."),
+  r_exposure=("Jobs in the most AI-exposed quarter of occupations. Exposure describes the "
+              "tasks, not who loses work."),
+  r_demand=("Advertisements requiring an AI skill: a small share of hiring. The series in "
+            "the figure below covers twenty years."),
   r_adoption=("Firms using AI in 2025. The EU more than doubled in two years."),
-  r_wages=("Real wage growth 2015--2025, US occupations by exposure. In Sweden pay is flat "
+  r_wages=("Real wage growth 2015--2025, US occupations by exposure. In Sweden it is flat "
            "in every group."),
   se_hd="SWEDEN IN DEPTH: HOW OFTEN DO JOB ADS ASK FOR AI?",
   se_sub="Every advertisement on the public job board",
   src_label="Source: ",
-  card_h="37mm",
   se_src="JobTech / Platsbanken job ads (CC0), frozen v1.3 term list, distinct advertisements",
   band_hi="mention an AI skill", band_lo="ask for it in the job itself",
   se_body=(r"A \textbf{{range}}, not a single number: the upper line counts an advertisement that "
@@ -300,12 +308,12 @@ COPY = {
   cap_tail=("This is the technology the four questions are read against, not a fifth question "
             "about the labour market."),
   footnote=(r"\textbf{{Before you quote this.}} The Swedish series counts what employers "
-            r"\emph{{write down when hiring}}: not jobs, and not firms using AI, which are two of "
-            r"the panels above. Not all hiring is advertised. A rising line means employers ask "
-            r"for AI skills more often than they used to, and nothing more."),
-  colophon=(r"AI-Econ Lab, Örebro University and the Ratio Institute. Public data throughout; "
-            r"every figure is reproducible from the source named beside it. Method and version "
-            r"history: \href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
+            r"\emph{{write down when hiring}}: not jobs, and not firms using AI, two of the panels "
+            r"above. Not all hiring is advertised. A rising line means only that employers ask "
+            r"for AI skills more often."),
+  colophon=(r"AI-Econ Lab, Örebro University and the Ratio Institute. Public data throughout; every "
+            r"figure is reproducible from the source beside it. Method: "
+            r"\href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
   lab_se="Sweden", lab_eu="Europe", lab_eu2="EU", lab_med="22-country median",
   lab_least="Least exposed", lab_most="Most exposed",
   of_all_jobs="bar spans all jobs", of_all_ads="bar spans 0--4\\% of ads",
@@ -364,16 +372,15 @@ COPY = {
   q_wages="Vad har hänt med lönerna?",
   r_exposure=("Jobb i den mest AI-exponerade fjärdedelen av yrkena. Exponering beskriver "
               "uppgifterna, inte vem som förlorar arbete."),
-  r_demand=("Annonser som kräver AI-kompetens: en liten del av rekryteringen. Den svenska "
-            "serien i figuren nedan visar tjugo år."),
-  r_adoption=("Andel företag som använde AI 2025. I EU var siffran 8\\% 2023, så användningen "
-              "har mer än fördubblats på två år."),
-  r_wages=("Reallöneutveckling 2015--2025 i amerikanska yrken, efter exponering. Lönerna växte "
-           "långsammare där exponeringen är högst. I Sverige är de platta i alla grupper."),
+  r_demand=("Annonser som kräver AI-kompetens: en liten del av rekryteringen. Serien i "
+            "figuren nedan täcker tjugo år."),
+  r_adoption=("Andel företag som använde AI 2025. I EU 8\\% 2023, alltså mer än en "
+              "fördubbling på två år."),
+  r_wages=("Reallöner 2015--2025, amerikanska yrken efter exponering. I Sverige platta i "
+           "alla grupper."),
   se_hd="SVERIGE PÅ DJUPET: HUR OFTA EFTERFRÅGAR ANNONSERNA AI?",
   se_sub="Baserat på samtliga annonser på Platsbanken",
   src_label="Källa: ",
-  card_h="43mm",
   se_src="JobTech / Platsbanken (CC0), fryst termlista v1.3, distinkta annonser",
   band_hi="nämner en AI-färdighet", band_lo="efterfrågar den i själva jobbet",
   se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: den övre linjen räknar en annons som "
@@ -391,8 +398,8 @@ COPY = {
             "arbetsmarknaden."),
   footnote=(r"\textbf{{Innan du citerar det här.}} Den svenska serien räknar vad arbetsgivare "
             r"\emph{{skriver ned när de rekryterar}}: inte jobb, och inte företag som använder AI, "
-            r"vilket är två av panelerna ovan. All rekrytering annonseras inte. En stigande linje "
-            r"betyder att arbetsgivare efterfrågar AI-kompetens oftare än förr, inget mer."),
+            r"två av panelerna ovan. All rekrytering annonseras inte. En stigande linje betyder "
+            r"bara att arbetsgivare efterfrågar AI-kompetens oftare än förr."),
   colophon=(r"AI-Econ Lab, Örebro universitet och Ratio. Öppna data genomgående; varje siffra går "
             r"att återskapa från källan intill. Metod: \href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
   lab_se="Sverige", lab_eu="Europa", lab_eu2="EU", lab_med="medianland av 22",
@@ -475,18 +482,18 @@ def main():
     cards = [
         card(C["q_exposure"],
              share_bars(C["lab_se"], exp_se, C["lab_eu"], exp_eu, note=C["of_all_jobs"]),
-             C["r_exposure"], tex(ov["Exposure"]["foot"]), colw, C["card_h"], srclab=C["src_label"]),
+             C["r_exposure"], tex(ov["Exposure"]["foot"]), colw, "A", srclab=C["src_label"]),
         card(C["q_demand"],
              share_bars(C["lab_se"], dem_se, C["lab_med"], dem_med, track=4, note=C["of_all_ads"]),
-             C["r_demand"], tex(ov["Demand"]["foot"]), colw, C["card_h"], srclab=C["src_label"]),
+             C["r_demand"], tex(ov["Demand"]["foot"]), colw, "A", srclab=C["src_label"]),
         card(C["q_adoption"],
              share_bars(C["lab_se"], ado_se, C["lab_eu2"], ado_eu, ghost=ado_prev,
                         note=C["of_all_firms"]),
-             C["r_adoption"], tex(ov["Adoption"]["foot"]), colw, C["card_h"], srclab=C["src_label"]),
+             C["r_adoption"], tex(ov["Adoption"]["foot"]), colw, "B", srclab=C["src_label"]),
         card(C["q_wages"], dumbbell(C["lab_least"], out_lo, C["lab_most"], out_hi),
-             C["r_wages"], tex(ov["Outcomes"]["foot"]), colw, C["card_h"], srclab=C["src_label"]),
+             C["r_wages"], tex(ov["Outcomes"]["foot"]), colw, "B", srclab=C["src_label"]),
     ]
-    grid = (cards[0] + "\\hfill" + cards[1] + "\\\\[4mm]\n"
+    grid = (cards[0] + "\\hfill" + cards[1] + "\\\\[2.6mm]\n"
             + cards[2] + "\\hfill" + cards[3])
 
     cap = ov["Capability"]
@@ -547,7 +554,7 @@ def main():
 {{\scriptsize\textcolor{{soft}}{{{C['a11y']} \quad {C['colophon']}}}}}
 """
 
-    geom = "a4paper,landscape,margin=11mm" if landscape else "a4paper,margin=11mm"
+    geom = "a4paper,landscape,margin=10mm" if landscape else "a4paper,margin=10mm"
     base = "12pt" if big else "11pt"
 
     doc = rf"""
@@ -583,24 +590,24 @@ def main():
 \raisebox{{2mm}}{{\parbox{{64mm}}{{\raggedleft
   {{\footnotesize\bfseries\textcolor{{{SE}}}{{ai-econlab.com}}}}\\[0.4mm]
   {{\scriptsize\textcolor{{soft}}{{{C['kicker'].format(stamp=stamp)}}}}}}}}}\\[0.6mm]
-{{\normalsize\textcolor{{soft}}{{{C['standfirst_sub']}}}}}\\[2.4mm]
-\textcolor{{ink}}{{\rule{{\textwidth}}{{1.4pt}}}}\\[2.6mm]
+{{\normalsize\textcolor{{soft}}{{{C['standfirst_sub']}}}}}\\[2mm]
+\textcolor{{ink}}{{\rule{{\textwidth}}{{1.4pt}}}}\\[2.2mm]
 
-{{\scriptsize\textcolor{{soft}}{{{C['caveat']}}}}}\\[3mm]
+{{\scriptsize\textcolor{{soft}}{{{C['caveat']}}}}}\\[2mm]
 
 {{\normalsize\bfseries\textcolor{{ink}}{{{C['four_hd']}}}}}\hfill
 {{\scriptsize\textcolor{{soft}}{{\textcolor{{{SE}}}{{\rule{{2.2mm}}{{2.2mm}}}}~{C['legend_se']}
-\quad \textcolor{{{INTL}}}{{\rule{{2.2mm}}{{2.2mm}}}}~{C['legend_intl']}}}}}\\[3.4mm]
-{grid}\\[2.4mm]
+\quad \textcolor{{{INTL}}}{{\rule{{2.2mm}}{{2.2mm}}}}~{C['legend_intl']}}}}}\\[2.8mm]
+{grid}\\[1.6mm]
 
 {{\normalsize\bfseries\textcolor{{ink}}{{{C['se_hd']}}}}}\hfill
-{{\scriptsize\textcolor{{soft}}{{{C['se_sub']}}}}}\\[4.5mm]
-\hspace*{{9mm}}{hero}\\[3mm]
+{{\scriptsize\textcolor{{soft}}{{{C['se_sub']}}}}}\\[2.2mm]
+\hspace*{{9mm}}{hero}\\[2mm]
 {{\scriptsize {se_body}}}\\[1.6mm]
 {{\scriptsize\textcolor{{soft}}{{{se_live}}}}}\\[1.2mm]
-{{\tiny\textcolor{{soft}}{{{C['se_src']}}}}}\\[3mm]
+{{\tiny\textcolor{{soft}}{{{C['se_src']}}}}}\\[2.4mm]
 
-\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.2mm]
+\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[1.8mm]
 \noindent\begin{{minipage}}[c]{{0.32\textwidth}}
   {{\footnotesize\bfseries\textcolor{{ink}}{{{C['cap_q']}}}}}\\[1.4mm]
   {{\LARGE\bfseries\textcolor{{ink}}{{{tex(cap['num'])}}}}}
@@ -608,9 +615,9 @@ def main():
 \begin{{minipage}}[c]{{0.66\textwidth}}\raggedright
   {{\scriptsize {C['cap_lab']}. {C['cap_tail']}}}\\[0.8mm]
   {{\scriptsize\textcolor{{soft}}{{{tex(cap['foot'])}}}}}
-\end{{minipage}}\\[2.4mm]
+\end{{minipage}}\\[2mm]
 
-\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.6mm]
+\textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2mm]
 {{\scriptsize\textcolor{{soft}}{{{C['footnote']}}}}}
 {page2}
 \end{{document}}
@@ -620,14 +627,31 @@ def main():
     with tempfile.TemporaryDirectory() as td:
         src = Path(td) / "onepager.tex"
         src.write_text(doc, encoding="utf-8")
+        if os.environ.get("AIEL_DUMP_TEX"):   # debugging aid: keep the generated source
+            Path(os.environ["AIEL_DUMP_TEX"]).with_suffix(f".{lang}.tex").write_text(doc, "utf-8")
         r = subprocess.run([TECTONIC, "--outdir", td, str(src)], capture_output=True, text=True)
         if r.returncode != 0:
             sys.stderr.write((r.stdout + r.stderr)[-3500:])
             raise SystemExit("tectonic failed")
+        # The sheet is a TWO-page sheet and its whole promise is that it fits. Page one holds
+        # the four questions, the Swedish series and the capability anchor; page two holds the
+        # occupations, the barriers and the vocabulary. A third page means something overflowed,
+        # which is silent in LaTeX and easy to miss when only one language is rebuilt. Fail here
+        # instead of shipping it: the two languages set the same copy in different numbers of
+        # lines, so a Swedish-only overflow is the normal way this breaks.
+        pages = int(re.search(r"^Pages:\s+(\d+)", subprocess.run(
+            ["pdfinfo", str(Path(td) / "onepager.pdf")], capture_output=True, text=True
+        ).stdout, re.M).group(1))
+        if pages != 2 and not (big or landscape):
+            raise SystemExit(
+                f"build_onepager: {lang} came out at {pages} pages, not 2. Something overflowed.\n"
+                f"  Find it with:  pdftotext -f 3 -l 3 -layout <pdf> -\n"
+                f"  Then shorten that copy, or take the millimetres out of the page-one gaps.")
         out.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(Path(td) / "onepager.pdf", out)
     print(f"wrote {out.relative_to(ROOT)} ({out.stat().st_size/1024:.0f} kB, {lang}, "
-          f"{'landscape' if landscape else 'portrait'}{', large print' if big else ''}, {stamp})")
+          f"{pages} pages, {'landscape' if landscape else 'portrait'}"
+          f"{', large print' if big else ''}, {stamp})")
 
 
 if __name__ == "__main__":
