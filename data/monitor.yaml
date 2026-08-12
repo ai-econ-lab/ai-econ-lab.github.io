@@ -20,9 +20,9 @@ lede: >-
 # Overview-first landing: one door per spine module (Exposure · Demand · Adoption · Outcomes).
 # International-first headline number each; Sweden is the depth cut inside the module. Every figure dated.
 overview:
-  - {k: "Exposure", num: "30<span>%</span>", lab: "of European jobs are in the top-25% most AI-exposed occupations (by generative-AI exposure); Sweden 39%, among the highest of 36", foot: "DAIOE genAI v2023 · EU-LFS", anchor: "#exposure", cls: ""}
-  - {k: "Demand",   num: "1.9<span>%</span>", lab: "median share of job ads requiring AI across 22 countries in 2025 (Stanford AI Index); Sweden 2.8%", foot: "AI Index / Lightcast · 2025", anchor: "#demand", cls: "b"}
-  - {k: "Adoption", num: "20<span>%</span>", lab: "of EU firms used AI in 2025, up from 8% in 2023 (Eurostat); Sweden 35%, among the leaders", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
+  - {k: "Exposure", num: "30<span>%</span>", lab: "of European jobs are in the top-25% most AI-exposed occupations (by generative-AI exposure); Sweden 39%, among the highest of 36 countries.", foot: "DAIOE genAI v2023 · EU-LFS", anchor: "#exposure", cls: ""}
+  - {k: "Demand",   num: "1.9<span>%</span>", lab: "median share of job ads requiring AI across 22 countries in 2025 (Stanford AI Index); Sweden 2.8%.", foot: "AI Index / Lightcast · 2025", anchor: "#demand", cls: "b"}
+  - {k: "Adoption", num: "20<span>%</span>", lab: "of EU firms used AI in 2025, up from 8% in 2023 (Eurostat); Sweden 35%, among the leaders.", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
   # Swapped 1 Aug 2026 (Magnus). This card carried the entry-level squeeze, which is the
   # page's most attackable number: the only module on a different instrument, the only one
   # still counting ad records, and the first thing a competitor goes for. It also left the
@@ -35,14 +35,14 @@ overview:
   # a DIFFERENCE OF GROWTH RATES, which is what this card reports, so the honest figure is
   # −6.6pp. It also makes the claim harder to wave away: real wages flat in every Swedish
   # exposure group over eleven years is a starker null than "+34% nominal".
-  - {k: "Outcomes", num: "−6.6<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.6% against 10.2%); in Sweden real wages are flat in all three exposure groups. Exposure has not shown up in pay", foot: "BLS OEWS · SCB · real terms · 2015–2025", anchor: "#wages", cls: "d"}
+  - {k: "Outcomes", num: "−6.6<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.6% against 10.2%); in Sweden real wages are flat in all three exposure groups. Exposure has not shown up in pay.", foot: "BLS OEWS · SCB · real terms · 2015–2025", anchor: "#wages", cls: "d"}
   # role: driver (4 Aug 2026). Capability is not a fifth question about the labour market:
   # it measures the technology rather than the market, which is why it sits apart. Rendering
   # it as a fifth peer card is what produced the "four questions, five cards" contradiction
   # Schroeder caught. stat_overview() pulls any entry marked driver out of the card grid and
   # renders it as a full-width band beneath. The key name is historical; the label shown to
   # readers is deliberately not causal.
-  - {k: "Capability", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents complete at even odds; the length has been doubling every 4–6 months", foot: "METR · May 2026", anchor: "#capability", cls: "e", role: "driver"}
+  - {k: "Capability", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents can finish about half the time; that length has been doubling every 4–6 months.", foot: "METR · May 2026", anchor: "#capability", cls: "e", role: "driver"}
 
 
 # The AI in Demand module.
@@ -108,11 +108,14 @@ trend:
   ymax: 1.5
   yticks: [0, 0.5, 1, 1.5]
 
+# Tile convention settled 12 Aug 2026 (Lydia's review): the grey foot line is always
+# source · vintage, never description; anything descriptive belongs in the label, which
+# ends with a full stop.
 tiles:
-  - {num: "1.09<span>%</span>", lab: "of 2025 job advertisements name a specific AI skill; 0.55% ask for it in the job's own requirements", foot: "frozen v1.3 · 2025 · distinct ads", cls: ""}
-  - {num: "22×", lab: "rise since 2006 in ads naming an AI skill (0.05% → 1.09%); the strict floor rose 27×", foot: "2006–2025 · Platsbanken", cls: "b"}
-  - {num: "28.7", lab: "ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023", foot: "27% of AI demand", cls: "c"}
-  - {num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations; descriptive, and not separable from the rate cycle", foot: "widening since 2020", cls: "d"}
+  - {num: "1.09<span>%</span>", lab: "of 2025 job advertisements name a specific AI skill; 0.55% ask for it in the job's own requirements.", foot: "Platsbanken · frozen v1.3 · distinct ads · 2025", cls: ""}
+  - {num: "22×", lab: "rise since 2006 in ads naming an AI skill (0.05% → 1.09%); the strict floor rose 27×.", foot: "Platsbanken · 2006–2025", cls: "b"}
+  - {num: "28.7", lab: "ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023; 27% of AI demand.", foot: "Platsbanken · 2025", cls: "c"}
+  - {num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations, a gap widening since 2020; descriptive, and not separable from the rate cycle.", foot: "JobTech · 2020–2025", cls: "d"}
 
 # The live 60-day window: its own instrument, never a point on the archive line (no-splice).
 livewindow:
@@ -139,7 +142,9 @@ livewindow:
 # Top ADVERTISEMENT TITLES (verbatim, from the candidate extracts: floor_top_titles.csv),
 # plus taxonomy-level churn. Free-text neologism newcomers: next release.
 titles:
-  flag: "Ad titles · verbatim"
+# Renamed 12 Aug 2026: "Ad titles · verbatim" read as a leftover "add title" placeholder
+# (Lydia's review).
+  flag: "employers' own wording"
   intro: >-
     Where the demand sits, in the employers' own words. The same titles head the list year
     after year: machine learning engineer, data scientist, AI/ML developer. One entry is a
@@ -226,10 +231,10 @@ capability:
   # anchor, so its figure is still read in a browser when the page moves.
   reviewed: {metr: 2026-08-12, arc: 2026-08-10}
   facts:
-    - {num: "12–17 h", lab: "Longest tasks frontier AI agents complete at even odds, in human-expert time", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}
-    - {num: "×2 every ~4 mo", lab: "How quickly that task length has been doubling, on the trend since 2023 (95% CI 3.4–5.2 months)", foot: "METR Time Horizon 1.1 · doubling time · May 2026"}
-    - {num: "5× per year", lab: "Growth of computing power used to train frontier models, since 2020", foot: "Epoch AI · Feb 2026"}
-    - {num: "100% vs 30%", lab: "Humans vs frontier AI on novel interactive worlds: explore, infer the goal, plan, with no instructions (was under 1% at launch)", foot: "ARC-AGI-3 · Jul 2026"}
+    - {num: "12–17 h", lab: "Longest tasks frontier AI agents finish about half the time, in human-expert time.", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}
+    - {num: "×2 every ~4 mo", lab: "How quickly that task length has been doubling, on the trend since 2023 (95% CI 3.4–5.2 months).", foot: "METR Time Horizon 1.1 · doubling time · May 2026"}
+    - {num: "5× per year", lab: "Growth of computing power used to train frontier models, since 2020.", foot: "Epoch AI · Feb 2026"}
+    - {num: "100% vs 30%", lab: "Humans vs frontier AI on novel interactive worlds: explore, infer the goal, plan, with no instructions (was under 1% at launch).", foot: "ARC-AGI-3 · Jul 2026"}
   links:
     - {label: "METR time horizons", url: "https://metr.org/time-horizons/"}
     - {label: "Epoch AI trends", url: "https://epoch.ai/trends"}

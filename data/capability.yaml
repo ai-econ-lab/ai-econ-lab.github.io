@@ -13,7 +13,7 @@ intro: 'Everything above measures AI in the labour market; this small module tra
   side.'
 facts:
 - num: 12–17 h
-  lab: Longest tasks frontier AI agents complete at even odds, in human-expert time
+  lab: Longest tasks frontier AI agents finish about half the time, in human-expert time
   foot: METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026
   mode: watched
   asof: '2026-05-01'
