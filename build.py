@@ -2116,24 +2116,21 @@ def brief(lang="en"):
             "någonstans i verksamheten, vilket inte säger något om hur stor del av arbetet den rör."),
         "barriers": L(
             f"Read this as how widespread each obstacle is, not as a division of non-adopters between "
-            f"causes. Eurostat asks surveyed enterprises with ten or more employees and allows several "
-            f"answers, so the shares neither sum to a total nor rebase onto the {nonad:.0f}% of Swedish "
-            f"firms not using AI. That bound is worth stating: even if no firm named two obstacles, at "
-            f"most {b_ceiling:.0f}% of non-adopters named any obstacle at all. For the rest, no obstacle "
-            f"is recorded. That is not the same as those firms saying nothing stands in the way, because "
-            f"the survey records which obstacles are named rather than collecting a verdict from every "
-            f"firm; but it does mean these data cannot carry the explanation on their own. Note too that "
-            f"EU firms report every obstacle more often than Swedish firms do, and adopt less.",
+            f"causes. Eurostat reports the shares as a percentage of all enterprises with ten or more employees and allows several "
+            f"answers, so they do not sum to a total. They also cannot be rebased onto the "
+            f"{nonad:.0f}% of Swedish firms not using AI, for a reason worth stating plainly: since 2023 "
+            f"the Swedish question is put only to firms that considered AI and decided against it, so "
+            f"most non-adopters are never asked. The ranking survives that, since every reason shares a "
+            f"denominator, but the levels describe a narrow group and the silence of the rest is a "
+            f"routing artefact rather than a finding.",
             f"Läs detta som hur utbrett varje hinder är, inte som en uppdelning av de som avstår efter "
-            f"orsak. Eurostat frågar tillfrågade företag med tio eller fler anställda och tillåter flera "
-            f"svar, så andelarna summerar inte till en helhet och kan inte räknas om till de "
-            f"{svn(round(nonad))}% av de svenska företagen som inte använder AI. Den gränsen är värd att "
-            f"nämna: även om inget företag angav två hinder, angav högst {svn(round(b_ceiling))}% av dem "
-            f"som avstår något hinder alls. För övriga registreras inget hinder. Det är inte detsamma "
-            f"som att de företagen säger att ingenting står i vägen, eftersom undersökningen registrerar "
-            f"vilka hinder som anges och inte hämtar in ett besked från varje företag; men det betyder "
-            f"att de här uppgifterna inte ensamma kan bära förklaringen. Notera också att företagen i EU "
-            f"uppger varje hinder oftare än de svenska, och använder AI i mindre utsträckning."),
+            f"orsak. Eurostat redovisar andelarna som procent av samtliga företag med tio eller fler anställda och tillåter flera "
+            f"svar, så de summerar inte till en helhet. De kan inte heller räknas om till de "
+            f"{svn(round(nonad))}% av de svenska företagen som inte använder AI, av ett skäl värt att "
+            f"säga rakt ut: sedan 2023 ställs den svenska frågan bara till företag som övervägt AI och "
+            f"valt bort det, så de flesta som avstår får den aldrig. Rangordningen står sig, eftersom "
+            f"alla skäl delar nämnare, men nivåerna beskriver en smal grupp och tystnaden hos övriga är "
+            f"en artefakt av frågans styrning snarare än ett resultat."),
         "outcomes": L(
             "Descriptive, not causal. Entry-level hiring is also more cyclical, and the tightening "
             "cycle hit these occupations hardest, so this cannot separate AI from the cycle.",

@@ -328,7 +328,7 @@ COPY = {
               "AI skill it asks for."),
   bar_hd="OBSTACLES FIRMS NAME",
   bar_sub="Per cent of all firms with 10+ employees, 2025",
-  bar_note=("Shares are of ALL surveyed firms, not of non-adopters, so they do not sum to anything. "
+  bar_note=("Shares are of ALL firms, not of non-adopters, so they do not sum to anything. "
             "Sweden is below the EU on every barrier, which is what a high-adoption country "
             "looks like. Not comparable with 2021: Eurostat flags a break in the Swedish series."),
   gaps_hd="WHAT THIS CANNOT SEE",
@@ -416,7 +416,7 @@ COPY = {
               "ett verktyg jobbet använder snarare än en AI-färdighet det efterfrågar."),
   bar_hd="HINDER SOM FÖRETAGEN ANGER",
   bar_sub="Procent av alla företag med minst 10 anställda, 2025",
-  bar_note=("Andelarna avser ALLA tillfrågade företag, inte bara de som avstått, så de summerar inte till "
+  bar_note=("Andelarna avser ALLA företag, inte bara de som avstått, så de summerar inte till "
             "något. Sverige ligger under EU på varje hinder, vilket är hur ett land med hög "
             "användning ser ut. Inte jämförbart med 2021: Eurostat flaggar ett serieavbrott."),
   gaps_hd="VAD DET HÄR INTE KAN SE",
