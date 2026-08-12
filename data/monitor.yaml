@@ -220,8 +220,10 @@ capability:
   #   thData blob — long_tasks_version 799cc9c4b4483a93fc3445623a49ea1bd74fdeb2, swaa_version
   #   f6cc84052e2a79dd540766c8a1b15ff399696371 — are byte-identical across every fetch,
   #   including one whose whole-page hash differed. The page hash moves; the data does not.
-  #   PREFER THOSE TWO IDENTIFIERS on the next re-read: they are the vantage-independent
-  #   version of this check, and hashing them instead of the page would end the false trips.
+  # Those two identifiers are now what the watcher actually compares, so a METR trip from
+  # here on means the measurements moved rather than the CDN: see metr_identity() in
+  # scripts/refresh_capability.py. ARC still goes by page hash because it publishes no
+  # anchor, so its figure is still read in a browser when the page moves.
   reviewed: {metr: 2026-08-12, arc: 2026-08-10}
   facts:
     - {num: "12–17 h", lab: "Longest tasks frontier AI agents complete at even odds, in human-expert time", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}

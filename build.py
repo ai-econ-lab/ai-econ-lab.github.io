@@ -2381,7 +2381,19 @@ def emit_data(out):
     (d / "swe_adoption.svg").write_text(
         chart_standalone(barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], _swxmax, 0, "adoption", ".0f", what="firm-size classes")), encoding="utf-8")
 
+ONEPAGERS = ("aiel-monitor-onepager.pdf", "aiel-monitor-onepager-sv.pdf")
+
+
 def build():
+    # CARRY THE ONE-PAGER PDFS ACROSS THE WIPE. build() deletes OUT and regenerates the sheets
+    # at the end through LaTeX, which only exists on Magnus's Mac (build_onepager.py hardcodes
+    # /opt/homebrew/bin/tectonic). On the GitHub runner that step fails softly, so the wipe was
+    # the whole story: the PDFs vanished from docs/, `git add -A` committed the deletion, and
+    # the six links to them from the homepage and the Monitor page went dead. That is precisely
+    # what happened on 12 Aug 2026, two days before the launch, having sat latent since the
+    # sheets were added on the 10th. Keeping the previous bytes means a machine that cannot
+    # rebuild the sheet republishes the last good one instead of removing it.
+    carried = {n: (OUT / n).read_bytes() for n in ONEPAGERS if (OUT / n).exists()}
     if OUT.exists(): shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
     for name, htmlstr in PAGES.items():
@@ -2415,6 +2427,12 @@ def build():
             print("  " + (r.stdout.strip() or r.stderr.strip().splitlines()[-1]))
     except Exception as e:                                    # noqa: BLE001
         print(f"  one-pager NOT built: {e}")
+    # Whatever the generator managed, no sheet that existed before this build may be missing
+    # after it. A stale sheet is a dated download; a deleted one is a 404 on the front page.
+    for name, blob in carried.items():
+        if not (OUT / name).exists():
+            (OUT / name).write_bytes(blob)
+            print(f"  {name}: kept the previous sheet (no TeX engine here, so not regenerated)")
 
     print(f"Built {len(PAGES)} pages + sitemap/robots/CNAME into {OUT}/")
     print(f"  papers: {paper_count()} · people: {sum(len(g['members']) for g in PEOPLE['groups'])}")

@@ -15,9 +15,33 @@ Not every external series can be honestly automated, so this splits them:
                 cannot drift behind the source.
   WATCHED       METR task horizons and ARC-AGI. Neither publishes the headline figure in a
                 machine-readable form (METR's public repo carries release dates only), so the
-                job here is detection: hash the source page, flag when it moves, and let a
+                job here is detection: watch a source identity, flag when it moves, and let a
                 human read the new number. A watched fact that has not been re-read within
                 STALE_DAYS is reported as stale rather than quietly shown as current.
+
+                WHAT "IDENTITY" MEANS DIFFERS BY SOURCE, and that matters more than it sounds.
+                Hashing a whole page detects changes that are not changes: metr.org serves
+                byte-different HTML from different CDN edges, so the runner and a laptop
+                disagree permanently, and the gate then trips on every run forever. It did.
+                So each watched source declares how to identify itself:
+
+                  data anchor  METR. Its page embeds a thData blob carrying the benchmark
+                               names and the two task-suite content hashes
+                               (long_tasks_version, swaa_version). Those change exactly when
+                               the measurements change and are identical from every vantage:
+                               verified 12 Aug 2026 across six fetches spanning two different
+                               whole-page hashes, one of them a 605 KB response against the
+                               usual 417 KB. This is the anchor to prefer wherever a source
+                               offers one.
+                  page hash    ARC-AGI, because it offers nothing better. The leaderboard is a
+                               Next.js app that streams its rows client-side; the HTML carries
+                               no scores and its page chunk is 6 KB of d3 rendering code with
+                               no data and no fetch call (checked 12 Aug 2026). Its page hash
+                               is at least vantage-stable, so detection works even though the
+                               figure itself must still be read in a browser.
+
+                A source that stops yielding its anchor is an error, never a silent fallback to
+                page hashing: falling back would trip the gate and read as a data change.
 
 The flag string is generated from what actually happened, so the page can only ever claim
 the freshness it has.
@@ -30,6 +54,8 @@ import hashlib
 import io
 import json
 import math
+import os
+import re
 import urllib.request
 from pathlib import Path
 
@@ -42,14 +68,18 @@ OUT = DATA / "capability.yaml"
 UA = {"User-Agent": "AIEL-monitor-refresh (python-urllib; research use)"}
 
 EPOCH_CSV = "https://epoch.ai/data/notable_ai_models.csv"
-WATCHED = {
-    "metr": "https://metr.org/time-horizons/",
-    # the leaderboard, not /arc-agi: the overview page carries no scores, so hashing it
-    # would report "unchanged" while the numbers underneath moved
-    "arc": "https://arcprize.org/leaderboard",
-}
 STALE_DAYS = 120           # one quarter plus a fortnight of slack
 TODAY = dt.date.today()
+
+# The state file is the runner's record of what a human has signed off. A local run that
+# writes it silently overwrites that record with values from a different vantage, which is
+# how the METR gate jammed between 10 and 12 Aug 2026: a local run put a laptop's page hash
+# in as the acknowledged one, the runner could never match it, and neither clearing route
+# could fire again. So CI owns the file. Locally the script still prints everything and still
+# regenerates capability.yaml; it just does not persist. Set AIEL_ALLOW_STATE_WRITE=1 to
+# override, which is for a deliberate schema migration and nothing else.
+CI_OWNS_STATE = bool(os.environ.get("GITHUB_ACTIONS"))
+ALLOW_STATE_WRITE = CI_OWNS_STATE or os.environ.get("AIEL_ALLOW_STATE_WRITE") == "1"
 
 
 def get(url, timeout=90):
@@ -97,21 +127,62 @@ def epoch_compute_trend():
 
 
 # ------------------------------------------------------------------ METR / ARC: watched
-def page_fingerprint(url):
-    """Hash of the source page as this machine sees it.
+def metr_identity(raw):
+    """METR's data identity: its benchmark names and the two task-suite content hashes.
 
-    THE FINGERPRINT IS VANTAGE-DEPENDENT. On 3 Aug 2026 metr.org served
-    e062b94a30e52db0 to the GitHub runner on three runs across an hour, and
-    ee1baf60ed0bdf5a to a Mac in Sweden on every attempt: a CDN difference, not a
-    change. It is stable per client, which is all the gate needs, since only the
-    runner's view drives it. But running this locally will disagree with CI and
-    record a pending fingerprint of its own. Clear an alert the documented way
-    (re-read the source, update data/monitor.yaml, let the weekly run settle it)
-    rather than by matching hashes between machines."""
+    The page embeds a thData blob whose dataset objects carry benchmark_name,
+    long_tasks_version and swaa_version. Those are the suite's own content hashes, so they
+    move when the measurements move and not when the CDN, the page shell or an asset digest
+    moves. Collected as distinct sorted sets rather than by picking out "the current one":
+    a new benchmark version appearing is exactly the event we want flagged, so hardcoding
+    v1.1 here would hide the thing worth catching.
+
+    The benchmark names are kept whole and only the 40-character hashes are truncated. An
+    earlier draft truncated everything to 12 characters, which collapsed METR-Horizon-v1.0
+    and METR-Horizon-v1.1 into one token and would have concealed a new suite entirely.
+
+    Returns None if the fields are absent, which the caller treats as an error."""
+    text = raw.decode("utf-8", "replace")
+
+    def distinct(field, cut=None):
+        found = set(re.findall(rf'"{field}":"([^"]+)"', text))
+        return sorted(v[:cut] if cut else v for v in found)
+
+    names = distinct("benchmark_name")
+    long_tasks = distinct("long_tasks_version", 12)
+    swaa = distinct("swaa_version", 12)
+    if not (names and long_tasks and swaa):
+        return None
+    return (f"benchmarks={','.join(names)} long_tasks={','.join(long_tasks)} "
+            f"swaa={','.join(swaa)}")
+
+
+WATCHED = {
+    "metr": {"url": "https://metr.org/time-horizons/", "identity": metr_identity},
+    # the leaderboard, not /arc-agi: the overview page carries no scores, so watching it
+    # would report "unchanged" while the numbers underneath moved. No data anchor exists
+    # either way, so this one is a page hash; see the module docstring.
+    "arc": {"url": "https://arcprize.org/leaderboard", "identity": None},
+}
+
+
+def source_identity(cfg):
+    """What this source looks like right now, as a string the state file can hold.
+
+    Prefixed with the scheme that produced it, so the state file says how each source is
+    being watched and a scheme change is visible rather than looking like a data change."""
     try:
-        return hashlib.sha256(get(url)).hexdigest()[:16]
+        raw = get(cfg["url"])
     except Exception as e:                      # a dead source must not kill the build
         return f"ERROR:{type(e).__name__}"
+    if cfg["identity"] is None:
+        return "page:" + hashlib.sha256(raw).hexdigest()[:16]
+    ident = cfg["identity"](raw)
+    if ident is None:
+        # Never fall back to a page hash: that would trip the gate and read as a data
+        # change, when what actually happened is that our anchor needs rewriting.
+        return "ERROR:AnchorMissing"
+    return "data:" + ident
 
 
 def month_name(d):
@@ -165,8 +236,8 @@ def main():
     # ARC-AGI failure again in a smaller form: on 3 Aug 2026 the watcher caught METR moving,
     # and the alert was gone within the hour, unread.
     #
-    # So capability_{key}_fp is now the ACKNOWLEDGED fingerprint: the page state a human has
-    # actually read. A newer observed fingerprint is held as _pending_fp and re-reported every
+    # So capability_{key}_id is now the ACKNOWLEDGED identity: the source state a human has
+    # actually read. A newer observed identity is held as _pending_id and re-reported every
     # run until the re-read happens. TWO THINGS COUNT AS A RE-READ:
     #
     #   the figure moved   the tile's own as-of date passes _pending_since_asof. Same
@@ -182,18 +253,22 @@ def main():
     # `reviewed` separates when a figure is from from when we last checked it.
     reviewed = cur.get("reviewed") or {}
     notes, stale, undated = [], [], []
-    for key, url in WATCHED.items():
-        fp = page_fingerprint(url)
+    for key, cfg in WATCHED.items():
+        fp = source_identity(cfg)
         state[f"capability_{key}_checked"] = TODAY.isoformat()
-        ack_key = f"capability_{key}_fp"
-        pend_key = f"capability_{key}_pending_fp"
+        ack_key = f"capability_{key}_id"
+        pend_key = f"capability_{key}_pending_id"
         since_key = f"capability_{key}_pending_since_asof"
         det_key = f"capability_{key}_pending_detected"
+        state.pop(f"capability_{key}_fp", None)          # retired whole-page-hash scheme
+        state.pop(f"capability_{key}_pending_fp", None)
 
         if fp.startswith("ERROR:"):
-            # Never remember an outage as a fingerprint: the old code stored "ERROR:..." and
+            # Never remember an outage as an identity: the old code stored "ERROR:..." and
             # the next successful run then read that as a source change that never happened.
-            notes.append(f"{key}: source unreachable ({fp[6:]})")
+            reason = ("its thData anchor is gone — rewrite metr_identity()"
+                      if fp == "ERROR:AnchorMissing" else f"source unreachable ({fp[6:]})")
+            notes.append(f"{key}: {reason}")
             continue
 
         ack = state.get(ack_key)
@@ -221,9 +296,10 @@ def main():
             continue
 
         state[pend_key] = fp
-        notes.append(f"{key}: source page CHANGED since last check — re-read the figure "
-                     f"(detected {state[det_key]}; if the figure is unchanged, stamp it in "
-                     f"monitor.yaml as capability.reviewed.{key})")
+        what = "measurements" if fp.startswith("data:") else "source page"
+        notes.append(f"{key}: {what} CHANGED since last check — re-read the figure "
+                     f"(detected {state[det_key]}; was {ack}, now {fp}; if the figure is "
+                     f"unchanged, stamp it in monitor.yaml as capability.reviewed.{key})")
 
     facts = []
     for f in cur["facts"]:
@@ -281,9 +357,14 @@ def main():
         "# Generated by scripts/refresh_capability.py. Do not hand-edit.\n"
         + yaml.dump(block, allow_unicode=True, sort_keys=False, width=100),
         encoding="utf-8")
-    STATE_FILE.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+    if ALLOW_STATE_WRITE:
+        STATE_FILE.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
 
     print(f"\ncapability.yaml written · flag: {flag}")
+    if not ALLOW_STATE_WRITE:
+        print("   watch_state.json NOT written: CI owns it, and a local write would put this "
+              "machine's view in as the acknowledged one. Clear a gate by stamping "
+              "capability.reviewed.<source> in data/monitor.yaml instead.")
     for f in facts:
         print(f"   [{f['mode']:7}] {f['num']:<16} {f['foot']}")
     for s in stale:
