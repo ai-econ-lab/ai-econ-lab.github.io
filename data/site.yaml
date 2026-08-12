@@ -165,7 +165,9 @@ contact:
   address: "Örebro University, SE-701 82 Örebro, Sweden"
   invite: "If you are interested in collaborating or writing an advanced thesis, send us an e-mail. There may be external funding for doctoral students and post-doctoral positions."
   links:
-    - {label: "Find your way to Örebro University", href: "https://www.oru.se/english/about-us/find-your-way-here/"}
+    # ORU retired /english/about-us/find-your-way-here/ (404 on 12 Aug 2026, checked on launch
+    # day). Its live equivalent is the contact page, so the label follows the target.
+    - {label: "Örebro University: contact and visiting details", href: "https://www.oru.se/english/about-us/contact-us/"}
 
 # Where finished pages are written (GitHub Pages serves from this folder).
 build:

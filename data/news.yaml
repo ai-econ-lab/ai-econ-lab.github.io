@@ -22,10 +22,12 @@
 years:
   - year: 2026
     items:
-      # Written 12 Aug, dated 14 Aug, and live from the start: the github.io address is not
-      # linked from anywhere yet, so no reader reaches it before the cutover (Magnus, 12 Aug).
-      - date: "Aug 14"
-        text: 'The AIEL Monitor launched, on the lab''s own domain and with a rebuilt website: open, dated indicators on AI and work across countries, with Sweden in depth, refreshed from public data. The first issue of the monthly AIEL Monitor Brief went out the same day, on barriers to AI use.'
+      # Dated 12 Aug, not the planned 14th: Magnus announced the launch publicly on LinkedIn on
+      # the 12th, so the site's own record of the launch may not post-date the announcement of it.
+      # "Published" rather than "went out", because that is true of the brief on the site whether
+      # or not the Substack issue has been mailed.
+      - date: "Aug 12"
+        text: 'The AIEL Monitor launched, on the lab''s own domain and with a rebuilt website: open, dated indicators on AI and work across countries, with Sweden in depth, refreshed from public data. The first issue of the monthly AIEL Monitor Brief was published the same day, on barriers to AI use.'
         links: [{label: "The Monitor", url: "/monitor/"}, {label: "Monthly brief", url: "/monitor/brief/"}]
       - {date: "Jun 24", text: 'The paper "Artificial Intelligence for Public Use" (Lodefalk, Engberg, Lidskog, Skargren & Tang) was accepted for publication in Digital Society.'}
       - date: "Jun 17"
