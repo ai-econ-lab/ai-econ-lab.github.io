@@ -320,7 +320,8 @@ COPY = {
               "applicability, not who loses work."),
   r_demand=("Advertisements asking for an AI skill: a small part of hiring. The Swedish "
             "series in the figure below is stricter and reads lower."),
-  r_adoption=("Firms using AI in 2025; the tick marks the 2024 wave."),
+  r_adoption=("Firms with 10 or more persons employed, 2025; the tick marks the 2024 wave. "
+              "Smaller firms are not in this survey."),
   r_wages=("Real wage growth by exposure, most exposed in bold. No Swedish gap; the US "
            "gap runs the other way."),
   se_hd="SWEDEN IN DEPTH: HOW OFTEN DO JOB ADS ASK FOR AI?",
@@ -355,7 +356,7 @@ COPY = {
   lab_us="US",
   lab_least="Least exposed", lab_most="Most exposed",
   of_all_jobs="bar spans all jobs", of_all_ads="bar spans 0--4\\% of ads",
-  of_all_firms="bar spans all firms",
+  of_all_firms="bar spans all surveyed firms",
   p2_hd="WHERE THE DEMAND ACTUALLY SITS",
   p2_sub="Swedish occupations, 2025, ranked by the share of their advertisements asking for AI",
   p2_top="Asks most often",
@@ -373,8 +374,9 @@ COPY = {
               "software, which our classifier judges to be a tool the job uses rather than an "
               "AI skill it asks for."),
   bar_hd="OBSTACLES FIRMS NAME",
-  bar_sub="Per cent of all firms with 10+ employees, 2025",
-  bar_note=("Shares are of ALL firms, not of non-adopters, so they do not sum to anything. "
+  bar_sub="Per cent of all firms with 10+ persons employed, 2025",
+  bar_note=("Shares are of every firm in the survey, not of non-adopters, so they do not sum "
+            "to anything. "
             "Sweden is below the EU on every barrier, which is partly mechanical: the more "
             "firms already use AI, the fewer are left to be asked why they do not. Not "
             "comparable with 2021: Eurostat flags a break in the Swedish series."),
@@ -413,7 +415,8 @@ COPY = {
               "tillämpbarhet, inte vem som förlorar arbete."),
   r_demand=("Annonser som kräver AI-kompetens: en liten del av rekryteringen. Serien "
             "i figuren nedan är striktare och ligger lägre."),
-  r_adoption=("Andel företag som använde AI 2025; strecket visar 2024."),
+  r_adoption=("Företag med minst 10 sysselsatta, 2025; strecket visar 2024. Mindre företag "
+              "ingår inte i undersökningen."),
   r_wages=("Reallöner efter exponering, mest exponerade i fetstil. Inget svenskt gap; det "
            "amerikanska går åt andra hållet."),
   se_hd="SVERIGE PÅ DJUPET: HUR OFTA EFTERFRÅGAR ANNONSERNA AI?",
@@ -444,7 +447,7 @@ COPY = {
   lab_us="USA",
   lab_least="Minst exponerade", lab_most="Mest exponerade",
   of_all_jobs="stapeln rymmer alla jobb", of_all_ads="stapeln rymmer 0--4\\% av annonserna",
-  of_all_firms="stapeln rymmer alla företag",
+  of_all_firms="stapeln rymmer alla undersökta företag",
   p2_hd="VAR EFTERFRÅGAN FAKTISKT FINNS",
   p2_sub="Svenska yrken 2025, rangordnade efter andelen annonser som efterfrågar AI",
   p2_top="Efterfrågar oftast",
@@ -461,9 +464,9 @@ COPY = {
               "de annonserna nämner taligenkänningsprogram, vilket vår klassificerare bedömer som "
               "ett verktyg jobbet använder snarare än en AI-färdighet det efterfrågar."),
   bar_hd="HINDER SOM FÖRETAGEN ANGER",
-  bar_sub="Procent av alla företag med minst 10 anställda, 2025",
-  bar_note=("Andelarna avser ALLA företag, inte bara de som avstått, så de summerar inte till "
-            "något. Sverige ligger under EU på varje hinder, vilket delvis är mekaniskt: ju "
+  bar_sub="Procent av alla företag med minst 10 sysselsatta, 2025",
+  bar_note=("Andelarna avser alla företag i undersökningen, inte bara de som avstått, så de "
+            "summerar inte till något. Sverige ligger under EU på varje hinder, vilket delvis är mekaniskt: ju "
             "fler som redan använder AI, desto färre återstår att fråga varför de inte gör "
             "det. Inte jämförbart med 2021: Eurostat flaggar ett serieavbrott."),
   gaps_hd="VAD DET HÄR INTE KAN SE",

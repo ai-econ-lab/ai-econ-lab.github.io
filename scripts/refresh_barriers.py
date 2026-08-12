@@ -4,7 +4,9 @@ refresh_barriers.py — why enterprises do NOT use AI (Eurostat isoc_eb_ain2).
 
 The Monitor's adoption module says how many firms use AI; this says why the others do not,
 which is the August brief's theme. Eurostat publishes eight reasons on a single question, as a
-percentage of ALL enterprises with 10+ employees, so the shares are not shares of non-adopters
+percentage of ALL enterprises with 10+ PERSONS EMPLOYED (Eurostat size class GE10, which
+counts working proprietors and family workers, unlike "employees"), so the shares are not
+shares of non-adopters
 and do not sum to anything meaningful. That is stated on the figure rather than corrected away.
 
 DO NOT TURN THIS INTO A TIME SERIES WITHOUT CHECKING THE ROUTING FIRST.
@@ -101,7 +103,7 @@ def main():
     rows.sort(key=lambda r: -r["eu"])
     doc = {
         "meta": {"year": year, "source": "Eurostat, isoc_eb_ain2",
-                 "unit": "per cent of all enterprises with 10 or more employees",
+                 "unit": "per cent of all enterprises with 10 or more persons employed",
                  "geo": "Sweden, with the EU27 average for comparison"},
         "lede": ("Adoption figures say how many firms use AI. This says what stops the rest. "
                  "The reasons are reported as a share of all enterprises, not of non-adopters, "

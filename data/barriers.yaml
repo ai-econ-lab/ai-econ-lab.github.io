@@ -1,7 +1,7 @@
 meta:
   year: 2025
   source: Eurostat, isoc_eb_ain2
-  unit: per cent of all enterprises with 10 or more employees
+  unit: per cent of all enterprises with 10 or more persons employed
   geo: Sweden, with the EU27 average for comparison
 lede: Adoption figures say how many firms use AI. This says what stops the rest. The
   reasons are reported as a share of all enterprises, not of non-adopters, so they
