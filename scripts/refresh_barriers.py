@@ -93,7 +93,12 @@ def main():
     rows = [{"name": LABELS[c], "share": round(se.get(c, 0.0), 1),
              "eu": round(eu.get(c, 0.0), 1), "is_se": True}
             for c in LABELS if c in se or c in eu]
-    rows.sort(key=lambda r: -r["share"])
+    # Ordered by the EU column, not the Swedish one. Both the brief and the one-pager lead
+    # with the EU picture and read Sweden against it, so a chart ordered by Sweden makes the
+    # series the sentence describes first arrive out of order: legal consequences is second
+    # in the EU and fourth in Sweden, and the reader following the EU bars downward sees the
+    # rank break. Sorting here rather than in each consumer keeps one order everywhere.
+    rows.sort(key=lambda r: -r["eu"])
     doc = {
         "meta": {"year": year, "source": "Eurostat, isoc_eb_ain2",
                  "unit": "per cent of all enterprises with 10 or more employees",
