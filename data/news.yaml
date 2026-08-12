@@ -12,6 +12,13 @@
 # a research lab's news page read like a changelog. The Monitor's version history already has a
 # home, with fingerprints, in data/methods.yaml under `versions`, rendered on /monitor/methods/.
 # Talks and seminars belong in the CV, not here, unless the audience is itself the news.
+#
+# SUMS: state the amount only for research grants of at least 1 MSEK (Magnus, 12 Aug 2026). A
+# million kronor is roughly where a grant funds a person rather than an activity, which is what
+# makes the figure worth reporting; below it the number invites comparison between grants and
+# between colleagues, which is not what a news archive is for. Prize and award amounts are never
+# stated. Grant reference numbers stay, since they are provenance rather than comparison. Full
+# amounts are on the CV for anyone who wants them.
 years:
   - year: 2026
     items:
@@ -25,7 +32,7 @@ years:
         text: 'A column was published in ProMarket (Stigler Center, Chicago Booth), "AI Is Not Reducing Employment but Rather Who Gets Hired" (Lodefalk, Löthman, Koch & Engberg), drawing on the "Same Storm, Different Boats" paper.'
         links: [{label: "ProMarket", url: "https://www.promarket.org/2026/06/17/ai-is-not-reducing-employment-but-rather-who-gets-hired/"}]
       - {date: "Jun 10–11", text: 'The fourth conference on AI and white-collar work was held at Katrinelund outside Örebro: 27 participants, 12 papers, keynotes by Michael Lechner (St. Gallen) and Christina Gathmann (LISER / Luxembourg). Dates set for the AIEL/AISCAF 2028 conference, 14–15 June 2028.'}
-      - {date: "Apr", text: 'Research grant from Jan Wallanders och Tom Hedelius Stiftelse.'}
+      - {date: "Apr", text: 'Research grant from Jan Wallanders och Tom Hedelius Stiftelse, 1 MSEK.'}
       - date: "Mar 27"
         text: 'ORU working paper released: "Who Adopts AI? Evidence on Firms, Technologies and Workers" (Pulito, Pytlikova, Schroeder & Lodefalk).'
         links: [{label: "ORU WP", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2026/wp-3-2026.pdf"}]
@@ -109,7 +116,7 @@ years:
     items:
       - {date: "Dec", text: 'Two new working papers released at Ratio and Örebro University: "AI Unboxed and Jobs" and "AI, Tasks, Skills and Wages".'}
       - date: "Dec 7"
-        text: "Research (dissemination) grant from Jan Wallanders och Tom Hedelius Stiftelse (Fh23-0069), 200k SEK."
+        text: "Research (dissemination) grant from Jan Wallanders och Tom Hedelius Stiftelse (Fh23-0069)."
         links: [{label: "Grant", url: "https://www.wallander-hedelius-browaldh.handelsbanken.se/sv/beviljade-anslag/nationalekonomi-hosten-2023"}]
       - {date: "Dec 7", text: "Lodefalk appointed a government member of an advisory board to the Swedish National Agency for Higher Vocational Education."}
       - {date: "Nov", text: 'Kyvik-Nordås held a special lecture (with Klügl) at the IFFT conference: "Double Whammy? Trade and Automation in Engineering Services".'}
@@ -118,7 +125,7 @@ years:
       - {date: "Nov 20–24", text: "Michael Koch (Aarhus University) visited the lab."}
       - {date: "Nov 16", text: "Lodefalk presented at the Swedish Universities and Colleges expert group on business administration."}
       - date: "Nov 15"
-        text: "Research grant from Torsten Söderbergs Stiftelse (ET3/23), 788k SEK."
+        text: "Research grant from Torsten Söderbergs Stiftelse (ET3/23)."
         links: [{label: "Announcement", url: "https://www.oru.se/forskning/nya-forskningsmedel/nyhetslista---nya-forskningsmedel/magnus-lodefalk-far-800-000-kronor-fran-torsten-soderbergs-stiftelse/"}]
       - {date: "Nov 10", text: "Engberg and Lodefalk presented at the Swedish Public Employment Agency."}
       - {date: "Oct 27", text: "Engberg featured with lab research in an episode of a YouTube documentary series on digitalisation."}
@@ -210,7 +217,7 @@ years:
       - {date: "Oct 14", text: 'Call for papers: online conference on "The Impact of AI on White-Collar Work", 25 November 2020.'}
       - {date: "Oct 1", text: "Two AI-Econ Lab papers accepted for an upcoming international conference."}
       - {date: "Jun 4", text: "Presentation at the AGAINST20 workshop, at the IEEE International Conference on Robotics and Automation (ICRA)."}
-      - {date: "May 12", text: "Research grant from Jan Wallanders och Tom Hedelius Stiftelse (Fv20-0023), 227k SEK."}
+      - {date: "May 12", text: "Research grant from Jan Wallanders och Tom Hedelius Stiftelse (Fv20-0023)."}
       - {date: "Mar 18", text: "PhD student recruited (starting 17 August 2020)."}
       - {date: "Feb 16", text: "Deadline for the PhD position in economics, financed by the Ratio Institute."}
   - year: 2019
