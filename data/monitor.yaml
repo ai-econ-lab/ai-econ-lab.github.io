@@ -35,7 +35,7 @@ overview:
   # a DIFFERENCE OF GROWTH RATES, which is what this card reports, so the honest figure is
   # −6.6pp. It also makes the claim harder to wave away: real wages flat in every Swedish
   # exposure group over eleven years is a starker null than "+34% nominal".
-  - {k: "Outcomes", num: "−6.6<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.6% against 10.2%); in Sweden real wages are flat in all three exposure groups. Exposure has not shown up in pay.", foot: "BLS OEWS · SCB · real terms · 2015–2025", anchor: "#wages", cls: "d"}
+  - {k: "Outcomes", num: "−6.6<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.6% against 10.2%); in Sweden real wages are flat in all three exposure groups. Exposure has not shown up in pay.", foot: "SCB · BLS OEWS × DAIOE genAI · real terms · SE 2014–2025, US 2015–2025", anchor: "#wages", cls: "d"}
   # role: driver (4 Aug 2026). Capability is not a fifth question about the labour market:
   # it measures the technology rather than the market, which is why it sits apart. Rendering
   # it as a fifth peer card is what produced the "four questions, five cards" contradiction

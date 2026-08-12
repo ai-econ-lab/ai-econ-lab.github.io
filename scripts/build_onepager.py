@@ -155,22 +155,43 @@ def share_bars(a_lab, a_val, b_lab, b_val, w=44, track=100, ghost=None, note=Non
     return s + "\\end{tikzpicture}"
 
 
-def dumbbell(a_lab, a_val, b_lab, b_val, w=44):
-    """Two groups, one scale, the GAP as the mark: that gap is the finding."""
-    track = max(a_val, b_val) * 1.18
-    xa, xb = a_val / track * w, b_val / track * w
-    return (f"\\begin{{tikzpicture}}[x=1mm,y=1mm]\n"
-            f"\\draw[line width=0.4pt,{SOFT}!30] (0,4) -- ({w},4);\n"
-            f"\\draw[line width=2.2pt,{SOFT}!45] ({xb:.2f},4) -- ({xa:.2f},4);\n"
-            f"\\fill[{INTL}] ({xb:.2f},4) circle (1.5);\n"
-            f"\\fill[{SE}!45] ({xa:.2f},4) circle (1.5);\n"
-            f"\\node[anchor=south,font=\\small\\bfseries,text=ink] at ({xb:.2f},6.2) "
-            f"{{{b_val:g}\\%}};\n"
-            f"\\node[anchor=south,font=\\small\\bfseries,text=ink] at ({xa:.2f},6.2) "
-            f"{{{a_val:g}\\%}};\n"
-            f"\\node[anchor=north,font=\\tiny,text={SOFT}] at ({xb:.2f},2.4) {{{b_lab}}};\n"
-            f"\\node[anchor=north,font=\\tiny,text={SOFT}] at ({xa:.2f},2.4) {{{a_lab}}};\n"
-            f"\\end{{tikzpicture}}")
+def dumbbell(rows, w=44):
+    """Two countries, one shared scale, the GAP within each as the mark.
+
+    Sweden and the United States answer this question with opposite signs, so the marks CROSS:
+    in Sweden the most-exposed third is the right-hand dot, in the United States it is the left.
+    A fixed left-to-right reading of "most, then least" would therefore be wrong for one of the
+    two rows, which is why the exposure group is carried by the dot's FILL (solid = most exposed,
+    hollow = least) and not by its position. Fill also survives greyscale, which position-plus-
+    colour would not.
+
+    One scale for both rows, deliberately. Giving Sweden its own axis would blow +0.9 against
+    -0.8 up to the width of the card and manufacture a Swedish gap out of rounding noise; on the
+    shared scale the two Swedish dots sit almost on top of each other, which IS the finding.
+
+    rows: [(country_label, colour, most_exposed, least_exposed), ...]
+    """
+    sign = lambda v: (f"+{v:g}" if v >= 0 else f"$-${abs(v):g}")
+    vals = [v for r in rows for v in r[2:]]
+    lo, hi = min(vals + [0]), max(vals)
+    span = (hi - lo) * 1.06 or 1
+    X = lambda v: (v - lo + (hi - lo) * 0.03) / span * w
+    gap, y0 = 5.2, 0.0
+    s = "\\begin{tikzpicture}[x=1mm,y=1mm]\n"
+    for i, (lab, col, most, least) in enumerate(rows):
+        y = y0 + (len(rows) - 1 - i) * gap
+        xm, xl = X(most), X(least)
+        s += (f"\\draw[line width=0.4pt,{SOFT}!25] (0,{y}) -- ({w},{y});\n"
+              f"\\draw[line width=1.9pt,{col}!45] ({min(xm, xl):.2f},{y}) -- ({max(xm, xl):.2f},{y});\n"
+              f"\\fill[white] ({xl:.2f},{y}) circle (1.35);\n"
+              f"\\draw[line width=0.9pt,{col}] ({xl:.2f},{y}) circle (1.35);\n"
+              f"\\fill[{col}] ({xm:.2f},{y}) circle (1.35);\n"
+              f"\\node[anchor=east,font=\\tiny,text={SOFT}] at (-1.6,{y}) {{{lab}}};\n"
+              f"\\node[anchor=west,font=\\scriptsize\\bfseries,text=ink] at ({w+2.0},{y}) "
+              f"{{{sign(most)}\\%}};\n"
+              f"\\node[anchor=west,font=\\scriptsize,text={SOFT}] at ({w+11.5},{y}) "
+              f"{{{sign(least)}\\%}};\n")
+    return s + "\\end{tikzpicture}"
 
 
 def card(question, viz, reading, vintage, colw, grp="A", srclab=""):
@@ -291,8 +312,8 @@ COPY = {
   r_demand=("Advertisements asking for an AI skill: a small part of hiring. The Swedish "
             "series in the figure below is stricter and reads lower."),
   r_adoption=("Firms using AI in 2025. The EU more than doubled in two years."),
-  r_wages=("Real wage growth 2015--2025, US occupations by exposure. In Sweden it is flat "
-           "in every group."),
+  r_wages=("Real wage growth by exposure, most exposed in bold. No Swedish gap; the US "
+           "gap runs the other way."),
   se_hd="SWEDEN IN DEPTH: HOW OFTEN DO JOB ADS ASK FOR AI?",
   se_sub="Every advertisement on the public job board",
   src_label="Source: ",
@@ -321,7 +342,7 @@ COPY = {
   colophon=(r"AI-Econ Lab, Örebro University and the Ratio Institute. Public data throughout; every "
             r"figure is reproducible from the source beside it. Method: "
             r"\href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
-  lab_se="Sweden", lab_eu="Europe", lab_eu2="EU", lab_med="22-country median",
+  lab_se="Sweden", lab_eu="Europe", lab_eu2="EU", lab_med="22-country median", lab_us="US",
   lab_least="Least exposed", lab_most="Most exposed",
   of_all_jobs="bar spans all jobs", of_all_ads="bar spans 0--4\\% of ads",
   of_all_firms="bar spans all firms",
@@ -383,8 +404,8 @@ COPY = {
             "i figuren nedan är striktare och ligger lägre."),
   r_adoption=("Andel företag som använde AI 2025. I EU 8\\% 2023, alltså mer än en "
               "fördubbling på två år."),
-  r_wages=("Reallöner 2015--2025, amerikanska yrken efter exponering. I Sverige platta i "
-           "alla grupper."),
+  r_wages=("Reallöner efter exponering, mest exponerade i fetstil. Inget svenskt gap; det "
+           "amerikanska går åt andra hållet."),
   se_hd="SVERIGE PÅ DJUPET: HUR OFTA EFTERFRÅGAR ANNONSERNA AI?",
   se_sub="Baserat på samtliga annonser på Platsbanken",
   src_label="Källa: ",
@@ -409,7 +430,7 @@ COPY = {
             r"bara att arbetsgivare efterfrågar AI-kompetens oftare än förr."),
   colophon=(r"AI-Econ Lab, Örebro universitet och Ratio. Öppna data genomgående; varje siffra går "
             r"att återskapa från källan intill. Metod: \href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
-  lab_se="Sverige", lab_eu="Europa", lab_eu2="EU", lab_med="medianland av 22",
+  lab_se="Sverige", lab_eu="Europa", lab_eu2="EU", lab_med="medianland av 22", lab_us="USA",
   lab_least="Minst exponerade", lab_most="Mest exponerade",
   of_all_jobs="stapeln rymmer alla jobb", of_all_ads="stapeln rymmer 0--4\\% av annonserna",
   of_all_firms="stapeln rymmer alla företag",
@@ -470,6 +491,7 @@ def main():
     tr, lw = m["trend"], m["livewindow"]
     occ = yaml.safe_load((DATA / "occupations.yaml").read_text(encoding="utf-8"))
     bar = yaml.safe_load((DATA / "barriers.yaml").read_text(encoding="utf-8"))
+    wag = yaml.safe_load((DATA / "wages.yaml").read_text(encoding="utf-8"))
     ttl = m["titles"]
     namekey = "name_sv" if lang == "sv" else "name"
 
@@ -482,6 +504,11 @@ def main():
     ado_prev, = grab(r"up from (\d+(?:\.\d+)?)% in 2023", ov["Adoption"]["lab"], "EU adoption 2023")
     out_hi, out_lo = grab(r"\((\d+(?:\.\d+)?)% against (\d+(?:\.\d+)?)%\)",
                           ov["Outcomes"]["lab"], "US real wage growth by exposure")
+    # The Swedish pair is parsed out of wages.yaml's own headline for the same reason every
+    # other figure on this sheet is parsed rather than typed: a second copy drifts.
+    se_hi, se_lo = grab(r"most exposed ([+-]?\d+(?:\.\d+)?) per cent, middle [+-]?[\d.]+, "
+                        r"least ([+-]?\d+(?:\.\d+)?)",
+                        wag["headline"], "Swedish real wage growth by exposure")
     ceiling = next((h.group(1) for note in m.get("notes", [])
                     for h in [re.search(r"corrected ceiling at <b>([\d.]+)%", note)] if h), "1.36")
 
@@ -502,7 +529,8 @@ def main():
              share_bars(C["lab_se"], ado_se, C["lab_eu2"], ado_eu, ghost=ado_prev,
                         note=C["of_all_firms"]),
              C["r_adoption"], tex(ov["Adoption"]["foot"]), colw, "B", srclab=C["src_label"]),
-        card(C["q_wages"], dumbbell(C["lab_least"], out_lo, C["lab_most"], out_hi),
+        card(C["q_wages"], dumbbell([(C["lab_se"], SE, se_hi, se_lo),
+                                    (C["lab_us"], INTL, out_hi, out_lo)]),
              C["r_wages"], tex(ov["Outcomes"]["foot"]), colw, "B", srclab=C["src_label"]),
     ]
     grid = (cards[0] + "\\hfill" + cards[1] + "\\\\[2.6mm]\n"
