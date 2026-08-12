@@ -128,7 +128,7 @@ def range_band(years, hi, lo, lab_hi, lab_lo, w=118, h=17):
 # share too but two orders smaller, so it gets its own scale with the ceiling stated. Wages is
 # a gap between two groups, and the gap is the finding, so it is a dumbbell.
 
-def _row(y, val, col, lab, track, w, bw=5.0, ghost=None):
+def _row(y, val, col, lab, track, w, bw=5.0, ghost=None, ghost_above=False):
     L = max(val / track * w, 0.8)
     s = (f"\\fill[{SOFT}!12,rounded corners=0.6pt] (0,{y}) rectangle ({w},{y+bw});\n"
          f"\\fill[{col},rounded corners=0.6pt] (0,{y}) rectangle ({L:.2f},{y+bw});\n"
@@ -137,15 +137,24 @@ def _row(y, val, col, lab, track, w, bw=5.0, ghost=None):
          f"\\node[anchor=east,font=\\tiny,text={SOFT}] at (-1.6,{y+bw/2:.2f}) {{{lab}}};\n")
     if ghost is not None:
         g = ghost / track * w
-        s += (f"\\draw[line width=0.8pt,{SOFT}!70] ({g:.2f},{y-1.0}) -- ({g:.2f},{y+bw+0.4});\n"
-              f"\\node[anchor=north,font=\\tiny,text={SOFT}] at ({g:.2f},{y-1.4}) "
-              f"{{{ghost:g}\\% in 2023}};\n")
+        # The tick carries no number. Labelling only the lower one was the asymmetry this card
+        # had; labelling both means putting the upper label above its bar, which grows the card
+        # past the page. The reading text names the wave the ticks mark, which is what the
+        # reader needs, and two unlabelled ticks at least compare like with like.
+        s += f"\\draw[line width=0.8pt,{SOFT}!70] ({g:.2f},{y-1.0}) -- ({g:.2f},{y+bw+0.4});\n"
     return s
 
 
-def share_bars(a_lab, a_val, b_lab, b_val, w=44, track=100, ghost=None, note=None):
+def share_bars(a_lab, a_val, b_lab, b_val, w=44, track=100, ghost=None, ghost_a=None,
+               note=None):
+    """Two bars on one track. `ghost_a`/`ghost` are the previous wave's values, drawn as a tick.
+
+    Both bars get a tick or neither: the adoption card used to mark only the international bar,
+    so a reader saw the EU double and could not see whether Sweden was moving at all, which is
+    the more interesting half of that comparison. Both ticks must be the SAME wave; marking
+    Sweden's 2024 against the EU's 2023 would compare two different windows in one picture."""
     s = "\\begin{tikzpicture}[x=1mm,y=1mm]\n"
-    s += _row(7.2, a_val, SE, a_lab, track, w)
+    s += _row(7.2, a_val, SE, a_lab, track, w, ghost=ghost_a, ghost_above=True)
     s += _row(0, b_val, INTL, b_lab, track, w, ghost=ghost)
     # The ghost tick already occupies the space under the lower bar, and the two collided.
     # The scale note is the one that yields: the 0-100 track is visually identical to the card
@@ -311,7 +320,7 @@ COPY = {
               "tasks, not who loses work."),
   r_demand=("Advertisements asking for an AI skill: a small part of hiring. The Swedish "
             "series in the figure below is stricter and reads lower."),
-  r_adoption=("Firms using AI in 2025. The EU more than doubled in two years."),
+  r_adoption=("Firms using AI in 2025; the tick marks the 2024 wave."),
   r_wages=("Real wage growth by exposure, most exposed in bold. No Swedish gap; the US "
            "gap runs the other way."),
   se_hd="SWEDEN IN DEPTH: HOW OFTEN DO JOB ADS ASK FOR AI?",
@@ -403,8 +412,7 @@ COPY = {
               "uppgifterna, inte vem som förlorar arbete."),
   r_demand=("Annonser som kräver AI-kompetens: en liten del av rekryteringen. Serien "
             "i figuren nedan är striktare och ligger lägre."),
-  r_adoption=("Andel företag som använde AI 2025. I EU 8\\% 2023, alltså mer än en "
-              "fördubbling på två år."),
+  r_adoption=("Andel företag som använde AI 2025; strecket visar 2024."),
   r_wages=("Reallöner efter exponering, mest exponerade i fetstil. Inget svenskt gap; det "
            "amerikanska går åt andra hållet."),
   se_hd="SVERIGE PÅ DJUPET: HUR OFTA EFTERFRÅGAR ANNONSERNA AI?",
@@ -493,6 +501,7 @@ def main():
     tr, lw = m["trend"], m["livewindow"]
     occ = yaml.safe_load((DATA / "occupations.yaml").read_text(encoding="utf-8"))
     bar = yaml.safe_load((DATA / "barriers.yaml").read_text(encoding="utf-8"))
+    ado = yaml.safe_load((DATA / "cross_country_adoption.yaml").read_text(encoding="utf-8"))
     wag = yaml.safe_load((DATA / "wages.yaml").read_text(encoding="utf-8"))
     ttl = m["titles"]
     namekey = "name_sv" if lang == "sv" else "name"
@@ -503,7 +512,16 @@ def main():
     dem_se, = grab(r"Sweden (\d+(?:\.\d+)?)%", ov["Demand"]["lab"], "Swedish AI-ad share")
     ado_eu, = grab(r"^(\d+(?:\.\d+)?)", plain(ov["Adoption"]["num"]), "EU adoption")
     ado_se, = grab(r"Sweden (\d+(?:\.\d+)?)%", ov["Adoption"]["lab"], "Swedish adoption")
-    ado_prev, = grab(r"up from (\d+(?:\.\d+)?)% in 2023", ov["Adoption"]["lab"], "EU adoption 2023")
+    # Previous wave for BOTH bars, read from the cross-country file so the two ticks are the
+    # same year by construction. The overview prose still quotes 2023 for the EU, which is a
+    # different (and older) window; that is why this no longer parses it.
+    adm = ado["meta"]
+    ado_prev = adm["eu_avg_prev"]
+    ado_prev_se = next(r["prev"] for r in ado["countries"] if r.get("is_se"))
+    if ado_prev is None or ado_prev_se is None:
+        raise SystemExit("build_onepager: cross_country_adoption.yaml has no previous wave for "
+                         "the EU or for Sweden, so the adoption card cannot mark both bars. "
+                         "Rerun scripts/refresh_cross_country.py.")
     out_hi, out_lo = grab(r"\((\d+(?:\.\d+)?)% against (\d+(?:\.\d+)?)%\)",
                           ov["Outcomes"]["lab"], "US real wage growth by exposure")
     # The Swedish pair is parsed out of wages.yaml's own headline for the same reason every
@@ -529,6 +547,7 @@ def main():
              C["r_demand"], tex(ov["Demand"]["foot"]), colw, "A", srclab=C["src_label"]),
         card(C["q_adoption"],
              share_bars(C["lab_se"], ado_se, C["lab_eu2"], ado_eu, ghost=ado_prev,
+                        ghost_a=ado_prev_se,
                         note=C["of_all_firms"]),
              C["r_adoption"], tex(ov["Adoption"]["foot"]), colw, "B", srclab=C["src_label"]),
         card(C["q_wages"], dumbbell([(C["lab_se"], SE, se_hi, se_lo),

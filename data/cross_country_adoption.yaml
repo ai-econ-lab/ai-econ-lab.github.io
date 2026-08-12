@@ -8,6 +8,7 @@ meta:
   year: 2025
   prev_year: 2024
   eu_avg: 19.9
+  eu_avg_prev: 13.5
   n_countries: 33
 countries:
   - {code: "DK", name: "Denmark", adoption: 42.0, year: 2025, prev: 27.6, is_se: false}

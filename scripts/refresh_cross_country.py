@@ -52,6 +52,9 @@ def main():
             rows.append((g, ys[latest], ys.get(prev)))
     rows.sort(key=lambda r: -r[1])
     eu = tab.get("EU27_2020", {}).get(latest)
+    # The previous wave for the EU too, not only for the countries. The one-pager marks the
+    # last wave on BOTH bars, and it can only do that honestly if both ticks are the same year.
+    eu_prev = tab.get("EU27_2020", {}).get(prev)
     L = ["# Cross-country firm AI-adoption — Monitor View B. Auto-refreshed from Eurostat isoc_eb_ai",
          "# (E_AI_TANY: enterprises using >=1 AI technology, % of enterprises 10+ employed). Freshest wave.",
          "# Rerun scripts/refresh_cross_country.py to update, then build.py. DO NOT hand-edit.",
@@ -62,6 +65,7 @@ def main():
          f'  year: {latest}',
          f'  prev_year: {prev}',
          f'  eu_avg: {round(eu,1) if eu is not None else "null"}',
+         f'  eu_avg_prev: {round(eu_prev,1) if eu_prev is not None else "null"}',
          f'  n_countries: {len(rows)}',
          "countries:"]
     for g, v, pv in rows:
