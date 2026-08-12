@@ -1980,6 +1980,30 @@ def brief(lang="en"):
     b_eu_low = min(b_rows, key=lambda r: r["eu"])
     b_cost = next(r for r in b_rows if r["name"].lower().startswith("cost"))
     b_se_top = max(b_rows, key=lambda r: r["share"])
+    # Levels moved out of this prose on 12 Aug 2026 and into the chart alone. The share is of ALL
+    # enterprises, while since 2023 only firms that considered AI and declined are asked, so a
+    # level lifted out of the sentence ("7.8% of firms lack AI skills") is wrong in a way the
+    # sentence could not prevent. The RANKING survives both that break and the country
+    # comparison, because every reason shares a denominator, so the ranking is what the prose
+    # asserts and the chart carries the numbers.
+    b_eu_rank = sorted(b_rows, key=lambda r: -r["eu"])
+    b_se_rank = sorted(b_rows, key=lambda r: -r["share"])
+    b_cost_rank = b_eu_rank.index(b_cost) + 1
+    b_n = len(b_rows)
+    # "Sweden has the same ordering" was in this paragraph for months and is not true: the two
+    # rankings agree at the top, at the bottom and on cost, but the three data and legal reasons
+    # in between swap around. Now that the sentence asserts a ranking and nothing else, that
+    # matters, so the claim is checked. If a vintage changes the pattern the build stops here
+    # and the sentence gets rewritten, rather than quietly asserting something false.
+    _agree = [i for i, (a, b) in enumerate(zip(b_eu_rank, b_se_rank)) if a["name"] == b["name"]]
+    _mid = {r["name"] for r in b_eu_rank[1:4]} == {r["name"] for r in b_se_rank[1:4]}
+    if _agree != [0, 4, 5, 6, 7] or not _mid:
+        raise SystemExit(
+            "brief: the EU and Swedish barrier rankings no longer agree at the top, the bottom "
+            "and on cost with only the three middle reasons swapping.\n"
+            f"  EU: {[r['name'] for r in b_eu_rank]}\n"
+            f"  SE: {[r['name'] for r in b_se_rank]}\n"
+            "  Rewrite the sentence in takeaways['barriers']; do not relax this check.")
     takeaways = {
         "exposure": L(
             f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
@@ -2003,22 +2027,26 @@ def brief(lang="en"):
             f"Användningen ökar brant med företagsstorlek, från {smd['10-49']}% av småföretagen (10–49 anställda) till "
             f"{smd['250-']}% av de stora (250+) {SWEAD['meta']['year']}, alla storleksklasser kraftigt upp sedan {SWEAD['meta']['prev_year']}."),
         "barriers": L(
-            f"Across the EU the obstacle enterprises name most often is people, not money: "
-            f"{b_eu_top['eu']}% name a lack of relevant expertise, against {b_eu_low['eu']}% who say AI is "
-            f"simply not useful to them, and cost sits low at {b_cost['eu']}%. Sweden has the same ordering at "
-            f"lower levels, {b_se_top['share']}% for expertise and {b_cost['share']}% for cost. Read the Swedish "
-            f"levels carefully, because since 2023 the question is put only to firms that considered AI and "
-            f"decided against it, which Eurostat flags as a break. These are therefore the obstacles of the "
-            f"firms that engaged with the question. The larger group never entered it, so the interesting "
-            f"puzzle is not what stops firms but why most never consider AI at all.",
-            f"I EU är hindret företagen oftast nämner kompetens, inte pengar: {svn(b_eu_top['eu'])}% anger "
-            f"brist på relevant kompetens, mot {svn(b_eu_low['eu'])}% som anser att AI inte är användbart för "
-            f"dem, och kostnad hamnar lågt på {svn(b_cost['eu'])}%. Sverige har samma ordning på lägre nivåer, "
-            f"{svn(b_se_top['share'])}% för kompetens och {svn(b_cost['share'])}% för kostnad. Läs de svenska "
-            f"nivåerna med omsorg: sedan 2023 ställs frågan bara till företag som övervägt AI och valt bort det, "
-            f"vilket Eurostat flaggar som ett brott. Det är alltså hindren hos de företag som tagit sig an "
-            f"frågan. Den större gruppen kom aldrig in i den, så det intressanta pusslet är inte vad som "
-            f"hindrar företagen utan varför de flesta aldrig överväger AI."),
+            f"Across the EU the obstacle enterprises name most often is people, not money: a lack of "
+            f"relevant expertise ranks first of {b_n}, cost only {b_cost_rank}th, and \u201cAI is simply not "
+            f"useful to us\u201d last. Sweden puts the same reason first and the same one last, with cost in "
+            f"the same place; only the data and legal reasons in between swap around. Read the ranking "
+            f"rather than the levels, "
+            f"because the levels are shares of all enterprises while since 2023 the question is put only to "
+            f"firms that considered AI and decided against it, which Eurostat flags as a break; the chart "
+            f"carries them for anyone who wants them. These are therefore the obstacles of the firms that "
+            f"engaged with the question. The larger group never entered it, so the interesting puzzle is not "
+            f"what stops firms but why most never consider AI at all.",
+            f"I EU är hindret företagen oftast nämner kompetens, inte pengar: brist på relevant kompetens "
+            f"rankas först av {b_n}, kostnad först på {b_cost_rank}:e plats, och \u201dAI är inte användbart "
+            f"för oss\u201d sist. Sverige sätter samma skäl först och samma sist, med kostnad på samma plats; "
+            f"bara data- och juridikskälen däremellan byter inbördes ordning. Läs rangordningen snarare "
+            f"än nivåerna: nivåerna "
+            f"är andelar av samtliga företag samtidigt som frågan sedan 2023 bara ställs till företag som "
+            f"övervägt AI och valt bort det, vilket Eurostat flaggar som ett brott. Diagrammet bär nivåerna "
+            f"för den som vill ha dem. Det är alltså hindren hos de företag som tagit sig an frågan. Den "
+            f"större gruppen kom aldrig in i den, så det intressanta pusslet är inte vad som hindrar "
+            f"företagen utan varför de flesta aldrig överväger AI."),
         "outcomes": L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
             f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
