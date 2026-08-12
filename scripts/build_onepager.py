@@ -172,7 +172,7 @@ def dumbbell(a_lab, a_val, b_lab, b_val, w=44):
             f"\\end{{tikzpicture}}")
 
 
-def card(question, viz, reading, vintage, colw, h="37mm"):
+def card(question, viz, reading, vintage, colw, h="37mm", srclab=""):
     """A tinted card. tcolorbox rather than a tikz node: a node with `text width` that contains
     another tikzpicture does not measure it, so the bars escaped the card and every card grew
     to a different height. tcolorbox handles nested content and gives a fixed height for free."""
@@ -183,7 +183,7 @@ def card(question, viz, reading, vintage, colw, h="37mm"):
             f"{{\\footnotesize\\bfseries\\textcolor{{ink}}{{{question}}}}}\n\n"
             f"\\vspace{{2.6mm}}\n\\hspace*{{11mm}}{viz}\n\n"
             f"\\vspace{{2.8mm}}\n{{\\scriptsize {reading}}}\n\n"
-            f"\\vspace{{1mm}}\n{{\\tiny\\textcolor{{soft}}{{{vintage}}}}}\n"
+            f"\\vspace{{1mm}}\n{{\\tiny\\textcolor{{soft}}{{{srclab}}}{{{vintage}}}}}\n"
             f"\\end{{tcolorbox}}\\end{{minipage}}")
 
 
@@ -273,12 +273,15 @@ COPY = {
   r_exposure=("Jobs in the most AI-exposed quarter of occupations. Exposure is a property of "
               "the tasks, not a forecast: it says nothing about who loses or gains work."),
   r_demand=("Advertisements requiring an AI skill: a small share of hiring. The Swedish "
-            "series below shows twenty years of it."),
+            "series in the figure below shows twenty years of it."),
   r_adoption=("Firms using AI in 2025. The EU more than doubled in two years."),
   r_wages=("Real wage growth 2015--2025, US occupations by exposure. In Sweden pay is flat "
            "in every group."),
   se_hd="SWEDEN IN DEPTH: HOW OFTEN DO JOB ADS ASK FOR AI?",
   se_sub="Every advertisement on the public job board",
+  src_label="Source: ",
+  card_h="37mm",
+  se_src="JobTech / Platsbanken job ads (CC0), frozen v1.3 term list, distinct advertisements",
   band_hi="mention an AI skill", band_lo="ask for it in the job itself",
   se_body=(r"A \textbf{{range}}, not a single number: the upper line counts an advertisement that "
            r"mentions an AI skill anywhere, the lower one only when the skill is asked of the "
@@ -310,21 +313,22 @@ COPY = {
   p2_hd="WHERE THE DEMAND ACTUALLY SITS",
   p2_sub="Swedish occupations, 2025, ranked by the share of their advertisements asking for AI",
   p2_top="Asks most often",
-  p2_zero="And these ask in none of them",
+  p2_zero="And in none of these",
   p2_zero_note=("These are among the largest occupations on the board. The demand is real and it "
                 "is concentrated: most of the labour market is not being asked for AI at all."),
   ads_word="ads",
   words_hd="IN THE EMPLOYERS' OWN WORDS",
   words_sub="Advertisement headlines, as written",
+  words_top="Most common:",
   words_new="New titles appearing",
   words_cooled="Titles that stopped clearing the bar",
   words_note=("One entry is a measurement artefact worth naming: medical secretary (medicinsk "
               "sekreterare) appears because those advertisements mention speech-recognition "
               "software, which our classifier judges to be a tool the job uses rather than an "
               "AI skill it asks for."),
-  bar_hd="WHY FIRMS SAY THEY DO NOT USE AI",
+  bar_hd="OBSTACLES FIRMS NAME",
   bar_sub="Per cent of all firms with 10+ employees, 2025",
-  bar_note=("Shares are of ALL firms, not of non-adopters, so they do not sum to anything. "
+  bar_note=("Shares are of ALL surveyed firms, not of non-adopters, so they do not sum to anything. "
             "Sweden is below the EU on every barrier, which is what a high-adoption country "
             "looks like. Not comparable with 2021: Eurostat flags a break in the Swedish series."),
   gaps_hd="WHAT THIS CANNOT SEE",
@@ -333,7 +337,7 @@ COPY = {
         ("Not all hiring is advertised.", "This is the advertised margin. Occupations that hire "
          "through networks or internal moves are under-represented, and that varies by sector."),
         ("One job board.", "Platsbanken is large and stable but it is not the whole market, and "
-         "its reach has fallen relative to surveyed vacancies since 2006."),
+         "its reach has fallen somewhat relative to surveyed vacancies since 2006."),
         ("Validated on one year.", "Precision and recall are measured on 2024 advertisements. "
          "An early-period check covering 2006 to 2013 is drawn and not yet done."),
         ("Exposure is not displacement.", "The exposure measure on page one describes tasks AI "
@@ -358,16 +362,19 @@ COPY = {
   q_demand="Hur ofta efterfrågar arbetsgivare AI-kompetens?",
   q_adoption="Hur många företag använder AI?",
   q_wages="Vad har hänt med lönerna?",
-  r_exposure=("Jobb i den mest AI-exponerade fjärdedelen av yrkena. Exponering är en egenskap "
-              "hos uppgifterna, inte en prognos: den säger inget om vem som förlorar arbete."),
+  r_exposure=("Jobb i den mest AI-exponerade fjärdedelen av yrkena. Exponering beskriver "
+              "uppgifterna, inte vem som förlorar arbete."),
   r_demand=("Annonser som kräver AI-kompetens: en liten del av rekryteringen. Den svenska "
-            "serien nedan visar tjugo år."),
+            "serien i figuren nedan visar tjugo år."),
   r_adoption=("Andel företag som använde AI 2025. I EU var siffran 8\\% 2023, så användningen "
               "har mer än fördubblats på två år."),
   r_wages=("Reallöneutveckling 2015--2025 i amerikanska yrken, efter exponering. Lönerna växte "
            "långsammare där exponeringen är högst. I Sverige är de platta i alla grupper."),
   se_hd="SVERIGE PÅ DJUPET: HUR OFTA EFTERFRÅGAR ANNONSERNA AI?",
-  se_sub="Varje annons på Platsbanken",
+  se_sub="Baserat på samtliga annonser på Platsbanken",
+  src_label="Källa: ",
+  card_h="43mm",
+  se_src="JobTech / Platsbanken (CC0), fryst termlista v1.3, distinkta annonser",
   band_hi="nämner en AI-färdighet", band_lo="efterfrågar den i själva jobbet",
   se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: den övre linjen räknar en annons som "
            r"nämner en AI-färdighet någonstans, den nedre bara när färdigheten efterfrågas av den "
@@ -395,20 +402,21 @@ COPY = {
   p2_hd="VAR EFTERFRÅGAN FAKTISKT FINNS",
   p2_sub="Svenska yrken 2025, rangordnade efter andelen annonser som efterfrågar AI",
   p2_top="Efterfrågar oftast",
-  p2_zero="Och dessa i ingen enda",
+  p2_zero="Och i ingen av dessa",
   p2_zero_note=("Det här är några av de största yrkena på Platsbanken. Efterfrågan är verklig och "
                 "koncentrerad: största delen av arbetsmarknaden får inte frågan alls."),
   ads_word="annonser",
   words_hd="MED ARBETSGIVARNAS EGNA ORD",
   words_sub="Annonsrubriker, så som de skrevs",
+  words_top="Vanligast:",
   words_new="Nya titlar som dyker upp",
   words_cooled="Titlar som inte längre når över tröskeln",
   words_note=("En post är en mätartefakt värd att nämna: medicinsk sekreterare dyker upp för att "
               "de annonserna nämner taligenkänningsprogram, vilket vår klassificerare bedömer som "
               "ett verktyg jobbet använder snarare än en AI-färdighet det efterfrågar."),
-  bar_hd="VARFÖR FÖRETAG SÄGER ATT DE INTE ANVÄNDER AI",
+  bar_hd="HINDER SOM FÖRETAGEN ANGER",
   bar_sub="Procent av alla företag med minst 10 anställda, 2025",
-  bar_note=("Andelarna avser ALLA företag, inte bara de som avstått, så de summerar inte till "
+  bar_note=("Andelarna avser ALLA tillfrågade företag, inte bara de som avstått, så de summerar inte till "
             "något. Sverige ligger under EU på varje hinder, vilket är hur ett land med hög "
             "användning ser ut. Inte jämförbart med 2021: Eurostat flaggar ett serieavbrott."),
   gaps_hd="VAD DET HÄR INTE KAN SE",
@@ -418,11 +426,11 @@ COPY = {
         ("All rekrytering annonseras inte.", "Det här är den annonserade marginalen. Yrken som "
          "rekryterar via nätverk eller internt är underrepresenterade, och det varierar mellan "
          "branscher."),
-        ("En enda jobbtavla.", "Platsbanken är stor och stabil men inte hela marknaden, och dess "
-         "räckvidd har minskat i förhållande till mätta vakanser sedan 2006."),
+        ("Endast en annonskälla.", "Platsbanken är stor och stabil men inte hela marknaden, och dess "
+         "räckvidd har minskat något i förhållande till mätta vakanser sedan 2006."),
         ("Validerat på ett år.", "Precision och täckning är uppmätta på annonser från 2024. En "
          "kontroll av 2006 till 2013 är uttagen men ännu inte gjord."),
-        ("Exponering är inte utslagning.", "Exponeringsmåttet på sidan ett beskriver uppgifter "
+        ("Exponering är inte ersättning.", "Exponeringsmåttet på sidan ett beskriver uppgifter "
          "som AI kan påverka. Det är ingen förutsägelse om att någon förlorar arbete.")],
   p2_kicker="sida 2 av 2",
   pdftitle="AI och arbetsmarknaden — AIEL Monitor, ett blad",
@@ -467,16 +475,16 @@ def main():
     cards = [
         card(C["q_exposure"],
              share_bars(C["lab_se"], exp_se, C["lab_eu"], exp_eu, note=C["of_all_jobs"]),
-             C["r_exposure"], tex(ov["Exposure"]["foot"]), colw),
+             C["r_exposure"], tex(ov["Exposure"]["foot"]), colw, C["card_h"], srclab=C["src_label"]),
         card(C["q_demand"],
              share_bars(C["lab_se"], dem_se, C["lab_med"], dem_med, track=4, note=C["of_all_ads"]),
-             C["r_demand"], tex(ov["Demand"]["foot"]), colw),
+             C["r_demand"], tex(ov["Demand"]["foot"]), colw, C["card_h"], srclab=C["src_label"]),
         card(C["q_adoption"],
              share_bars(C["lab_se"], ado_se, C["lab_eu2"], ado_eu, ghost=ado_prev,
                         note=C["of_all_firms"]),
-             C["r_adoption"], tex(ov["Adoption"]["foot"]), colw),
+             C["r_adoption"], tex(ov["Adoption"]["foot"]), colw, C["card_h"], srclab=C["src_label"]),
         card(C["q_wages"], dumbbell(C["lab_least"], out_lo, C["lab_most"], out_hi),
-             C["r_wages"], tex(ov["Outcomes"]["foot"]), colw),
+             C["r_wages"], tex(ov["Outcomes"]["foot"]), colw, C["card_h"], srclab=C["src_label"]),
     ]
     grid = (cards[0] + "\\hfill" + cards[1] + "\\\\[4mm]\n"
             + cards[2] + "\\hfill" + cards[3])
@@ -523,8 +531,9 @@ def main():
 \begin{{minipage}}[t]{{0.49\textwidth}}
   {{\normalsize\bfseries\textcolor{{ink}}{{{C['words_hd']}}}}}\\[1mm]
   {{\scriptsize\textcolor{{soft}}{{{C['words_sub']}}}}}\\[3.4mm]
-  {{\scriptsize\bfseries\textcolor{{ink}}{{{tex(ttl['top'][-1]['year'])}}}}}
-  {{\scriptsize {tex(' · '.join(ttl['top'][-1]['items']))}}}\\[2.6mm]
+  {{\scriptsize\bfseries\textcolor{{ink}}{{{C['words_top']}}}}}
+  {{\scriptsize\bfseries\textcolor{{ink}}{{{tex(ttl['top'][0]['year'])}}}}}
+  {{\scriptsize {tex(' · '.join(ttl['top'][0]['items']))}}}\\[2.6mm]
   {{\scriptsize\bfseries\textcolor{{ink}}{{{C['words_new']}}}}}\\[1.6mm]
   {chips(ttl['newcomers']['items'], 6)}\\[2.6mm]
   {{\scriptsize\bfseries\textcolor{{ink}}{{{C['words_cooled']}}}}}\\[1.6mm]
@@ -588,7 +597,8 @@ def main():
 {{\scriptsize\textcolor{{soft}}{{{C['se_sub']}}}}}\\[4.5mm]
 \hspace*{{9mm}}{hero}\\[3mm]
 {{\scriptsize {se_body}}}\\[1.6mm]
-{{\scriptsize\textcolor{{soft}}{{{se_live}}}}}\\[3mm]
+{{\scriptsize\textcolor{{soft}}{{{se_live}}}}}\\[1.2mm]
+{{\tiny\textcolor{{soft}}{{{C['se_src']}}}}}\\[3mm]
 
 \textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.2mm]
 \noindent\begin{{minipage}}[c]{{0.32\textwidth}}
