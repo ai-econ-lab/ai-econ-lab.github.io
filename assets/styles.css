@@ -497,7 +497,11 @@ main [id]{scroll-margin-top:196px}
 .blang a{color:var(--blue);text-decoration:none}.blang .soon{opacity:.5}
 .bback{font-family:var(--mono);font-size:12px;color:var(--muted);text-decoration:none}
 .bback:hover{color:var(--blue)}
-.bsec{margin-top:26px}
+/* padding:0 overrides the global section{padding:clamp(38px,6vw,66px) 0} band rule, which
+   the brief inherited silently: each of its three sections carried ~47px of top AND bottom
+   padding, so the printed brief ran to three near-empty pages while every gap looked like a
+   margin nobody could find. Rhythm here is the margin below, and nothing else. */
+.bsec{margin-top:26px;padding:0}
 .bh2{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin:0 0 12px}
 .bp{color:var(--ink-2);font-size:14.5px;line-height:1.55;margin:0 0 12px;max-width:64ch}
 .bchart{margin-top:4px}.bchart svg{width:100%;height:auto}
@@ -526,14 +530,40 @@ main [id]{scroll-margin-top:196px}
     --border:#e3e8ee; --blue:#0072b2; --link:#065f92;
     --c1:#0072b2; --c2:#d55e00; --c3:#009e73; --c4:#cc79a7;
   }
-  .mast, footer, .tip, #printbrief, .bactions, .skip { display:none !important; }
+  /* Hide the SITE chrome, not the brief's own footer: that footer is the only place the
+     printed sheet says who made it and where to find the live version, and a brief that
+     circulates as a PDF needs to carry its own attribution. */
+  .mast, footer:not(.bfooter), .tip, #printbrief, .bactions, .skip { display:none !important; }
   body { background:#fff; color:#000; }
   .brief { max-width:100%; padding:0; }
   .briefsheet { box-shadow:none; border:0; border-radius:0; padding:0; }
-  .bsec, .bstat, .blist li, .bchart { break-inside:avoid; }
+  /* The chart and a list row must not be split across a page; a SECTION must be allowed to,
+     or a section that does not fit the remainder is thrown whole onto the next sheet and the
+     brief prints as three near-empty pages. That is how it printed before 12 Aug 2026. */
+  .bstat, .blist li, .bchart { break-inside:avoid; }
+  .bsec { break-inside:auto; margin-top:13px; }
+  .bh2 { margin:0 0 6px; }
+  /* The chart is the only fixed-size block, so it is what decides whether the brief lands on
+     one sheet. Cap it rather than letting a 640x172 viewBox scale to the full A4 measure. */
+  .bchart { margin-top:2px; }
+  .bchart svg { max-height:35mm; }
+  .btitle { font-size:19pt; }
+  .bsub { font-size:9.2pt; line-height:1.4; margin-top:6px; }
+  .kicker { font-size:8pt; }
+    /* footer{background:navy} is the SITE footer's rule and .bfooter is also a <footer>, so
+     unsetting the band is part of keeping it. */
+  .bfooter { margin-top:10px; padding-top:6px; font-size:7.6pt; background:none;
+    color:var(--muted); flex-wrap:nowrap; gap:14px; break-inside:avoid; }
+  /* On screen the measure is capped at 64ch for reading comfort in a 820px column. On A4 the
+     column IS the page, so keeping the cap wastes a third of the sheet and pushes the brief
+     onto a second page. Set the type down instead, the way a printed brief is set. */
+  .bp { max-width:none; font-size:9.5pt; line-height:1.35; margin:0 0 6px; }
+  .bsub { max-width:none; }
+  .bsrc { margin-top:5px; }
+  .bhead { padding-bottom:10px; margin-bottom:12px; }
   .bnum, .btitle, .bh2 { color:#000; }
   a { color:#000; text-decoration:none; }
-  @page { size:A4; margin:14mm; }
+  @page { size:A4; margin:12mm; }
 }
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
