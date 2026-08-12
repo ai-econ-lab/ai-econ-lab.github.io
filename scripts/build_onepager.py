@@ -327,12 +327,12 @@ COPY = {
   se_live=(r"Right now ({asof}): of the {n} most recent advertisements, {names}\% mention an AI "
            r"skill and {floor}\% ask for one in the job itself. This is the only figure on the "
            r"sheet that moves daily."),
-  cap_q="How capable are AI systems?",
+  cap_q="How capable are AI systems?", cap_cond="at 50\\% success",
   # Taken from the copy table, NOT from monitor.yaml: the yaml is English-only, so pulling
   # cap["lab"] straight through left a full English sentence in the middle of the Swedish
   # sheet. Source lines below it stay in English on purpose, being citations.
-  cap_lab=("the longest human-expert tasks frontier AI agents complete at even odds; the "
-           "length has been doubling every 4--6 months"),
+  cap_lab=("the longest human-expert tasks frontier AI agents complete; the length has been "
+           "doubling every 4--6 months"),
   cap_tail=("This is the technology the four questions are read against, not a fifth question "
             "about the labour market."),
   footnote=(r"\textbf{{Before you quote this.}} The Swedish series counts what employers "
@@ -419,9 +419,9 @@ COPY = {
   se_live=(r"Just nu ({asof}): av de {n} senaste annonserna nämner {names}\% en AI-färdighet och "
            r"{floor}\% efterfrågar den i själva jobbet. Det är den enda siffran på bladet som "
            r"ändras dagligen."),
-  cap_q="Hur kapabla är AI-systemen?",
-  cap_lab=("de längsta expertuppgifter som AI-agenter klarar i hälften av fallen; längden har "
-           "fördubblats var fjärde till sjätte månad"),
+  cap_q="Hur kapabla är AI-systemen?", cap_cond="vid 50\\% träffsäkerhet",
+  cap_lab=("de längsta expertuppgifter som AI-agenter klarar; längden har fördubblats var "
+           "fjärde till sjätte månad"),
   cap_tail=("Det här är tekniken som de fyra frågorna läses mot, inte en femte fråga om "
             "arbetsmarknaden."),
   footnote=(r"\textbf{{Innan du citerar det här.}} Den svenska serien räknar vad arbetsgivare "
@@ -650,7 +650,8 @@ def main():
 \textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[1.8mm]
 \noindent\begin{{minipage}}[c]{{0.32\textwidth}}
   {{\footnotesize\bfseries\textcolor{{ink}}{{{C['cap_q']}}}}}\\[1.4mm]
-  {{\LARGE\bfseries\textcolor{{ink}}{{{tex(cap['num'])}}}}}
+  {{\LARGE\bfseries\textcolor{{ink}}{{{tex(cap['num'])}}}}}\\[0.4mm]
+  {{\scriptsize\textcolor{{soft}}{{{C['cap_cond']}}}}}
 \end{{minipage}}%
 \begin{{minipage}}[c]{{0.66\textwidth}}\raggedright
   {{\scriptsize {C['cap_lab']}. {C['cap_tail']}}}\\[0.8mm]
