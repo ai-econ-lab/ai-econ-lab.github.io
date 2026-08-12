@@ -2192,6 +2192,33 @@ def brief(lang="en"):
             "nivåer. Källa: Akavias självselekterade medlemspanel med 1 729 offentliganställda, maj 2024, "
             "egen bearbetning."),
     }
+    # Section headings carry the month's argument rather than naming the slot they sit in.
+    # A reader who skims three headings should come away with the finding, not with
+    # "question / data / caveat", which is true of every issue and therefore says nothing.
+    # Keyed by theme, like setups, takeaways and limits, so the twelve-month calendar cannot
+    # drift from them; a theme without an entry falls back to the old generic labels.
+    heads = {
+        "barriers": (L("Why so few firms use AI", "Varför så få företag använder AI"),
+                     L("Skills, not money", "Kompetens, inte pengar"),
+                     L("The ranking travels, the levels do not",
+                       "Rangordningen bär, inte nivåerna")),
+        "exposure": (L("Which jobs sit closest to AI", "Vilka jobb ligger närmast AI"),
+                     L("Sweden is among the most exposed", "Sverige är bland de mest exponerade"),
+                     L("Exposure is not displacement", "Exponering är inte förträngning")),
+        "demand": (L("What employers actually ask for", "Vad arbetsgivarna faktiskt ber om"),
+                   L("Demand is rising and still small", "Efterfrågan stiger och är fortfarande liten"),
+                   L("The advertised margin, not demand itself",
+                     "Den annonserade marginalen, inte efterfrågan")),
+        "adoption": (L("Which firms have started", "Vilka företag har börjat"),
+                     L("It climbs steeply with size", "Den stiger brant med storleken"),  # not "not sector": the takeaway says nothing about sectors
+                     L("Use is not intensity", "Användning är inte omfattning")),
+        "outcomes": (L("Where AI would show up first", "Där AI skulle synas först"),
+                     L("The signal is in hiring, not pay", "Signalen finns i anställandet, inte lönerna"),
+                     L("Descriptive, not causal", "Beskrivande, inte kausalt")),
+    }
+    h_q, h_find, h_lim = heads.get(theme, (L("The question", "Frågan"),
+                                           L("What the data show", "Vad data visar"),
+                                           L("What it does not show", "Vad det inte visar")))
     limits = {
         "exposure": L(
             "Exposure says nothing about whether AI substitutes for a worker or assists one, and the "
@@ -2278,16 +2305,16 @@ def brief(lang="en"):
       <a class="bback" href="/monitor/">{L("← the live monitor","← den levande monitorn")}</a></div>
   </header>
 
-  <section class="bsec"><h2 class="bh2">{L("The question","Frågan")}</h2>
+  <section class="bsec"><h2 class="bh2">{h(h_q)}</h2>
     <p class="bp">{setups[theme]}</p></section>
 
-  <section class="bsec"><h2 class="bh2">{L("What the data show","Vad data visar")}</h2>
+  <section class="bsec"><h2 class="bh2">{h(h_find)}</h2>
     <div class="bchart">{th_chart}</div>
     <p class="bp">{takeaways[theme]}</p>
     {f'<p class="bp">{extras[theme]}</p>' if theme in extras else ''}
     <p class="bsrc">{L("Source","Källa")}: {h(srcs[theme])}. {L("Full method at","Fullständig metod på")} ai-econlab.com/monitor/#method.</p></section>
 
-  <section class="bsec"><h2 class="bh2">{L("What it does not show","Vad det inte visar")}</h2>
+  <section class="bsec"><h2 class="bh2">{h(h_lim)}</h2>
     <p class="bp">{limits[theme]}</p></section>
 
   <footer class="bfooter">
