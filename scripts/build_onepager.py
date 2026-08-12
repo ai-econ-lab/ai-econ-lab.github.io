@@ -228,9 +228,16 @@ def zero_rows(rows, key, C, n=3):
     return "\\\\[1.3mm]\n".join(out)
 
 
-def barrier_bars(rows, w=20, n=6):
-    """Sweden against the EU, same hue mapping as page one."""
+def barrier_bars(rows, namekey="name", w=20, n=6):
+    """Sweden against the EU, same hue mapping as page one.
+
+    namekey selects the label language. The Swedish sheet shipped with English bar labels
+    ("Lack of relevant expertise") because this drew r["name"] unconditionally, so the swap is
+    made here and a missing translation raises rather than falling back silently."""
     rows = rows[:n]
+    missing = [r["name"] for r in rows if not r.get(namekey)]
+    if missing:
+        raise SystemExit("barriers: no " + namekey + " for " + "; ".join(missing))
     top = max(max(r["share"], r["eu"]) for r in rows) * 1.08
     bw, gap, grp = 2.5, 0.7, 3.4
     s = "\\begin{tikzpicture}[x=1mm,y=1mm]\n"
@@ -243,7 +250,7 @@ def barrier_bars(rows, w=20, n=6):
                   f"\\node[anchor=west,font=\\tiny,text=ink] at ({L+1:.2f},{yy+bw/2:.2f}) "
                   f"{{{val:g}}};\n")
         s += (f"\\node[anchor=east,font=\\tiny,text=ink,align=right,text width=32mm] "
-              f"at (-1.4,{y+bw+gap/2:.2f}) {{{tex(r['name'])}}};\n")
+              f"at (-1.4,{y+bw+gap/2:.2f}) {{{tex(r[namekey])}}};\n")
     return s + "\\end{tikzpicture}"
 
 
@@ -478,6 +485,11 @@ def main():
     ceiling = next((h.group(1) for note in m.get("notes", [])
                     for h in [re.search(r"corrected ceiling at <b>([\d.]+)%", note)] if h), "1.36")
 
+    # se_src is copy so the Swedish sheet can say it in Swedish, but the English one must stay
+    # the data's own wording; assert rather than let the two drift apart silently.
+    if COPY["en"]["se_src"] != occ["meta"]["source"]:
+        raise SystemExit("build_onepager: COPY['en']['se_src'] no longer matches "
+                         "occupations.yaml meta.source. Update the copy, not the data.")
     colw = "0.31" if landscape else "0.485"
     cards = [
         card(C["q_exposure"],
@@ -524,7 +536,7 @@ def main():
   {zero_rows(occ['zero'], namekey, C)}\\[3mm]
   {{\scriptsize\textcolor{{soft}}{{{C['p2_zero_note']}}}}}
 \end{{minipage}}\\[3.5mm]
-{{\tiny\textcolor{{soft}}{{{tex(occ['meta']['source'])}}}}}\\[3mm]
+{{\tiny\textcolor{{soft}}{{{C['se_src']}}}}}\\[3mm]
 
 \textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[4mm]
 \noindent\begin{{minipage}}[t]{{0.47\textwidth}}
@@ -532,7 +544,7 @@ def main():
   {{\scriptsize\textcolor{{soft}}{{{C['bar_sub']}}}}}\\[1.4mm]
   {{\tiny\textcolor{{soft}}{{\textcolor{{{SE}}}{{\rule{{2mm}}{{2mm}}}}~{C['legend_se']} \quad
   \textcolor{{{INTL}}}{{\rule{{2mm}}{{2mm}}}}~EU}}}}\\[3mm]
-  \hspace*{{33mm}}{barrier_bars(bar['rows'])}\\[3.4mm]
+  \hspace*{{33mm}}{barrier_bars(bar['rows'], 'name_sv' if lang == 'sv' else 'name')}\\[3.4mm]
   {{\scriptsize\textcolor{{soft}}{{{C['bar_note']}}}}}
 \end{{minipage}}\hfill
 \begin{{minipage}}[t]{{0.49\textwidth}}
