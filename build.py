@@ -771,7 +771,8 @@ def dotplot(cc):
         p.append(f'<text class="tick" x="{gx:.1f}" y="{H-14}" text-anchor="middle">{t:.1f}</text>')
     mx = X(cc["meta"]["mean"])
     p.append(f'<line class="meanline" x1="{mx:.1f}" y1="{top-1}" x2="{mx:.1f}" y2="{top+n*rowh}"/>')
-    p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-4}" text-anchor="middle">EU mean</text>')
+    p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-4}" text-anchor="middle">'
+             f'{cc["meta"]["n_countries"]}-country mean</text>')
     for i, r in enumerate(rows):
         y = top + i * rowh + rowh * 0.62
         se = " se" if r["is_se"] else ""
@@ -978,12 +979,12 @@ def exposure_section():
     and Jobs, linked below). Exposure marks where AI overlaps with the work, not what follows. Where movement has
     appeared so far, it is in who gets hired rather than in how many: the most exposed occupations hire fewer
     young workers (the Outcomes module below, and the Same Storm, Different Boats paper).</p>
-  <div class="dotwrap">{barplot(cc['countries'], mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f')}</div>
+  <div class="dotwrap">{barplot(cc['countries'], mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f', mean_label=f"{mt['n_countries']}-country")}</div>
   {figfooter("cross_country.csv", src, "cross_country.svg", next_up="with the DAIOE v2024 release")}
   <div class="depth"><p class="dk">Sweden, in depth</p>
     <p class="secintro" style="margin:0"><b>{se['share']:.0f}%</b> of Swedish jobs are in the most AI-exposed
       occupations (the <b>top 25%</b> by generative-AI exposure), the <b>2nd-highest of {h(mt['n_countries'])}</b>
-      countries (EU average {mt['mean_share']:.0f}%). The rank depends on where the line is drawn: Sweden is
+      countries (mean {mt['mean_share']:.0f}%, seven of them outside the EU). The rank depends on where the line is drawn: Sweden is
       2nd at this quarter cut and at a 30% cut, 3rd at a third, and 5th if only the top 20% of occupations
       count, so read it as among the most exposed rather than as a precise placing.
       The occupation-by-occupation detail lives on the <a href="/daioe/">DAIOE</a> page, and Swedish employment is
@@ -1015,7 +1016,7 @@ def hero_exposure_panel(method_href, all_href):
       <span class="vint">{h(mt['n_countries'])} countries</span></div>
     <div class="panelbody">
       <p class="psub"><b>{se['share']:.0f}%</b> of Swedish jobs sit in the most AI-exposed quarter of occupations,
-        among the highest of {h(mt['n_countries'])} countries (EU average {mt['mean_share']:.0f}%). Exposure marks
+        among the highest of {h(mt['n_countries'])} countries (mean {mt['mean_share']:.0f}%). Exposure marks
         where AI overlaps with the work, not what follows from it.</p>
       <div class="dotwrap">{barplot(rows, mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f')}</div>
       {figfooter("cross_country.csv", src, "cross_country.svg", method_href=method_href)}
@@ -2007,13 +2008,13 @@ def brief(lang="en"):
     takeaways = {
         "exposure": L(
             f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
-            f"DAIOE generative-AI exposure), among the highest of {n_ctry} countries; the EU average is "
-            f"{eu_share:.0f}%. The placing depends on where the line is drawn, from 2nd at this quarter cut to 5th "
+            f"DAIOE generative-AI exposure), among the highest of {n_ctry} countries; the mean across "
+            f"them is {eu_share:.0f}%. The placing depends on where the line is drawn, from 2nd at this quarter cut to 5th "
             f"if only the top 20% of occupations count. Exposure marks where AI overlaps with the work, not "
             f"displacement.",
             f"{se_share:.0f}% av de svenska jobben finns i de mest AI-exponerade yrkena (den mest exponerade "
             f"fjärdedelen, topp 25% efter DAIOE generativ AI-exponering), bland de högsta av {n_ctry} länder; "
-            f"EU-snittet är {eu_share:.0f}%. Placeringen beror på var gränsen dras, från 2:a vid fjärdedelsgränsen "
+            f"snittet över dem är {eu_share:.0f}%. Placeringen beror på var gränsen dras, från 2:a vid fjärdedelsgränsen "
             f"till 5:e om bara de 20 procent mest exponerade yrkena räknas. Exponering visar var AI överlappar med "
             f"arbetet, inte förträngning."),
         "demand": L(

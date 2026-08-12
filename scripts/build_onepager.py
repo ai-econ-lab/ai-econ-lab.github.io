@@ -342,7 +342,8 @@ COPY = {
   colophon=(r"AI-Econ Lab, Örebro University and the Ratio Institute. Public data throughout; every "
             r"figure is reproducible from the source beside it. Method: "
             r"\href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
-  lab_se="Sweden", lab_eu="Europe", lab_eu2="EU", lab_med="22-country median", lab_us="US",
+  lab_se="Sweden", lab_eu="36-country mean", lab_eu2="EU27", lab_med="22-country median",
+  lab_us="US",
   lab_least="Least exposed", lab_most="Most exposed",
   of_all_jobs="bar spans all jobs", of_all_ads="bar spans 0--4\\% of ads",
   of_all_firms="bar spans all firms",
@@ -430,7 +431,8 @@ COPY = {
             r"bara att arbetsgivare efterfrågar AI-kompetens oftare än förr."),
   colophon=(r"AI-Econ Lab, Örebro universitet och Ratio. Öppna data genomgående; varje siffra går "
             r"att återskapa från källan intill. Metod: \href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
-  lab_se="Sverige", lab_eu="Europa", lab_eu2="EU", lab_med="medianland av 22", lab_us="USA",
+  lab_se="Sverige", lab_eu="36-landssnitt", lab_eu2="EU27", lab_med="medianland av 22",
+  lab_us="USA",
   lab_least="Minst exponerade", lab_most="Mest exponerade",
   of_all_jobs="stapeln rymmer alla jobb", of_all_ads="stapeln rymmer 0--4\\% av annonserna",
   of_all_firms="stapeln rymmer alla företag",
