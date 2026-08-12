@@ -40,7 +40,10 @@ registration:
   # and open a GitHub issue. Remove the claim if that Action is ever disabled.
   - "DATA UPDATED <b>{data_updated}</b> · SOURCES CHECKED WEEKLY"
   - '<span class="lv">● LIVE · PUBLIC + PARTNER DATA</span>'
-  - "MONITOR PROTOTYPE"
+  # "PROTOTYPE" read as unfinished to a first-time visitor arriving from the launch post.
+  # "VERSION 1" says the same thing, that this is early and will change, without inviting
+  # the reader to discount the numbers, which are not provisional (Magnus, 12 Aug 2026).
+  - "MONITOR <b>VERSION 1</b>"
 
 # Who supports the work. Added 4 Aug 2026.
 #
