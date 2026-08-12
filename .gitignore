@@ -7,3 +7,8 @@ __pycache__/
 # NB: files already committed must also be untracked (git rm --cached) --
 # .gitignore alone does not stop tracking something git already knows about.
 notes/
+
+# Session notes must never reach this PUBLIC repo: the monitor-refresh workflow runs
+# `git add -A`, so an untracked note at the root would be committed and published.
+# Pickups belong in the PRIVATE labour-market-monitor repo.
+SESSION_PICKUP.md
