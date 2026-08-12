@@ -213,7 +213,16 @@ capability:
   #   browser. ARC-AGI-3 best frontier system sits at 30 per cent (Claude Opus 5 High), the
   #   next best near 10, against the benchmark's own definition that 100 per cent means
   #   matching human efficiency. Unchanged.
-  reviewed: {metr: 2026-08-10, arc: 2026-08-10}
+  # Re-read 12 Aug 2026: ARC cleared on the 10 Aug stamp and stayed clear, METR tripped again.
+  # METR: figures unchanged again, and this time on machine-readable evidence rather than
+  #   prose. The page's LAST UPDATED still reads 8 May 2026, it still says "Time Horizon 1.1
+  #   (Current)" and carries the 16 h caveat; and the v1.1 suite identifiers inside its own
+  #   thData blob — long_tasks_version 799cc9c4b4483a93fc3445623a49ea1bd74fdeb2, swaa_version
+  #   f6cc84052e2a79dd540766c8a1b15ff399696371 — are byte-identical across every fetch,
+  #   including one whose whole-page hash differed. The page hash moves; the data does not.
+  #   PREFER THOSE TWO IDENTIFIERS on the next re-read: they are the vantage-independent
+  #   version of this check, and hashing them instead of the page would end the false trips.
+  reviewed: {metr: 2026-08-12, arc: 2026-08-10}
   facts:
     - {num: "12–17 h", lab: "Longest tasks frontier AI agents complete at even odds, in human-expert time", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}
     - {num: "×2 every ~4 mo", lab: "How quickly that task length has been doubling, on the trend since 2023 (95% CI 3.4–5.2 months)", foot: "METR Time Horizon 1.1 · doubling time · May 2026"}
