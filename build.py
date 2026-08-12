@@ -287,8 +287,8 @@ def home():
       part of that work becomes public: open indicators on AI and work across countries, with Sweden
       in uncommon depth, updated as the data arrive.</p>
     <div class="cta-row"><a class="btn primary" href="/monitor/">Open the Monitor →</a>
-      <a class="btn ghost" href="/monitor/methods/">How we measure it</a>
       {sheet_pair()}</div>
+    <div class="cta-row"><a class="btn ghost" href="/monitor/methods/">How we measure it</a></div>
     <div class="affil">{affils}</div>
   </div>
   {hero_exposure_panel("/monitor/#method", "/monitor/#exposure")}
@@ -1818,9 +1818,9 @@ def monitor():
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
-      <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a>
-      <a class="btn ghost" href="/monitor/methods/">How we measure it</a>
-      {sheet_pair()}</div></div>
+      {sheet_pair()}
+      <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a></div>
+    <div class="cta-row"><a class="btn ghost" href="/monitor/methods/">How we measure it</a></div></div>
   {hero_exposure_panel("#method", "#exposure")}
 </div></div></div>
 
@@ -2043,9 +2043,9 @@ def brief(lang="en"):
             f"rather than the levels, "
             f"because the levels are shares of all enterprises while since 2023 the question is put only to "
             f"firms that considered AI and decided against it, which Eurostat flags as a break; the chart "
-            f"carries them for anyone who wants them. These are therefore the obstacles of the firms that "
-            f"engaged with the question. The larger group never entered it, so the interesting puzzle is not "
-            f"what stops firms but why most never consider AI at all.",
+            f"carries them for anyone who wants them. These are therefore the obstacles of firms that engaged "
+            f"with the question; the larger group never entered it, and the interesting puzzle is "
+            f"why most never consider AI at all.",
             f"I EU är hindret företagen oftast nämner kompetens, inte pengar: brist på relevant kompetens "
             f"rankas först av {b_n}, kostnad först på {b_cost_rank}:e plats, och \u201dAI är inte användbart "
             f"för oss\u201d sist. Sverige sätter samma skäl först och samma sist, med kostnad på samma plats; "
@@ -2053,9 +2053,9 @@ def brief(lang="en"):
             f"än nivåerna: nivåerna "
             f"är andelar av samtliga företag samtidigt som frågan sedan 2023 bara ställs till företag som "
             f"övervägt AI och valt bort det, vilket Eurostat flaggar som ett brott. Diagrammet bär nivåerna "
-            f"för den som vill ha dem. Det är alltså hindren hos de företag som tagit sig an frågan. Den "
-            f"större gruppen kom aldrig in i den, så det intressanta pusslet är inte vad som hindrar "
-            f"företagen utan varför de flesta aldrig överväger AI."),
+            f"för den som vill ha dem. Det är alltså hindren hos de företag som tagit sig an frågan; den "
+            f"större gruppen kom aldrig in i den, och det intressanta pusslet är varför de flesta "
+            f"aldrig överväger AI."),
         "outcomes": L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
             f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
@@ -2134,47 +2134,33 @@ def brief(lang="en"):
             "att fråga dem, så det som fångas är faktisk användning snarare än avsikt, och det beror "
             "långt mer på hur stort företaget är än på vad det gör."),
         "barriers": L(
-            f"Capability is no longer the obvious constraint. Frontier AI agents now finish tasks of up "
-            f"to {metr_en} of human-expert work about half the time, a length that has been doubling roughly "
-            f"every four months, and the computing power behind notable models has grown about "
-            f"{epoch_x:.1f}-fold a year since 2020. Experiments on assigned tasks find real gains: "
-            f"15% more customer-support issues resolved per hour in one firm (Brynjolfsson, Li "
-            f"and Raymond, 2025); 40% less time and 18% higher quality on professional writing (Noy "
-            f"and Zhang, 2023); 12% more consulting tasks, completed 25% faster, but 19% less "
-            f"accurately on one task chosen to sit outside the frontier (Dell'Acqua et al., 2026). "
-            f"Those are narrow tasks, set by a researcher and marked against a known standard. "
-            f"Reorganising complex work inside a going concern is a different problem, and the "
-            f"evidence that AI pays at the level of the firm is much thinner than the task evidence. Yet "
-            f"in {ADOPT['meta']['year']} only {eu_adopt:.0f}% of EU enterprises used AI, {total_se}% in "
-            f"Sweden, and AI skills were required in a median {dem_med:.1f}% of job postings across "
-            f"{dm['meta']['n_countries']} countries, {se_dem:.1f}% in Sweden. Our own Swedish series counts "
-            f"more strictly, matching a frozen term list rather than extracting skills from the whole "
-            f"advertisement, and so reads lower: between {tr['floor_values'][-1]:.2f}% of advertisements "
-            f"that ask for AI in the role itself and {tr['values'][-1]:.2f}% that name an AI skill "
-            f"anywhere. So why does a technology that "
-            f"performs this well on assigned tasks see so little use? Eurostat put the question to firms "
-            f"across the EU, Sweden among them.",
-            f"Förmågan är inte längre den självklara begränsningen. Dagens AI-agenter klarar uppgifter på "
-            f"upp till {metr_sv} mänskligt expertarbete ungefär hälften av gångerna, en längd som ungefär "
-            f"fördubblats var fjärde månad, och beräkningskraften bakom de uppmärksammade modellerna "
-            f"har vuxit omkring {svn(round(epoch_x, 1))} gånger per år sedan 2020. Experiment på "
-            f"tilldelade uppgifter visar verkliga vinster: 15% fler kundärenden lösta per "
-            f"timme i ett företag (Brynjolfsson, Li och Raymond, 2025); 40% kortare tid och 18% högre "
-            f"kvalitet på professionellt skrivande (Noy och Zhang, 2023); 12% fler konsultuppgifter, "
-            f"utförda 25% snabbare, men 19% mindre träffsäkert på en uppgift som medvetet valts utanför "
-            f"det AI behärskar (Dell'Acqua m.fl., 2026). Det är avgränsade uppgifter, satta av en "
-            f"forskare och bedömda mot en känd måttstock. Att organisera om komplext arbete i en "
-            f"pågående verksamhet är ett annat problem, och underlaget för att AI lönar sig på "
-            f"företagsnivå är betydligt tunnare än underlaget på uppgiftsnivå. Ändå använde bara {svn(round(eu_adopt))}% av "
-            f"EU:s företag AI {ADOPT['meta']['year']}, {total_se}% i Sverige, och AI-kompetens krävdes "
-            f"i medianen {svn(round(dem_med, 1))}% av jobbannonserna i "
-            f"{dm['meta']['n_countries']} länder, {svn(round(se_dem, 1))}% i Sverige. Vår egen svenska serie "
-            f"räknar striktare, mot en fryst termlista i stället för att extrahera kompetenser ur hela "
-            f"annonstexten, och ligger därför lägre: mellan {svn(round(tr['floor_values'][-1], 2))}% av "
-            f"annonserna som efterfrågar AI i själva tjänsten och {svn(round(tr['values'][-1], 2))}% som "
-            f"nämner en AI-färdighet någonstans. "
-            f"Varför används då en teknik som presterar så här bra på tilldelade uppgifter fortfarande så "
-            f"lite? Eurostat ställde frågan till företag i hela EU, Sverige inräknat."),
+            f"Capability is no longer the obvious constraint. Frontier AI agents now finish tasks "
+            f"of up to {metr_en} of human-expert work about half the time, and that length has been "
+            f"doubling roughly every four months. Experiments on assigned tasks find real gains: "
+            f"15% more customer-support issues resolved per hour in one firm (Brynjolfsson, Li and "
+            f"Raymond, 2025); 40% less time and 18% higher quality on professional writing (Noy and "
+            f"Zhang, 2023); 12% more consulting tasks, 25% faster, but 19% less accurately on a task "
+            f"chosen outside the frontier (Dell'Acqua et al., 2026). Those are narrow "
+            f"tasks, set by a researcher and marked against a known standard. Reorganising complex "
+            f"work inside a going concern is a different problem, and the evidence that AI pays at "
+            f"the level of the firm is much thinner. Yet in {ADOPT['meta']['year']} only "
+            f"{eu_adopt:.0f}% of EU enterprises used AI, {total_se}% in Sweden. So why does a "
+            f"technology that performs this well on assigned tasks see so little use? Eurostat put "
+            f"the question to firms across the EU.",
+            f"Förmågan är inte längre den självklara begränsningen. Dagens AI-agenter klarar "
+            f"uppgifter på upp till {metr_sv} mänskligt expertarbete ungefär hälften av gångerna, "
+            f"och den längden har ungefär fördubblats var fjärde månad. Experiment på tilldelade "
+            f"uppgifter visar verkliga vinster: 15% fler kundärenden lösta per timme i ett företag "
+            f"(Brynjolfsson, Li och Raymond, 2025); 40% kortare tid och 18% högre kvalitet på "
+            f"professionellt skrivande (Noy och Zhang, 2023); 12% fler konsultuppgifter, 25% "
+            f"snabbare, men 19% mindre träffsäkert på en uppgift vald utanför det AI behärskar "
+            f"(Dell'Acqua m.fl., 2026). Det är avgränsade uppgifter, satta av en forskare "
+            f"och bedömda mot en känd måttstock. Att organisera om komplext arbete i en pågående "
+            f"verksamhet är ett annat problem, och underlaget för att AI lönar sig på företagsnivå "
+            f"är betydligt tunnare. Ändå använde bara {svn(round(eu_adopt))}% av EU:s företag AI "
+            f"{ADOPT['meta']['year']}, {total_se}% i Sverige. Varför används då en teknik som "
+            f"presterar så här bra på tilldelade uppgifter fortfarande så lite? Eurostat ställde "
+            f"frågan till företag i hela EU."),
         "outcomes": L(
             "If AI were already reshaping work, it should show up in what happens to jobs and pay. So "
             "far the clearest signal is not in wages but in who gets hired.",
@@ -2183,22 +2169,22 @@ def brief(lang="en"):
     }
     extras = {
         "barriers": L(
-            "Eurostat surveys the business economy, so the public sector is absent from the chart, and "
-            "in Sweden that is a large omission. Our own report for the Expert Group on Public Economics "
-            "found about a quarter of central government authorities and municipalities using AI against "
-            "more than sixty per cent of the regions, with AI concentrated in administrative support "
-            "rather than core welfare services. The obstacle named there is competence again, but with a "
-            "detail the business survey cannot give: the gap is among leaders as much as among employees, "
-            "and it runs across every level of government. Source: a self-selected Akavia member panel of "
+            "Eurostat surveys the business economy, so the public sector is absent from the chart, "
+            "and in Sweden that is a large omission. Our report for the Expert Group on Public "
+            "Economics found about a quarter of central government authorities and municipalities "
+            "using AI against more than sixty per cent of the regions, with AI concentrated in "
+            "administrative support rather than core services. The obstacle named there is "
+            "competence again, with a detail the business survey cannot give: the gap is among "
+            "leaders as much as among employees. Source: a self-selected Akavia member panel of "
             "1,729 public-sector professionals, May 2024, our own processing.",
-            "Eurostat undersöker näringslivet, så offentlig sektor saknas i diagrammet, och i Sverige är "
-            "det en stor lucka. Vår egen ESO-rapport fann att omkring en fjärdedel av de statliga "
-            "myndigheterna och kommunerna använder AI, mot över sextio procent av regionerna, och att AI "
-            "framför allt används i administrativt stöd snarare än i kärnverksamheten. Hindret som nämns "
-            "är kompetens även där, men med en precisering som företagsundersökningen inte kan ge: bristen "
-            "finns hos ledningen lika mycket som hos medarbetarna, och den går genom förvaltningens alla "
-            "nivåer. Källa: Akavias självselekterade medlemspanel med 1 729 offentliganställda, maj 2024, "
-            "egen bearbetning."),
+            "Eurostat undersöker näringslivet, så offentlig sektor saknas i diagrammet, och i "
+            "Sverige är det en stor lucka. Vår ESO-rapport fann att omkring en fjärdedel av de "
+            "statliga myndigheterna och kommunerna använder AI, mot över sextio procent av "
+            "regionerna, och att AI framför allt används i administrativt stöd snarare än i "
+            "kärnverksamheten. Hindret som nämns är kompetens även där, med en precisering som "
+            "företagsundersökningen inte kan ge: bristen finns hos ledningen lika mycket som hos "
+            "medarbetarna. Källa: Akavias självselekterade medlemspanel med 1 729 "
+            "offentliganställda, maj 2024, egen bearbetning."),
     }
     # Section headings carry the month's argument rather than naming the slot they sit in.
     # A reader who skims three headings should come away with the finding, not with
@@ -2214,14 +2200,16 @@ def brief(lang="en"):
                      L("Sweden is among the most exposed", "Sverige är bland de mest exponerade"),
                      L("Exposure is not displacement", "Exponering är inte förträngning")),
         "demand": (L("What employers actually ask for", "Vad arbetsgivarna faktiskt ber om"),
-                   L("Demand is rising and still small", "Efterfrågan stiger och är fortfarande liten"),
+                   L("Demand is rising and still small",
+                     "Efterfrågan stiger och är fortfarande liten"),
                    L("The advertised margin, not demand itself",
                      "Den annonserade marginalen, inte efterfrågan")),
         "adoption": (L("Which firms have started", "Vilka företag har börjat"),
-                     L("It climbs steeply with size", "Den stiger brant med storleken"),  # not "not sector": the takeaway says nothing about sectors
+                     L("It climbs steeply with size", "Den stiger brant med storleken"),
                      L("Use is not intensity", "Användning är inte omfattning")),
         "outcomes": (L("Where AI would show up first", "Där AI skulle synas först"),
-                     L("The signal is in hiring, not pay", "Signalen finns i anställandet, inte lönerna"),
+                     L("The signal is in hiring, not pay",
+                       "Signalen finns i anställandet, inte lönerna"),
                      L("Descriptive, not causal", "Beskrivande, inte kausalt")),
     }
     h_q, h_find, h_lim = heads.get(theme, (L("The question", "Frågan"),
@@ -2246,27 +2234,23 @@ def brief(lang="en"):
             "Användning är inte omfattning. Ett företag räknas här om det använder en AI-teknik "
             "någonstans i verksamheten, vilket inte säger något om hur stor del av arbetet den rör."),
         "barriers": L(
-            f"Read this as how widespread each obstacle is, not as a division of non-adopters between "
-            f"causes. Eurostat reports the shares as a percentage of all enterprises with ten or more employees and allows several "
-            f"answers, so they do not sum to a total and cannot be rebased onto the {nonad:.0f}% of "
-            f"Swedish firms not using AI. The ranking is the part that travels, since every reason shares a "
-            f"denominator; the levels are not comparable across years, and for Sweden not across the 2023 "
-            f"break either. Nor is any of this cut by firm size, which is where the variation sits: "
-            f"in Sweden {smd['10-49']}% of firms with 10 to 49 employees use AI against {smd['250-']}% of "
-            f"those with 250 or more, so a national average describes no one in particular. An obstacle named is "
-            f"also not a benefit forgone: the survey records what firms say stopped them, not whether "
-            f"adopting would have paid.",
-            f"Läs detta som hur utbrett varje hinder är, inte som en uppdelning av de som avstår efter "
-            f"orsak. Eurostat redovisar andelarna som procent av samtliga företag med tio eller fler anställda och tillåter flera "
-            f"svar, så de summerar inte till en helhet och kan inte räknas om till de "
-            f"{svn(round(nonad))}% av de svenska företagen som inte använder AI. Rangordningen är det som "
-            f"bär, eftersom alla skäl delar nämnare; nivåerna är inte jämförbara mellan år, och för Sverige "
-            f"inte heller över brottet 2023. Ingenting av detta är dessutom uppdelat efter företagsstorlek, "
-            f"vilket är där variationen finns: i Sverige använder {smd['10-49']}% av företagen med 10 till 49 "
-            f"anställda AI mot {smd['250-']}% av dem med 250 eller fler, så ett riksgenomsnitt beskriver "
-            f"ingen särskild. "
-            f"Ett nämnt hinder är inte heller en utebliven vinst: undersökningen registrerar vad "
-            f"företagen uppger stoppade dem, inte om det hade lönat sig att införa AI."),
+            f"Read this as how widespread each obstacle is, not as a division of non-adopters "
+            f"between causes. Eurostat allows several answers, so the shares do not sum to a total "
+            f"and cannot be rebased onto the {nonad:.0f}% of Swedish firms not using AI. The levels "
+            f"are not comparable across years, and for Sweden not across the 2023 break. Nor is any "
+            f"of this cut by firm size, where the variation sits: in Sweden {smd['10-49']}% of firms "
+            f"with 10 to 49 employees use AI against {smd['250-']}% of those with 250 or more. An "
+            f"obstacle named is also not a benefit forgone: the survey records what firms say "
+            f"stopped them, not whether adopting would have paid.",
+            f"Läs detta som hur utbrett varje hinder är, inte som en uppdelning av dem som avstår "
+            f"efter orsak. Eurostat tillåter flera svar, så andelarna summerar inte till en helhet "
+            f"och kan inte räknas om till de {svn(round(nonad))}% av de svenska företagen som inte "
+            f"använder AI. Nivåerna är inte jämförbara mellan år, och för Sverige inte heller över "
+            f"brottet 2023. Ingenting är dessutom uppdelat efter företagsstorlek, där variationen "
+            f"finns: i Sverige använder {smd['10-49']}% av företagen med 10 till 49 anställda AI mot "
+            f"{smd['250-']}% av dem med 250 eller fler. Ett nämnt hinder är inte heller en utebliven "
+            f"vinst: undersökningen registrerar vad företagen uppger stoppade dem, inte om det hade "
+            f"lönat sig att införa AI."),
         "outcomes": L(
             "Descriptive, not causal. Entry-level hiring is also more cyclical, and the tightening "
             "cycle hit these occupations hardest, so this cannot separate AI from the cycle.",

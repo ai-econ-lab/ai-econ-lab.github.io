@@ -176,6 +176,48 @@ def check_aggregates(docs, problems):
                             f"EU average: \u201c{m.group(0).strip()}\u201d. {tell}.")
 
 
+
+def check_brief_length(problems):
+    """D. The brief is a ONE-page publication, in both languages, every month.
+
+    Added 12 Aug 2026 on Magnus's instruction ("should always be 1 page"). The August issue ran
+    to 666 words against 90-142 for every other month, because only its theme had been written
+    out in full, and it printed to three pages before the print stylesheet was fixed and to a
+    cramped one after. Rather than re-print twelve months through a headless browser on every
+    build, this bounds the input: at the sheet's type size a page holds about 560 words of body
+    copy besides the chart, so an issue over the budget will not fit however the CSS is tuned.
+
+    Checked for all twelve themes and both languages, because the calendar means a build only
+    ever renders one of them and an overlong February would otherwise surface in February.
+    """
+    budget = 560
+    import os as _os
+    prev = _os.environ.get("BRIEF_MONTH_OVERRIDE")
+    try:
+        sys.path.insert(0, str(ROOT))
+        import importlib
+        build = importlib.import_module("build")
+        for month in range(1, 13):
+            _os.environ["BRIEF_MONTH_OVERRIDE"] = f"2027-{month:02d}"
+            for lang in ("en", "sv"):
+                page = re.sub(r"<svg.*?</svg>", "", build.brief(lang), flags=re.S)
+                body = re.findall(r'<p class="bp">(.*?)</p>', page, re.S)
+                words = sum(len(re.sub(r"<[^>]+>", "", b).split()) for b in body)
+                if words > budget:
+                    problems.append(
+                        f"brief {lang.upper()} month {month}: {words} words of body copy against a "
+                        f"{budget}-word budget, so it will not fit one page. Cut the copy; do not "
+                        f"shrink the type, which is already at the floor for a printed sheet.")
+    except Exception as e:                      # a checker must not break the build it guards
+        problems.append(f"brief length check could not run: {type(e).__name__}: {e}")
+    finally:
+        if prev is None:
+            _os.environ.pop("BRIEF_MONTH_OVERRIDE", None)
+        else:
+            _os.environ["BRIEF_MONTH_OVERRIDE"] = prev
+
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--docs", default="docs")
@@ -188,6 +230,7 @@ def main():
     check_page(docs / "monitor" / "brief" / "sv" / "index.html", "brief SV", problems)
     check_sources(problems)
     check_aggregates(docs, problems)
+    check_brief_length(problems)
 
     if problems:
         print(f"check_claims: {len(problems)} problem(s)\n")
@@ -197,7 +240,7 @@ def main():
         return 1
     print("check_claims: every JobTech module states a unit, no generator/output "
           "disagreement, no stale assertions, page and Brief agree, and no comparator "
-          "is named for a population it does not cover.")
+          "is named for a population it does not cover, and every month's brief fits one page.")
     return 0
 
 

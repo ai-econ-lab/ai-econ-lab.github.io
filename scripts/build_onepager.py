@@ -316,8 +316,8 @@ COPY = {
   # "Has it shown up in pay?" presupposes an effect that ought to appear, which is a causal
   # claim on a descriptive sheet.
   q_wages="What has happened to pay?",
-  r_exposure=("Jobs in the most AI-exposed quarter of occupations. Exposure describes the "
-              "tasks, not who loses work."),
+  r_exposure=("Jobs in the most AI-exposed quarter of occupations. Exposure describes "
+              "applicability, not who loses work."),
   r_demand=("Advertisements asking for an AI skill: a small part of hiring. The Swedish "
             "series in the figure below is stricter and reads lower."),
   r_adoption=("Firms using AI in 2025; the tick marks the 2024 wave."),
@@ -410,7 +410,7 @@ COPY = {
   q_adoption="Hur många företag använder AI?",
   q_wages="Vad har hänt med lönerna?",
   r_exposure=("Jobb i den mest AI-exponerade fjärdedelen av yrkena. Exponering beskriver "
-              "uppgifterna, inte vem som förlorar arbete."),
+              "tillämpbarhet, inte vem som förlorar arbete."),
   r_demand=("Annonser som kräver AI-kompetens: en liten del av rekryteringen. Serien "
             "i figuren nedan är striktare och ligger lägre."),
   r_adoption=("Andel företag som använde AI 2025; strecket visar 2024."),

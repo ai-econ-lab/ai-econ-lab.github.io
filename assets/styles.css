@@ -83,6 +83,9 @@ h1.title{font-size:clamp(32px,4.6vw,54px);line-height:1.02;letter-spacing:-.02em
 h1.title em{font-style:normal;color:var(--blue)}
 .lede{font-family:var(--serif);font-size:clamp(17px,1.7vw,21px);color:var(--ink-2);line-height:1.46;max-width:46ch;margin:20px 0 0}
 .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+/* A second row under the offers, for links that are not an offer (methods). Tighter than
+   the first row's 26px so the two read as one block rather than two decisions. */
+.cta-row + .cta-row{margin-top:12px}
 .btn{font-family:var(--mono);font-size:12.5px;letter-spacing:.02em;text-decoration:none;border-radius:9px;padding:11px 17px;display:inline-flex;align-items:center;gap:9px;border:1px solid var(--border-2)}
 .btn.primary{background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
 .btn.primary:hover{background:var(--navy-2)}
@@ -541,14 +544,14 @@ main [id]{scroll-margin-top:196px}
      or a section that does not fit the remainder is thrown whole onto the next sheet and the
      brief prints as three near-empty pages. That is how it printed before 12 Aug 2026. */
   .bstat, .blist li, .bchart { break-inside:avoid; }
-  .bsec { break-inside:auto; margin-top:13px; }
+  .bsec { break-inside:auto; margin-top:15px; }
   .bh2 { margin:0 0 6px; }
   /* The chart is the only fixed-size block, so it is what decides whether the brief lands on
      one sheet. Cap it rather than letting a 640x172 viewBox scale to the full A4 measure. */
   .bchart { margin-top:2px; }
-  .bchart svg { max-height:35mm; }
+  .bchart svg { max-height:40mm; }
   .btitle { font-size:19pt; }
-  .bsub { font-size:9.2pt; line-height:1.4; margin-top:6px; }
+  .bsub { font-size:9.8pt; line-height:1.45; margin-top:7px; }
   .kicker { font-size:8pt; }
     /* footer{background:navy} is the SITE footer's rule and .bfooter is also a <footer>, so
      unsetting the band is part of keeping it. */
@@ -557,13 +560,13 @@ main [id]{scroll-margin-top:196px}
   /* On screen the measure is capped at 64ch for reading comfort in a 820px column. On A4 the
      column IS the page, so keeping the cap wastes a third of the sheet and pushes the brief
      onto a second page. Set the type down instead, the way a printed brief is set. */
-  .bp { max-width:none; font-size:9.5pt; line-height:1.35; margin:0 0 6px; }
+  .bp { max-width:none; font-size:9.9pt; line-height:1.42; margin:0 0 8px; }
   .bsub { max-width:none; }
   .bsrc { margin-top:5px; }
   .bhead { padding-bottom:10px; margin-bottom:12px; }
   .bnum, .btitle, .bh2 { color:#000; }
   a { color:#000; text-decoration:none; }
-  @page { size:A4; margin:12mm; }
+  @page { size:A4; margin:14mm; }
 }
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
