@@ -42,6 +42,8 @@ import re
 import sys
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parent.parent
 
 # A JobTech-derived footer must say which of these it counts. The exception is allowed to
@@ -122,6 +124,58 @@ def check_sources(problems):
             problems.append(f"{out} has no generated-by header; is it hand-maintained again?")
 
 
+
+def check_aggregates(docs, problems):
+    """C. A comparator must be named for the population it actually covers.
+
+    Added 12 Aug 2026, after the exposure comparator was called "the EU average" in the brief,
+    in View A's prose and on four chart reference lines. It is the mean over the 36 EU-LFS
+    countries in cross_country.yaml, seven of which (Iceland, Montenegro, Norway, Serbia,
+    Switzerland, Turkey, the United Kingdom) are not in the EU, so a reader comparing it with
+    the adoption card's EU27 figure was comparing two different country sets under one name.
+
+    Two precise probes rather than one loose one. A first attempt matched any "EU" within forty
+    characters of the number and produced six hits, all false: axis ticks reading "30% 40% EU27",
+    the phrase "EU-LFS", and the sentence that correctly says seven countries are OUTSIDE the EU.
+    A checker that cries wolf gets switched off, so this one targets the two shapes the claim can
+    actually take: the reference line's own label, which carries name and value in one element,
+    and prose that puts an EU word and an averaging word next to the figure.
+    """
+    cc = yaml.safe_load((ROOT / "data" / "cross_country.yaml").read_text(encoding="utf-8"))
+    mean = cc["meta"]["mean_share"]
+    n = cc["meta"]["n_countries"]
+    non_eu = {"Iceland", "Montenegro", "Norway", "Serbia", "Switzerland", "Turkey",
+              "United Kingdom"} & {c["name"] for c in cc["countries"]}
+    if not non_eu:
+        return          # the set became EU-only; "EU" would then be fair and this check is moot
+    tell = f"{len(non_eu)} of the countries are outside the EU ({', '.join(sorted(non_eu))})"
+
+    # (1) the reference line's label: "<name> <value>" in one <text class="meanlab"> element
+    lab = re.compile(r'<text class="meanlab"[^>]*>([^<]*)</text>')
+    for path in sorted(docs.rglob("*.html")) + sorted(docs.rglob("*.svg")):
+        for m in lab.finditer(path.read_text(encoding="utf-8", errors="ignore")):
+            txt = m.group(1).strip()
+            num = re.search(r"([\d.]+)\s*$", txt)
+            on_mean = (num and abs(float(num.group(1)) - mean) < 0.05) or "-country" not in txt
+            if re.match(r"EU\b|EU27\b", txt) and on_mean and abs(
+                    float(num.group(1)) - mean if num else mean) < 0.05:
+                problems.append(f"{path.relative_to(docs)}: reference line labelled "
+                                f"\u201c{txt}\u201d plots the {n}-country exposure mean. {tell}.")
+
+    # (2) prose: an EU word and an averaging word next to the figure, with nothing between them
+    claim = re.compile(
+        r"(EU-?(?:27)?)[\s-]*(average|mean|snittet|snitt|genomsnittet|genomsnitt)"
+        r"[^.%<]{0,24}" + re.escape(f"{mean:.0f}") + r"\s*%"
+        r"|" + re.escape(f"{mean:.0f}") + r"\s*%[^.%<]{0,24}"
+        r"(EU-?(?:27)?)[\s-]*(average|mean|snittet|snitt|genomsnittet|genomsnitt)")
+    for path in sorted(docs.rglob("*.html")):
+        txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", path.read_text(encoding="utf-8",
+                                                                        errors="ignore")))
+        for m in claim.finditer(txt):
+            problems.append(f"{path.relative_to(docs)}: calls the {n}-country exposure mean an "
+                            f"EU average: \u201c{m.group(0).strip()}\u201d. {tell}.")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--docs", default="docs")
@@ -133,6 +187,7 @@ def main():
     check_page(docs / "monitor" / "brief" / "index.html", "brief EN", problems)
     check_page(docs / "monitor" / "brief" / "sv" / "index.html", "brief SV", problems)
     check_sources(problems)
+    check_aggregates(docs, problems)
 
     if problems:
         print(f"check_claims: {len(problems)} problem(s)\n")
@@ -141,7 +196,8 @@ def main():
         print("A module may differ from its neighbours; it may not do so silently.")
         return 1
     print("check_claims: every JobTech module states a unit, no generator/output "
-          "disagreement, no stale assertions, page and Brief agree.")
+          "disagreement, no stale assertions, page and Brief agree, and no comparator "
+          "is named for a population it does not cover.")
     return 0
 
 

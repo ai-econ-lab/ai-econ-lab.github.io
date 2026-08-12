@@ -786,9 +786,15 @@ def dotplot(cc):
     return "".join(p)
 
 def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countries",
-            mean_label="EU", cmp_key=None, cmp_label="", series_label=""):
+            mean_label="EU27", cmp_key=None, cmp_label="", series_label=""):
     """Ranked horizontal bar chart (share; meaningful zero). Bar = latest year; a muted delta
     shows the year-on-year change from the previous wave (when present). Sweden highlighted.
+
+    mean_label names the reference line's population and DEFAULTS TO EU27, because every caller
+    that takes the default draws Eurostat's EU27_2020 aggregate. Pass it whenever the line is
+    something else. It was defaulted to "EU" until 12 Aug 2026, and the exposure charts, whose
+    line is the mean over 36 EU-LFS countries including Switzerland, the UK and Turkey,
+    inherited it in four places and told the reader they were looking at an EU average.
 
     The label gutter is sized to the longest label. It used to be a fixed 128px, which was
     fine for country names but silently CLIPPED longer ones: Akavia's official profession
@@ -1018,7 +1024,7 @@ def hero_exposure_panel(method_href, all_href):
       <p class="psub"><b>{se['share']:.0f}%</b> of Swedish jobs sit in the most AI-exposed quarter of occupations,
         among the highest of {h(mt['n_countries'])} countries (mean {mt['mean_share']:.0f}%). Exposure marks
         where AI overlaps with the work, not what follows from it.</p>
-      <div class="dotwrap">{barplot(rows, mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f')}</div>
+      <div class="dotwrap">{barplot(rows, mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f', mean_label=f"{mt['n_countries']}-country")}</div>
       {figfooter("cross_country.csv", src, "cross_country.svg", method_href=method_href)}
       <p style="margin:12px 0 0"><a class="mono" style="font-size:12px" href="{all_href}">All {h(mt['n_countries'])} countries →</a></p>
     </div></div>"""
@@ -1967,7 +1973,9 @@ def brief(lang="en"):
     cc = CROSS; dm = DEMAND; smd = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
     tr = MONITOR["trend"]          # our own Swedish series: the floor-to-ceiling range
     n_ctry = cc["meta"]["n_countries"]; dver = cc["meta"]["daioe_version"]
-    se_share = next(r["share"] for r in cc["countries"] if r["is_se"]); eu_share = cc["meta"]["mean_share"]
+    se_share = next(r["share"] for r in cc["countries"] if r["is_se"])
+    # NOT an EU average: the set is 36 EU-LFS countries, seven of them outside the EU.
+    ctry_mean = cc["meta"]["mean_share"]
     CAL = load("brief_calendar.yaml")["months"]            # confirmed 12-month theme calendar
     cm = CAL.get(today.month, {"theme": "exposure", "title_en": "AI exposure across Europe",
                                "title_sv": "AI-exponering i Europa"})
@@ -2009,12 +2017,12 @@ def brief(lang="en"):
         "exposure": L(
             f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
             f"DAIOE generative-AI exposure), among the highest of {n_ctry} countries; the mean across "
-            f"them is {eu_share:.0f}%. The placing depends on where the line is drawn, from 2nd at this quarter cut to 5th "
+            f"them is {ctry_mean:.0f}%. The placing depends on where the line is drawn, from 2nd at this quarter cut to 5th "
             f"if only the top 20% of occupations count. Exposure marks where AI overlaps with the work, not "
             f"displacement.",
             f"{se_share:.0f}% av de svenska jobben finns i de mest AI-exponerade yrkena (den mest exponerade "
             f"fjärdedelen, topp 25% efter DAIOE generativ AI-exponering), bland de högsta av {n_ctry} länder; "
-            f"snittet över dem är {eu_share:.0f}%. Placeringen beror på var gränsen dras, från 2:a vid fjärdedelsgränsen "
+            f"snittet över dem är {ctry_mean:.0f}%. Placeringen beror på var gränsen dras, från 2:a vid fjärdedelsgränsen "
             f"till 5:e om bara de 20 procent mest exponerade yrkena räknas. Exponering visar var AI överlappar med "
             f"arbetet, inte förträngning."),
         "demand": L(
@@ -2268,8 +2276,9 @@ def brief(lang="en"):
     }
 
     if theme == "exposure":
-        th_chart = barplot(cc["countries"], eu_share, 10 * (int(max(r["share"] for r in cc["countries"]) // 10) + 1),
-                           cc["meta"]["weight_year"], "share", ".0f")
+        th_chart = barplot(cc["countries"], ctry_mean, 10 * (int(max(r["share"] for r in cc["countries"]) // 10) + 1),
+                           cc["meta"]["weight_year"], "share", ".0f",
+                           mean_label=f'{cc["meta"]["n_countries"]}-country')
     elif theme == "demand":
         th_chart = barplot(dm["countries"], 0, int(max(r["share"] for r in dm["countries"])) + 1, 0, "share", ".1f")
     elif theme == "barriers":
@@ -2474,7 +2483,9 @@ def emit_data(out):
         for r in CROSS["countries"]: w.writerow([r["code"], r["name"], r["share"], r["exposure"], r["coverage"], r["year"]])
     _ccx = 10 * (int(max(r["share"] for r in CROSS["countries"]) // 10) + 1)
     (d / "cross_country.svg").write_text(
-        chart_standalone(barplot(CROSS["countries"], CROSS["meta"]["mean_share"], _ccx, CROSS["meta"]["weight_year"], "share", ".0f")), encoding="utf-8")
+        chart_standalone(barplot(CROSS["countries"], CROSS["meta"]["mean_share"], _ccx,
+                                 CROSS["meta"]["weight_year"], "share", ".0f",
+                                 mean_label=f'{CROSS["meta"]["n_countries"]}-country')), encoding="utf-8")
     with (d / "cross_country_adoption.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["code", "country", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])
         for r in ADOPT["countries"]:
