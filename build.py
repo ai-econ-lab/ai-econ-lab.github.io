@@ -1484,9 +1484,14 @@ def adoption_section():
       {h(amt['year'])}, up from {se['prev']:g}% a year earlier (Eurostat). SCB's firm survey decomposes that headline
       by size: adoption climbs steeply with the size of the firm, from <b>{sm['10-49']}%</b> of small firms
       (10–49 employees) to <b>{sm['250-']}%</b> of large ones (250+), every class up sharply since {h(swm['prev_year'])}.
-      The all-firms figure ({sm['Tot250']}%, highlighted) is the same number the cross-country bar shows.</p>
-    <div class="dotwrap">{barplot(SWEAD['sizes'], amt['eu_avg'], swxmax, 0, 'adoption', '.0f', what='firm-size classes')}</div>
-    {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; EU average {amt['eu_avg']:g}% (Eurostat)", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
+      The highlighted row ({sm['Tot250']}%) is the headline, and it is the same number the cross-country bar shows.
+      Read it for what it is: a figure for firms with ten or more. Eurostat's population stops there and it
+      publishes no EU figure for anything smaller, but SCB surveys firms from no employees upward, so the three
+      rows below the headline are ones almost no other country can show. Sweden was one of two countries
+      reporting the 0–9 class to Eurostat for {h(swm['year'])}. Among the smallest firms adoption is roughly half
+      the headline, which is worth knowing before the headline is read as a national rate.</p>
+    <div class="dotwrap">{barplot(SWEAD['sizes'], sm['Tot250'], swxmax, 0, 'adoption', '.0f', what='firm-size classes', mean_label='Sweden 10+')}</div>
+    {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; reference line is the Swedish 10+ headline, {sm['Tot250']}%", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
   </div>
   {akavia_workers_block()}
   {population_block()}
@@ -2622,7 +2627,8 @@ def emit_data(out):
             w.writerow([r["name"], r["adoption"], SWEAD["meta"]["year"], r.get("prev", ""), SWEAD["meta"]["prev_year"]])
     _swxmax = 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1)
     (d / "swe_adoption.svg").write_text(
-        chart_standalone(barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], _swxmax, 0, "adoption", ".0f", what="firm-size classes")), encoding="utf-8")
+        chart_standalone(barplot(SWEAD["sizes"], SWEAD["meta"]["total"], _swxmax, 0, "adoption", ".0f",
+                                 what="firm-size classes", mean_label="Sweden 10+")), encoding="utf-8")
 
 ONEPAGERS = ("aiel-monitor-onepager.pdf", "aiel-monitor-onepager-sv.pdf")
 

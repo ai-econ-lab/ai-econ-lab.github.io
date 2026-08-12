@@ -10,5 +10,8 @@ meta:
 sizes:
   - {code: "250-", name: "250+ employees", adoption: 72, prev: 40, is_se: false}
   - {code: "50-249", name: "50–249 employees", adoption: 50, prev: 18, is_se: false}
-  - {code: "Tot250", name: "All firms (10+)", adoption: 35, prev: null, is_se: true}
+  - {code: "Tot250", name: "Headline: 10+", adoption: 35, prev: null, is_se: true}
   - {code: "10-49", name: "10–49 employees", adoption: 31, prev: 8, is_se: false}
+  - {code: "5-9", name: "5–9 employees", adoption: 30, prev: null, is_se: false}
+  - {code: "1-4", name: "1–4 employees", adoption: 20, prev: null, is_se: false}
+  - {code: "0", name: "No employees", adoption: 14, prev: null, is_se: false}

@@ -16,11 +16,20 @@ ROOT = Path(__file__).resolve().parent.parent
 SCB = "https://api.scb.se/OV0104/v1/doris/en/ssd/START/NV/NV0116/NV0116M/AiTeknikerTypN"
 YEAR, PREV = "2025", "2021"
 # SCB size-class code -> (display name, highlight?). Order = how the bars stack (biggest first).
+# Micro classes added 12 Aug 2026. Eurostat's published population is 10+ persons employed and
+# it has no EU aggregate below that, but SCB surveys firms from zero employees up and publishes
+# 0, 1-4, 5-9, 1-9 and 0-9. Sweden is one of two countries reporting 0-9 to Eurostat for 2025.
+# That makes the ladder BELOW the headline something almost nobody else can show, and it is also
+# the honest answer to "35% of what?": SCB's own "totalt" (TotSNI) equals Tot250 exactly, so the
+# headline is a 10+ figure and not an all-firms one.
 SIZES = [
     ("250-",   "250+ employees",   False),
     ("50-249", "50–249 employees", False),
-    ("Tot250", "All firms (10+)",  True),   # the headline that ties to the cross-country bar
+    ("Tot250", "Headline: 10+",    True),   # the headline that ties to the cross-country bar
     ("10-49",  "10–49 employees",  False),
+    ("5-9",    "5–9 employees",    False),
+    ("1-4",    "1–4 employees",    False),
+    ("0",      "No employees",     False),
 ]
 
 
