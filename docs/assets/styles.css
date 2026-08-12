@@ -87,18 +87,16 @@ h1.title em{font-style:normal;color:var(--blue)}
 .btn.primary{background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
 .btn.primary:hover{background:var(--navy-2)}
 .btn.ghost{background:var(--paper);color:var(--ink)} .btn.ghost:hover{border-color:var(--blue);color:var(--blue)}
-/* One sheet, two languages (see sheet_pair() in build.py). Deliberately NOT two ghost
-   buttons: equal-weight neighbours read as two different downloads, which is how the
-   Swedish edition came to look like an afterthought. The pair is one flex item so the
-   label cannot wrap away from its buttons, and the default carries a wash rather than the
-   navy fill, so it does not compete with the primary call to action beside it. */
-.sheet{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
-.sheet .lab{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--muted)}
-.seg{display:inline-flex;border:1px solid var(--border-2);border-radius:9px;overflow:hidden}
-.seg a{font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;text-decoration:none;padding:10px 13px;color:var(--ink-2)}
-.seg a+a{border-left:1px solid var(--border-2)}
-.seg a.on{background:var(--c1-soft);color:var(--link)}
-.seg a:hover{color:var(--blue)}
+/* The two-page sheet and its language (see sheet_pair() in build.py). The sheet is the offer,
+   so it gets the button; the language is a detail, so it gets small text. An earlier segmented
+   English/Swedish control inverted that and made the language picker the loudest thing on the
+   row. Column layout so the languages sit under their own button rather than alongside the
+   other calls to action. */
+.sheet{display:inline-flex;flex-direction:column;align-items:flex-start;gap:5px}
+.sheetlang{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted);padding-left:2px}
+.sheetlang a{color:var(--link);text-decoration:none}
+.sheetlang a[aria-current]{color:var(--muted);font-weight:600}
+.sheetlang a:not([aria-current]):hover{color:var(--blue);text-decoration:underline}
 .affil{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--muted)}
 .affil span{padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:var(--paper)}
 

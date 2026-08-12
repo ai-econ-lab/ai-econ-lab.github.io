@@ -145,24 +145,30 @@ def assetv(rel):   # cache-busting token for a file under the repo root
     return hashlib.md5(p.read_bytes()).hexdigest()[:8] if p.exists() else "0"
 
 # ── shared chrome ────────────────────────────────────────────────────────────
-def sheet_pair(label="The whole picture, 2 pages"):
-    """The two-page sheet, offered in both languages as ONE control.
+def sheet_pair(label="The whole picture, 2 pages (PDF)"):
+    """The two-page sheet, with the language as a subordinate choice.
 
-    Lydia's review asked for the Swedish edition to be reachable from both "whole picture"
-    buttons, and it was: as a second ghost button reading "svenska (PDF)". Two adjacent
-    buttons of equal weight read as two different downloads, so the Swedish edition looked
-    like an afterthought bolted onto the English one rather than the same sheet in another
-    language. A segmented control says what is actually true — one sheet, two languages —
-    and English carries the wash because it is the default.
+    Two failed designs are worth recording, because both got the hierarchy wrong.
 
-    Rendered as a single inline-flex item so that on a narrow screen the label never wraps
-    away from the buttons it labels.
+    First, Lydia's review asked for the Swedish edition to be reachable from both "whole
+    picture" buttons, and it was: as a second ghost button reading "svenska (PDF)". Two
+    adjacent buttons of equal weight read as two different downloads, so the Swedish edition
+    looked like an afterthought bolted onto the English one.
+
+    Second, a segmented English/Swedish control fixed that and broke something worse. It made
+    the LANGUAGE PICKER the prominent object and demoted the sheet itself to small grey label
+    text, so the page shouted the least interesting decision on it. Magnus, 12 Aug: "the whole
+    picture is super important but is like hidden while English and Svenska is really large".
+
+    The sheet is the offer, so the sheet is the button. The language is a detail, so it is
+    small text beneath, with the current one marked and not a link. "Swedish", not "Svenska":
+    this is an English page, the same rule that governs the occupation names.
     """
-    return (f'<span class="sheet"><span class="lab">{label}</span>'
-            f'<span class="seg">'
-            f'<a class="on" href="/aiel-monitor-onepager.pdf">English (PDF)</a>'
-            f'<a href="/aiel-monitor-onepager-sv.pdf">Svenska (PDF)</a>'
-            f'</span></span>')
+    return (f'<span class="sheet">'
+            f'<a class="btn ghost" href="/aiel-monitor-onepager.pdf">{label} →</a>'
+            f'<span class="sheetlang"><a href="/aiel-monitor-onepager.pdf" aria-current="page">English</a>'
+            f' · <a href="/aiel-monitor-onepager-sv.pdf">Swedish</a></span>'
+            f'</span>')
 
 
 def masthead(active):
