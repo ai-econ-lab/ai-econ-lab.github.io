@@ -785,7 +785,7 @@ def dotplot(cc):
     return "".join(p)
 
 def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countries",
-            mean_label="EU"):
+            mean_label="EU", cmp_key=None, cmp_label="", series_label=""):
     """Ranked horizontal bar chart (share; meaningful zero). Bar = latest year; a muted delta
     shows the year-on-year change from the previous wave (when present). Sweden highlighted.
 
@@ -805,6 +805,13 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
     step = 10 if xmax > 25 else 5 if xmax > 12 else 1
     p = [f'<svg class="rankchart barplot" viewBox="0 0 {W} {H}" role="img" '
          f'aria-label="Ranked bar chart, {n} {h(what)}, latest value with change since the previous wave">']
+    # A paired chart without a key is a puzzle: two colours and no way to tell which is which.
+    if cmp_key:
+        gap = int(x0 + 13 + len(series_label) * 6.2 + 10)
+        p.append(f'<rect class="bar se" x="{x0}" y="4" width="9" height="7" rx="2"/>'
+                 f'<text class="tick" x="{x0+13}" y="10.5">{h(series_label)}</text>'
+                 f'<rect class="barcmp" x="{gap}" y="4" width="9" height="7" rx="2"/>'
+                 f'<text class="tick" x="{gap+13}" y="10.5">{h(cmp_label)}</text>')
     for t in range(0, int(xmax) + 1, step):
         gx = X(t)
         p.append(f'<line class="grid" x1="{gx:.1f}" y1="{top}" x2="{gx:.1f}" y2="{top+n*rowh}"/>')
@@ -823,7 +830,15 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
         v = r[vkey]
         nm = h(r["name"]) + (f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else "")
         p.append(f'<text class="dname{se}" x="{gutter}" y="{y+rowh*0.72:.1f}" text-anchor="end">{nm}</text>')
-        p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
+        if cmp_key and r.get(cmp_key) is not None:
+            cv = r[cmp_key]
+            p.append(f'<rect class="barcmp" x="{x0}" y="{y+rowh*0.16:.1f}" '
+                     f'width="{max(1.5,X(cv)-x0):.1f}" height="{rowh*0.30:.1f}" rx="2"/>')
+            p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.52:.1f}" '
+                     f'width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.30:.1f}" rx="2"/>')
+            p.append(f'<text class="dvalcmp" x="632" y="{y+rowh*0.72:.1f}" text-anchor="end">{cv:{vfmt}}</text>')
+        else:
+            p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
         p.append(f'<text class="dval{se}" x="574" y="{y+rowh*0.72:.1f}" text-anchor="end">{v:{vfmt}}</text>')
         if r.get("prev") is not None:
             p.append(f'<text class="ddelta" x="632" y="{y+rowh*0.72:.1f}" text-anchor="end">{v-r["prev"]:+.0f}</text>')
@@ -1990,16 +2005,20 @@ def brief(lang="en"):
         "barriers": L(
             f"Across the EU the obstacle enterprises name most often is people, not money: "
             f"{b_eu_top['eu']}% name a lack of relevant expertise, against {b_eu_low['eu']}% who say AI is "
-            f"simply not useful to them, and cost sits low at {b_cost['eu']}%. Sweden has the same ordering "
-            f"at lower levels, {b_se_top['share']}% for expertise and {b_cost['share']}% for cost. The Swedish "
-            f"figures are not comparable with years before 2023: the question is now put only to firms that "
-            f"considered AI and decided against it, and Eurostat flags the break.",
+            f"simply not useful to them, and cost sits low at {b_cost['eu']}%. Sweden has the same ordering at "
+            f"lower levels, {b_se_top['share']}% for expertise and {b_cost['share']}% for cost. Read the Swedish "
+            f"levels carefully, because since 2023 the question is put only to firms that considered AI and "
+            f"decided against it, which Eurostat flags as a break. These are therefore the obstacles of the "
+            f"firms that engaged with the question. The larger group never entered it, so the interesting "
+            f"puzzle is not what stops firms but why most never consider AI at all.",
             f"I EU är hindret företagen oftast nämner kompetens, inte pengar: {svn(b_eu_top['eu'])}% anger "
             f"brist på relevant kompetens, mot {svn(b_eu_low['eu'])}% som anser att AI inte är användbart för "
             f"dem, och kostnad hamnar lågt på {svn(b_cost['eu'])}%. Sverige har samma ordning på lägre nivåer, "
-            f"{svn(b_se_top['share'])}% för kompetens och {svn(b_cost['share'])}% för kostnad. De svenska "
-            f"siffrorna är inte jämförbara med åren före 2023: frågan ställs nu bara till företag som övervägt "
-            f"AI och valt bort det, och Eurostat flaggar brottet."),
+            f"{svn(b_se_top['share'])}% för kompetens och {svn(b_cost['share'])}% för kostnad. Läs de svenska "
+            f"nivåerna med omsorg: sedan 2023 ställs frågan bara till företag som övervägt AI och valt bort det, "
+            f"vilket Eurostat flaggar som ett brott. Det är alltså hindren hos de företag som tagit sig an "
+            f"frågan. Den större gruppen kom aldrig in i den, så det intressanta pusslet är inte vad som "
+            f"hindrar företagen utan varför de flesta aldrig överväger AI."),
         "outcomes": L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
             f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
@@ -2115,6 +2134,25 @@ def brief(lang="en"):
             "Om AI redan formade om arbetet borde det synas i vad som händer med jobb och löner. "
             "Hittills är den tydligaste signalen inte lönerna utan vem som blir anställd."),
     }
+    extras = {
+        "barriers": L(
+            "Eurostat surveys the business economy, so the public sector is absent from the chart, and "
+            "in Sweden that is a large omission. Our own report for the Expert Group on Public Economics "
+            "found about a quarter of central government authorities and municipalities using AI against "
+            "more than sixty per cent of the regions, with AI concentrated in administrative support "
+            "rather than core welfare services. The obstacle named there is competence again, but with a "
+            "detail the business survey cannot give: the gap is among leaders as much as among employees, "
+            "and it runs across every level of government. Source: a self-selected Akavia member panel of "
+            "1,729 public-sector professionals, May 2024, our own processing.",
+            "Eurostat undersöker näringslivet, så offentlig sektor saknas i diagrammet, och i Sverige är "
+            "det en stor lucka. Vår egen ESO-rapport fann att omkring en fjärdedel av de statliga "
+            "myndigheterna och kommunerna använder AI, mot över sextio procent av regionerna, och att AI "
+            "framför allt används i administrativt stöd snarare än i kärnverksamheten. Hindret som nämns "
+            "är kompetens även där, men med en precisering som företagsundersökningen inte kan ge: bristen "
+            "finns hos ledningen lika mycket som hos medarbetarna, och den går genom förvaltningens alla "
+            "nivåer. Källa: Akavias självselekterade medlemspanel med 1 729 offentliganställda, maj 2024, "
+            "egen bearbetning."),
+    }
     limits = {
         "exposure": L(
             "Exposure says nothing about whether AI substitutes for a worker or assists one, and the "
@@ -2136,20 +2174,20 @@ def brief(lang="en"):
         "barriers": L(
             f"Read this as how widespread each obstacle is, not as a division of non-adopters between "
             f"causes. Eurostat reports the shares as a percentage of all enterprises with ten or more employees and allows several "
-            f"answers, so they do not sum to a total. They also cannot be rebased onto the "
-            f"{nonad:.0f}% of Swedish firms not using AI, for a reason worth stating plainly: since 2023 "
-            f"the Swedish question is put only to firms that considered AI and decided against it, so "
-            f"most non-adopters are never asked. The ranking survives that, since every reason shares a "
-            f"denominator, but the levels describe a narrow group and the silence of the rest is a "
-            f"routing artefact rather than a finding.",
+            f"answers, so they do not sum to a total and cannot be rebased onto the {nonad:.0f}% of "
+            f"Swedish firms not using AI. The ranking is the part that travels, since every reason shares a "
+            f"denominator; the levels are not comparable across years, and for Sweden not across the 2023 "
+            f"break either. Nor is any of this cut by firm size, which is where the variation sits: "
+            f"{smd['10-49']}% of firms with 10 to 49 employees use AI against {smd['250-']}% of those with "
+            f"250 or more, so a national average describes no one in particular.",
             f"Läs detta som hur utbrett varje hinder är, inte som en uppdelning av de som avstår efter "
             f"orsak. Eurostat redovisar andelarna som procent av samtliga företag med tio eller fler anställda och tillåter flera "
-            f"svar, så de summerar inte till en helhet. De kan inte heller räknas om till de "
-            f"{svn(round(nonad))}% av de svenska företagen som inte använder AI, av ett skäl värt att "
-            f"säga rakt ut: sedan 2023 ställs den svenska frågan bara till företag som övervägt AI och "
-            f"valt bort det, så de flesta som avstår får den aldrig. Rangordningen står sig, eftersom "
-            f"alla skäl delar nämnare, men nivåerna beskriver en smal grupp och tystnaden hos övriga är "
-            f"en artefakt av frågans styrning snarare än ett resultat."),
+            f"svar, så de summerar inte till en helhet och kan inte räknas om till de "
+            f"{svn(round(nonad))}% av de svenska företagen som inte använder AI. Rangordningen är det som "
+            f"bär, eftersom alla skäl delar nämnare; nivåerna är inte jämförbara mellan år, och för Sverige "
+            f"inte heller över brottet 2023. Ingenting av detta är dessutom uppdelat efter företagsstorlek, "
+            f"vilket är där variationen finns: {smd['10-49']}% av företagen med 10 till 49 anställda använder "
+            f"AI mot {smd['250-']}% av dem med 250 eller fler, så ett riksgenomsnitt beskriver ingen särskild."),
         "outcomes": L(
             "Descriptive, not causal. Entry-level hiring is also more cyclical, and the tightening "
             "cycle hit these occupations hardest, so this cannot separate AI from the cycle.",
@@ -2168,9 +2206,11 @@ def brief(lang="en"):
         # class of bug); rows with a name_sv swap it in, others fall back to the English name.
         rows_b = ([{**r, "name": r.get("name_sv", r["name"])} for r in BARRIERS["rows"]]
                   if sv else BARRIERS["rows"])
+        # Sweden against the EU on the same rows, because the finding now leads with the EU.
         th_chart = barplot(rows_b, 0,
-                           int(max(r["share"] for r in BARRIERS["rows"])) + 1, 0,
-                           "share", ".1f", what="reasons")
+                           int(max(max(r["share"], r["eu"]) for r in BARRIERS["rows"])) + 1, 0,
+                           "share", ".1f", what="reasons", cmp_key="eu",
+                           series_label=L("Sweden","Sverige"), cmp_label="EU")
     elif theme == "adoption":
         th_chart = barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f", what="firm-size classes")
     else:
@@ -2200,6 +2240,7 @@ def brief(lang="en"):
   <section class="bsec"><h2 class="bh2">{L("What the data show","Vad data visar")}</h2>
     <div class="bchart">{th_chart}</div>
     <p class="bp">{takeaways[theme]}</p>
+    {f'<p class="bp">{extras[theme]}</p>' if theme in extras else ''}
     <p class="bsrc">{L("Source","Källa")}: {h(srcs[theme])}. {L("Full method at","Fullständig metod på")} ai-econ-lab.github.io/monitor/#method.</p></section>
 
   <section class="bsec"><h2 class="bh2">{L("What it does not show","Vad det inte visar")}</h2>

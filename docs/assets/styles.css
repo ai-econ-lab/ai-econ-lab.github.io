@@ -355,6 +355,11 @@ footer{background:var(--navy);color:var(--navy-ink);margin-top:20px}
 .dotplot .dot.se{fill:var(--c1)}
 .barplot .bar{fill:var(--muted);opacity:.55}
 .barplot .bar.se{fill:var(--c1);opacity:1}
+/* Paired comparison series (barplot cmp_key): the international benchmark against Sweden, drawn
+   on the same rows. Vermillion is the Monitor's one categorical partner to the blue, used the
+   same way everywhere: colour follows the entity, never the panel. */
+.barplot .barcmp{fill:var(--c2);opacity:.85}
+.barplot .dvalcmp{fill:var(--c2);font-family:var(--mono);font-size:10px}
 .rankchart .ddelta{fill:var(--muted);font-size:8.5px}
 
 /* figure download footer (item 10) */
