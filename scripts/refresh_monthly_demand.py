@@ -17,8 +17,14 @@ Run:  python3 scripts/refresh_monthly_demand.py
 import csv
 from pathlib import Path
 
+# _v11 is the DISTINCT-advertisement series (the v1.1 freeze made the distinct advertisement
+# the published unit); the unsuffixed file is the raw RECORD series kept alongside it as the
+# robustness line. Both totals are emitted, because the site states both and had been typing
+# them: "8.1M distinct public job ads (11.2M ad records)" was hand-written in two places and
+# could not disagree with its own data anywhere a build could notice.
 SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
        / "data/free_cuts/monthly_ai_share_v11.csv")
+SRC_RECORDS = SRC.with_name("monthly_ai_share.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "monthly_demand.yaml"
 WINDOW = 12
 
@@ -30,6 +36,12 @@ def main():
     ai = [float(r["ai_any_pct"]) for r in rows]
     floor = [float(r["floor_pct"]) for r in rows]
     ads = [int(r["ads"]) for r in rows]
+    rec_rows = [r for r in csv.DictReader(SRC_RECORDS.open(encoding="utf-8"))
+                if r["thin"] != "1" and r["partial"] != "1"]
+    total_records = sum(int(r["ads"]) for r in rec_rows)
+    if total_records < sum(ads):
+        raise SystemExit("refresh_monthly_demand: the record series is smaller than the distinct "
+                         "series. The two source files have been swapped.")
 
     def trailing(v):
         out = []
@@ -50,6 +62,7 @@ def main():
              f"  last_value: {ai[-1]:.2f}", f"  last_ma: {ai_ma[-1]:.2f}",
              f"  last_floor_ma: {floor_ma[-1]:.2f}",
              f"  total_ads: {sum(ads)}",
+             f"  total_records: {total_records}",
              "  source: JobTech historical job ads (Arbetsförmedlingen), CC0",
              "series:"]
     for i, m in enumerate(ym):
@@ -59,7 +72,7 @@ def main():
     print(f"monthly_demand.yaml: {len(ym)} months, {ym[0]} to {ym[-1]}")
     print(f"  peak single month: {ym[peak]} at {ai[peak]:.2f}%")
     print(f"  latest: {ym[-1]} {ai[-1]:.2f}% raw, {ai_ma[-1]:.2f}% on the {WINDOW}-month mean")
-    print(f"  ads behind the series: {sum(ads):,}")
+    print(f"  ads behind the series: {sum(ads):,} distinct, {total_records:,} records")
 
 
 if __name__ == "__main__":

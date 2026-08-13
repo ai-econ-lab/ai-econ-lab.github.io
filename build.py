@@ -8,7 +8,7 @@ engine and no third-party deps beyond PyYAML — so it runs the same on your Mac
 and in CI. Edit the YAML, run `python3 build.py`, commit, push.
 """
 from pathlib import Path
-import shutil, sys, yaml, html, re, unicodedata, hashlib, datetime
+import shutil, sys, yaml, html, re, unicodedata, hashlib, datetime, json
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
@@ -99,8 +99,7 @@ WAGES    = load("wages.yaml")
 OCCUP    = load("occupations.yaml")
 OCCTIER  = load("occupation_tiers.yaml")
 MONTHLY  = load("monthly_demand.yaml")
-# The distinct-advertisement count for the masthead, read from the series that counts them.
-DISTINCT_ADS = f"{MONTHLY['meta']['total_ads'] / 1e6:.1f}M"
+
 JOBQ     = load("job_quality.yaml")
 GOV      = load("governance.yaml")
 VOCAB    = load("vocabulary.yaml")
@@ -109,6 +108,16 @@ CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
 WORKCOND = load("working_conditions.yaml")
+# Every count the site states about its own corpus and coverage, derived from the file that
+# holds it. Typed counts cannot contradict their data anywhere a build can notice, which is
+# how the monthly series came to say 16,113,466 while the masthead said 8.1M (13 Aug 2026).
+DISTINCT_ADS = f"{MONTHLY['meta']['total_ads'] / 1e6:.1f}M"
+RECORD_ADS   = f"{MONTHLY['meta']['total_records'] / 1e6:.1f}M"
+N_COUNTRIES  = CROSS['meta']['n_countries']
+# The occupation explorer plots assets/daioe_occupations.json, so the count comes from there.
+N_OCCUPATIONS = len(json.loads((ROOT / 'assets' / 'daioe_occupations.json')
+                              .read_text(encoding='utf-8'))['occ'])
+
 AKAVIA   = load("akavia.yaml")
 RELATED  = load("related_research.yaml")
 METHODS  = load("methods.yaml")
@@ -188,7 +197,8 @@ def masthead(active):
     # nothing could notice, because the two numbers had no common source. A headline count that
     # is typed cannot disagree with its own data loudly enough to be heard.
     reg = "".join(
-        f'<span>{s.replace("{data_updated}", DATA_UPDATED_DISPLAY).replace("{distinct_ads}", DISTINCT_ADS)}</span>'
+        f'<span>{s.replace("{data_updated}", DATA_UPDATED_DISPLAY).replace("{distinct_ads}", DISTINCT_ADS)
+                    .replace("{n_countries}", str(N_COUNTRIES))}</span>'
         for s in SITE["registration"])
     return f"""<div class="mast"><div class="wrap"><div class="mastbar">
   <a class="brand" href="/"><span class="plaque"><b>{h(b['monogram'])}</b></span>
@@ -314,7 +324,7 @@ def home():
     <div class="pillar"><div class="n">01 · DATA</div><h3>Register-grade evidence</h3>
       <p>Linked employer–employee register data at population scale in Sweden: annual, with 4-digit occupations
         (LISA), and monthly individual employment (AGI); plus comparable access in a handful of other countries.
-        Rare reach, paired with 8.1M distinct public job ads (11.2M ad records).</p></div>
+        Rare reach, paired with {DISTINCT_ADS} distinct public job ads ({RECORD_ADS} ad records).</p></div>
     <div class="pillar"><div class="n">02 · REACH</div><h3>Multi-country</h3>
       <p>Register-level in Sweden, Denmark, Portugal and Germany, with more countries planned; 30-plus via EU-LFS
         and international job-ad data for external validity.</p></div>
@@ -480,7 +490,7 @@ def daioe():
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">How exposed is your job?</p>
   <h2 class="sec">Find your occupation.</h2>
-  <p class="secintro">Type an occupation to see its DAIOE exposure and where it sits among roughly 420 occupations.
+  <p class="secintro">Type an occupation to see its DAIOE exposure and where it sits among roughly {N_OCCUPATIONS} occupations.
     Generative AI by default; switch the sub-domain to compare.
     <a class="mono" style="font-size:12px;white-space:nowrap" href="https://www.zeit.de/wirtschaft/2026-05/automatisierungsrisiko-arbeitnehmer-ki-arbeitsmarkt-bedrohung">As featured in Die Zeit ↗</a></p>
   <div class="occtool">
@@ -501,11 +511,11 @@ def daioe():
   <h2 class="sec">Every occupation, placed by its exposure.</h2>
   <div class="scrolly">
     <div class="scrolly-chart">
-      <svg id="beeswarm" viewBox="0 0 760 340" role="img" aria-label="Beeswarm of about 420 occupations by generative-AI exposure"></svg>
+      <svg id="beeswarm" viewBox="0 0 760 340" role="img" aria-label="Beeswarm of about {N_OCCUPATIONS} occupations by generative-AI exposure"></svg>
       <div class="beeaxis"><span>← less exposed</span><span>more exposed →</span></div>
     </div>
     <div class="scrolly-steps">
-      <div class="step" data-hl="all"><p>Roughly 420 occupations, each a dot, placed left to right by how exposed they are to generative AI. Hover any dot to name it.</p></div>
+      <div class="step" data-hl="all"><p>Roughly {N_OCCUPATIONS} occupations, each a dot, placed left to right by how exposed they are to generative AI. Hover any dot to name it.</p></div>
       <div class="step" data-hl="hi"><p><b>The exposed end is desk work.</b> Writers, programmers, analysts, marketers and, yes, economists cluster on the right.</p></div>
       <div class="step" data-hl="lo"><p><b>The other end is hands and bodies.</b> Care, craft, construction, cleaning and farming sit on the left, where generative AI reaches least.</p></div>
       <div class="step" data-hl="hi"><p><b>It cuts against intuition.</b> The more schooling a job needs, the more exposed it tends to be. Exposure is not replacement, but the pattern is stark.</p></div>
@@ -517,7 +527,7 @@ def daioe():
 <div class="rule"><div class="wrap"><section>
   <p class="kicker">The named extremes · generative AI, {DAIOE_EXP['year']}</p>
   <h2 class="sec">Where generative AI reaches, and where it doesn't.</h2>
-  <p class="secintro">DAIOE's generative-AI exposure across roughly 420 occupations. Writers, marketers, programmers
+  <p class="secintro">DAIOE's generative-AI exposure across roughly {N_OCCUPATIONS} occupations. Writers, marketers, programmers
     and, yes, economists sit at the very top; hands-on manual, craft and outdoor work sits at the bottom.</p>
   <div class="expgrid">
     <div><div class="exphead"><span class="dotc hi"></span>Most exposed to generative AI</div>
@@ -1444,7 +1454,7 @@ def demand_section(tiles, seg):
     <p class="secintro" style="margin:0 0 4px">{h(MONITOR['aiindemand_lede'])} We read every open and historical
       Swedish job ad (JobTech / Platsbanken, 2006 onwards) with a versioned, citable term list, so the level and its
       22-fold rise since 2006 are reproducible. Employers repost, so the archive holds
-      <b>11.2 million</b> records but <b>8.1 million</b> distinct advertisements; we count each advertisement once.
+      <b>{RECORD_ADS[:-1]} million</b> records but <b>{DISTINCT_ADS[:-1]} million</b> distinct advertisements; we count each advertisement once.
       Two corrections since the first release both raised the rise rather than lowered it: repeat postings inflated
       the denominator, and a handful of early ads matched product names that did not yet exist.</p>
     <p class="psub" style="margin:8px 0 0"><b>{h(MONITOR['captions']['scope'].split('.')[0])}.</b>{h(MONITOR['captions']['scope'].split('.', 1)[1])}</p>
@@ -1816,7 +1826,13 @@ def monitor():
     for c in m["segmentation"]["cards"]:
         seg += (f'<div class="prod"><h3><span style="display:inline-block;width:11px;height:11px;border-radius:3px;'
                 f'background:var({c["color"]});margin-right:8px"></span>{h(c["name"])}</h3><p>{h(c["text"])}</p></div>')
-    caveats = "".join(f"<li>{c}</li>" for c in m["caveats"])
+    # The caveat prose lives in monitor.yaml and cannot carry an f-string, so it uses the
+    # same placeholder convention as the masthead and is substituted here. It states both
+    # corpus counts in one sentence, which is exactly the kind of figure that goes stale.
+    def _fill(txt):
+        return (txt.replace("{records_m}", RECORD_ADS[:-1])
+                   .replace("{distinct_m}", DISTINCT_ADS[:-1]))
+    caveats = "".join(f"<li>{_fill(c)}</li>" for c in m["caveats"])
     explorers = ""
     for e in DAIOE["explorers"]:
         explorers += f"""<div class="explorer">

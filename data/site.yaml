@@ -32,7 +32,7 @@ registration:
   # records rather than distinct advertisements manufactured a 30-point artefact, and
   # the published unit is the distinct advertisement (8.1M). A banner reading "11.2M
   # SWEDISH ADS" was the page's largest number and the one it tells you not to use.
-  - "<b>{distinct_ads}</b> DISTINCT SWEDISH ADS · 36 COUNTRIES"
+  - "<b>{distinct_ads}</b> DISTINCT SWEDISH ADS · {n_countries} COUNTRIES"
   # Derived at build time from the numeric data files' last git commit — see
   # data_updated() in build.py. Do not hand-type a date here; it will drift.
   # The weekly claim is backed by .github/workflows/monitor-refresh.yml (Mondays):

@@ -11,6 +11,7 @@ meta:
   last_ma: 1.20
   last_floor_ma: 0.59
   total_ads: 8056733
+  total_records: 11161739
   source: JobTech historical job ads (Arbetsförmedlingen), CC0
 series:
   - {m: '2006-01', ai: 0.0369, ai_ma: 0.0369, floor: 0.0000, floor_ma: 0.0000, ads: 16244}

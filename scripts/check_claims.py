@@ -219,34 +219,64 @@ def check_brief_length(problems):
 
 
 
-def check_ad_counts(docs, problems):
-    """E. The masthead's advertisement count and the monthly series must be the same number.
+def check_stated_counts(docs, problems):
+    """E. Every count the site states about its own corpus or coverage must match its generator.
 
-    Added 13 Aug 2026. The masthead said 8.1M distinct advertisements while the Monitor page,
-    two screens below, said the monthly series was "built on 16,113,466 ads": exactly twice the
-    truth, because monthly_demand.yaml had been generated from a duplicate-poisoned CSV and was
-    never rebuilt after the CSV was fixed upstream. Every SHARE was right, since the duplication
-    hit numerator and denominator alike, so no line on any chart moved and nothing looked wrong.
-    Only a reader who compared two numbers on two screens could catch it, and one did.
+    Added 13 Aug 2026, widened the same day. It began as one check on the advertisement total,
+    after Magnus read "246 months built on 16,113,466 ads" against a masthead saying 8.1M. That
+    figure was exactly twice the truth: monthly_demand.yaml had been built from a
+    duplicate-poisoned CSV and never rebuilt after the CSV was fixed upstream. Every SHARE was
+    right, because the duplication hit numerator and denominator alike, so no chart moved and
+    nothing looked wrong.
 
-    The masthead is now substituted from the same file, so this check exists to catch the case
-    where someone types the figure back into site.yaml.
+    Magnus's point was that fixing the one figure he happened to find is not the job. So this
+    checks all of them, and most are now substituted from their data rather than typed; what
+    remains typed is prose that cannot carry an f-string, which is exactly what this catches.
     """
     md = yaml.safe_load((ROOT / "data" / "monthly_demand.yaml").read_text(encoding="utf-8"))
-    total = md["meta"]["total_ads"]
-    series = sum(r["ads"] for r in md["series"])
-    if series != total:
-        problems.append(f"monthly_demand.yaml: meta.total_ads is {total:,} but the series sums to "
-                        f"{series:,}. Rerun scripts/refresh_monthly_demand.py.")
-    want = f"{total / 1e6:.1f}M"
-    for path in sorted(docs.rglob("*.html")):
-        txt = re.sub(r"<[^>]+>", " ", path.read_text(encoding="utf-8", errors="ignore"))
-        for m in re.finditer(r"([\d.]+)\s*M\s+DISTINCT SWEDISH ADS", txt):
-            if m.group(1) + "M" != want:
-                problems.append(
-                    f"{path.relative_to(docs)}: masthead says {m.group(1)}M distinct advertisements, "
-                    f"the monthly series counts {want} ({total:,}). One of them was typed.")
+    cc = yaml.safe_load((ROOT / "data" / "cross_country.yaml").read_text(encoding="utf-8"))
+    distinct, records = md["meta"]["total_ads"], md["meta"]["total_records"]
 
+    series = sum(r["ads"] for r in md["series"])
+    if series != distinct:
+        problems.append(f"monthly_demand.yaml: meta.total_ads is {distinct:,} but the series sums "
+                        f"to {series:,}. Rerun scripts/refresh_monthly_demand.py.")
+    if records <= distinct:
+        problems.append(f"monthly_demand.yaml: the record count ({records:,}) is not larger than "
+                        f"the distinct count ({distinct:,}). Employers repost, so it must be.")
+
+    m1 = lambda n: f"{n / 1e6:.1f}"
+    # (pattern, expected values in group order, what the figure is)
+    rules = [
+        (r"([\d.]+)\s*M\s+DISTINCT SWEDISH ADS", [m1(distinct)], "distinct advertisements"),
+        (r"DISTINCT SWEDISH ADS\s*·\s*(\d+)\s+COUNTRIES", [str(cc["meta"]["n_countries"])],
+         "countries covered"),
+        (r"([\d.]+)M distinct public job ads \(([\d.]+)M ad records\)",
+         [m1(distinct), m1(records)], "distinct advertisements and records"),
+        (r"([\d.]+) million records but ([\d.]+) million distinct advertisements",
+         [m1(records), m1(distinct)], "records and distinct advertisements"),
+        (r"months built on\s*([\d,]+)\s*distinct advertisements", [f"{distinct:,}"],
+         "distinct advertisements behind the monthly series"),
+    ]
+    seen = {what: 0 for _, _, what in rules}
+    for path in sorted(docs.rglob("*.html")):
+        txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", path.read_text(encoding="utf-8",
+                                                                        errors="ignore")))
+        for pat, want, what in rules:
+            for m in re.finditer(pat, txt):
+                seen[what] += 1
+                got = list(m.groups())
+                if got != want:
+                    problems.append(
+                        f"{path.relative_to(docs)}: states {what} as {', '.join(got)}, "
+                        f"the data says {', '.join(want)}. It was typed; derive it or fix it.")
+    # A rule that matches nothing passes vacuously, which is the same failure as no rule at all:
+    # reword the sentence and the guard quietly stops guarding. Every rule must find its target.
+    for what, n in seen.items():
+        if n == 0:
+            problems.append(f"the check for {what} matched nothing. Either the sentence was "
+                            f"reworded and the pattern needs updating, or the figure was removed "
+                            f"and so should the rule be. Do not leave it matching nothing.")
 
 
 def main():
@@ -262,7 +292,7 @@ def main():
     check_sources(problems)
     check_aggregates(docs, problems)
     check_brief_length(problems)
-    check_ad_counts(docs, problems)
+    check_stated_counts(docs, problems)
 
     if problems:
         print(f"check_claims: {len(problems)} problem(s)\n")
