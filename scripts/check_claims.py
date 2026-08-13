@@ -218,6 +218,37 @@ def check_brief_length(problems):
 
 
 
+
+def check_ad_counts(docs, problems):
+    """E. The masthead's advertisement count and the monthly series must be the same number.
+
+    Added 13 Aug 2026. The masthead said 8.1M distinct advertisements while the Monitor page,
+    two screens below, said the monthly series was "built on 16,113,466 ads": exactly twice the
+    truth, because monthly_demand.yaml had been generated from a duplicate-poisoned CSV and was
+    never rebuilt after the CSV was fixed upstream. Every SHARE was right, since the duplication
+    hit numerator and denominator alike, so no line on any chart moved and nothing looked wrong.
+    Only a reader who compared two numbers on two screens could catch it, and one did.
+
+    The masthead is now substituted from the same file, so this check exists to catch the case
+    where someone types the figure back into site.yaml.
+    """
+    md = yaml.safe_load((ROOT / "data" / "monthly_demand.yaml").read_text(encoding="utf-8"))
+    total = md["meta"]["total_ads"]
+    series = sum(r["ads"] for r in md["series"])
+    if series != total:
+        problems.append(f"monthly_demand.yaml: meta.total_ads is {total:,} but the series sums to "
+                        f"{series:,}. Rerun scripts/refresh_monthly_demand.py.")
+    want = f"{total / 1e6:.1f}M"
+    for path in sorted(docs.rglob("*.html")):
+        txt = re.sub(r"<[^>]+>", " ", path.read_text(encoding="utf-8", errors="ignore"))
+        for m in re.finditer(r"([\d.]+)\s*M\s+DISTINCT SWEDISH ADS", txt):
+            if m.group(1) + "M" != want:
+                problems.append(
+                    f"{path.relative_to(docs)}: masthead says {m.group(1)}M distinct advertisements, "
+                    f"the monthly series counts {want} ({total:,}). One of them was typed.")
+
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--docs", default="docs")
@@ -231,6 +262,7 @@ def main():
     check_sources(problems)
     check_aggregates(docs, problems)
     check_brief_length(problems)
+    check_ad_counts(docs, problems)
 
     if problems:
         print(f"check_claims: {len(problems)} problem(s)\n")
@@ -240,7 +272,8 @@ def main():
         return 1
     print("check_claims: every JobTech module states a unit, no generator/output "
           "disagreement, no stale assertions, page and Brief agree, and no comparator "
-          "is named for a population it does not cover, and every month's brief fits one page.")
+          "is named for a population it does not cover, every month's brief fits one page, and "
+          "the masthead's advertisement count matches the series that counts them.")
     return 0
 
 

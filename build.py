@@ -99,6 +99,8 @@ WAGES    = load("wages.yaml")
 OCCUP    = load("occupations.yaml")
 OCCTIER  = load("occupation_tiers.yaml")
 MONTHLY  = load("monthly_demand.yaml")
+# The distinct-advertisement count for the masthead, read from the series that counts them.
+DISTINCT_ADS = f"{MONTHLY['meta']['total_ads'] / 1e6:.1f}M"
 JOBQ     = load("job_quality.yaml")
 GOV      = load("governance.yaml")
 VOCAB    = load("vocabulary.yaml")
@@ -180,8 +182,14 @@ def masthead(active):
         items += f'<a href="{n["href"]}"{cls}{cur}>{h(n["label"]).replace("&gt;",">")}</a>'
     # Plain substitution, not str.format: the strip is hand-authored HTML and a
     # stray brace in a future entry must not raise.
-    reg = "".join(f'<span>{s.replace("{data_updated}", DATA_UPDATED_DISPLAY)}</span>'
-                  for s in SITE["registration"])
+    # {distinct_ads} is substituted from monthly_demand.yaml, the series that actually counts
+    # them. It was typed as "8.1M" until 13 Aug 2026, when the figure beside it on the Monitor
+    # page read 16,113,466: the monthly file had been built from a duplicate-poisoned CSV, and
+    # nothing could notice, because the two numbers had no common source. A headline count that
+    # is typed cannot disagree with its own data loudly enough to be heard.
+    reg = "".join(
+        f'<span>{s.replace("{data_updated}", DATA_UPDATED_DISPLAY).replace("{distinct_ads}", DISTINCT_ADS)}</span>'
+        for s in SITE["registration"])
     return f"""<div class="mast"><div class="wrap"><div class="mastbar">
   <a class="brand" href="/"><span class="plaque"><b>{h(b['monogram'])}</b></span>
     <span class="brandtext"><b>{h(b['name'])}</b><small>{h(b['tagline'])}</small></span></a>
@@ -1140,7 +1148,7 @@ def monthly_block():
     return (f'<div class="grouphdr" style="margin-top:26px">Month by month, {h(m["first"])} to '
             f'{h(m["last"])}</div>\n'
             f'<p class="secintro" style="margin-top:4px">The same measure at monthly resolution, '
-            f'{m["n_months"]} months built on <b>{m["total_ads"]:,}</b> ads. The faint line is the raw '
+            f'{m["n_months"]} months built on <b>{m["total_ads"]:,}</b> distinct advertisements. The faint line is the raw '
             f'month and the bold lines are 12-month trailing means: broad AI demand in blue, the narrower '
             f'skill floor in orange. A single month carries little weight, because Swedish hiring falls '
             f'sharply every July and again in December, so the trend is the line to read. The broad measure '
