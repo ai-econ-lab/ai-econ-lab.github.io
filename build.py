@@ -1892,7 +1892,7 @@ def monitor():
 {capability_section()}
 
 <div class="rule" id="method"><div class="wrap"><section>
-  <p class="kicker">How to read this</p>
+  <p class="kicker">Method · sources, versions and limits</p>
   <h2 class="sec">What we measure, and what we don't yet.</h2>
   <div class="prose" style="margin-top:16px">
     <p>The measure runs on public data with one exception, described below. The Swedish demand series reads every
