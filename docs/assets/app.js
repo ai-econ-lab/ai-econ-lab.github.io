@@ -285,3 +285,29 @@ window.drawTrend();
     });
   });
 })();
+
+/* Open every disclosure before printing, and close it again after.
+
+   The Monitor puts the caveats that do not bear on a first reading behind <details class="note">,
+   which is only defensible if they come back in full whenever the page is printed, saved as PDF or
+   archived. The stylesheet has carried a @media print rule since long before this that sets
+   display:block on the children of details.note, and on 13 Aug 2026 it was verified and does NOT
+   work: a closed <details> hides its content through the UA's own slot behaviour, which display on
+   the child cannot override in Chrome. The caveats were silently absent from every printed copy.
+
+   Doing it in script is the version that holds across browsers and does not depend on
+   ::details-content, which is very new. Elements opened here are marked so that only those are
+   closed again, leaving anything the reader had opened themselves alone. */
+(function () {
+  var opened = [];
+  addEventListener("beforeprint", function () {
+    opened = [];
+    document.querySelectorAll("details:not([open])").forEach(function (d) {
+      d.open = true; opened.push(d);
+    });
+  });
+  addEventListener("afterprint", function () {
+    opened.forEach(function (d) { d.open = false; });
+    opened = [];
+  });
+})();

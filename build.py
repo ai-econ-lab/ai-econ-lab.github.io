@@ -1485,29 +1485,30 @@ def adoption_section():
     return f"""<div class="rule module-sec" id="adoption"><div class="wrap"><section>
   <p class="kicker">Module 3 · Adoption · who is actually using it</p>
   <h2 class="sec">How widely has AI actually been adopted?</h2>
-  <p class="secintro" style="margin-bottom:14px"><b>Three levels, three denominators.</b> Firms adopt, workers use
-    AI at work, and the population uses it at all, each measured on a different population, so the numbers are not
-    comparable with one another and are never set side by side here. Firms come first (below), then workers, then
-    the population. The weakest of the three is the worker level: Sweden has no representative public statistic for
-    the share of employed people who use AI at work, so what we can show is a professional-union panel, labelled as
-    such.</p>
-  <p class="secintro">Exposure is potential; adoption is what firms have done. The share of enterprises using at
-    least one AI technology (<b>{h(amt['year'])}</b>, {h(amt['source'])}), with the year-on-year change since
-    {h(amt['prev_year'])} shown as <b>+pp</b>. Adoption is climbing fast: the EU average rose from 8% in 2023 to
-    {h(amt['eu_avg'])}% in {h(amt['year'])}. Exposure and adoption need not line up across countries.</p>
+  <p class="secintro">Exposure is potential; adoption is what firms have done. Adoption is climbing fast: the EU
+    average rose from 8% in 2023 to {h(amt['eu_avg'])}% in {h(amt['year'])}, and exposure and adoption need not
+    line up across countries.</p>
+  <details class="note"><summary>How to read this</summary>
+    <p><b>Three levels, three denominators.</b> Firms adopt, workers use AI at work, and the population uses it at
+    all. Each is measured on a different population, so the three are never set side by side here. The weakest of
+    the three is the worker level: Sweden has no representative public statistic for the share of employed people
+    who use AI at work, so what we can show is a professional-union panel, labelled as such.</p>
+    <p>The bars are the share of enterprises using at least one AI technology, with the year-on-year change since
+    {h(amt['prev_year'])} shown as <b>+pp</b>.</p></details>
   <div class="dotwrap">{barplot(ad['countries'], amt['eu_avg'], xmax, amt['year'])}</div>
   {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg", next_up="Eurostat 2026 wave (expected around year-end)")}
   <div class="depth"><p class="dk">Sweden, in depth · by firm size</p>
     <p class="secintro" style="margin:0 0 14px">Sweden is among the EU leaders at <b>{se['adoption']:g}%</b> in
-      {h(amt['year'])}, up from {se['prev']:g}% a year earlier (Eurostat). SCB's firm survey decomposes that headline
-      by size: adoption climbs steeply with the size of the firm, from <b>{sm['10-49']}%</b> of small firms
-      (10–49 employees) to <b>{sm['250-']}%</b> of large ones (250+), every class up sharply since {h(swm['prev_year'])}.
-      The highlighted row ({sm['Tot250']}%) is the headline, and it is the same number the cross-country bar shows.
-      Read it for what it is: a figure for firms with ten or more. Eurostat's population stops there and it
-      publishes no EU figure for anything smaller, but SCB surveys firms from no employees upward, so the three
-      rows below the headline are ones almost no other country can show. Sweden was one of two countries
-      reporting the 0–9 class to Eurostat for {h(swm['year'])}. Among the smallest firms adoption is roughly half
-      the headline, which is worth knowing before the headline is read as a national rate.</p>
+      {h(amt['year'])}, and adoption climbs steeply with the size of the firm, from <b>{sm['10-49']}%</b> of small
+      firms to <b>{sm['250-']}%</b> of large ones. <b>The headline ({sm['Tot250']}%) is a figure for firms with ten
+      or more employees</b>, and among the smallest firms adoption is roughly half that, which is worth knowing
+      before it is read as a national rate.</p>
+    <details class="note"><summary>How to read this</summary>
+      <p>Eurostat's population stops at ten employees and it publishes no EU figure for anything smaller. SCB
+      surveys firms from no employees upward, so the three rows below the headline are ones almost no other country
+      can show: Sweden was one of two countries reporting the 0–9 class to Eurostat for {h(swm['year'])}.</p>
+      <p>The highlighted row is the same number the cross-country bar above shows. Every class is up sharply since
+      {h(swm['prev_year'])}.</p></details>
     <div class="dotwrap">{barplot(SWEAD['sizes'], sm['Tot250'], swxmax, 0, 'adoption', '.0f', what='firm-size classes', mean_label='Sweden 10+')}</div>
     {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; reference line is the Swedish 10+ headline, {sm['Tot250']}%", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
   </div>
