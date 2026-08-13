@@ -1463,11 +1463,6 @@ def demand_section(tiles, seg):
   <div class="dotwrap">{barplot(dm['countries'], 0, dxmax, 0, 'share', '.1f')}</div>
   {figfooter("cross_country_demand.csv", f"{dmt['source']}, {dmt['year']} · {dmt['unit']}", "cross_country_demand.svg", next_up="Stanford AI Index 2027 (spring 2027)")}
 
-  <p class="secintro" style="margin:10px 0 0"><b>The whole picture on one page.</b>
-    A dated infographic with all five modules, generated from this page's own data:
-    <a href="/aiel-monitor-onepager.pdf">download the two-page sheet (PDF)</a>, or the
-    <a href="/aiel-monitor-onepager-sv.pdf">Swedish edition</a>. The figures on it come from different
-    years and survey waves, so each states its own year.</p>
 
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
     {folded(f"""{h(MONITOR['aiindemand_lede'])} We read every open and historical Swedish job ad """
@@ -1789,6 +1784,11 @@ def capability_section():
   <p class="secintro">{h(c["intro"])}</p>
   <div class="tiles">{tiles}</div>
   <p class="psub" style="margin-top:8px">Sources: {links}. {h(c["caveat"])}</p>
+  <p class="secintro" style="margin:22px 0 0"><b>The whole picture on one page.</b>
+    A dated infographic with all five modules, generated from this page's own data:
+    <a href="/aiel-monitor-onepager.pdf">download the two-page sheet (PDF)</a>, or the
+    <a href="/aiel-monitor-onepager-sv.pdf">Swedish edition</a>. The figures on it come from different
+    years and survey waves, so each states its own year.</p>
 </section></div></div>"""
 
 def stat_overview():
