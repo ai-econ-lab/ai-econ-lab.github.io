@@ -279,6 +279,27 @@ def check_stated_counts(docs, problems):
                             f"and so should the rule be. Do not leave it matching nothing.")
 
 
+
+def check_authoring_markers(docs, problems):
+    """F. No authoring marker may reach the rendered page.
+
+    Added 13 Aug 2026. [[note]] splits a paragraph into what stays visible and what folds behind
+    a disclosure, but only in paragraphs routed through folded(). One marker was placed in a
+    paragraph that already went through note(), which takes its two halves as separate arguments,
+    so the marker was published as literal text on the live page. A convention that is invisible
+    when it works must be loud when it does not.
+    """
+    for path in sorted(docs.rglob("*.html")):
+        txt = path.read_text(encoding="utf-8", errors="ignore")
+        if "[[note]]" in txt:
+            i = txt.index("[[note]]")
+            problems.append(
+                f"{path.relative_to(docs)}: the authoring marker [[note]] was published as text: "
+                f"\u201c…{re.sub(r'<[^>]+>', ' ', txt[i:i+80]).strip()}…\u201d. That paragraph is "
+                f"not routed through folded(); use note(visible, method, label) instead.")
+
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--docs", default="docs")
@@ -293,6 +314,7 @@ def main():
     check_aggregates(docs, problems)
     check_brief_length(problems)
     check_stated_counts(docs, problems)
+    check_authoring_markers(docs, problems)
 
     if problems:
         print(f"check_claims: {len(problems)} problem(s)\n")

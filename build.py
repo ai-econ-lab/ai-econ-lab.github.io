@@ -755,6 +755,31 @@ def akavia_provenance(m):
             f'<p>{meth}</p></details>')
 
 
+# ---- one convention for authoring the split -------------------------------------------------
+# note() above is the renderer and predates this. What was missing was a way to AUTHOR the split
+# inside a single paragraph: copy carries a marker, everything before [[note]] stays visible and
+# everything after folds away. Moving one marker moves one sentence, which is reviewable, and
+# removing every marker restores the page exactly. It delegates to note() rather than emitting
+# its own <details>, so there is one renderer and the two cannot drift apart.
+NOTE_MARK = "[[note]]"
+
+def folded(txt, cls="secintro", style="", label=None):
+    """Author a paragraph with an inline [[note]] marker; render it through note()."""
+    st = f' style="{style}"' if style else ""
+    if NOTE_MARK not in txt:
+        return f'<p class="{cls}"{st}>{txt}</p>'
+    if label is None:
+        raise ValueError(
+            "folded(): every disclosure needs a label that names what is inside it. The page's own "
+            "convention is specific ('Where the dip goes when you count each advertisement once'); "
+            "a catch-all makes the reader guess, and 'How to read this' puts the problem on the "
+            "reader rather than on the measurement (Magnus, 13 Aug 2026).")
+    lead, rest = [x.strip() for x in txt.split(NOTE_MARK, 1)]
+    if not rest:
+        return f'<p class="{cls}"{st}>{lead}</p>'
+    return note(lead, rest, label=label).replace('<p class="secintro">', f'<p class="{cls}"{st}>', 1)
+
+
 def figfooter(csv_name, source, svg_name=None, method_href=None, next_up=None):
     """Item 10: download + provenance under a figure. Source states DAIOE variant + year.
     Offers the data (CSV) plus, when the figure has a static SVG, the chart as SVG and PNG
@@ -971,7 +996,8 @@ def working_conditions_block():
   <p class="secintro" style="margin-top:4px">More AI-exposed occupations are the classic "active job": more mentally demanding, but with
     <b>more control</b> over one's work; harder to switch off after hours, yet more meaningful and markedly more
     positive about technology. Public survey data by occupation, set against DAIOE {h(mt['daioe_variant'])}
-    ({h(mt['daioe_version'])}); descriptive, not causal.</p>
+    ({h(mt['daioe_version'])}); descriptive, not causal, and a single cross-section: more-exposed work is also
+    more qualified work, so part of every gap here is occupational composition rather than anything AI does.</p>
   <div class="lensmod">
     <div class="lensbar2"><span class="ll">Gender</span>
       <button class="gbtn on" data-g="all">All</button><button class="gbtn" data-g="women">Women</button><button class="gbtn" data-g="men">Men</button></div>
@@ -979,7 +1005,7 @@ def working_conditions_block():
     <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
   </div>
   {figfooter("working_conditions.csv", f"{mt['wc_source']} × DAIOE {mt['daioe_variant']} {mt['daioe_version']}", svg_name="working_conditions.svg", next_up="with SCB's next work-environment survey wave")}
-  <p class="prov" style="margin-top:10px">Toggle gender: the control gap is the story. In low-exposure jobs women
+  <p class="prov" style="margin-top:10px">Toggle gender: the control gap narrows as exposure rises. In low-exposure jobs women
     report far less influence than men (56% vs 68%); in high-exposure jobs it nearly closes (74% vs 78%).</p>"""
 
 def exposure_section():
@@ -993,16 +1019,8 @@ def exposure_section():
     return f"""<div class="rule module-sec" id="exposure"><div class="wrap"><section>
   <p class="kicker">Module 1 · Exposure · which jobs sit in AI’s path</p>
   <h2 class="sec">How much of each country's work is AI-exposed?</h2>
-  <p class="secintro">DAIOE scores every occupation (ISCO-08) for how far generative AI overlaps with its tasks.
-    We label the <b>top 25% of occupations</b> by that score the <b>most AI-exposed</b>; the bars show the share of
-    each country's jobs in them (Eurostat EU-LFS employment, <b>{h(mt['weight_year'])}</b>; a few countries use their
-    latest year, marked ’YY). So <b>{se['share']:.0f}%</b> means about four in ten Swedish jobs sit in the most
-    AI-exposed quarter of occupations. <b>Exposure is not displacement</b>: in the lab's own firm-level panel for Sweden, Denmark
-    and Portugal, exposure shows no robust association with total firm employment, and within firms what it
-    predicts is a shift away from clerical and administrative work rather than broad job loss (AI Unboxed
-    and Jobs, linked below). Exposure marks where AI overlaps with the work, not what follows. Where movement has
-    appeared so far, it is in who gets hired rather than in how many: the most exposed occupations hire fewer
-    young workers (the Outcomes module below, and the Same Storm, Different Boats paper).</p>
+  {folded(f"""<b>{se['share']:.0f}%</b> of Swedish jobs, about four in ten, sit in the most AI-exposed quarter of occupations, and <b>exposure is not displacement</b>: it marks where AI overlaps with the work, not what follows from it. [[note]] DAIOE scores every occupation (ISCO-08) for how far generative AI overlaps with its tasks. We label the <b>top 25% of occupations</b> by that score the most AI-exposed; the bars show the share of each country's jobs in them (Eurostat EU-LFS employment, <b>{h(mt['weight_year'])}</b>; a few countries use their latest year, marked ’YY). On displacement: in the lab's own firm-level panel for Sweden, Denmark and Portugal, exposure shows no robust association with total firm employment, and within firms what it predicts is a shift away from clerical and administrative work rather than broad job loss (AI Unboxed and Jobs, linked below). Where movement has appeared so far, it is in who gets hired rather than in how many: the most exposed occupations hire fewer
+    young workers (the Outcomes module below, and the Same Storm, Different Boats paper).""", label="How exposure is measured, and what it says about displacement")}
   <div class="dotwrap">{barplot(cc['countries'], mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f', mean_label=f"{mt['n_countries']}-country")}</div>
   {figfooter("cross_country.csv", src, "cross_country.svg", next_up="with the DAIOE v2024 release")}
   <div class="depth"><p class="dk">Sweden, in depth</p>
@@ -1306,10 +1324,11 @@ def governance_block():
             '<p class="secintro" style="margin-top:4px">A separate band counts ads that mention '
             'the vocabulary of AI <b>governance</b>: responsible AI, AI ethics, AI safety, AI '
             'governance and the AI Act. It has been computed since the series began and never '
-            'shown, and it is the fastest-growing thing in the whole build. There were none in '
+            'shown. There were none in '
             f'2018 and {m["last_n"]} in the whole of {m["last_year"]}; the first half of 2026 '
             f'alone has <b>{m["h1_2026_n"]}</b>, which is {m["h1_2026_pct"]:.1f}% of all AI ads '
-            f'against {m["last_pct"]:.1f}% a year earlier.</p>\n'
+            f'against {m["last_pct"]:.1f}% across {m["last_year"]} as a whole: the share has nearly '
+            'doubled in half a year.</p>\n'
             + note(
                 '<b>Read this as language, not as jobs.</b> Unlike our headline series, this band '
                 'counts any mention rather than a requirement of the role, and <b>a hand-check of every '
@@ -1451,13 +1470,16 @@ def demand_section(tiles, seg):
     years and survey waves, so each states its own year.</p>
 
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
-    <p class="secintro" style="margin:0 0 4px">{h(MONITOR['aiindemand_lede'])} We read every open and historical
-      Swedish job ad (JobTech / Platsbanken, 2006 onwards) with a versioned, citable term list, so the level and its
-      22-fold rise since 2006 are reproducible. Employers repost, so the archive holds
-      <b>{RECORD_ADS[:-1]} million</b> records but <b>{DISTINCT_ADS[:-1]} million</b> distinct advertisements; we count each advertisement once.
-      Two corrections since the first release both raised the rise rather than lowered it: repeat postings inflated
-      the denominator, and a handful of early ads matched product names that did not yet exist.</p>
-    <p class="psub" style="margin:8px 0 0"><b>{h(MONITOR['captions']['scope'].split('.')[0])}.</b>{h(MONITOR['captions']['scope'].split('.', 1)[1])}</p>
+    {folded(f"""{h(MONITOR['aiindemand_lede'])} We read every open and historical Swedish job ad """
+             f"""(JobTech / Platsbanken, 2006 onwards) with a versioned, citable term list, so the level and its """
+             f"""22-fold rise from 2006 to 2025 are reproducible. [[note]] Employers repost, so the archive holds """
+             f"""<b>{RECORD_ADS[:-1]} million</b> records but <b>{DISTINCT_ADS[:-1]} million</b> distinct """
+             f"""advertisements; we count each advertisement once. Two corrections since the first release both """
+             f"""raised the rise rather than lowered it: repeat postings inflated the denominator, and a handful """
+             f"""of early ads matched product names that did not yet exist.""", style="margin:0 0 4px", label="How the advertisements are read, and the two corrections since")}
+    {folded(f"""{h(MONITOR['captions']['scope'].split('.', 1)[1].split('.')[0])}.[[note]]"""
+             f"""{h('.'.join(MONITOR['captions']['scope'].split('.')[2:]))}""", cls="psub",
+             style="margin:8px 0 0", label="What this measures, and what it does not")}
     <div class="tiles">{tiles}</div>
     {figfooter("ai_in_demand_trend.csv", f"JobTech / Platsbanken job ads (CC0), 2006 onwards · {DEF_LABEL} · distinct advertisements", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
     {monthly_block()}
@@ -1488,9 +1510,9 @@ def adoption_section():
   <p class="secintro">Exposure is potential; adoption is what firms have done. Adoption is climbing fast: the EU
     average rose from 8% in 2023 to {h(amt['eu_avg'])}% in {h(amt['year'])}, and exposure and adoption need not
     line up across countries.</p>
-  <details class="note"><summary>How to read this</summary>
+  <details class="note"><summary>Three levels, three denominators</summary>
     <p><b>Three levels, three denominators.</b> Firms adopt, workers use AI at work, and the population uses it at
-    all. Each is measured on a different population, so the three are never set side by side here. The weakest of
+    all. Each is measured on a different population, so the three are never set side by side here. Firms come first below, then workers, then the population. The weakest of
     the three is the worker level: Sweden has no representative public statistic for the share of employed people
     who use AI at work, so what we can show is a professional-union panel, labelled as such.</p>
     <p>The bars are the share of enterprises using at least one AI technology, with the year-on-year change since
@@ -1503,7 +1525,7 @@ def adoption_section():
       firms to <b>{sm['250-']}%</b> of large ones. <b>The headline ({sm['Tot250']}%) is a figure for firms with ten
       or more employees</b>, and among the smallest firms adoption is roughly half that, which is worth knowing
       before it is read as a national rate.</p>
-    <details class="note"><summary>How to read this</summary>
+    <details class="note"><summary>Why the headline stops at ten employees</summary>
       <p>Eurostat's population stops at ten employees and it publishes no EU figure for anything smaller. SCB
       surveys firms from no employees upward, so the three rows below the headline are ones almost no other country
       can show: Sweden was one of two countries reporting the 0–9 class to Eurostat for {h(swm['year'])}.</p>
@@ -1538,15 +1560,16 @@ def akavia_workers_block():
     cp = tr["clean_pair"]
     thin = min(prof, key=lambda r: r["n"])
     return f"""<div class="depth"><p class="dk">Sweden, in depth · by worker</p>
-    <p class="secintro" style="margin:0 0 14px">Firm surveys count employers who have started. This counts
-      people, and it counts them the way the Swedish professional trade union Akavia does: the share of
-      professionals using AI <b>daily or weekly</b>. Between the only two rounds that asked the question the same way, that share went from
-      <b>{cp['from_value']}%</b> in {h(cp['from'])} to <b>{cp['to_value']}%</b> in {h(cp['to'])}. Counting
-      any use at all, however occasional, gives {tr['any_use'][-1]}% on the same round. Nearly everyone now
-      works somewhere AI is used at all ({a['org_use']['y2024']}% in 2024, {a['org_use']['y2025']}% in 2025).
-      The spread by profession is wide: communication professionals are furthest ahead and lawyers furthest
-      behind, and central government trails the private sector by
-      {sec[0]['adoption'] - sec[-1]['adoption']}pp. Men {a['by_sex']['men']}%, women {a['by_sex']['women']}%.</p>
+    {folded(f"""Firm surveys count employers who have started; this counts people. The share of professionals """
+             f"""using AI <b>daily or weekly</b> went from <b>{cp['from_value']}%</b> in {h(cp['from'])} to """
+             f"""<b>{cp['to_value']}%</b> in {h(cp['to'])}, and the spread by profession is wide: communication """
+             f"""professionals are furthest ahead and lawyers furthest behind. [[note]] The two rounds quoted are """
+             f"""the only two that asked the question the same way, and it is Akavia's own threshold. Counting any """
+             f"""use at all, however occasional, gives {tr['any_use'][-1]}% on the same round. Nearly everyone now """
+             f"""works somewhere AI is used at all ({a['org_use']['y2024']}% in 2024, """
+             f"""{a['org_use']['y2025']}% in 2025). Central government trails the private sector by """
+             f"""{sec[0]['adoption'] - sec[-1]['adoption']}pp. Men {a['by_sex']['men']}%, women """
+             f"""{a['by_sex']['women']}%.""", style="margin:0 0 14px", label="Which rounds compare like with like")}
     <div class="dotwrap">{barplot(prof, 0, xmax, 0, 'adoption', '.0f', what='professions')}</div>
     <p class="psub" style="margin-top:4px">Bars are {h(cp['to'])}, with the change measured against
       {h(cp['from'])}, the one earlier round that asked the question identically. Cell sizes differ a great
@@ -1595,21 +1618,16 @@ def population_block():
     gap_now = m["men"] - m["women"]
     gap_then = m["men_first"] - m["women_first"]
     return f"""<div class="depth"><p class="dk">Sweden, in depth · by person</p>
-    <p class="secintro" style="margin:0 0 14px">Broadest of the three: the share of <b>everyone</b> aged 16–74 who
-      has used generative AI at all, at work or outside it, from SCB's population survey: a probability sample with published margins of error,
-      so this is the firmest number in the module. It rose from <b>{m['headline_first']:g}%</b> in
-      {h(m['first_year'])} to <b>{m['headline']:g}%</b> in {h(m['year'])} (±{m['headline_moe']:g}). Age divides it
-      far more than anything else does: {ages[0]['adoption']:g}% of {h(ages[0]['group'])}-year-olds against
-      {ages[-1]['adoption']:g}% of {h(ages[-1]['group'])}s, a {swing:g}-point span. The gap between men and women
+    {folded(f"""The share of <b>everyone</b> aged 16–74 who has used generative AI at all rose from <b>{m['headline_first']:g}%</b> in {h(m['first_year'])} to <b>{m['headline']:g}%</b> in {h(m['year'])} (±{m['headline_moe']:g}), and age divides it far more than anything else: {ages[0]['adoption']:g}% of {h(ages[0]['group'])}-year-olds against {ages[-1]['adoption']:g}% of {h(ages[-1]['group'])}s, a {swing:g}-point span. [[note]] Broadest of the three levels: at work or outside it, from SCB's population survey, a probability sample with published margins of error, which makes it the firmest number in the module. The gap between men and women
       is narrowing, from {gap_then:g} points in {h(m['first_year'])} to {gap_now:g}
-      ({m['men']:g}% against {m['women']:g}%). Figures refer to the {h(m['reference_period'])}.</p>
+      ({m['men']:g}% against {m['women']:g}%). Figures refer to the {h(m['reference_period'])}.""", style="margin:0 0 14px", label="What the population survey covers, and how firm it is")}
     <div class="dotwrap">{barplot(_pop_age_rows(), m['headline'], xmax, 0, 'adoption', '.0f', what='age groups', mean_label='Sweden')}</div>
     {figfooter("population_ai.csv", f"{m['source']}, {m['first_year']}–{m['year']} · {m['unit']}; bars {m['year']}, change vs {m['first_year']}. {m['design']}", svg_name="population_ai.svg", next_up="with SCB's next ICT-use survey wave")}
-    <p class="secintro" style="margin:12px 0 0">The US counterpart at this level is
-      <b>{u['pct']:g}%</b> (<a href="{um['url']}">{h(um['source'])}</a>, {h(um['vintage'])}). Read it as a
-      reference point, not a ranking: it covers ages 18–64 where SCB covers 16–74, and Swedish 65–74-year-olds use
-      generative AI far less ({ages[-1]['adoption']:g}%), which pulls the Swedish figure down relative to a
-      US-style base.</p>
+    {folded(f"""The US counterpart at this level is <b>{u['pct']:g}%</b> """
+             f"""(<a href="{um['url']}">{h(um['source'])}</a>, {h(um['vintage'])}), which is a reference point """
+             f"""rather than a ranking. [[note]] It covers ages 18–64 where SCB covers 16–74, and Swedish """
+             f"""65–74-year-olds use generative AI far less ({ages[-1]['adoption']:g}%), which pulls the Swedish """
+             f"""figure down relative to a US-style base.""", style="margin:12px 0 0", label="Why this is a reference point and not a ranking")}
   </div>"""
 
 
@@ -1644,10 +1662,11 @@ def akavia_outcomes_block():
   <table class="minitab"><thead><tr><th>Wave</th><th>Uses AI</th><th>Knows of a policy</th><th>Knows of a strategy</th></tr></thead><tbody>{rows}</tbody></table>
   <p class="secintro" style="margin-top:14px">What the work actually is, among AI users{uv}:</p>
   <ul class="tight">{uf}</ul>
-  <p class="secintro" style="margin-top:14px">And who provides the tools. Among those using <b>standalone</b> AI
-    tools, not among all workers, <b>{sh['private_account']}%</b> have a private e-mail account connected to a
-    work AI tool, the employer pays for {sh['employer_pays']}% and {sh['self_pays']}% pay themselves. The
-    denominator matters here and is easy to overstate.</p>
+  {folded(f"""And who provides the tools: <b>{sh['private_account']}%</b> have a private e-mail account """
+           f"""connected to a work AI tool, the employer pays for {sh['employer_pays']}% and """
+           f"""{sh['self_pays']}% pay themselves. [[note]] Those shares are among workers using """
+           f"""<b>standalone</b> AI tools, not among all workers, so they describe a subset and not the """
+           f"""workforce.""", style="margin-top:14px", label="Who these percentages are of")}
   {figfooter("akavia_governance.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. {m['population']}", next_up="with the next Akavia panel wave")}
   {akavia_provenance(m)}"""
 
@@ -1675,13 +1694,14 @@ def outcomes_section(explorers):
     least-exposed occupations, every year since {h(em['first_year'])}, and the gap has widened from
     −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. This is consistent with the
     canaries finding of our Same Storm, Different Boats study (the most AI-exposed occupations hire fewer young
-    workers, the labour market's canaries in the coal mine), but it is not independent evidence for it: entry-level hiring is more cyclical than experienced
+    workers, the labour market's canaries in the coal mine), but it is not independent evidence for it, and
+    <b>this module counts ad records rather than distinct advertisements</b>.""",
+    f"""Entry-level hiring is more cyclical than experienced
     hiring, the tightening cycle that began in April 2022 fell hardest on exactly these occupations, and this series
-    starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the cycle.
-    <b>It is also the one module on the page still counting ad records rather than distinct advertisements</b>,
-    because it reads totals from the JobTech API, which cannot be deduplicated; elsewhere on this page, counting
-    records rather than advertisements manufactured an artefact of about thirty points.""",
-    """The Same Storm paper can separate them, because it observes employers and workers\u2019 ages and identifies
+    starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the cycle. It counts records because
+    it reads totals from the JobTech API, which cannot be deduplicated; elsewhere on this page, counting
+    records rather than advertisements manufactured an artefact of about thirty points.
+    The Same Storm paper can separate them, because it observes employers and workers\u2019 ages and identifies
     within employers. Descriptive throughout: less-exposed work also skews lower-skill, so part of the level gap is
     structural. The same entry-level pattern appears in the international AI &quot;canaries&quot; literature on young
     workers, though no directly comparable cross-country series exists yet.""",
@@ -1742,8 +1762,9 @@ def wages_block():
                    f'<p class="psub" style="margin-top:4px">{h(c["source"])}</p></div>')
     cavs = " ".join(f'<li>{cv}</li>' for cv in w["caveats"])
     return f"""<div class="grouphdr" id="wages" style="margin-top:36px">Wages in AI-exposed occupations</div>
-  <p class="secintro" style="margin-top:4px">{h(w["intro"])}</p>
-  <p class="secintro"><b>{h(w["headline"])}</b></p>
+  {folded(f'<b>{h(w["headline"].split(".")[0])}.</b>[[note]] {h(".".join(w["headline"].split(".")[1:]).strip())} '
+          f'{h(w["intro"])}', style="margin-top:4px",
+          label="How the thirds are cut, and the country detail")}
   <div class="two" style="grid-template-columns:1fr 1fr">{charts}</div>
   <div class="dblegend">{"".join(f'<span><i style="background:{WAGE_COLORS[g]}"></i>{WAGE_LABELS[g]} third</span>' for g in ("high", "mid", "low"))}</div>
   <p class="psub">{h(w["eu_line"])}</p>
@@ -1798,12 +1819,12 @@ def stat_overview():
     return f"""<div class="rule" id="overview"><div class="wrap"><section>
   <p class="kicker">The whole picture, in one glance</p>
   <h2 class="sec">From what the technology can do to what happens to jobs and pay.</h2>
-  <p class="secintro">The four modules follow one chain. Exposure asks which jobs sit in AI's path; demand asks what
-    employers are actually hiring for; adoption asks who is using AI in practice; outcomes asks what happens to
-    employment, entry-level hiring and wages. A fifth band, Capability, tracks the technology itself: it measures
-    what AI can do rather than the labour market, which is why it sits apart below the four. One international
-    headline each, with Sweden as the depth cut inside every module. Every figure is public and dated; open a card
-    to jump to the module.</p>
+  <p class="secintro">The four modules follow one chain. Exposure asks which jobs sit in AI's path; demand asks
+    what employers are actually hiring for; adoption asks who is using AI in practice; outcomes asks what happens
+    to employment, entry-level hiring and wages. A fifth band, Capability, tracks the technology itself: it
+    measures what AI can do rather than the labour market, which is why it sits apart below the four. One
+    international headline each, with Sweden as the depth cut inside every module. Every figure is
+    public and dated; open a card to jump to the module.</p>
   <div class="ovgrid">{cards}</div>
   {band}
 </section></div></div>"""
