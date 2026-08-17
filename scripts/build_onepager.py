@@ -333,7 +333,8 @@ COPY = {
            r"mentions an AI skill anywhere, the lower one only when the skill is asked of the "
            r"person being hired. Both rose steeply. The broader count went from {v0:.2f}\% of "
            r"advertisements in {y0} to {v1:.2f}\% in {y1}, about {rise:.0f} times as high, and the "
-           r"honest {y1} range is \textbf{{{fl:.2f}\% to {ceiling}\%}}."),
+           r"{y1} range is \textbf{{{fl:.2f}\% to {ceiling}\%}}. Both lines rest on a term list and "
+           r"cover only the AI demand that words reveal."),
   se_live=(r"Right now ({asof}): of the {n} most recent advertisements, {names}\% mention an AI "
            r"skill and {floor}\% ask for one in the job itself. This is the only figure on the "
            r"sheet that moves daily."),
@@ -428,7 +429,8 @@ COPY = {
            r"nämner en AI-färdighet någonstans, den nedre bara när färdigheten efterfrågas av den "
            r"som ska anställas. Båda har stigit kraftigt. Den bredare räkningen gick från "
            r"{v0:.2f}\% av annonserna {y0} till {v1:.2f}\% {y1}, ungefär {rise:.0f} gånger så mycket, "
-           r"och det ärliga intervallet för {y1} är \textbf{{{fl:.2f}\% till {ceiling}\%}}."),
+           r"och intervallet för {y1} är \textbf{{{fl:.2f}\% till {ceiling}\%}}. Båda linjerna vilar "
+           r"på en termlista och rymmer bara den AI-efterfrågan som orden visar."),
   se_live=(r"Just nu ({asof}): av de {n} senaste annonserna nämner {names}\% en AI-färdighet och "
            r"{floor}\% efterfrågar den i själva jobbet. Det är den enda siffran på bladet som "
            r"ändras dagligen."),
@@ -541,8 +543,18 @@ def main():
     se_hi, se_lo = grab(r"most exposed ([+-]?\d+(?:\.\d+)?) per cent, middle [+-]?[\d.]+, "
                         r"least ([+-]?\d+(?:\.\d+)?)",
                         wag["headline"], "Swedish real wage growth by exposure")
-    ceiling = next((h.group(1) for note in m.get("notes", [])
-                    for h in [re.search(r"corrected ceiling at <b>([\d.]+)%", note)] if h), "1.36")
+    # The corrected ceiling is parsed out of the caveat that publishes it, for the same reason
+    # every other figure here is parsed: a second copy drifts. It drifted. This read used to
+    # look in m["notes"], a key monitor.yaml has never had, so it always fell through to a
+    # typed "1.36" — the PRE-correction ceiling, still being printed after the four-period
+    # correction moved the published figure to 1.27 on 17 Aug 2026. No silent fallback now.
+    ceiling = next((h.group(1) for note in m["caveats"]
+                    for h in [re.search(r"corrected (?:\d{4} )?ceiling at <b>([\d.]+)%",
+                                        note)] if h), None)
+    if ceiling is None:
+        raise SystemExit("build_onepager: no caveat in monitor.yaml states the corrected "
+                         "ceiling ('corrected [YYYY] ceiling at <b>N%'). The sheet will not print a "
+                         "typed-in ceiling; fix the caveat or the pattern.")
 
     # se_src is copy so the Swedish sheet can say it in Swedish, but the English one must stay
     # the data's own wording; assert rather than let the two drift apart silently.
