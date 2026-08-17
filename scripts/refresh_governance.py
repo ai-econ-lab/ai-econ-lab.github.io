@@ -2,7 +2,7 @@
 """Build data/governance.yaml: demand for AI-governance and compliance roles.
 
 The `adjacent` band has been computed in every annual build since the v1 freeze and has never
-been shown. It counts ads that sit in AI's compliance and policy penumbra (AI Act, AI governance,
+been shown. It counts ads that sit in AI's compliance and policy grey zone (AI Act, AI governance,
 model risk, algorithmic accountability) rather than asking for an AI skill as such, which is why
 it is a band of its own and not part of the headline series.
 

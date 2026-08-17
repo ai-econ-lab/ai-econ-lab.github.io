@@ -5,7 +5,7 @@ build_onepager.py — the AIEL Monitor as a one-page infographic, generated from
 WHO IT IS FOR. A student or a journalist who asks "what is actually happening to the labour
 market and AI?" and wants one page rather than a report. That audience sets the language: the
 five modules lead with the QUESTION each answers, not with our internal name for it, and the
-house vocabulary (floor, ceiling, penumbra, whole-text, recall-corrected) is either translated
+house vocabulary (floor, ceiling, grey zone, whole-text, recall-corrected) is either translated
 or dropped. If a term needs the methods note to parse, it does not belong on this sheet.
 
 DESCRIPTIVE, AND SAYING SO. That reader's first instinct is a causal one: AI is doing this to

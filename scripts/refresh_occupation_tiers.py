@@ -66,7 +66,7 @@ EN = {
 CAVEAT = (
     f"Occupations with at least {MIN_ADS} distinct AI-skill advertisements in {YEAR}; "
     "repeat postings of the same advertisement are counted once. Rows do not sum to 100: "
-    "the remainder is advertisements the classifier places in the AI-literacy penumbra or "
+    "the remainder is advertisements the classifier places in the AI-literacy grey zone or "
     "judges not to be AI demand at all, which is how medical secretaries appear at zero on "
     "all three tiers despite passing the lexical measure."
 )
