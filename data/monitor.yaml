@@ -194,8 +194,8 @@ segmentation:
   intro: >-
     Every ad that asks for AI skills in the role itself, 2023 to mid-2026, classified by
     what the worker is hired to do with AI. A language-model classifier applies the lab's
-    written labelling rules; it agrees with our hand-labelled reference ads 89 per cent of
-    the time on the four-way split and 94 per cent on the grouping shown here. The
+    written labelling rules; it agrees with our hand-labelled reference ads 88 per cent of
+    the time on the four-way split and 91 per cent on the grouping shown here. The
     headline: employers still mostly hire people to build AI, but the fastest-growing tier
     is people hired to simply use it.
   cards:
@@ -211,7 +211,7 @@ caveats:
   - "<b>The ceiling bounds AI demand we can detect from words, not AI demand.</b> Both lines are anchored to a term list, so an ad that is genuinely an AI job and never uses an AI word is in neither, and nothing on this page bounds it. That residual is not yet measured; an audit of the ads the term list never flags is the next piece of work. Its direction is known and it is upward."
   - "Ads that mention AI only when describing the company never count <i>towards the floor</i>; the floor counts an ad for what it asks of the person being hired. The broader line does count them, which is precisely why the two differ."
   - "Counts are <b>distinct advertisements</b>: employers repost, so the archive holds {records_m} million records but {distinct_m} million distinct advertisements, and each is counted once. The raw-record series is retained alongside as the robustness line. Two modules still count records and say so where they appear: the entry-level squeeze, which reads totals from an API that cannot be deduplicated, and the employers' own wording block, where a vacancy posted more than once counts each time."
-  - "The builder / integrator / user split is classifier-based (validated against hand-labelled ads at 89% on the four-way split); a small share of ads sits in an AI-literacy grey zone outside the three tiers, and a reconciliation of the classifier's strictness against our hand-labelled benchmark is in progress. Shares may move a little; the ranking and trends are robust."
+  - "The builder / integrator / user split is classifier-based (validated against hand-labelled ads at 88% on the four-way split); a small share of ads sits in an AI-literacy grey zone outside the three tiers, and a reconciliation of the classifier's strictness against our hand-labelled benchmark is in progress. Shares may move a little; the ranking and trends are robust."
 
 # Module 5 (minor): AI capability — external series, summarised quarterly.
 # Verified 25 Jul 2026; sources + method in ai-monitor/notes/ai-performance-module_2026-07-25.md.
