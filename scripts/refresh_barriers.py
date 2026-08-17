@@ -55,6 +55,13 @@ inverted from every other one there: a change in meta.year FAILS the run instead
 it, for the routing reason above. Re-pulling within a wave is what the schedule is for; a new
 wave is a question about universes and belongs to a person, not to a Monday cron job.
 
+That gate guards the wrong side on its own, though, and watch_eurostat_barriers in
+scripts/check_sources.py closes the other one. The gate fires only when a HUMAN moves YEAR;
+nothing in it looks at Eurostat, so a new wave could sit unpublished for years with no alarm
+anywhere. The watcher compares Eurostat's newest wave against YEAR below and opens an issue,
+which is the same shape the repo already uses for every source a machine must not apply by
+itself.
+
 Run: python3 scripts/refresh_barriers.py   ->  data/barriers.yaml
 """
 import json
@@ -62,6 +69,29 @@ import urllib.request
 from pathlib import Path
 
 import yaml
+
+# Anchored on this file, not on the working directory. Every other refresher here resolves
+# through a ROOT derived from __file__; this one wrote to a relative Path("data/barriers.yaml")
+# and worked only because weekly_refresh.py and the Action both happen to run from the repo
+# root. From any other directory it did one of two things, and the second is the reason this
+# is worth a comment. With no data/ under the working directory it raised FileNotFoundError,
+# because write_text does not create parents: loud, and caught by weekly_refresh.py, which
+# restores and fails. With a data/ directory there it wrote into THAT repo instead, printed
+# its usual eight success lines and left the published file untouched, which is the worst
+# shape a refresh failure can take, a green run that changed nothing. That case is not
+# hypothetical: lab-infrastructure/ai-monitor/ has a data/ directory and drives this site's
+# refresh, so it is a natural place to run a site script from. Fixed 17 Aug 2026.
+ROOT = Path(__file__).resolve().parent.parent
+
+# The wave this module publishes. Pinned rather than read off the API, for the routing reason
+# in the docstring, and module-level rather than a local in main() because check_sources.py
+# parses this line: watch_eurostat_barriers reads the pinned year from here instead of keeping
+# a third copy of it beside the generator and meta.year in data/barriers.yaml. Keep the name
+# and keep the value a plain four-digit literal; the watcher raises, and turns the Monday run
+# red, if it cannot find them, since a watcher comparing against a year it guessed is worse
+# than none. Moving it is a three-part hand edit: this constant, the PERMITTED/FORBIDDEN table
+# in the docstring, and a committed re-run of this script.
+YEAR = 2025
 
 BASE = ("https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/isoc_eb_ain2"
         "?format=JSON&lang=EN&unit=PC_ENT&size_emp=GE10&nace_r2=C10-S951_X_K")
@@ -115,7 +145,7 @@ def fetch(geo, year):
 
 
 def main():
-    year = 2025
+    year = YEAR
     eu, se = fetch("EU27_2020", year), fetch("SE", year)
     rows = [{"name": LABELS[c], "name_sv": LABELS_SV[c], "share": round(se.get(c, 0.0), 1),
              "eu": round(eu.get(c, 0.0), 1), "is_se": True}
@@ -136,7 +166,7 @@ def main():
                  "non-adopters between causes."),
         "rows": rows,
     }
-    Path("data/barriers.yaml").write_text(
+    (ROOT / "data" / "barriers.yaml").write_text(
         yaml.dump(doc, allow_unicode=True, sort_keys=False), encoding="utf-8")
     print(f"barriers.yaml: {len(rows)} reasons, {year}")
     for r in rows:

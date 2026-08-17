@@ -28,6 +28,16 @@ Watched sources and why they need a human:
   scb_amu       SCB Arbetsmiljöundersökningen (working-conditions module) —
                 refresh_working_conditions.py needs a local DAIOE×SSYK
                 crosswalk, so it cannot run on the Action runner.
+  fred_rps      FRED RPS genAI adoption (US benchmark). Quarterly; detection
+                only, because the series carry caveats a machine should not
+                paper over. Running since 27 Jul 2026 and left out of this list
+                until 17 Aug 2026.
+  eurostat_     Eurostat isoc_eb_ain2, the barrier question. The one watcher
+  barriers      here whose subject is auto-refreshed: refresh_barriers.py runs
+                every Monday, but pinned to one wave, so it can only ever
+                re-pull the year it already publishes. The pin is deliberate
+                (the question's routing changed between waves), and this is
+                what stops the pin from also being a blindfold.
 
 Akavia has no watcher: the data arrive from the partner by hand. That round is
 a documented manual workflow (process the new wave, reconcile against Akavia's
@@ -35,6 +45,7 @@ own published figures, update data/akavia.yaml, rebuild).
 """
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -43,6 +54,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 STATE_FILE = Path(__file__).resolve().parent / "watch_state.json"
+BARRIERS_GENERATOR = Path(__file__).resolve().parent / "refresh_barriers.py"
 UA = {"User-Agent": "AIEL-monitor-watch (python-urllib; research use)"}
 
 
@@ -140,6 +152,97 @@ def watch_fred_rps(state):
     return None
 
 
+def pinned_barrier_year():
+    """The barrier wave scripts/refresh_barriers.py is pinned to, read out of the generator.
+
+    Derived, never repeated. That integer already exists in two places, the generator and
+    meta.year in data/barriers.yaml, and a third copy here would be the one nobody remembers
+    to move: the watcher would then report "no new wave" against a year the site left behind,
+    which is worse than having no watcher, because it reads as an all-clear.
+
+    Parsed rather than imported, for two reasons. refresh_barriers.py imports PyYAML, and the
+    workflow describes that dependency as scoped to the refresh chain, so importing it here
+    would quietly make the watchers depend on it too. And what is being checked is the literal
+    a person edits, not what the module computes, so reading the literal is the more direct
+    test. Raises if the constant has been renamed or is no longer a plain four-digit literal;
+    main() turns that into a red run, which is right, because the alternative is a watcher
+    comparing against a year it guessed.
+    """
+    m = re.search(r"^YEAR\s*=\s*(\d{4})\b",
+                  BARRIERS_GENERATOR.read_text(encoding="utf-8"), re.MULTILINE)
+    if not m:
+        raise RuntimeError("no `YEAR = <four digits>` line in scripts/refresh_barriers.py; the "
+                           "barrier watcher reads the pinned wave from there and will not guess")
+    return int(m.group(1))
+
+
+def watch_eurostat_barriers(state):
+    """Has Eurostat published a barrier wave later than the one the site is pinned to?
+
+    This one guards a gap the rest of the machinery cannot see. refresh_barriers.py is on the
+    Monday auto-apply list, but it asks Eurostat for one fixed year, so it can only ever
+    re-pull the wave it already publishes. The inverted year gate in weekly_refresh.py fires
+    when a HUMAN moves that constant; nothing anywhere looks at what Eurostat has. Without
+    this the site could sit on a superseded wave indefinitely and every run would stay green.
+
+    Asked of one of the module's own eight indicators and of every country: one indicator
+    because the eight are a single question and publish together, which keeps the response at
+    ~5 KB instead of the ~79 KB the unfiltered cube returns, and no geo filter because a wave
+    that reaches some countries before Sweden is still news, and whether it is actionable is
+    the reading this issue asks for. The time dimension's category index is the published list
+    of periods, so no scraping is involved.
+
+    The reference point is max(pinned, last flagged): pinned so that the watcher goes quiet by
+    itself once the generator catches up, last-flagged so that an undecided wave is raised once
+    rather than every Monday. barriers_seen is deliberately absent from watch_state.json until
+    something is flagged, since seeding it with the current wave would put back the third copy
+    of the constant this function exists to avoid.
+    """
+    pinned = pinned_barrier_year()
+    d = json.loads(get("https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/"
+                       "isoc_eb_ain2?format=JSON&lang=EN&unit=PC_ENT&size_emp=GE10"
+                       "&nace_r2=C10-S951_X_K&indic_is=E_AI_BLE"))
+    if not d.get("value"):
+        raise RuntimeError("isoc_eb_ain2 returned no observations, so its time index says "
+                           "nothing about which waves exist")
+    latest = max(int(t) for t in d["dimension"]["time"]["category"]["index"])
+    if latest <= max(pinned, int(state.get("barriers_seen", 0))):
+        return None
+    state["barriers_seen"] = latest
+    return (f"Eurostat barrier wave {latest} is out (isoc_eb_ain2) — read the routing before "
+            "the site moves",
+            f"Eurostat now publishes isoc_eb_ain2 for {latest}. scripts/refresh_barriers.py is "
+            f"pinned to YEAR = {pinned} and will go on re-pulling {pinned} until a person moves "
+            "it, which is why this is an issue and not a refresh.\n\n"
+            "THE PIN IS ABOUT ROUTING, NOT ABOUT CAUTION. The barrier question has not always "
+            "been asked of the same firms. In the Swedish source register 2021 asked it of all "
+            "non-adopters and 3,425 firms answered; 2023 gated it on E_AI_EC == 1, considered "
+            "AI but did not adopt, and 482 firms answered. Eurostat carries that through rather "
+            "than washing it out: every Swedish 2023 cell in isoc_eb_ain2 is flagged `b`, break "
+            "in time series, and Sweden was the only one of the 27 reporting countries flagged "
+            f"that year. A {pinned}-to-{latest} movement can therefore be routing rather than "
+            "anything firms said, and a new wave need not describe the same universe at all.\n\n"
+            "So the next step is a reading:\n\n"
+            f"1. Pull the {latest} wave for Sweden and read the `status` block, not the values: "
+            "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/isoc_eb_ain2"
+            "?format=JSON&lang=EN&unit=PC_ENT&size_emp=GE10&nace_r2=C10-S951_X_K&geo=SE"
+            f"&time={latest}. Check whether the eight E_AI_B* cells carry `b`, and whether any "
+            "other country does.\n"
+            f"2. Decide whether {latest} and {pinned} describe the same universe, and write the "
+            "answer into the PERMITTED/FORBIDDEN table in the refresh_barriers.py docstring "
+            "either way. That table is the record of this judgement; leaving it unextended is "
+            "how the next reader loses the reason.\n"
+            f"3. If it is publishable: set YEAR = {latest} in scripts/refresh_barriers.py, run "
+            "`python3 scripts/refresh_barriers.py && python3 build.py`, and commit the "
+            "regenerated data/barriers.yaml in the same change. check_barriers in "
+            "weekly_refresh.py compares the regenerated year against the year in the COMMITTED "
+            "barriers.yaml, so bumping the constant on its own just fails the next Monday run "
+            "and restores the old file.\n"
+            f"4. If it is not publishable: leave the pin at {pinned} and close this. The wave is "
+            "recorded in watch_state.json, so it will not be raised again; the watcher fires "
+            "next on whatever comes after it.")
+
+
 def open_issue(title, body):
     """Create a GitHub issue unless an open one already has this title."""
     gh = shutil.which("gh")
@@ -157,7 +260,7 @@ def main():
     state = json.loads(STATE_FILE.read_text())
     errors, flags = [], []
     for w in (watch_ai_index, watch_daioe_dataset, watch_eu_lfs, watch_scb_amu,
-              watch_fred_rps):
+              watch_fred_rps, watch_eurostat_barriers):
         try:
             hit = w(state)
             if hit:
