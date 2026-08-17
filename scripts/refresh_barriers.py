@@ -50,6 +50,11 @@ dataset updated 2026-06-15. Re-check the flags if Eurostat republishes.
 
 The variable names below are borrowed from the SCB register as labels only.
 
+Auto-applied weekly since 17 Aug 2026, under a gate in scripts/weekly_refresh.py that is
+inverted from every other one there: a change in meta.year FAILS the run instead of passing
+it, for the routing reason above. Re-pulling within a wave is what the schedule is for; a new
+wave is a question about universes and belongs to a person, not to a Monday cron job.
+
 Run: python3 scripts/refresh_barriers.py   ->  data/barriers.yaml
 """
 import json
@@ -69,6 +74,26 @@ LABELS = {
     "E_AI_BCDP": "Data-protection and privacy concerns",
     "E_AI_BLEG": "Unclear legal consequences",
     "E_AI_BEC": "Ethical considerations",
+}
+# The Swedish label for each reason, because three consumers need one: the SV sheet in
+# build.py, the SV one-pager (scripts/build_onepager.py) and the SV social card. Lydia's
+# review on 11 Aug 2026 found the SV brief drawing these bars in English, and the fix put
+# name_sv into data/barriers.yaml by hand. That left this generator unable to reproduce its
+# own committed output: running it deleted all eight labels, and build.py falls back with
+# r.get("name_sv", r["name"]), so a Swedish sheet with English bar labels would have gone
+# out with nothing raised anywhere. Holding the labels here (17 Aug 2026) is what allows the
+# weekly refresh to run this script at all. Keyed on the Eurostat code rather than on the
+# English label, since a wording change upstream would otherwise orphan the translation just
+# as quietly.
+LABELS_SV = {
+    "E_AI_BLE": "Brist på relevant kompetens",
+    "E_AI_BCST": "Kostnaderna verkar för höga",
+    "E_AI_BNU": "Inte användbart för företaget",
+    "E_AI_BDDT": "Datatillgång eller datakvalitet",
+    "E_AI_BINC": "Oförenligt med befintliga system",
+    "E_AI_BCDP": "Oro för dataskydd och integritet",
+    "E_AI_BLEG": "Oklara rättsliga konsekvenser",
+    "E_AI_BEC": "Etiska överväganden",
 }
 
 
@@ -92,7 +117,7 @@ def fetch(geo, year):
 def main():
     year = 2025
     eu, se = fetch("EU27_2020", year), fetch("SE", year)
-    rows = [{"name": LABELS[c], "share": round(se.get(c, 0.0), 1),
+    rows = [{"name": LABELS[c], "name_sv": LABELS_SV[c], "share": round(se.get(c, 0.0), 1),
              "eu": round(eu.get(c, 0.0), 1), "is_se": True}
             for c in LABELS if c in se or c in eu]
     # Ordered by the EU column, not the Swedish one. Both the brief and the one-pager lead

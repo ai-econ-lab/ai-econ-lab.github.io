@@ -25,6 +25,10 @@ Tables:
              SCB's base is confirmed, only the 2025 cross-section is emitted, flagged.
 
 Stdlib only. api.scb.se is on the lab allowlist.
+
+Auto-applied weekly since 17 Aug 2026 (scripts/weekly_refresh.py). Unlike the barriers pull,
+a new wave here is welcome: the survey year comes from the API rather than from a constant,
+and T82 carries no break, so the gate only checks that the year does not go backwards.
 """
 from __future__ import annotations
 
@@ -95,7 +99,13 @@ def main() -> None:
         "meta:",
         '  indicator: "Persons who have used generative AI tools"',
         '  unit: "% of persons aged 16–74"',
-        '  source: "SCB, Befolkningens it-användning (LE0108T82)"',
+        # The English gloss is not decoration. build.py prints this string verbatim in the
+        # figure footer of both editions, so on the English site a bare Swedish table name
+        # was the only thing telling a reader what the source is; the 28 Jul 2026 pass that
+        # glossed the Swedish source names edited the yaml and not this line, which meant
+        # every run of this script since would have reverted it. Keep the gloss here.
+        '  source: "SCB, Befolkningens it-användning / ICT use among the population '
+        '(LE0108T82)"',
         '  url: "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__LE__LE0108__LE0108Q/"',
         f'  year: {latest}',
         f'  first_year: {first}',

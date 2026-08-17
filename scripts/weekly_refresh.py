@@ -12,6 +12,9 @@ result end-to-end:
   AUTO-APPLY (this script) — pure public-API pulls, nothing outside this repo:
     refresh_cross_country.py   Eurostat isoc_eb_ai   -> data/cross_country_adoption.yaml
     refresh_swe_adoption.py    SCB NV0116            -> data/swe_adoption.yaml
+    refresh_capability.py      Epoch AI              -> data/capability.yaml
+    refresh_barriers.py        Eurostat isoc_eb_ain2 -> data/barriers.yaml
+    refresh_population_ai.py   SCB LE0108T82         -> data/population_ai.yaml
   WATCH (scripts/check_sources.py) — sources needing a human step: AI Index PDF
     (View C), DAIOE dataset releases, EU-LFS weights (gated on the DAIOE
     vintage), SCB AMU (needs a local DAIOE crosswalk). A hit opens a GitHub
@@ -24,6 +27,15 @@ Action red (GitHub then emails the maintainer). The gates are deliberately
 coarse (country counts, 0-100 bounds, the wave year must not go backwards):
 they catch a broken pull, not a subtly wrong one — the per-figure vintages on
 the site remain the human-audited truth.
+
+Two of the gates check something else again: that a hand-augmentation of the
+committed file survives the regenerated one. Both files added on 17 Aug 2026
+carried an edit their generator did not reproduce, and in the barriers case the
+loss was silent, because build.py falls back to the English label. A refresher
+that cannot rebuild its own committed output does not belong on a schedule, so
+the gate asserts the augmented field on every run rather than trusting that it
+is still in the generator. The barriers year gate is inverted from all the
+others; the reason for that is in check_barriers.
 """
 import subprocess
 import sys
@@ -123,17 +135,96 @@ def check_capability(d, prev_year):
                          "scripts/refresh_capability.py.")
 
 
+def check_barriers(d, prev_year):
+    """Eurostat isoc_eb_ain2, the module that says why firms do NOT use AI.
+
+    Two of these asserts are unusual, and both date from 17 Aug 2026, when this pull went
+    onto the weekly list.
+
+    name_sv is checked because the committed barriers.yaml had been hand-augmented with the
+    eight Swedish bar labels after Lydia's review of 11 Aug 2026, and refresh_barriers.py did
+    not emit them. Scheduling the script as it then stood would have deleted all eight on the
+    first Monday, and build.py falls back with r.get("name_sv", r["name"]), so the Swedish
+    sheet, one-pager and social card would have published English bar labels with nothing
+    raised anywhere. The labels now live in the generator; this assert is what keeps them
+    there, since the failure it guards against is invisible on the page.
+
+    The year assert runs the other way from every other gate in this file. The others let the
+    year advance, because catching a new wave is what they are for. A new barrier wave is not
+    that: the question's routing changed between 2021, asked of all non-adopters (3,425 firms
+    answered), and 2023, gated on E_AI_EC == 1, considered AI but did not adopt (482 firms),
+    and Eurostat flags every Swedish 2023 cell as a break in series. Two waves can therefore
+    describe two different universes while looking like one series, which is a reading rather
+    than a pull. Re-pulling within a wave stays automatic; crossing into a new one stops the
+    run and asks for a person.
+    """
+    rows = d["rows"]
+    assert len(rows) == 8, f"{len(rows)} reasons, Eurostat's question carries eight"
+    assert all(pct_ok(r.get("share")) and pct_ok(r.get("eu")) for r in rows), \
+        "barrier share outside 0-100"
+    assert all(r.get("is_se") for r in rows), "rows are no longer the Swedish column"
+    unlabelled = [r["name"] for r in rows if not r.get("name_sv")]
+    assert not unlabelled, (
+        "no Swedish label on: " + "; ".join(unlabelled)
+        + ". build.py falls back to the English name, so the Swedish sheet, one-pager and "
+          "social card would go out with English bar labels and no error. Restore LABELS_SV "
+          "in scripts/refresh_barriers.py.")
+    y = int(d["meta"]["year"])
+    assert y == prev_year, (
+        f"the barrier wave year changed from {prev_year} to {y}, which this run will not "
+        "publish unread: the question's routing changed between waves (2021 asked all "
+        "non-adopters, 3,425 firms; 2023 gated on E_AI_EC == 1, considered AI but did not "
+        "adopt, 482 firms), and Eurostat flags the Swedish 2023 cells as a break in "
+        "series, so a new "
+        f"wave need not describe the same universe as {prev_year}. Read the status block for "
+        f"SE in isoc_eb_ain2 {y}, decide whether the two waves are comparable, then set the "
+        "year and update the docstring in scripts/refresh_barriers.py by hand.")
+
+
+def check_population(d, prev_year):
+    """SCB LE0108T82, the population level of the Adoption module.
+
+    The source line is asserted for the same reason name_sv is asserted above. The committed
+    file carried an English gloss, "/ ICT use among the population", added on 28 Jul 2026 when
+    the Swedish source names were glossed for the English edition, and this generator emitted
+    the bare Swedish table name instead. build.py prints the string verbatim in the figure
+    footer of both editions, so losing it leaves an English-language reader with a Swedish
+    table name and nothing else.
+
+    The year may advance here. The survey year is read off the API rather than fixed in the
+    script, and SCB flags no break on T82, so a new wave is exactly what the schedule is for.
+    """
+    m = d["meta"]
+    ages = d["by_age"]
+    assert len(ages) >= 5, f"only {len(ages)} age groups (SCB publishes six)"
+    assert all(pct_ok(r.get("adoption")) and pct_ok(r.get("prev")) for r in ages), \
+        "population share outside 0-100"
+    assert all(pct_ok(m.get(k)) for k in ("headline", "headline_first", "men", "women")), \
+        "headline or sex split outside 0-100"
+    shares = (d.get("purpose_latest") or {}).get("shares") or []
+    assert shares, "the purpose block is empty"
+    assert all(pct_ok(s.get("pct")) for s in shares), "purpose share outside 0-100"
+    assert "ICT use among the population" in m["source"], (
+        f"the English gloss is gone from the source line ({m['source']!r}), which the figure "
+        "footer prints verbatim on both editions. Restore it in "
+        "scripts/refresh_population_ai.py.")
+    y = int(m["year"])
+    assert prev_year <= y <= prev_year + 5, f"survey wave went from {prev_year} to {y}"
+
+
 JOBS = [
     ("refresh_cross_country.py", "data/cross_country_adoption.yaml", check_adoption),
     ("refresh_swe_adoption.py", "data/swe_adoption.yaml", check_swe),
     ("refresh_capability.py", "data/capability.yaml", check_capability),
+    ("refresh_barriers.py", "data/barriers.yaml", check_barriers),
+    ("refresh_population_ai.py", "data/population_ai.yaml", check_population),
 ]
 
 
 def main():
     failed = []
     for script, target, gate in JOBS:
-        prev_year = int(load(target)["meta"]["year"])   # before the pull: the year must not regress
+        prev_year = int(load(target)["meta"]["year"])   # before the pull; each gate rules on the year
         if not run_refresher(script):
             restore(target)
             failed.append(script)
