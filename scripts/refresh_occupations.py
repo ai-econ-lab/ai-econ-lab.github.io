@@ -21,9 +21,11 @@ from pathlib import Path
 
 import yaml
 
-SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
+from monitor_root import MONITOR_ROOT
+
+SRC = (MONITOR_ROOT
        / "data/bulk_v13/derived/series_ssyk4.csv")
-ANNUAL = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
+ANNUAL = (MONITOR_ROOT
           / "data/bulk_v13/derived/series_annual.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "occupations.yaml"
 PREV = OUT

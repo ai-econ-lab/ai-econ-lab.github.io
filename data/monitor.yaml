@@ -132,17 +132,29 @@ livewindow:
   # ingest and never re-scored, so the 60-day window had 71% of rows on the v1 definition and
   # 29% on v1.1, averaged into one number with nothing saying so. It has since been re-seeded
   # and is 100.0% on v1.3, matching the archive series for the first time since v1.1.
+  # FALLBACK ONLY, and the last figures placed here by hand (12 Aug 2026). The live source is
+  # data/livewindow.yaml, written by scripts/refresh_livewindow.py from the JobStream store;
+  # build.py loads this block first and lets that file override it. These four keys stay so the
+  # page still renders, with an honest date, if the generated file is missing.
+  #
+  # The prose that used to sit here as `sentence:` is gone. It carried "32,022", "1.57" and
+  # "0.80" as typed characters next to the same four numbers as data, so the two could and did
+  # disagree, and any refresh that moved `asof` alone would have advanced the date over three
+  # frozen figures. build.py composes that sentence from the numbers now; `note` below is the
+  # part that is genuinely prose and makes no numeric claim.
   asof: "12 Aug 2026"
-  n: "32,022"
-  names_pct: "1.57"
-  floor_pct: "0.80"
-  sentence: >-
-    Of the 32,022 most recent job ads, 1.57% name a specific AI skill and 0.80% ask for one in
-    the job itself (each figure give or take about a tenth of a percentage point). These numbers
-    run a little higher than the chart's, for two reasons we have measured: the live feed
-    carries a somewhat different mix of ads than the yearly archives, and the archives store
-    slightly shortened ad texts. Once we can calibrate the two against each other, they will
-    join into one line that runs to today.
+  asof_iso: 2026-08-12
+  window_days: 60
+  n: 32022
+  names_pct: 1.568
+  floor_pct: 0.799
+  names_ci: [1.437, 1.71]
+  floor_ci: [0.708, 0.903]
+  note: >-
+    These numbers run a little higher than the chart's, for two reasons we have measured: the
+    live feed carries a somewhat different mix of ads than the yearly archives, and the archives
+    store slightly shortened ad texts. Once we can calibrate the two against each other, they
+    will join into one line that runs to today.
 
 # Top ADVERTISEMENT TITLES (verbatim, from the candidate extracts: floor_top_titles.csv),
 # plus taxonomy-level churn. Free-text neologism newcomers: next release.
@@ -234,7 +246,23 @@ capability:
   # here on means the measurements moved rather than the CDN: see metr_identity() in
   # scripts/refresh_capability.py. ARC still goes by page hash because it publishes no
   # anchor, so its figure is still read in a browser when the page moves.
-  reviewed: {metr: 2026-08-12, arc: 2026-08-10}
+  # Re-read 17 Aug 2026, after the weekly gate failed on ARC on both 10 and 17 Aug.
+  # ARC: unchanged. Read in the browser again, and this time out of the leaderboard's own
+  #   DOM table rather than off the plot: ARC-AGI-3 is topped by Claude Opus 5 (High) at
+  #   30.2 per cent, dated 2026-07-24, with GPT-5.6 Sol (Max) second at 7.8. So "100% vs 30%"
+  #   stands, and the second-place figure the 10 Aug note put "near 10" is 7.8.
+  #   What moved the page was an unrelated addition: xAI's Grok 4.6 family was published on
+  #   2026-08-11, and its XHigh tier scores 2.1 on ARC-AGI-3. The watcher cannot tell that
+  #   from a headline change, and it should not try -- a leaderboard addition is exactly when
+  #   a top score might move, so the trip was correct and the re-read is the price.
+  #   Checked while re-reading, and worth recording so nobody re-tries it: the scores are NOT
+  #   fetchable. arcprize.org/leaderboard ships no <table> in its HTML (curl gets 45 kB with
+  #   no "Opus 5" anywhere); the table is built client-side. arcprize.org/arc-agi/3 IS
+  #   server-rendered but carries only the definition, "A 100% score means AI agents can beat
+  #   every game as efficiently as humans", and no score at all. Watching that page instead
+  #   would look machine-readable while being blind to the number, which is the precise
+  #   failure that let ARC-AGI-3 run from under 1% to 30% unnoticed for four months.
+  reviewed: {metr: 2026-08-12, arc: 2026-08-17}
   facts:
     - {num: "12–17 h", lab: "Longest tasks frontier AI agents finish about half the time, in human-expert time.", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}
     - {num: "×2 every ~4 mo", lab: "How quickly that task length has been doubling, on the trend since 2023 (95% CI 3.4–5.2 months).", foot: "METR Time Horizon 1.1 · doubling time · May 2026"}

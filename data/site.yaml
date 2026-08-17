@@ -35,11 +35,18 @@ registration:
   - "<b>{distinct_ads}</b> DISTINCT SWEDISH ADS · {n_countries} COUNTRIES"
   # Derived at build time from the numeric data files' last git commit — see
   # data_updated() in build.py. Do not hand-type a date here; it will drift.
-  # The weekly claim is backed by .github/workflows/monitor-refresh.yml (Mondays):
-  # API sources auto-refresh behind sanity gates; report/release sources are watched
-  # and open a GitHub issue. Remove the claim if that Action is ever disabled.
+  # The weekly claim is backed by two Actions, and is now a floor rather than the rate:
+  #   monitor-refresh.yml here (Mondays)      Eurostat, SCB and Epoch behind sanity gates;
+  #                                           report/release sources watched, issue on a hit
+  #   site-refresh.yml in ai-monitor (daily)  the live 60-day window and the nine job-ads
+  #                                           modules, which until 17 Aug 2026 could only be
+  #                                           refreshed by hand from one laptop
+  # Remove the claim if both are ever disabled.
   - "DATA UPDATED <b>{data_updated}</b> · SOURCES CHECKED WEEKLY"
-  - '<span class="lv">● LIVE · PUBLIC + PARTNER DATA</span>'
+  # Derived from the live window's own as-of date — see LIVE_STATUS in build.py. Do not put
+  # the badge back as a literal: it read "● LIVE" for five days in August 2026 next to a
+  # window that had stopped moving, which is the one thing the badge is supposed to rule out.
+  - "{live_status}"
   # "PROTOTYPE" read as unfinished to a first-time visitor arriving from the launch post.
   # "VERSION 1" says the same thing, that this is early and will change, without inviting
   # the reader to discount the numbers, which are not provisional (Magnus, 12 Aug 2026).

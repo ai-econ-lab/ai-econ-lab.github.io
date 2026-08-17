@@ -20,7 +20,9 @@ Run:  python3 scripts/refresh_job_quality.py
 import csv
 from pathlib import Path
 
-SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
+from monitor_root import MONITOR_ROOT
+
+SRC = (MONITOR_ROOT
        / "data/free_cuts/job_quality_v11.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "job_quality.yaml"
 FIRST = 2018

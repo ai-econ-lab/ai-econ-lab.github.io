@@ -14,8 +14,10 @@ import json, csv, statistics as st, urllib.request
 from collections import defaultdict
 from pathlib import Path
 
+from monitor_root import MONITOR_ROOT
+
 ROOT = Path(__file__).resolve().parent.parent
-DAIOE_CSV = Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor/data/daioe_subdomains_ssyk4.csv"
+DAIOE_CSV = MONITOR_ROOT / "data/daioe_subdomains_ssyk4.csv"
 DAIOE_YEAR = 2023                      # site's public DAIOE release
 SCB = "https://api.scb.se/OV0104/v1/doris/sv/ssd/START/AM/AM0501/AM0501A/ArbmiljoSSYK"
 YEAR = "2024"                          # freshest Arbetsmiljoundersokning

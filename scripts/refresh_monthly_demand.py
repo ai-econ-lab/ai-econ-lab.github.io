@@ -17,12 +17,14 @@ Run:  python3 scripts/refresh_monthly_demand.py
 import csv
 from pathlib import Path
 
+from monitor_root import MONITOR_ROOT
+
 # _v11 is the DISTINCT-advertisement series (the v1.1 freeze made the distinct advertisement
 # the published unit); the unsuffixed file is the raw RECORD series kept alongside it as the
 # robustness line. Both totals are emitted, because the site states both and had been typing
 # them: "8.1M distinct public job ads (11.2M ad records)" was hand-written in two places and
 # could not disagree with its own data anywhere a build could notice.
-SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
+SRC = (MONITOR_ROOT
        / "data/free_cuts/monthly_ai_share_v11.csv")
 SRC_RECORDS = SRC.with_name("monthly_ai_share.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "monthly_demand.yaml"

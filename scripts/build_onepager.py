@@ -503,7 +503,14 @@ def main():
     stamp = (f"{today.day} {SV_MONTH[today.month]} {today.year}" if lang == "sv"
              else today.strftime("%-d %B %Y"))
     ov = {o["k"]: o for o in m["overview"]}
-    tr, lw = m["trend"], m["livewindow"]
+    tr = m["trend"]
+    # Same precedence as build.py: monitor.yaml carries the fallback and the framing, and the
+    # generated file overrides the figures when it exists. Without this the one-pager would
+    # keep printing the hand-placed fallback while the website showed the refreshed window.
+    lw = dict(m["livewindow"])
+    lw_gen = DATA / "livewindow.yaml"
+    if lw_gen.exists():
+        lw.update(yaml.safe_load(lw_gen.read_text(encoding="utf-8")) or {})
     occ = yaml.safe_load((DATA / "occupations.yaml").read_text(encoding="utf-8"))
     bar = yaml.safe_load((DATA / "barriers.yaml").read_text(encoding="utf-8"))
     ado = yaml.safe_load((DATA / "cross_country_adoption.yaml").read_text(encoding="utf-8"))
@@ -568,8 +575,14 @@ def main():
                                   v1=tr["values"][-2], y1=tr["years"][-2],
                                   rise=tr["values"][-2] / tr["values"][0],
                                   fl=tr["floor_values"][-2], ceiling=ceiling)
-    se_live = C["se_live"].format(asof=tex(lw["asof"]), n=tex(lw["n"]),
-                                  names=lw["names_pct"], floor=lw["floor_pct"])
+    # Same source and same formatting as the website's live-window block. `n` used to be the
+    # string "32,022" in monitor.yaml and is now an integer in the generated file, so the
+    # thousands separator is applied here rather than being typed into the data; and the two
+    # percentages are printed to the same 2 dp as the page, which they previously were only
+    # because someone had typed them that way.
+    se_live = C["se_live"].format(asof=tex(str(lw["asof"])), n=f"{int(lw['n']):,}",
+                                  names=f"{float(lw['names_pct']):.2f}",
+                                  floor=f"{float(lw['floor_pct']):.2f}")
     gaps = "\\\\[1.6mm]\n".join(
         f"{{\\scriptsize\\bfseries\\textcolor{{ink}}{{{tex(h)}}}}} "
         f"{{\\scriptsize\\textcolor{{soft}}{{{tex(b)}}}}}" for h, b in C["gaps"])

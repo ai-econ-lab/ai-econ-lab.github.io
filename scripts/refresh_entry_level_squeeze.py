@@ -18,8 +18,10 @@ import csv
 from collections import defaultdict
 from pathlib import Path
 
+from monitor_root import MONITOR_ROOT
+
 ROOT = Path(__file__).resolve().parent.parent
-SRC = Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor/data/entry_level_squeeze.csv"
+SRC = MONITOR_ROOT / "data/entry_level_squeeze.csv"
 FIRST_YEAR = 2020                       # 'experience' field unpopulated before 2020
 DAIOE_VARIANT, DAIOE_VERSION = "generative-AI", "v2023"
 

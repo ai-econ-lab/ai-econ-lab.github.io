@@ -108,6 +108,42 @@ CROSS    = load("cross_country.yaml")
 ADOPT    = load("cross_country_adoption.yaml")
 DEMAND   = load("cross_country_demand.yaml")
 WORKCOND = load("working_conditions.yaml")
+
+# ── the live window, and whether it is still live ────────────────────────────
+# data/livewindow.yaml is written by scripts/refresh_livewindow.py from the JobStream store
+# and is the preferred source. monitor.yaml's block is the fallback and the last figures that
+# were placed by hand; it carries the framing prose either way.
+#
+# THE BADGE IS DERIVED, because the alternative was tested and failed. site.yaml carried a
+# literal "● LIVE" and monitor.yaml a hand-typed `asof`, and on 17 Aug 2026 the site showed
+# "● LIVE" beside a window stamped five days earlier, while the daily poll had ingested ads
+# every one of those days. Both statements were separately defensible and the pair was not.
+# A badge that cannot go out means nothing when it is on.
+LIVEWINDOW = dict(MONITOR.get("livewindow") or {})
+try:
+    LIVEWINDOW.update(load("livewindow.yaml") or {})
+except FileNotFoundError:
+    pass
+
+def _livewindow_age():
+    """Days since the live window's as-of date, or None if it cannot be read."""
+    iso = LIVEWINDOW.get("asof_iso")
+    try:
+        d = (datetime.date.fromisoformat(str(iso)) if iso
+             else datetime.datetime.strptime(LIVEWINDOW["asof"], "%d %b %Y").date())
+    except (KeyError, ValueError, TypeError):
+        return None
+    return (datetime.date.today() - d).days
+
+LIVEWINDOW_AGE = _livewindow_age()
+# Two days: the poll runs daily at 04:17 UTC and JobStream publishes on the day, so a window
+# one day behind is normal operation and two is a single missed run. Three means the feed,
+# the emit step or the push has been down since before yesterday, which is a fact about the
+# site and not about the labour market.
+LIVE_OK = LIVEWINDOW_AGE is not None and LIVEWINDOW_AGE <= 2
+LIVE_STATUS = ('<span class="lv">● LIVE · PUBLIC + PARTNER DATA</span>' if LIVE_OK else
+               '<span class="lv stale">◌ FEED DELAYED · PUBLIC + PARTNER DATA</span>')
+
 # Every count the site states about its own corpus and coverage, derived from the file that
 # holds it. Typed counts cannot contradict their data anywhere a build can notice, which is
 # how the monthly series came to say 16,113,466 while the masthead said 8.1M (13 Aug 2026).
@@ -198,7 +234,7 @@ def masthead(active):
     # is typed cannot disagree with its own data loudly enough to be heard.
     reg = "".join(
         f'<span>{s.replace("{data_updated}", DATA_UPDATED_DISPLAY).replace("{distinct_ads}", DISTINCT_ADS)
-                    .replace("{n_countries}", str(N_COUNTRIES))}</span>'
+                    .replace("{n_countries}", str(N_COUNTRIES)).replace("{live_status}", LIVE_STATUS)}</span>'
         for s in SITE["registration"])
     return f"""<div class="mast"><div class="wrap"><div class="mastbar">
   <a class="brand" href="/"><span class="plaque"><b>{h(b['monogram'])}</b></span>
@@ -844,13 +880,29 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
     titles ("Communication professionals", "Business professionals and economists") ran off
     the left of the viewBox and rendered as "ication professionals". Labels are 10px in the
     mono face, so ~0.62em per character is a safe advance width; the gutter grows and the
-    bars shorten rather than anything being cut."""
+    bars shorten rather than anything being cut.
+
+    That fix carried a `min(300, ...)` cap, which quietly reintroduced the very defect the
+    paragraph above says it removed: any label past ~46 characters was clipped again, exactly
+    as before, and the cap's own comment ("so bars stay readable") described a trade-off that
+    was never made -- nothing shortened the bars, the label was simply cut. It survived
+    because only one label in the whole dataset is that long: SCB's "Assistant nurses, home
+    care, home nursing, elderly care and habilitation" (72 chars) rendered on the live site as
+    "care, home nursing, elderly care and habilitation", losing the occupation's actual name.
+
+    So the gutter is now uncapped and the CANVAS grows with it instead. W is no longer a
+    constant; every x to the right of the gutter is measured from W, which keeps the plotting
+    area exactly 216px and the right-hand columns exactly where they were for every existing
+    chart (all of which sit under the old 300px cap and are therefore byte-identical), while a
+    long label widens the viewBox rather than losing characters. A wider viewBox scales down
+    inside the same container, which is a visible, self-announcing trade; clipping is not."""
     rows = data; n = len(rows); hy = int(hy)
-    W, rowh, top, bot = 640, 15, 18, 34
+    rowh, top, bot = 15, 18, 34
     H = top + n * rowh + bot
     longest = max((len(str(r["name"])) for r in rows), default=0)
-    gutter = min(300, max(128, int(longest * 10 * 0.62) + 10))   # cap so bars stay readable
-    x0, x1 = gutter + 12, 528
+    gutter = max(128, int(longest * 10 * 0.62) + 10)
+    W = 640 + max(0, gutter - 300)      # grow the canvas, never the clip
+    x0, x1 = gutter + 12, W - 112
     X = lambda v: x0 + v / xmax * (x1 - x0)
     step = 10 if xmax > 25 else 5 if xmax > 12 else 1
     p = [f'<svg class="rankchart barplot" viewBox="0 0 {W} {H}" role="img" '
@@ -886,12 +938,12 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
                      f'width="{max(1.5,X(cv)-x0):.1f}" height="{rowh*0.30:.1f}" rx="2"/>')
             p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.52:.1f}" '
                      f'width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.30:.1f}" rx="2"/>')
-            p.append(f'<text class="dvalcmp" x="632" y="{y+rowh*0.72:.1f}" text-anchor="end">{cv:{vfmt}}</text>')
+            p.append(f'<text class="dvalcmp" x="{W-8}" y="{y+rowh*0.72:.1f}" text-anchor="end">{cv:{vfmt}}</text>')
         else:
             p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
-        p.append(f'<text class="dval{se}" x="574" y="{y+rowh*0.72:.1f}" text-anchor="end">{v:{vfmt}}</text>')
+        p.append(f'<text class="dval{se}" x="{W-66}" y="{y+rowh*0.72:.1f}" text-anchor="end">{v:{vfmt}}</text>')
         if r.get("prev") is not None:
-            p.append(f'<text class="ddelta" x="632" y="{y+rowh*0.72:.1f}" text-anchor="end">{v-r["prev"]:+.0f}</text>')
+            p.append(f'<text class="ddelta" x="{W-8}" y="{y+rowh*0.72:.1f}" text-anchor="end">{v-r["prev"]:+.0f}</text>')
     p.append("</svg>")
     return "".join(p)
 
@@ -1095,13 +1147,38 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
 def livewindow_block():
     """The live 60-day window as its own labelled instrument. Never a point on the archive
     line: the JobStream flow is a different subset of ads and runs higher in level (splice
-    check 2026-07-24), so the honest presentation is side-by-side, not spliced."""
-    lw = MONITOR.get("livewindow")
-    if not lw:
+    check 2026-07-24), so the honest presentation is side-by-side, not spliced.
+
+    The first sentence is COMPOSED from the figures, not stored beside them. It used to be one
+    hand-written `sentence:` carrying "32,022", "1.57" and "0.80" as literal characters, which
+    meant a refresh that advanced `asof` would have moved the date over three frozen numbers --
+    strictly worse than being visibly stale, because the staleness would no longer show. The
+    framing that follows is genuine prose about the two instruments and stays in monitor.yaml
+    as `note`; it makes no numeric claim, so it does not need generating.
+
+    When the window is behind, the block says so in the chip rather than dropping the numbers:
+    a figure with an honest old date is worth more to a reader than a gap."""
+    lw = LIVEWINDOW
+    if not lw or lw.get("n") is None:
         return ""
+    n = f"{int(lw['n']):,}"
+    lead = (f"Of the {n} most recent job ads, {float(lw['names_pct']):.2f}% name a specific AI "
+            f"skill and {float(lw['floor_pct']):.2f}% ask for one in the job itself")
+    ci = ""
+    if lw.get("names_ci") and lw.get("floor_ci"):
+        nlo, nhi = lw["names_ci"]; flo, fhi = lw["floor_ci"]
+        ci = (f" (95% intervals {float(nlo):.2f}–{float(nhi):.2f} and "
+              f"{float(flo):.2f}–{float(fhi):.2f})")
+    note = lw.get("note") or ""
+    age = LIVEWINDOW_AGE
+    chip = (f"last {int(lw.get('window_days', 60))} days, as of {h(str(lw['asof']))}"
+            if LIVE_OK else
+            f"last {int(lw.get('window_days', 60))} days, as of {h(str(lw['asof']))} · "
+            f"not refreshed for {age} days")
+    cls = "livechip" if LIVE_OK else "livechip stale"
     return f"""<div class="grouphdr" style="margin-top:26px">Right now · the live feed
-      <span class="livechip"><i></i>last 60 days, as of {h(lw['asof'])}</span></div>
-    <p class="secintro" style="margin-top:4px">{h(lw['sentence'])}</p>"""
+      <span class="{cls}"><i></i>{chip}</span></div>
+    <p class="secintro" style="margin-top:4px">{h(lead + ci + ".")} {h(note)}</p>"""
 
 
 def titles_block():

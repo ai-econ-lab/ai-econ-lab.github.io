@@ -28,7 +28,9 @@ from pathlib import Path
 
 import yaml
 
-SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
+from monitor_root import MONITOR_ROOT
+
+SRC = (MONITOR_ROOT
        / "data/free_cuts/tier_by_occupation.csv")          # distinct advertisements
 OUT = Path(__file__).resolve().parent.parent / "data" / "occupation_tiers.yaml"
 

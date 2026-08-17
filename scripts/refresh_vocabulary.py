@@ -25,7 +25,9 @@ Run:  python3 scripts/refresh_vocabulary.py
 import csv
 from pathlib import Path
 
-SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor"
+from monitor_root import MONITOR_ROOT
+
+SRC = (MONITOR_ROOT
        / "data/diagnostics/term_composition.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "vocabulary.yaml"
 

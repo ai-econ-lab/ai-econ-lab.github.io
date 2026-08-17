@@ -37,7 +37,9 @@ from pathlib import Path
 
 import yaml
 
-SRC = (Path.home() / "Documents/Workspace/lab-infrastructure/ai-monitor" / "data" / "wages")
+from monitor_root import MONITOR_ROOT
+
+SRC = (MONITOR_ROOT / "data" / "wages")
 OUT = Path(__file__).resolve().parent.parent / "data" / "wages.yaml"
 
 COUNTRIES = [

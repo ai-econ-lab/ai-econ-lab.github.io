@@ -78,6 +78,8 @@ nav.top a.cta:hover{background:#e7ecff}
 .regstrip{border-top:1px solid #ffffff1f}
 .reg{display:flex;gap:24px;flex-wrap:wrap;padding:9px 0;font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.05em;color:#ffffff9c}
 .reg b{color:#fff;font-weight:600} .reg .lv{color:#8fe6c2}
+/* Masthead badge, degraded: the green belongs to a feed that is actually current. */
+.reg .lv.stale{color:#c9c4bb}
 
 /* ── hero ─────────────────────────────────────────────────── */
 .hero{padding:clamp(34px,6vw,64px) 0 clamp(26px,4vw,40px)}
@@ -115,6 +117,11 @@ h1.title em{font-style:normal;color:var(--blue)}
 .panelhead .ttl{font-family:var(--serif);font-weight:600;font-size:16px}
 .livechip{margin-left:auto;font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--live);display:inline-flex;align-items:center;gap:7px}
 .livechip i{width:7px;height:7px;border-radius:50%;background:var(--live);box-shadow:0 0 0 3px color-mix(in srgb,var(--live) 22%,transparent)}
+/* The live badge when the feed is behind (build.py: LIVE_OK). Muted rather than alarming: a
+   delayed window is a maintenance fact, not a warning to the reader about the numbers, which
+   are still true of the date they carry. The dot loses its halo and stops reading as "on". */
+.livechip.stale{color:var(--muted)}
+.livechip.stale i{background:none;box-shadow:inset 0 0 0 1.5px var(--muted)}
 .panelbody{padding:16px 20px 20px}
 .psub{font-size:var(--fs-sec);color:var(--muted);margin:0 0 6px}
 svg{display:block;width:100%;height:auto;overflow:visible;touch-action:none}
