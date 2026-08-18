@@ -102,7 +102,7 @@ window.drawTrend = function drawTrend(){
     if (hasFloor){
       dotF.setAttribute("cx",xx); dotF.setAttribute("cy",Y(F[bi])); dotF.style.opacity=1;
       rows += `<div class="r"><span>Asks for AI in the role</span><b>${F[bi].toFixed(3)}%</b></div>`;
-      rows += `<div class="r"><span>Penumbra (gap)</span><b>${(V[bi]-F[bi]).toFixed(3)}%</b></div>`;
+      rows += `<div class="r"><span>Grey zone (gap)</span><b>${(V[bi]-F[bi]).toFixed(3)}%</b></div>`;
     }
     showTip(`<b>${YRS[bi]}</b>${rows}${prov}`, ev.clientX, ev.clientY);
   };
