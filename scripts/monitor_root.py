@@ -42,3 +42,26 @@ def monitor_root() -> Path:
 
 
 MONITOR_ROOT = monitor_root()
+
+
+# ── the frozen definition, in ONE place ──────────────────────────────────────────────
+# build.py already carried DEF_VERSION/DEF_FP with a comment explaining that five figure
+# footers and two CSV exports had each held their own "frozen v1.2" literal, so a re-freeze
+# meant finding all seven and the Monitor served a mix until someone did. The fix was made in
+# build.py only, and four literals survived outside it: two figure footers reached v1.4 while
+# occupations.yaml, the one-pager's source line and refresh_occupations.py still said v1.3.
+# So the same defect recurred at the next freeze, one layer out. It lives here now, where both
+# build.py and the refresh scripts can import it.
+DEF_VERSION = "v1.4"
+DEF_FP = "0bebeebaf6ffea26"
+DEF_LABEL = f"frozen {DEF_VERSION} term list"
+
+
+def bulk_dir() -> str:
+    """The derived-series directory matching DEF_VERSION, e.g. 'bulk_v14'.
+
+    Derived rather than typed for the same reason: a refresh script pointed at the previous
+    freeze's directory reads a series the site no longer claims to publish, and nothing in the
+    output says so.
+    """
+    return "bulk_v" + DEF_VERSION.lstrip("v").replace(".", "")

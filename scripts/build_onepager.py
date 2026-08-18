@@ -327,7 +327,7 @@ COPY = {
   se_hd="SWEDEN IN DEPTH: HOW OFTEN DO JOB ADS ASK FOR AI?",
   se_sub="Every advertisement on the public job board",
   src_label="Source: ",
-  se_src="JobTech / Platsbanken job ads (CC0), frozen v1.3 term list, distinct advertisements",
+  se_src="JobTech / Platsbanken job ads (CC0), frozen v1.4 term list, distinct advertisements",
   band_hi="mention an AI skill", band_lo="ask for it in the job itself",
   se_body=(r"A \textbf{{range}}, not a single number: the upper line counts an advertisement that "
            r"mentions an AI skill anywhere, the lower one only when the skill is asked of the "
@@ -423,7 +423,7 @@ COPY = {
   se_hd="SVERIGE PÅ DJUPET: HUR OFTA EFTERFRÅGAR ANNONSERNA AI?",
   se_sub="Baserat på samtliga annonser på Platsbanken",
   src_label="Källa: ",
-  se_src="JobTech / Platsbanken (CC0), fryst termlista v1.3, distinkta annonser",
+  se_src="JobTech / Platsbanken (CC0), fryst termlista v1.4, distinkta annonser",
   band_hi="nämner en AI-färdighet", band_lo="efterfrågar den i själva jobbet",
   se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: den övre linjen räknar en annons som "
            r"nämner en AI-färdighet någonstans, den nedre bara när färdigheten efterfrågas av den "

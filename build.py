@@ -19,9 +19,8 @@ def load(name): return yaml.safe_load((DATA / name).read_text(encoding="utf-8"))
 # re-freeze meant finding all seven and the monitor served a mix until someone did. Twice it
 # was missed. Keep the version and its fingerprint here and interpolate; methods.yaml remains
 # the citable record, this is only the label the figures wear.
-DEF_VERSION = "v1.3"
-DEF_FP = "8654fe27a3724d06"
-DEF_LABEL = f"frozen {DEF_VERSION} term list"
+sys.path.insert(0, str(ROOT / "scripts"))
+from monitor_root import DEF_VERSION, DEF_FP, DEF_LABEL  # noqa: E402
 
 # ── data freshness ───────────────────────────────────────────────────────────
 # The masthead strip carries an UPDATED stamp next to a "● LIVE" badge, so it has
@@ -1142,7 +1141,7 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · frozen v1.3 term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href=method_href, next_up="tier split: built, integrated or simply used")}</div></div>"""
+      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · " + DEF_LABEL + " · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href=method_href, next_up="tier split: built, integrated or simply used")}</div></div>"""
 
 def livewindow_block():
     """The live 60-day window as its own labelled instrument. Never a point on the archive

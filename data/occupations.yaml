@@ -2,7 +2,7 @@
 meta:
   year: 2025
   national: 0.55
-  source: JobTech / Platsbanken job ads (CC0), frozen v1.3 term list, distinct advertisements
+  source: JobTech / Platsbanken job ads (CC0), frozen v1.4 term list, distinct advertisements
   measure: share of the occupation's advertisements that ask for AI skills in the role itself (the
     strict floor)
   min_ads: 400
@@ -12,32 +12,32 @@ lede: The national figure is an average over a very uneven distribution. In the 
 top:
 - name: Doctoral students
   name_sv: Doktorander
-  share: 14.91
+  share: 15.03
   ads: 1643
   is_se: false
 - name: Research assistants
   name_sv: Forskarassistenter m.fl.
-  share: 11.38
+  share: 11.54
   ads: 1274
   is_se: false
 - name: Other IT specialists
   name_sv: Övriga IT-specialister
-  share: 9.1
+  share: 9.47
   ads: 1330
   is_se: false
 - name: Software and systems developers
   name_sv: Mjukvaru- och systemutvecklare m.fl.
-  share: 5.41
+  share: 5.46
   ads: 14799
   is_se: false
 - name: University lecturers
   name_sv: Universitets- och högskolelektorer
-  share: 4.84
+  share: 4.94
   ads: 972
   is_se: false
 - name: Electrical engineers and technicians
   name_sv: Ingenjörer och tekniker inom elektroteknik
-  share: 3.78
+  share: 3.81
   ads: 3198
   is_se: false
 - name: Chemists
@@ -45,15 +45,15 @@ top:
   share: 3.72
   ads: 646
   is_se: false
-- name: Cell and molecular biologists
-  name_sv: Cell- och molekylärbiologer m.fl.
-  share: 3.01
-  ads: 731
-  is_se: false
 - name: Systems analysts and IT architects
   name_sv: Systemanalytiker och IT-arkitekter m.fl.
-  share: 2.99
+  share: 3.16
   ads: 3417
+  is_se: false
+- name: Cell and molecular biologists
+  name_sv: Cell- och molekylärbiologer m.fl.
+  share: 2.87
+  ads: 731
   is_se: false
 zero:
 - name: Registered nurses
