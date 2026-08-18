@@ -8,9 +8,11 @@ flag: External series · checked 18 Aug 2026
 intro: 'Everything above measures AI in the labour market; this small module tracks the technology itself,
   in the most work-relevant unit there is: how much human working time a single AI run can replace. The
   frontier is jagged, and it moves fast: on novel interactive worlds, where the goal must be inferred
-  without instructions, the best system scored under 1% at the benchmark''s launch and 30% by July 2026,
-  against 100% for humans. Frontier capability is also what our DAIOE exposure measure tracks on the technology
-  side.'
+  without instructions, the best system scored under 1% at the benchmark''s launch and 30% of human level
+  by July 2026. That benchmark is scored against people by construction: every environment is verified
+  solvable by a human, and 100% means matching human efficiency, so the figure is a distance to human
+  performance rather than a head-to-head result. Frontier capability is also what our DAIOE exposure measure
+  tracks on the technology side.'
 facts:
 - num: 12–17 h
   lab: Longest tasks frontier AI agents finish about half the time, in human-expert time.
@@ -28,10 +30,11 @@ facts:
   foot: Epoch AI · notable models · Aug 2026
   mode: auto
   asof: '2026-08-14'
-- num: 100% vs 30%
-  lab: 'Humans vs frontier AI on novel interactive worlds: explore, infer the goal, plan, with no instructions
-    (was under 1% at launch).'
-  foot: ARC-AGI-3 · Jul 2026
+- num: 30<span>% of human level</span>
+  lab: 'Frontier AI on novel interactive worlds: explore, infer the goal, plan, with no instructions.
+    The scale is human-calibrated — 100% means beating every game as efficiently as a person — so this
+    is a distance to human performance, not a measured head-to-head. Was under 1% at launch.'
+  foot: ARC-AGI-3 · Claude Opus 5 (High), 30.2% · Jul 2026
   mode: watched
   asof: '2026-07-01'
 links:
@@ -49,7 +52,7 @@ caveat: These are external research series, quoted with their dates; we summaris
   and each tile carries its own date.
 checked: '2026-08-18'
 reviewed:
-  arc: '2026-08-17'
+  arc: '2026-08-18'
   metr: '2026-08-12'
 stale: []
 undated: []
