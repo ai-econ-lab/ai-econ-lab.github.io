@@ -57,7 +57,21 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 OUT = ROOT / "docs" / "aiel-monitor-onepager.pdf"
-TECTONIC = "/opt/homebrew/bin/tectonic"
+# Resolved, never hardcoded. This was "/opt/homebrew/bin/tectonic", one Mac's Homebrew path,
+# which cannot exist on the Linux runner that rebuilds the site. There it raised
+# FileNotFoundError inside build.py's try/except, which caught it, kept the previous PDF and
+# printed "no TeX engine here" — so a sheet that had silently stopped regenerating looked like
+# a deliberate skip. $TECTONIC overrides; otherwise PATH, then the known Homebrew locations.
+def _find_tectonic() -> str:
+    import os
+    import shutil
+    return (os.environ.get("TECTONIC")
+            or shutil.which("tectonic")
+            or next((c for c in ("/opt/homebrew/bin/tectonic", "/usr/local/bin/tectonic",
+                                 "/usr/bin/tectonic") if Path(c).exists()), ""))
+
+
+TECTONIC = _find_tectonic()
 
 # Hex for \definecolor, and a LaTeX-legal NAME to refer to it by. A colour name may not
 # begin with a digit, so "0072B2" is not usable as one: \textcolor{0072B2} is an undefined
@@ -721,6 +735,11 @@ def main():
         src.write_text(doc, encoding="utf-8")
         if os.environ.get("AIEL_DUMP_TEX"):   # debugging aid: keep the generated source
             Path(os.environ["AIEL_DUMP_TEX"]).with_suffix(f".{lang}.tex").write_text(doc, "utf-8")
+        if not TECTONIC:
+            raise SystemExit(
+                "build_onepager: no tectonic on PATH and none at the usual locations, so the "
+                "sheet cannot be typeset. Install it, or set $TECTONIC. This is a MISSING "
+                "TOOL, not a reason to ship yesterday's PDF.")
         r = subprocess.run([TECTONIC, "--outdir", td, str(src)], capture_output=True, text=True)
         if r.returncode != 0:
             sys.stderr.write((r.stdout + r.stderr)[-3500:])

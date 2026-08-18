@@ -2803,7 +2803,9 @@ def build():
     for name, blob in carried.items():
         if not (OUT / name).exists():
             (OUT / name).write_bytes(blob)
-            print(f"  {name}: kept the previous sheet (no TeX engine here, so not regenerated)")
+            print(f"  {name}: NOT REGENERATED — kept the previous sheet. The message above "
+                  f"says why; it is not necessarily a missing TeX engine, which is what this "
+                  f"line used to assert without checking.")
 
     print(f"Built {len(PAGES)} pages + sitemap/robots/CNAME into {OUT}/")
     print(f"  papers: {paper_count()} · people: {sum(len(g['members']) for g in PEOPLE['groups'])}")
