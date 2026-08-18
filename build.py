@@ -307,7 +307,14 @@ def daioe_ld():
     return json.dumps({"@context":"https://schema.org","@type":"Dataset","name":"DAIOE — data-driven AI Occupational Exposure",
         "description":DAIOE["lede"],"license":"https://creativecommons.org/licenses/by/4.0/",
         "creator":{"@type":"Organization","name":SITE["brand"]["name"]},"isAccessibleForFree":True,
-        "distribution":{"@type":"DataDownload","contentUrl":DAIOE["resources"][0]["href"]},
+        # encodingFormat is required on a DataDownload and was missing, which Search Console
+        # reported on 16 Aug 2026. The repository publishes each vintage in three formats, so
+        # all three are declared rather than guessing at one. contentUrl is the repository
+        # landing page, which is where a human starts; the formats say what they will find.
+        "distribution":{"@type":"DataDownload","contentUrl":DAIOE["resources"][0]["href"],
+                        "encodingFormat":["text/csv",
+                                          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                          "application/x-stata-dta"]},
         "url":BASE+"/daioe/"}, ensure_ascii=False)
 
 def people_ld():
@@ -1351,7 +1358,13 @@ def jobquality_block():
                 f'series does survive is deduplication: counting each advertisement once rather than once per '
                 f'posting moves every gap by under 2pp, so it is not an artefact of employers reposting.',
                 'Why composition could explain this, and what it survives')
-            + figfooter("job_quality_v11.csv",
+            # job_quality.csv, not job_quality_v11.csv. The _v11 name is the SOURCE file in
+            # the ai-monitor repo (data/free_cuts/job_quality_v11.csv); this footer offers a
+            # public download, and the export below writes job_quality.csv. The two names
+            # diverged, so every reader who clicked it got a 404 and Search Console reported
+            # "Blocked due to other 4xx issue" on 7 Aug 2026. scripts/check_links.py now fails
+            # the build on any internal link that does not resolve.
+            + figfooter("job_quality.csv",
                         f'{h(m["source"])}, {m["first_year"]} to {m["last_year"]} · complete years only'
                         f' · distinct advertisements',
                         "job_quality.svg"))
