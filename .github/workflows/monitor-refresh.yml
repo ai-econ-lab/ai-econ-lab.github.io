@@ -96,8 +96,26 @@ jobs:
             git push
           }
 
+      # The other half of the mutual watch, and AFTER the push on purpose. The upstream cannot
+      # be read from here -- that would put a token for a private repository in a public one,
+      # the direction site-refresh.yml refuses -- so this checks its EFFECT: has a data refresh
+      # commit arrived recently. Credential-free, because this repository's commits are public.
+      # Its mirror, scripts/check_schedules.py in the ai-monitor repo, watches this side.
+      #
+      # continue-on-error, and folded into the gate below: a silent upstream is worth an email
+      # but has nothing to do with whether THIS refresh's own Eurostat and SCB data should
+      # publish. A watchdog that blocks the publish it was watching over is a worse bug than
+      # the one it detects.
+      - name: The upstream refresh is still arriving
+        id: upstream
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/check_upstream_alive.py
+
       - name: Fail the run if refresh, watchers or claim checks failed
-        if: steps.refresh.outcome != 'success' || steps.watch.outcome != 'success' || steps.claims.outcome != 'success'
+        if: steps.refresh.outcome != 'success' || steps.watch.outcome != 'success' || steps.claims.outcome != 'success' || steps.upstream.outcome != 'success'
         run: |
-          echo "refresh: ${{ steps.refresh.outcome }} · watch: ${{ steps.watch.outcome }} · claims: ${{ steps.claims.outcome }}"
+          echo "refresh: ${{ steps.refresh.outcome }} · watch: ${{ steps.watch.outcome }} · claims: ${{ steps.claims.outcome }} · upstream: ${{ steps.upstream.outcome }}"
           exit 1
