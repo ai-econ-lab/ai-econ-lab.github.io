@@ -23,6 +23,8 @@ Never hand-edit the output: the header says not to, and that is exactly how the 
 Run:  python3 scripts/refresh_vocabulary.py
 """
 import csv
+import json
+import re
 from pathlib import Path
 
 from monitor_root import MONITOR_ROOT
@@ -31,49 +33,69 @@ SRC = (MONITOR_ROOT
        / "data/diagnostics/term_composition.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "vocabulary.yaml"
 
-# Two classes are gated for display. ANACHRONISMS: product names matching ads published before
-# the product existed. POLYSEMY: ordinary words that later became AI terms, where the early hits
-# are the ordinary sense. "finjustering" is plain Swedish for mechanical fine-tuning, "prompting"
-# had a clinical and pedagogical sense, "gpt" is also a lab test and a disk partition table, and
-# "llm" is also a Master of Laws. Checked: in 2023-2026 "llm" sits in software and research
-# occupations, so the modern hits are the language-model sense and are kept.
-GATE = {"gemini": 2023, "claude": 2023, "copilot": 2023, "chatgpt": 2022,
-        "llama": 2023, "mistral": 2023, "sora": 2024, "grok": 2023,
-        "prompting": 2022, "finjustering": 2022, "gpt": 2022, "llm": 2022}
-FAMILY = [
-    ("genai", ["llm", "large language", "generativ", "generative", "chatgpt", "gpt",
-               "transformer", "prompt", "copilot", "gemini", "claude", "finjustering",
-               "diffusion", "hallucin"]),
-    ("ml", ["machine learning", "maskininlärning", "deep learning", "djupinlärning", "neural",
-            "computer vision", "datorseende", "machine vision", "tensorflow", "pytorch",
-            "scikit", "boosting", "clustering", "mlops", "image processing", "bildanalys",
-            "natural language processing", "språkteknologi", "sensor fusion", "random forest",
-            "reinforcement", "förstärkningsinlärning", "gradient"]),
-    ("early", ["data mining", "datautvinning", "expertsystem", "expert system",
-               "språkbehandling", "fuzzy", "genetisk algoritm", "beslutsstöd"]),
-    ("generic", ["artificiell intelligens", "artificial intelligence", "ai/ml", "a.i."]),
-]
+# THE FAMILY MAP AND THE YEAR GATES NOW LIVE BESIDE THE TERM LIST THEY SHADOW, in
+# ai-monitor/config/vocabulary_families.json. They were two hand-written lists here: which band
+# a term draws in, and from which year a polysemous term may count. Both name the same terms the
+# definition names, in a different repository, maintained by hand -- so they drifted by
+# construction. Every freeze added terms and nothing told this file.
+#
+# By 19 Aug 2026 the drift was 26.4% of all term hits unclassified, peaking at 44.7% in a
+# period, and it was not neutral: the residual held "ml" (4,239 hits, v1.4's own addition), the
+# genAI vocabulary of 2023-2026, and every hyphen and newline variant of terms already mapped.
+# The chart understated its own finding, worst in the years it is about -- 2026-Q2 generative
+# read 20.8% where the mapped figure is 35.5%.
+#
+# ai-monitor/scripts/check_vocabulary_families.py fails the build when a term above the
+# threshold has no family, so the next freeze cannot re-open the gap quietly.
+FAMILY_MAP = json.loads(
+    (MONITOR_ROOT / "config" / "vocabulary_families.json").read_text(encoding="utf-8"))
+GATE = {k: v for k, v in FAMILY_MAP["year_gate"].items() if not k.startswith("_")}
+FOLD = set(FAMILY_MAP["display"]["fold_into_other"])
+
+
+def squash(s):
+    """Lowercase, and drop whitespace, hyphens and underscores.
+
+    This is the fix for the variant problem: the old map matched the literal substring
+    "machine learning", so "machine-learning" (297 hits), "machinelearning" (66) and
+    "machine\nlearning" (18) all fell through to unclassified while the term they are spelt
+    differently from sat in the ml band.
+    """
+    return re.sub(r"[\s\-_]+", "", s.lower())
 
 
 def family(term):
-    t = f" {term.lower()} "
-    for name, keys in FAMILY:
-        if any(k in t for k in keys):
+    t = squash(term)
+    for name in FAMILY_MAP["order"]:
+        spec = FAMILY_MAP["families"][name]
+        if any(squash(k) == t for k in spec["exact"]):
             return name
-    return "generic" if t.strip() in {"ai", "ki"} else "other"
+        if any(squash(k) in t for k in spec["contains"]):
+            return name
+    return "other"
+
+
+def band(term):
+    """The band the CHART draws, which is the family unless the chart does not draw it yet."""
+    f = family(term)
+    return "other" if f in FOLD else f
 
 
 rows = list(csv.DictReader(SRC.open(encoding="utf-8")))
 cols = [c for c in rows[0] if c not in ("term", "total")]
+
 series, other_max = [], 0
 for c in cols:
     agg, tot = {}, 0
     for r in rows:
         n = int(r[c] or 0)
         y = int(c[:4])
-        if not n or any(g in r["term"].lower() and y < yr for g, yr in GATE.items()):
+        # Gate keys are squashed too. They were raw substrings, which is why "finjustering"
+        # was gated and "fine-tuning" was not: the same term, spelt with a hyphen, was a
+        # different string to this line.
+        if not n or any(squash(g) in squash(r["term"]) and y < yr for g, yr in GATE.items()):
             continue
-        agg[family(r["term"])] = agg.get(family(r["term"]), 0) + n
+        agg[band(r["term"])] = agg.get(band(r["term"]), 0) + n
         tot += n
     if not tot:
         continue
