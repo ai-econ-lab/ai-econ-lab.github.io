@@ -41,7 +41,18 @@ def monitor_root() -> Path:
     return root
 
 
-MONITOR_ROOT = monitor_root()
+def __getattr__(name):
+    """Resolve MONITOR_ROOT on first use, not at import.
+
+    The definition constants below live in this module too, and build.py imports ONLY those:
+    it never opens the ai-monitor tree. Resolving the checkout at import time therefore made
+    build.py refuse to run wherever that tree is absent, which is every GitHub runner --
+    the "site data refresh" job died on 19 Aug 2026 at `python3 build.py`, one day after the
+    constants moved here. A module must not demand what its importer does not use.
+    """
+    if name == "MONITOR_ROOT":
+        return monitor_root()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 # ── the frozen definition, in ONE place ──────────────────────────────────────────────
