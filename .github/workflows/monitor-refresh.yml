@@ -78,6 +78,9 @@ jobs:
       - name: Chart labels fit, and do not crowd the chart
         run: python3 scripts/check_label_lengths.py
 
+      - name: Stored short labels match the rule
+        run: python3 scripts/check_label_columns.py
+
       - name: Check every module states the unit it is computed on
         id: claims
         continue-on-error: true

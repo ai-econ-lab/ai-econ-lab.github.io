@@ -65,6 +65,9 @@ jobs:
       - name: Chart labels fit, and do not crowd the chart
         run: python3 scripts/check_label_lengths.py
 
+      - name: Stored short labels match the rule
+        run: python3 scripts/check_label_columns.py
+
       - name: Every internal link resolves
         run: python3 scripts/check_links.py
 

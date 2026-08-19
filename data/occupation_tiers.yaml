@@ -55,6 +55,7 @@ rows:
   integrator: 21
   user: 0
 - name: Medical secretaries and care administrators
+  name_short: Medical secretaries etc.
   n: 30
   builder: 0
   integrator: 0

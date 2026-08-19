@@ -37,6 +37,7 @@ top:
   is_se: false
 - name: Electrical engineers and technicians
   name_sv: Ingenjörer och tekniker inom elektroteknik
+  name_sv_short: Ingenjörer och tekniker m.m.
   share: 3.81
   ads: 3198
   is_se: false
@@ -47,6 +48,7 @@ top:
   is_se: false
 - name: Systems analysts and IT architects
   name_sv: Systemanalytiker och IT-arkitekter m.fl.
+  name_sv_short: Systemanalytiker och IT-arkitekter
   share: 3.16
   ads: 3417
   is_se: false
@@ -68,6 +70,8 @@ zero:
   is_se: false
 - name: Assistant nurses, home care, home nursing, elderly care and habilitation
   name_sv: Undersköterskor; hemtjänst; hemsjukvård; äldreboende och habilitering
+  name_short: Assistant nurses, home care etc.
+  name_sv_short: Undersköterskor; hemtjänst m.m.
   share: 0.0
   ads: 8607
   is_se: false

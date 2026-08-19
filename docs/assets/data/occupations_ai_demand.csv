@@ -1,13 +1,13 @@
-occupation,asks_for_ai_in_role_pct,advertisements,year,group
-Doctoral students,15.03,1643,2025,top
-Research assistants,11.54,1274,2025,top
-Other IT specialists,9.47,1330,2025,top
-Software and systems developers,5.46,14799,2025,top
-University lecturers,4.94,972,2025,top
-Electrical engineers and technicians,3.81,3198,2025,top
-Chemists,3.72,646,2025,top
-Systems analysts and IT architects,3.16,3417,2025,top
-Cell and molecular biologists,2.87,731,2025,top
-Registered nurses,0.0,15842,2025,zero
-Personal care assistants,0.0,14946,2025,zero
-"Assistant nurses, home care, home nursing, elderly care and habilitation",0.0,8607,2025,zero
+occupation,occupation_sv,occupation_short,asks_for_ai_in_role_pct,advertisements,year,group
+Doctoral students,Doktorander,Doctoral students,15.03,1643,2025,top
+Research assistants,Forskarassistenter m.fl.,Research assistants,11.54,1274,2025,top
+Other IT specialists,Övriga IT-specialister,Other IT specialists,9.47,1330,2025,top
+Software and systems developers,Mjukvaru- och systemutvecklare m.fl.,Software and systems developers,5.46,14799,2025,top
+University lecturers,Universitets- och högskolelektorer,University lecturers,4.94,972,2025,top
+Electrical engineers and technicians,Ingenjörer och tekniker inom elektroteknik,Electrical engineers and technicians,3.81,3198,2025,top
+Chemists,Kemister,Chemists,3.72,646,2025,top
+Systems analysts and IT architects,Systemanalytiker och IT-arkitekter m.fl.,Systems analysts and IT architects,3.16,3417,2025,top
+Cell and molecular biologists,Cell- och molekylärbiologer m.fl.,Cell and molecular biologists,2.87,731,2025,top
+Registered nurses,Grundutbildade sjuksköterskor,Registered nurses,0.0,15842,2025,zero
+Personal care assistants,Personliga assistenter,Personal care assistants,0.0,14946,2025,zero
+"Assistant nurses, home care, home nursing, elderly care and habilitation",Undersköterskor; hemtjänst; hemsjukvård; äldreboende och habilitering,"Assistant nurses, home care etc.",0.0,8607,2025,zero

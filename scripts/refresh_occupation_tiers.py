@@ -29,6 +29,7 @@ from pathlib import Path
 import yaml
 
 from monitor_root import MONITOR_ROOT
+from labels import shorten  # noqa: E402
 
 SRC = (MONITOR_ROOT
        / "data/free_cuts/tier_by_occupation.csv")          # distinct advertisements
@@ -80,10 +81,18 @@ def main():
         if r["year"] != YEAR or not r["label"]:
             continue
         n = int(r["n"])
-        entry = {"name": EN.get(r["label"], r["label"]), "n": n,
-                 "builder": round(100 * int(r["builder"]) / n),
-                 "integrator": round(100 * int(r["integrator"]) / n),
-                 "user": round(100 * int(r["user"]) / n)}
+        name = EN.get(r["label"], r["label"])
+        entry = {"name": name}
+        # Written down only when the official title is too long to print, so a name_short line
+        # here reads as "that one was shortened". See _row() in refresh_occupations.py for why
+        # a derived column is stored at all, and check_label_columns.py for what stops it
+        # drifting away from labels.shorten().
+        if shorten(name) != name:
+            entry["name_short"] = shorten(name)
+        entry.update({"n": n,
+                      "builder": round(100 * int(r["builder"]) / n),
+                      "integrator": round(100 * int(r["integrator"]) / n),
+                      "user": round(100 * int(r["user"]) / n)})
         (rows if n >= MIN_ADS else dropped).append(entry)
 
     rows.sort(key=lambda x: -x["n"])

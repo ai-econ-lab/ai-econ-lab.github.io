@@ -2783,16 +2783,25 @@ def emit_data(out):
                              f"{c['source']} · AI-Econ Lab"), encoding="utf-8")
     with (d / "occupation_tiers.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
-        w.writerow(["occupation", "ai_ads", "builds_pct", "integrates_pct", "uses_pct", "year"])
+        # occupation is the official title, always in full: a data file has no width to run
+        # out of, and a download that quietly abbreviated its key would be worse than useless
+        # for joining. occupation_short is what the charts print, given for every row rather
+        # than only the long ones, so the column can be used without a fallback.
+        w.writerow(["occupation", "occupation_short", "ai_ads", "builds_pct", "integrates_pct",
+                    "uses_pct", "year"])
         for r in OCCTIER["rows"]:
-            w.writerow([r["name"], r["n"], r["builder"], r["integrator"], r["user"],
-                        OCCTIER["meta"]["year"]])
+            w.writerow([r["name"], shorten(str(r["name"])), r["n"], r["builder"], r["integrator"],
+                        r["user"], OCCTIER["meta"]["year"]])
     with (d / "occupations_ai_demand.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
-        w.writerow(["occupation", "asks_for_ai_in_role_pct", "advertisements", "year", "group"])
+        # Full official title, the Swedish title the employment service uses, and the display
+        # label the charts print. See the tiers export above for why the full title stays.
+        w.writerow(["occupation", "occupation_sv", "occupation_short", "asks_for_ai_in_role_pct",
+                    "advertisements", "year", "group"])
         for grp in ("top", "zero"):
             for r in OCCUP[grp]:
-                w.writerow([r["name"], r["share"], r["ads"], OCCUP["meta"]["year"], grp])
+                w.writerow([r["name"], r.get("name_sv", ""), shorten(str(r["name"])),
+                            r["share"], r["ads"], OCCUP["meta"]["year"], grp])
     _occx = int(max(r["share"] for r in OCCUP["top"])) + 1
     (d / "occupations_ai_demand.svg").write_text(
         chart_standalone(barplot(OCCUP["top"] + OCCUP["zero"], OCCUP["meta"]["national"],

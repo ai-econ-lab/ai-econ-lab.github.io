@@ -1,11 +1,11 @@
-occupation,ai_ads,builds_pct,integrates_pct,uses_pct,year
-Software and systems developers,756,46,26,4,2025
-Doctoral students,230,80,10,0,2025
-Research assistants,130,68,17,2,2025
-Other IT specialists,118,63,25,1,2025
-Electrical engineers and technicians,115,48,22,2,2025
-Systems analysts and IT architects,96,55,31,1,2025
-University lecturers,46,72,11,0,2025
-Electrical engineers (graduate),34,32,18,0,2025
-Mechanical engineers,33,48,21,0,2025
-Medical secretaries and care administrators,30,0,0,0,2025
+occupation,occupation_short,ai_ads,builds_pct,integrates_pct,uses_pct,year
+Software and systems developers,Software and systems developers,756,46,26,4,2025
+Doctoral students,Doctoral students,230,80,10,0,2025
+Research assistants,Research assistants,130,68,17,2,2025
+Other IT specialists,Other IT specialists,118,63,25,1,2025
+Electrical engineers and technicians,Electrical engineers and technicians,115,48,22,2,2025
+Systems analysts and IT architects,Systems analysts and IT architects,96,55,31,1,2025
+University lecturers,University lecturers,46,72,11,0,2025
+Electrical engineers (graduate),Electrical engineers (graduate),34,32,18,0,2025
+Mechanical engineers,Mechanical engineers,33,48,21,0,2025
+Medical secretaries and care administrators,Medical secretaries etc.,30,0,0,0,2025
