@@ -4,11 +4,8 @@
   "lfs_seen": 2025,
   "amu_seen": 2024,
   "fred_rps_seen": "2026-04-01",
-  "capability_metr_checked": "2026-08-17",
-  "capability_arc_checked": "2026-08-17",
+  "capability_metr_checked": "2026-08-19",
+  "capability_arc_checked": "2026-08-19",
   "capability_metr_id": "data:benchmarks=METR-Horizon-v1.0,METR-Horizon-v1.1 long_tasks=2ce7f1e0c4f8,799cc9c4b448 swaa=3d2ab4f0662a,f6cc84052e2a",
-  "capability_arc_id": "page:e5d575d07a0751c0",
-  "capability_arc_pending_since_asof": "2026-07-01",
-  "capability_arc_pending_detected": "2026-08-17",
-  "capability_arc_pending_id": "page:e16bed21ecb18e5c"
+  "capability_arc_id": "page:e16bed21ecb18e5c"
 }
