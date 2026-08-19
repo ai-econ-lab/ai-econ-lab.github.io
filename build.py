@@ -1488,10 +1488,15 @@ def vocabulary_svg(v):
     for i, r in enumerate(s):
         if r["p"].isdigit() and int(r["p"]) % 4 == 0:
             p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-8}" text-anchor="middle">{r["p"]}</text>')
+    # Five families since 19 Aug 2026. autonomy was the ENTIRE unplotted residual -- true
+    # "other" is 0.0% in every period -- so the caption's "up to 17% fall outside these four
+    # families" was a sentence about one named thing the chart declined to name. Its shape is a
+    # finding: 17.2% of term hits in 2016, 0.9% by 2026-Q2, displaced by ML and then generative.
     lines = (("ml", "var(--c1)", "machine learning"),
              ("early", "var(--c2)", "early terms"),
              ("genai", "var(--c3)", "generative"),
-             ("generic", "var(--c4)", "\u0022AI\u0022 itself"))
+             ("generic", "var(--c4)", "\u0022AI\u0022 itself"),
+             ("autonomy", "var(--warn)", "robotics & autonomy"))
     for key, colour, _ in lines:
         pts = " ".join(f'{X(i):.1f},{Y(r[key]):.1f}' for i, r in enumerate(s))
         p.append(f'<polyline points="{pts}" fill="none" stroke="{colour}" stroke-width="2.2"/>')
@@ -1524,8 +1529,8 @@ def vocabulary_block():
             'follows it.</p>\n'
             f'<div class="dotwrap">{vocabulary_svg(VOCAB)}</div>\n'
             '<p class="psub" style="margin-top:6px">Shares of '
-            f'{m["total_term_hits"]:,} term matches. Up to {m["other_max"]:.0f}% of matches in a '
-            'period fall outside these four families and are not plotted. For display, product '
+            f'{m["total_term_hits"]:,} term matches, in five families that between them account '
+            'for every match. For display, product '
             'names and words with an older everyday sense are counted only from the year they '
             'acquired their AI meaning, so the chart does not show a 2006 ad matching a model '
             'released in 2023; the published series is frozen and unchanged.</p>\n'
