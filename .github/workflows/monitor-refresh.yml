@@ -56,6 +56,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/check_sources.py
 
+      # Same step, and the same reason, as site-refresh.yml in the ai-monitor repo: build.py
+      # typesets the two one-pager PDFs through LaTeX, and without tectonic it keeps
+      # yesterday's sheets and carries on. That failure is invisible -- the site refreshes
+      # while the downloadable sheet quietly stops moving -- so the two workflows that both
+      # run build.py must both have it.
+      - name: Install tectonic (the one-pager sheets are typeset, not templated)
+        run: |
+          curl -fsSL https://drop-sh.fullyjustified.net | sh
+          sudo mv ./tectonic /usr/local/bin/tectonic
+          tectonic --version
+
       - name: Rebuild site
         run: python build.py
 
