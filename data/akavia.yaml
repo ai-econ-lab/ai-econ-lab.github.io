@@ -9,7 +9,7 @@ meta:
   caveat: >-
     Figures describe Akavia's members in six professions, not the Swedish labour market as a whole,
     and the sample is not an unrestricted random sample of the population. The question wording also
-    changed twice over the period, so the trend is not a clean time series: part of any change
+    changed three times over the period, so the trend is not a clean time series: part of any change
     reflects the wording rather than behaviour, and the size of that part is not knowable from these
     data.
   caveat_method: >-
@@ -55,6 +55,7 @@ trend:
   breaks_after:
   - Sep 2023
   - May 2024
+  - May 2025
 by_profession:
 - name: Communication professionals
   adoption: 82

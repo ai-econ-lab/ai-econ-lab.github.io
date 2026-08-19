@@ -2710,15 +2710,30 @@ def emit_data(out):
             for g in ("all", "women", "men"):
                 w.writerow([c["label"], g, c[g]["lo"], c[g]["hi"], WORKCOND["meta"]["daioe_version"], WORKCOND["meta"]["wc_year"]])
     with (d / "akavia_ai_use.csv").open("w", newline="", encoding="utf-8") as f:
+        # WAVE LABELS ARE DERIVED, NEVER TYPED. This header read pct_using_ai_2025 /
+        # pct_using_ai_2023 while the values under it had been moved to May 2026 and May 2024,
+        # so the published download asserted a 2025-vs-2023 comparison -- which is precisely the
+        # cross-wording-break comparison the page's own prose disavows. The bars and the
+        # comparator move whenever a wave lands; the header did not, because it was a string.
+        _ak = AKAVIA["trend"]
+        _now, _prev = _ak["clean_pair"]["to"], _ak["clean_pair"]["from"]
+        _slug = lambda lab: lab.lower().replace(" ", "_")
         w = _csv.writer(f)
-        w.writerow(["cut", "group", "pct_using_ai_2025", "pct_using_ai_2023",
-                    "ci_low_2025", "ci_high_2025", "respondents_2025", "source"])
+        # comparable_with_previous marks the wording breaks the trend crosses. Without it the
+        # five rows read as one series, which is the misreading the caveat exists to prevent
+        # and which a downloaded file carries no caveat to prevent.
+        w.writerow(["cut", "group", f"pct_using_ai_{_slug(_now)}", f"pct_using_ai_{_slug(_prev)}",
+                    "ci_low", "ci_high", "respondents", "comparable_with_previous", "source"])
         for cut, key in (("profession", "by_profession"), ("sector", "by_sector")):
             for r in AKAVIA[key]:
                 w.writerow([cut, r["name"], r["adoption"], r["prev"], r["lo"], r["hi"],
-                            r["n"], AKAVIA["meta"]["source"]])
-        for lab, v in zip(AKAVIA["trend"]["labels"], AKAVIA["trend"]["values"]):
-            w.writerow(["all", lab, v, "", "", "", "", AKAVIA["meta"]["source"]])
+                            r["n"], "yes", AKAVIA["meta"]["source"]])
+        breaks = set(_ak.get("breaks_after") or [])
+        prev_lab = None
+        for lab, v in zip(_ak["labels"], _ak["values"]):
+            cmp_ = "" if prev_lab is None else ("no" if prev_lab in breaks else "yes")
+            w.writerow(["all", lab, v, "", "", "", "", cmp_, AKAVIA["meta"]["source"]])
+            prev_lab = lab
     _akx = 10 * (max(r["adoption"] for r in AKAVIA["by_profession"]) // 10 + 1)
     (d / "akavia_ai_use.svg").write_text(
         chart_standalone(barplot(AKAVIA["by_profession"], 0, _akx, 0, "adoption", ".0f", what="professions")),

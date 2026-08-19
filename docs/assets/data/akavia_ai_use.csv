@@ -1,15 +1,15 @@
-cut,group,pct_using_ai_2025,pct_using_ai_2023,ci_low_2025,ci_high_2025,respondents_2025,source
-profession,Communication professionals,82,54,71,93,80,Akavia member web panel
-profession,IT professionals,79,43,74,84,357,Akavia member web panel
-profession,HR specialists,79,32,71,86,165,Akavia member web panel
-profession,Business professionals and economists,72,27,69,75,1202,Akavia member web panel
-profession,Social scientists,59,23,54,63,557,Akavia member web panel
-profession,Lawyers,57,18,52,61,601,Akavia member web panel
-sector,Private,81,38,78,83,1427,Akavia member web panel
-sector,Local and regional,62,22,57,68,405,Akavia member web panel
-sector,Central government,48,14,44,51,1130,Akavia member web panel
-all,May 2023,13,,,,,Akavia member web panel
-all,Sep 2023,15,,,,,Akavia member web panel
-all,May 2024,28,,,,,Akavia member web panel
-all,May 2025,48,,,,,Akavia member web panel
-all,May 2026,68,,,,,Akavia member web panel
+cut,group,pct_using_ai_may_2026,pct_using_ai_may_2024,ci_low,ci_high,respondents,comparable_with_previous,source
+profession,Communication professionals,82,54,71,93,80,yes,Akavia member web panel
+profession,IT professionals,79,43,74,84,357,yes,Akavia member web panel
+profession,HR specialists,79,32,71,86,165,yes,Akavia member web panel
+profession,Business professionals and economists,72,27,69,75,1202,yes,Akavia member web panel
+profession,Social scientists,59,23,54,63,557,yes,Akavia member web panel
+profession,Lawyers,57,18,52,61,601,yes,Akavia member web panel
+sector,Private,81,38,78,83,1427,yes,Akavia member web panel
+sector,Local and regional,62,22,57,68,405,yes,Akavia member web panel
+sector,Central government,48,14,44,51,1130,yes,Akavia member web panel
+all,May 2023,13,,,,,,Akavia member web panel
+all,Sep 2023,15,,,,,yes,Akavia member web panel
+all,May 2024,28,,,,,no,Akavia member web panel
+all,May 2025,48,,,,,no,Akavia member web panel
+all,May 2026,68,,,,,no,Akavia member web panel
