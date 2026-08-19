@@ -61,5 +61,5 @@ rows:
   user: 0
 caveat: 'Occupations with at least 25 distinct AI-skill advertisements in 2025; repeat postings of
   the same advertisement are counted once. Rows do not sum to 100: the remainder is advertisements
-  the classifier places in the AI-literacy grey zone or judges not to be AI demand at all, which is
-  how medical secretaries appear at zero on all three tiers despite passing the lexical measure.'
+  the classifier places in the AI-literacy grey zone or judges not to be AI demand at all, which
+  is how medical secretaries appear at zero on all three tiers despite passing the lexical measure.'
