@@ -73,6 +73,11 @@ jobs:
       # After the rebuild, because it reads the BUILT page: that is what a reader sees and
       # what the Brief inherits. Before the commit, so a page that claims a counting unit it
       # is not computed on never reaches the live site.
+      # Labels are the one thing a build cannot get wrong quietly: a clipped or crowded chart
+      # is valid HTML and a clean build. See scripts/check_label_lengths.py.
+      - name: Chart labels fit, and do not crowd the chart
+        run: python3 scripts/check_label_lengths.py
+
       - name: Check every module states the unit it is computed on
         id: claims
         continue-on-error: true

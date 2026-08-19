@@ -54,6 +54,9 @@ from pathlib import Path
 
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from labels import shorten  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 OUT = ROOT / "docs" / "aiel-monitor-onepager.pdf"
@@ -242,9 +245,14 @@ def card(question, viz, reading, vintage, colw, grp="A", srclab=""):
 
 # ---- page two -----------------------------------------------------------------------------
 
-def rank_bars(rows, key, w=23, n=6):
+def rank_bars(rows, key, w=23, n=6, lang="en"):
     """Ranked shares. One hue: these are all the same entity (Swedish occupations), so the
-    ordering carries the message and a categorical palette would only add noise."""
+    ordering carries the message and a categorical palette would only add noise.
+
+    Labels are shortened (scripts/labels.py). A sheet has no hover to fall back on, so the
+    trade is real here in a way it is not on the site; it is made anyway, because the
+    alternative on a 23mm bar column is a title that wraps across three lines and pushes the
+    layout off its two pages. The full titles are on the site and in the CSV the footer names."""
     rows = rows[:n]
     top = max(r["share"] for r in rows) * 1.05
     bw, gap = 3.4, 1.5
@@ -256,18 +264,18 @@ def rank_bars(rows, key, w=23, n=6):
               f"\\node[anchor=west,font=\\scriptsize\\bfseries,text=ink] at ({L+1.4:.2f},{y+bw/2:.2f}) "
               f"{{{r['share']:.1f}\\%}};\n"
               f"\\node[anchor=east,font=\\tiny,text=ink] at (-1.4,{y+bw/2:.2f}) "
-              f"{{{tex(r[key])}}};\n")
+              f"{{{tex(shorten(str(r[key]), lang))}}};\n")
     return s + "\\end{tikzpicture}"
 
 
-def zero_rows(rows, key, C, n=3):
+def zero_rows(rows, key, C, n=3, lang="en"):
     """The occupations that ask for AI in NONE of their advertisements. Deliberately NOT a
     chart: a bar of length zero communicates nothing, and the point is the advertisement
     volume sitting behind the zero."""
     out = []
     for r in rows[:n]:
         out.append(f"{{\\scriptsize\\bfseries\\textcolor{{ink}}{{0.0\\%}}}}~"
-                   f"{{\\scriptsize {tex(r[key])}}}~"
+                   f"{{\\scriptsize {tex(shorten(str(r[key]), lang))}}}~"
                    f"{{\\tiny\\textcolor{{soft}}{{({r['ads']:,} {C['ads_word']})}}}}")
     return "\\\\[1.3mm]\n".join(out)
 
@@ -622,11 +630,11 @@ def main():
 {{\scriptsize\textcolor{{soft}}{{{C['p2_sub']}}}}}\\[3mm]
 \noindent\begin{{minipage}}[t]{{0.50\textwidth}}
   {{\footnotesize\bfseries\textcolor{{ink}}{{{C['p2_top']}}}}}\\[3mm]
-  \hspace*{{26mm}}{rank_bars(occ['top'], namekey)}
+  \hspace*{{26mm}}{rank_bars(occ['top'], namekey, lang=lang)}
 \end{{minipage}}\hfill
 \begin{{minipage}}[t]{{0.44\textwidth}}
   {{\footnotesize\bfseries\textcolor{{ink}}{{{C['p2_zero']}}}}}\\[3mm]
-  {zero_rows(occ['zero'], namekey, C)}\\[3mm]
+  {zero_rows(occ['zero'], namekey, C, lang=lang)}\\[3mm]
   {{\scriptsize\textcolor{{soft}}{{{C['p2_zero_note']}}}}}
 \end{{minipage}}\\[3.5mm]
 {{\tiny\textcolor{{soft}}{{{C['se_src']}}}}}\\[3mm]

@@ -21,6 +21,7 @@ def load(name): return yaml.safe_load((DATA / name).read_text(encoding="utf-8"))
 # the citable record, this is only the label the figures wear.
 sys.path.insert(0, str(ROOT / "scripts"))
 from monitor_root import DEF_VERSION, DEF_FP, DEF_LABEL  # noqa: E402
+from labels import MAX_LABEL_CHARS, shorten  # noqa: E402
 
 # ── data freshness ───────────────────────────────────────────────────────────
 # The masthead strip carries an UPDATED stamp next to a "● LIVE" badge, so it has
@@ -858,20 +859,28 @@ def dotplot(cc):
     p.append(f'<line class="meanline" x1="{mx:.1f}" y1="{top-1}" x2="{mx:.1f}" y2="{top+n*rowh}"/>')
     p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-4}" text-anchor="middle">'
              f'{cc["meta"]["n_countries"]}-country mean</text>')
+    # This gutter is a fixed 128px and the canvas does not grow with it, so a long label here
+    # is CLIPPED, silently, the way barplot's used to be. Country names have never come close,
+    # but "has never happened" is not a guarantee: shortening to what the gutter can actually
+    # show turns a future clip into a marked abbreviation. ~6.2px per character at 10px mono.
+    dot_limit = int((128 - 10) / 6.2)
     for i, r in enumerate(rows):
         y = top + i * rowh + rowh * 0.62
         se = " se" if r["is_se"] else ""
         vx = X(r["exposure"])
-        nm = h(r["name"]) + (f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else "")
+        full = str(r["name"])
+        disp = shorten(full, limit=dot_limit)
+        nm = h(disp) + (f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else "")
+        tip = f"<title>{h(full)}</title>" if disp != full else ""
         p.append(f'<line class="rowguide" x1="{x0}" y1="{y-3:.1f}" x2="{x1}" y2="{y-3:.1f}"/>')
-        p.append(f'<text class="dname{se}" x="128" y="{y:.1f}" text-anchor="end">{nm}</text>')
+        p.append(f'<text class="dname{se}" x="128" y="{y:.1f}" text-anchor="end">{tip}{nm}</text>')
         p.append(f'<circle class="dot{se}" cx="{vx:.1f}" cy="{y-3:.1f}" r="{4.4 if r["is_se"] else 3.1}"/>')
         p.append(f'<text class="dval{se}" x="600" y="{y:.1f}" text-anchor="end">{r["exposure"]:.2f}</text>')
     p.append("</svg>")
     return "".join(p)
 
 def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countries",
-            mean_label="EU27", cmp_key=None, cmp_label="", series_label=""):
+            mean_label="EU27", cmp_key=None, cmp_label="", series_label="", lang="en"):
     """Ranked horizontal bar chart (share; meaningful zero). Bar = latest year; a muted delta
     shows the year-on-year change from the previous wave (when present). Sweden highlighted.
 
@@ -901,11 +910,25 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
     area exactly 216px and the right-hand columns exactly where they were for every existing
     chart (all of which sit under the old 300px cap and are therefore byte-identical), while a
     long label widens the viewBox rather than losing characters. A wider viewBox scales down
-    inside the same container, which is a visible, self-announcing trade; clipping is not."""
+    inside the same container, which is a visible, self-announcing trade; clipping is not.
+
+    THAT TRADE TURNED OUT TO BE A BAD ONE ON A PHONE, which is where most readers are. The
+    72-character nursing title pushed the viewBox to 796, so the gutter took 57 per cent of
+    the width; scaled into a portrait screen the reader got a column of titles and a sliver of
+    chart, all of it too small to read. Neither clipping nor growing was the answer: the title
+    was simply too long to print in full beside a bar.
+
+    Labels are shortened for display now (scripts/labels.py, the way a statistical agency
+    does it: keep the head, drop the enumeration, mark it "etc." or "m.m."), and the full
+    official title goes into a <title> child of the text element, so hover and assistive
+    technology still read it. The CSV exports keep the full title too: a data file has no
+    width to run out of. The uncapped gutter stays as the backstop for anything the shortener
+    cannot help, and with a 36-character cap the canvas is back to a constant 640."""
     rows = data; n = len(rows); hy = int(hy)
     rowh, top, bot = 15, 18, 34
     H = top + n * rowh + bot
-    longest = max((len(str(r["name"])) for r in rows), default=0)
+    short = {str(r["name"]): shorten(str(r["name"]), lang) for r in rows}
+    longest = max((len(v) for v in short.values()), default=0)
     gutter = max(128, int(longest * 10 * 0.62) + 10)
     W = 640 + max(0, gutter - 300)      # grow the canvas, never the clip
     x0, x1 = gutter + 12, W - 112
@@ -936,8 +959,15 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
     for i, r in enumerate(rows):
         y = top + i * rowh; se = " se" if r["is_se"] else ""
         v = r[vkey]
-        nm = h(r["name"]) + (f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else "")
-        p.append(f'<text class="dname{se}" x="{gutter}" y="{y+rowh*0.72:.1f}" text-anchor="end">{nm}</text>')
+        full = str(r["name"])
+        suffix = f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else ""
+        nm = h(short[full]) + suffix
+        # The official title, in full, for hover and for assistive technology. Only when the
+        # display label actually differs -- an identical <title> on every row is noise that
+        # screen readers read out twice.
+        tip = f"<title>{h(full)}</title>" if short[full] != full else ""
+        p.append(f'<text class="dname{se}" x="{gutter}" y="{y+rowh*0.72:.1f}" '
+                 f'text-anchor="end">{tip}{nm}</text>')
         if cmp_key and r.get(cmp_key) is not None:
             cv = r[cmp_key]
             p.append(f'<rect class="barcmp" x="{x0}" y="{y+rowh*0.16:.1f}" '
@@ -1527,8 +1557,17 @@ def occupation_tiers_block():
     """The builder/integrator/user split cut by occupation. A compact table rather than a chart:
     three shares per row that deliberately do not sum to 100, which a stacked bar would hide."""
     t = OCCTIER; m = t["meta"]
+    # Same shortening as the charts, and for the same reader: five columns and a 43-character
+    # title in the first one leaves the numbers nothing to sit in on a phone. A cell can wrap
+    # where an SVG label cannot, so this is a smaller problem than the chart's -- but it is
+    # the same problem, and a title attribute keeps the official label one hover away.
+    def _cell(name):
+        short = shorten(name)
+        return (f'<td title="{h(name)}">{h(short)}</td>' if short != name
+                else f'<td>{h(name)}</td>')
+
     body = "".join(
-        f'<tr><td>{h(r["name"])}</td><td>{r["n"]}</td><td>{r["builder"]}%</td>'
+        f'<tr>{_cell(str(r["name"]))}<td>{r["n"]}</td><td>{r["builder"]}%</td>'
         f'<td>{r["integrator"]}%</td><td>{r["user"]}%</td></tr>' for r in t["rows"])
     return f"""<div class="grouphdr" id="occupation-tiers" style="margin-top:30px">Who is the AI for, by occupation
       <span class="preview-flag">◔ Classifier · {h(str(m['year']))}</span></div>
@@ -2411,10 +2450,14 @@ def brief(lang="en"):
         rows_b = ([{**r, "name": r.get("name_sv", r["name"])} for r in BARRIERS["rows"]]
                   if sv else BARRIERS["rows"])
         # Sweden against the EU on the same rows, because the finding now leads with the EU.
+        # lang follows the sheet, so a shortened Swedish label is marked "m.m." and not "etc.".
+        # The same omission put English bar labels on the Swedish sheet once already; see
+        # build_onepager.py::barrier_bars.
         th_chart = barplot(rows_b, 0,
                            int(max(max(r["share"], r["eu"]) for r in BARRIERS["rows"])) + 1, 0,
                            "share", ".1f", what="reasons", cmp_key="eu",
-                           series_label=L("Sweden","Sverige"), cmp_label="EU")
+                           series_label=L("Sweden","Sverige"), cmp_label="EU",
+                           lang="sv" if sv else "en")
     elif theme == "adoption":
         th_chart = barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f", what="firm-size classes")
     else:

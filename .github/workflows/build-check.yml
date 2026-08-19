@@ -60,6 +60,11 @@ jobs:
           done
           echo "both sheets regenerated"
 
+      # Labels are the one thing a build cannot get wrong quietly: a clipped or crowded chart
+      # is valid HTML and a clean build. See scripts/check_label_lengths.py.
+      - name: Chart labels fit, and do not crowd the chart
+        run: python3 scripts/check_label_lengths.py
+
       - name: Every internal link resolves
         run: python3 scripts/check_links.py
 
@@ -69,6 +74,9 @@ jobs:
       # The refresh scripts are not run here (they need the ai-monitor checkout and the
       # network), but they must at least still import: an ImportError, a syntax error or a
       # module-level side effect in one of them otherwise waits for its schedule to be found.
+      - name: Label shortener behaves
+        run: python3 scripts/test_labels.py
+
       - name: Every refresh script imports
         env:
           AI_MONITOR_ROOT: ${{ github.workspace }}
