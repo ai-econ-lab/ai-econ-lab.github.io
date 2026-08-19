@@ -5,8 +5,8 @@ asof: "19 Aug 2026"
 asof_iso: 2026-08-19
 window_days: 60
 n: 32592
-names_pct: 1.375
-floor_pct: 0.681
-names_ci: [1.254, 1.507]
-floor_ci: [0.597, 0.776]
-generated_at: "2026-08-19T07:51:24+00:00"
+names_pct: 1.35
+floor_pct: 0.675
+names_ci: [1.23, 1.481]
+floor_ci: [0.592, 0.77]
+generated_at: "2026-08-19T11:41:38+00:00"

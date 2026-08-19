@@ -9,7 +9,7 @@ meta:
   ml_peak: 76.74
   other_max: 0
   total_term_hits: 59346
-  source: JobTech historical job ads (Arbetsförmedlingen), CC0, frozen v1.1 term list, distinct advertisements
+  source: JobTech historical job ads (Arbetsförmedlingen), CC0, frozen v1.4 term list, distinct advertisements
 series:
   - {p: '2006', early: 17.39, ml: 65.22, generic: 16.3, genai: 1.09, autonomy: 0, other: 0, n: 92}
   - {p: '2007', early: 22.45, ml: 64.29, generic: 12.24, genai: 0, autonomy: 1.02, other: 0, n: 98}

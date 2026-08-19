@@ -63,8 +63,8 @@ def __getattr__(name):
 # occupations.yaml, the one-pager's source line and refresh_occupations.py still said v1.3.
 # So the same defect recurred at the next freeze, one layer out. It lives here now, where both
 # build.py and the refresh scripts can import it.
-DEF_VERSION = "v1.4"
-DEF_FP = "0bebeebaf6ffea26"
+DEF_VERSION = "v1.5"
+DEF_FP = "96b1f3f8caa38319"
 DEF_LABEL = f"frozen {DEF_VERSION} term list"
 
 

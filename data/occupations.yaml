@@ -2,7 +2,7 @@
 meta:
   year: 2025
   national: 0.55
-  source: JobTech / Platsbanken job ads (CC0), frozen v1.4 term list, distinct advertisements
+  source: JobTech / Platsbanken job ads (CC0), frozen v1.5 term list, distinct advertisements
   measure: share of the occupation's advertisements that ask for AI skills in the role itself (the
     strict floor)
   min_ads: 400
@@ -12,7 +12,7 @@ lede: The national figure is an average over a very uneven distribution. In the 
 top:
 - name: Doctoral students
   name_sv: Doktorander
-  share: 15.03
+  share: 14.97
   ads: 1643
   is_se: false
 - name: Research assistants
@@ -27,7 +27,7 @@ top:
   is_se: false
 - name: Software and systems developers
   name_sv: Mjukvaru- och systemutvecklare m.fl.
-  share: 5.46
+  share: 5.44
   ads: 14799
   is_se: false
 - name: University lecturers

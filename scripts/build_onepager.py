@@ -58,6 +58,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from labels import shorten  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+# The frozen definition lives in ONE place. Two source lines here, one English and one
+# Swedish, each carried their own 'v1.4' literal and were still on v1.3 when the site had
+# reached v1.4. Importing it means a re-freeze cannot leave the one-pager behind again.
+from monitor_root import DEF_VERSION  # noqa: E402
 DATA = ROOT / "data"
 OUT = ROOT / "docs" / "aiel-monitor-onepager.pdf"
 # Resolved, never hardcoded. This was "/opt/homebrew/bin/tectonic", one Mac's Homebrew path,
@@ -349,7 +353,7 @@ COPY = {
   se_hd="SWEDEN IN DEPTH: HOW OFTEN DO JOB ADS ASK FOR AI?",
   se_sub="Every advertisement on the public job board",
   src_label="Source: ",
-  se_src="JobTech / Platsbanken job ads (CC0), frozen v1.4 term list, distinct advertisements",
+  se_src=f"JobTech / Platsbanken job ads (CC0), frozen {DEF_VERSION} term list, distinct advertisements",
   band_hi="mention an AI skill", band_lo="ask for it in the job itself",
   se_body=(r"A \textbf{{range}}, not a single number: the upper line counts an advertisement that "
            r"mentions an AI skill anywhere, the lower one only when the skill is asked of the "
@@ -445,7 +449,7 @@ COPY = {
   se_hd="SVERIGE PÅ DJUPET: HUR OFTA EFTERFRÅGAR ANNONSERNA AI?",
   se_sub="Baserat på samtliga annonser på Platsbanken",
   src_label="Källa: ",
-  se_src="JobTech / Platsbanken (CC0), fryst termlista v1.4, distinkta annonser",
+  se_src=f"JobTech / Platsbanken (CC0), fryst termlista {DEF_VERSION}, distinkta annonser",
   band_hi="nämner en AI-färdighet", band_lo="efterfrågar den i själva jobbet",
   se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: den övre linjen räknar en annons som "
            r"nämner en AI-färdighet någonstans, den nedre bara när färdigheten efterfrågas av den "
