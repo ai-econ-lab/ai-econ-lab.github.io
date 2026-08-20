@@ -3,33 +3,33 @@ meta:
   first: 2006
   last: 2026-Q2
   n_periods: 22
-  early_first: 17.39
-  early_last: 0.6
-  genai_last: 34.91
-  ml_peak: 76.74
-  other_max: 0
-  total_term_hits: 59346
-  source: JobTech historical job ads (Arbetsförmedlingen), CC0, frozen v1.4 term list, distinct advertisements
+  early_first: 21.13
+  early_last: 0.59
+  genai_last: 35.55
+  ml_peak: 73.51
+  other_max: 1.2
+  total_term_hits: 58823
+  source: JobTech historical job ads (Arbetsförmedlingen), CC0, frozen v1.5 term list, distinct advertisements
 series:
-  - {p: '2006', early: 17.39, ml: 65.22, generic: 16.3, genai: 1.09, autonomy: 0, other: 0, n: 92}
-  - {p: '2007', early: 22.45, ml: 64.29, generic: 12.24, genai: 0, autonomy: 1.02, other: 0, n: 98}
-  - {p: '2008', early: 22.55, ml: 60.78, generic: 13.73, genai: 0, autonomy: 2.94, other: 0, n: 102}
-  - {p: '2009', early: 13.91, ml: 76.52, generic: 6.09, genai: 0, autonomy: 3.48, other: 0, n: 115}
-  - {p: '2010', early: 12.89, ml: 72.16, generic: 11.86, genai: 0, autonomy: 3.09, other: 0, n: 194}
-  - {p: '2011', early: 13.66, ml: 66.77, generic: 8.07, genai: 0, autonomy: 11.49, other: 0, n: 322}
-  - {p: '2012', early: 15.07, ml: 72.17, generic: 8.12, genai: 0, autonomy: 4.64, other: 0, n: 345}
-  - {p: '2013', early: 12.21, ml: 76.74, generic: 6.69, genai: 0, autonomy: 4.36, other: 0, n: 344}
-  - {p: '2014', early: 12.33, ml: 73.78, generic: 6.85, genai: 0, autonomy: 7.05, other: 0, n: 511}
-  - {p: '2015', early: 11.52, ml: 66.8, generic: 7.41, genai: 0, autonomy: 14.27, other: 0, n: 729}
-  - {p: '2016', early: 8.33, ml: 66.2, generic: 8.24, genai: 0, autonomy: 17.22, other: 0, n: 1225}
-  - {p: '2017', early: 6.44, ml: 72.08, generic: 11.71, genai: 0, autonomy: 9.76, other: 0, n: 2049}
-  - {p: '2018', early: 3.57, ml: 71.52, generic: 19.5, genai: 0.03, autonomy: 5.38, other: 0, n: 3420}
-  - {p: '2019', early: 3.72, ml: 70.63, generic: 20.46, genai: 0.08, autonomy: 5.11, other: 0, n: 4995}
-  - {p: '2020', early: 2.69, ml: 72.5, generic: 19.63, genai: 1.14, autonomy: 4.04, other: 0, n: 4208}
-  - {p: '2021', early: 2.26, ml: 72.92, generic: 19.77, genai: 0.22, autonomy: 4.84, other: 0, n: 5579}
-  - {p: '2022', early: 1.77, ml: 71.91, generic: 18.17, genai: 1.52, autonomy: 6.63, other: 0, n: 7783}
-  - {p: '2023', early: 1.25, ml: 69.03, generic: 18.21, genai: 5.5, autonomy: 6.01, other: 0, n: 5761}
-  - {p: '2024', early: 0.78, ml: 67.71, generic: 15.33, genai: 12.94, autonomy: 3.24, other: 0, n: 7188}
-  - {p: '2025', early: 1.16, ml: 60.62, generic: 14.03, genai: 21.87, autonomy: 2.32, other: 0, n: 8354}
-  - {p: '2026-Q1', early: 0.83, ml: 49.37, generic: 16.29, genai: 32.69, autonomy: 0.83, other: 0, n: 2787}
-  - {p: '2026-Q2', early: 0.6, ml: 48.74, generic: 14.88, genai: 34.91, autonomy: 0.86, other: 0, n: 3145}
+  - {p: '2006', early: 21.13, ml: 56.34, generic: 21.13, genai: 1.41, autonomy: 0, other: 0, n: 71}
+  - {p: '2007', early: 27.96, ml: 54.84, generic: 15.05, genai: 0, autonomy: 1.08, other: 1.08, n: 93}
+  - {p: '2008', early: 25.93, ml: 53.09, generic: 16.05, genai: 0, autonomy: 3.7, other: 1.23, n: 81}
+  - {p: '2009', early: 17.78, ml: 68.89, generic: 8.89, genai: 0, autonomy: 4.44, other: 0, n: 90}
+  - {p: '2010', early: 11.38, ml: 72.46, generic: 11.98, genai: 0, autonomy: 4.19, other: 0, n: 167}
+  - {p: '2011', early: 14.87, ml: 62.83, generic: 9.67, genai: 0, autonomy: 12.64, other: 0, n: 269}
+  - {p: '2012', early: 17.35, ml: 65.99, generic: 11.56, genai: 0, autonomy: 5.1, other: 0, n: 294}
+  - {p: '2013', early: 14.24, ml: 73.51, generic: 7.62, genai: 0, autonomy: 4.64, other: 0, n: 302}
+  - {p: '2014', early: 14.35, ml: 69.91, generic: 7.87, genai: 0, autonomy: 7.64, other: 0.23, n: 432}
+  - {p: '2015', early: 12.09, ml: 64.33, generic: 7.91, genai: 0, autonomy: 15.67, other: 0, n: 670}
+  - {p: '2016', early: 8.67, ml: 64.71, generic: 8.25, genai: 0, autonomy: 18.28, other: 0.09, n: 1176}
+  - {p: '2017', early: 6.56, ml: 70.04, generic: 12.67, genai: 0.1, autonomy: 10.43, other: 0.2, n: 2013}
+  - {p: '2018', early: 3.64, ml: 71.05, generic: 19.6, genai: 0.03, autonomy: 5.59, other: 0.09, n: 3271}
+  - {p: '2019', early: 3.4, ml: 69.87, generic: 21.45, genai: 0.1, autonomy: 5.09, other: 0.08, n: 4908}
+  - {p: '2020', early: 2.9, ml: 72.03, generic: 19.75, genai: 1.03, autonomy: 4.29, other: 0, n: 4269}
+  - {p: '2021', early: 2.42, ml: 72.25, generic: 20.11, genai: 0.14, autonomy: 5.05, other: 0.02, n: 5579}
+  - {p: '2022', early: 1.89, ml: 71.6, generic: 18.24, genai: 1.57, autonomy: 6.64, other: 0.06, n: 7714}
+  - {p: '2023', early: 1.13, ml: 69.12, generic: 18.59, genai: 5.32, autonomy: 5.84, other: 0, n: 5768}
+  - {p: '2024', early: 0.86, ml: 66.9, generic: 14.99, genai: 13.87, autonomy: 3.37, other: 0.01, n: 7212}
+  - {p: '2025', early: 0.97, ml: 59.53, generic: 14.46, genai: 22.68, autonomy: 2.35, other: 0.01, n: 8528}
+  - {p: '2026-Q1', early: 0.85, ml: 49.59, generic: 16.86, genai: 31.72, autonomy: 0.85, other: 0.11, n: 2692}
+  - {p: '2026-Q2', early: 0.59, ml: 47.86, generic: 15.11, genai: 35.55, autonomy: 0.78, other: 0.12, n: 3224}
