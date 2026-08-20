@@ -1324,7 +1324,11 @@ def monthly_block():
               '<span><i style="background:var(--c1);opacity:.32"></i>single month, unsmoothed</span>'
               '</div>\n'
             + figfooter("monthly_ai_share.csv",
-                        f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · {DEF_LABEL} · distinct advertisements',
+                        # The monthly block states the definition IT was built from, which is
+                        # not necessarily the site's. DEF_LABEL here is what let a v1.4 monthly
+                        # series be published under a v1.5 footer on 19 Aug 2026.
+                        f'{h(m["source"])}, {h(m["first"])} to {h(m["last"])} · '
+                        f'{h(m.get("definition", DEF_LABEL))} term list · distinct advertisements',
                         "monthly_ai_demand.svg"))
 
 
@@ -2703,7 +2707,7 @@ def emit_data(out):
         for r in MONTHLY["series"]:
             w.writerow([r["m"], r["ads"], r["ai"], r["ai_ma"], r["floor"], r["floor_ma"]])
     (d / "monthly_ai_demand.svg").write_text(chart_standalone(monthly_svg(MONTHLY), "Swedish job ads asking for an AI skill, monthly",
-                         f'JobTech historical job ads (CC0) · frozen {DEF_VERSION} · distinct advertisements · {MONTHLY["meta"]["first"]}-{MONTHLY["meta"]["last"]} · AI-Econ Lab'), encoding="utf-8")
+                         f'JobTech historical job ads (CC0) · {MONTHLY["meta"].get("definition", f"frozen {DEF_VERSION}")} · distinct advertisements · {MONTHLY["meta"]["first"]}-{MONTHLY["meta"]["last"]} · AI-Econ Lab'), encoding="utf-8")
     with (d / "working_conditions.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f); w.writerow(["condition", "gender", "pct_least_exposed_occ", "pct_most_exposed_occ", "daioe", "wc_year"])
         for c in WORKCOND["conditions"]:

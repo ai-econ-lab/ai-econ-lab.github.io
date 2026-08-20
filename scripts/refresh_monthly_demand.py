@@ -15,6 +15,8 @@ Run:  python3 scripts/refresh_monthly_demand.py
 """
 
 import csv
+import re
+import json
 from pathlib import Path
 
 from monitor_root import MONITOR_ROOT
@@ -29,6 +31,22 @@ SRC = (MONITOR_ROOT
 SRC_RECORDS = SRC.with_name("monthly_ai_share.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "monthly_demand.yaml"
 WINDOW = 12
+
+
+
+def _definition() -> str:
+    """The definition the monthly cut was actually built from.
+
+    Missing provenance is not a reason to guess: a block that cannot say where it came from
+    should say that, and the site's vintage check turns an "unknown" into a failure rather
+    than letting the site's own version stand in for it.
+    """
+    p = SRC.with_name("monthly_ai_share_v11.provenance.json")
+    if not p.exists():
+        return "unknown"
+    text = str(json.loads(p.read_text(encoding="utf-8")).get("definition", ""))
+    m = re.match(r"(v\d+(?:\.\d+)?)", text)
+    return m.group(1) if m else "unknown"
 
 
 def main():
@@ -66,6 +84,12 @@ def main():
              f"  total_ads: {sum(ads)}",
              f"  total_records: {total_records}",
              "  source: JobTech historical job ads (Arbetsförmedlingen), CC0",
+             # THE DEFINITION IS READ FROM THE CUT, NOT FROM THE SITE'S CONSTANT. On 19 Aug the
+             # site published v1.5 while this block was still built from an older bulk, and the
+             # footer said v1.5 anyway because build.py stamped DEF_LABEL over it. The cut now
+             # writes a provenance sidecar; this carries it into the module, and build.py prints
+             # what the module says.
+             f"  definition: frozen {_definition()}",
              "series:"]
     for i, m in enumerate(ym):
         lines.append(f"  - {{m: '{m}', ai: {ai[i]:.4f}, ai_ma: {ai_ma[i]:.4f}, "

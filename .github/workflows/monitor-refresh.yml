@@ -86,6 +86,14 @@ jobs:
         continue-on-error: true
         run: python scripts/check_claims.py
 
+      # A module may lag a freeze; it may not claim one it has not been through. This also asks
+      # git whether the monitor data the site points at is committed, which is what separates a
+      # build that works on one laptop from one that works here.
+      - name: Every module names the definition it was really built from
+        id: vintages
+        continue-on-error: true
+        run: python scripts/check_vintages.py
+
       - name: Commit and push if anything changed
         run: |
           git config user.name "github-actions[bot]"
@@ -115,7 +123,7 @@ jobs:
         run: python3 scripts/check_upstream_alive.py
 
       - name: Fail the run if refresh, watchers or claim checks failed
-        if: steps.refresh.outcome != 'success' || steps.watch.outcome != 'success' || steps.claims.outcome != 'success' || steps.upstream.outcome != 'success'
+        if: steps.refresh.outcome != 'success' || steps.watch.outcome != 'success' || steps.claims.outcome != 'success' || steps.upstream.outcome != 'success' || steps.vintages.outcome != 'success'
         run: |
-          echo "refresh: ${{ steps.refresh.outcome }} · watch: ${{ steps.watch.outcome }} · claims: ${{ steps.claims.outcome }} · upstream: ${{ steps.upstream.outcome }}"
+          echo "refresh: ${{ steps.refresh.outcome }} · watch: ${{ steps.watch.outcome }} · claims: ${{ steps.claims.outcome }} · upstream: ${{ steps.upstream.outcome }} · vintages: ${{ steps.vintages.outcome }}"
           exit 1

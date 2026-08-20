@@ -13,6 +13,7 @@ meta:
   total_ads: 8056733
   total_records: 11161739
   source: JobTech historical job ads (Arbetsförmedlingen), CC0
+  definition: frozen v1.5
 series:
   - {m: '2006-01', ai: 0.0185, ai_ma: 0.0185, floor: 0.0000, floor_ma: 0.0000, ads: 16244}
   - {m: '2006-02', ai: 0.0230, ai_ma: 0.0207, floor: 0.0173, floor_ma: 0.0086, ads: 17371}
