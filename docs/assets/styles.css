@@ -644,3 +644,52 @@ ul.tight li{margin:2px 0}
   .reg::-webkit-scrollbar{display:none}
   .reg span{white-space:nowrap;flex:0 0 auto}
 }
+
+/* ── phones: reaching the right-hand side of a figure ───────────────────────
+   In portrait every chart looked cut off and no swipe would move it. The
+   charts were not the fault; four things above them were.
+
+   First, build.py writes the column count of a .two block as an inline style
+   attribute, and an inline declaration outranks a stylesheet rule wherever the
+   rule sits. The .two{grid-template-columns:1fr} above was therefore never
+   applied on a phone: the two wage charts stayed side by side, each held to the
+   520px floor below, and the document became 1074px wide on a 390px screen. The
+   PAGE scrolled sideways and took the horizontal swipe the charts needed, which
+   is why the finger did nothing.
+
+   Second, collapsing the grid is not enough on its own. A grid item's automatic
+   minimum size is its own content, so one column still widened to the chart
+   inside it; min-width:0 lets the track be the width of the screen and hands
+   the overflow to the scroll container where it belongs.
+
+   Third, the chart is drawn on a 640-unit canvas and held to a 520px floor so
+   its labels stay legible, so it is wider than a portrait screen and scrolls
+   inside its own box. Nothing said so. The fade marks the cut, and the padding
+   beside it is what the last bar scrolls into, so the end of a chart is never
+   left underneath the fade. The brief sheet draws the same charts in .bchart,
+   which had no scroll container at all and simply pushed the page out.
+
+   Fourth, a venue badge on the research list is nowrap, and one ACM conference
+   title is long enough to set a row to 527px by itself. */
+@media(max-width:760px){
+  .two{grid-template-columns:1fr !important}
+  .two>*{min-width:0}
+  .dotwrap,.bchart{
+    overflow-x:auto;
+    overscroll-behavior-x:contain;          /* the swipe stays in the chart */
+    -webkit-overflow-scrolling:touch;
+    padding-right:26px;
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),#0000002e);
+            mask-image:linear-gradient(90deg,#000 calc(100% - 26px),#0000002e);
+  }
+  .rrow .badge{white-space:normal}
+
+  /* The occupations table is five columns of counts, and at desktop cell
+     metrics its narrowest possible width is 339px: wider than a 320px phone,
+     and close enough to 390px that a font with wider digits pushes it over.
+     Tightening the cells buys the difference, and the table is made a scroll
+     container as well, so a narrower screen scrolls the table rather than the
+     page. */
+  .minitab{display:block;overflow-x:auto;overscroll-behavior-x:contain;font-size:.82rem}
+  .minitab th,.minitab td{padding:5px 5px}
+}
