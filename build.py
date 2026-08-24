@@ -2884,7 +2884,21 @@ def build():
         for args in ([], ["--sv"]):
             r = subprocess.run([sys.executable, str(ROOT / "scripts" / "build_onepager.py")] + args,
                                capture_output=True, text=True)
-            print("  " + (r.stdout.strip() or r.stderr.strip().splitlines()[-1]))
+            if r.returncode == 0:
+                print("  " + (r.stdout.strip() or "built"))
+                continue
+            # build_onepager writes tectonic's OWN diagnostics to stderr, trimmed to the last
+            # 3500 characters, and then raises SystemExit("tectonic failed"). Printing only
+            # `stderr.splitlines()[-1]` therefore kept the two words and threw away the part
+            # that says why. On 24 Aug 2026 the nightly refresh failed here on a runner where
+            # `tectonic --version` had just printed 0.17.0 one step earlier, so the engine was
+            # plainly present -- and the log held nothing but "tectonic failed", twice. The
+            # cause could not be diagnosed from the run at all, only guessed at, which is the
+            # opposite of what the line beneath it promises when it says "the message above
+            # says why". Print the whole thing; a build log is not the place to be terse.
+            print(f"  one-pager ({args[0] if args else '--en'}) FAILED, exit {r.returncode}:")
+            for line in ((r.stderr.strip() or r.stdout.strip() or "(no output)").splitlines()):
+                print(f"    | {line}")
     except Exception as e:                                    # noqa: BLE001
         print(f"  one-pager NOT built: {e}")
     # Whatever the generator managed, no sheet that existed before this build may be missing

@@ -34,7 +34,31 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from monitor_root import MONITOR_ROOT, DEF_VERSION, bulk_dir  # noqa: E402
+import monitor_root  # noqa: E402
+from monitor_root import DEF_VERSION, bulk_dir  # noqa: E402
+
+
+def monitor_checkout() -> Path | None:
+    """The ai-monitor tree, or None where it is not on this machine.
+
+    This used to be `from monitor_root import MONITOR_ROOT`, which reads as a constant and is
+    not one: monitor_root defines it through a module __getattr__ precisely so that the
+    checkout is resolved on FIRST USE and not at import. A from-import forces that resolution
+    at import time, which defeated the whole arrangement -- the same defect, in the same
+    module, that the __getattr__ docstring was written to describe after build.py hit it on
+    19 Aug 2026. The effect here was that this script exited 1 on every GitHub runner before
+    it had checked a single module, and the nightly monitor-refresh had been red on it since.
+
+    Absent is not the same as broken. The ai-monitor repository is private and this workflow
+    lives in a public one, so the checkout is not merely missing from the runner by accident:
+    it CANNOT be there, by the same rule that keeps a token for the private repository out of
+    this repository (see check_upstream_alive.py, which watches the upstream's effect for that
+    reason). A check that cannot run in a place should say so and stand down, not fail.
+    """
+    try:
+        return monitor_root.monitor_root()
+    except SystemExit:
+        return None
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -66,8 +90,8 @@ def claimed(path: Path) -> str | None:
     return m.group(1) if m else None
 
 
-def actual_from_provenance(rel: str) -> str | None:
-    p = MONITOR_ROOT / rel
+def actual_from_provenance(root: Path, rel: str) -> str | None:
+    p = root / rel
     if not p.exists():
         return None
     d = json.loads(p.read_text(encoding="utf-8"))
@@ -76,7 +100,7 @@ def actual_from_provenance(rel: str) -> str | None:
     return m.group(1) if m else None
 
 
-def untracked_inputs() -> list[str]:
+def untracked_inputs(root: Path) -> list[str]:
     """Files the site reads that exist on this disk but are not in the monitor repository.
 
     THE FAILURE THIS CATCHES. On 19 August the site was pointed at bulk_v15 and every local
@@ -91,7 +115,7 @@ def untracked_inputs() -> list[str]:
               "data/free_cuts/monthly_ai_share_v11.provenance.json",
               "data/diagnostics/term_composition.csv"]
     try:
-        out = subprocess.run(["git", "-C", str(MONITOR_ROOT), "ls-files", "--", *wanted],
+        out = subprocess.run(["git", "-C", str(root), "ls-files", "--", *wanted],
                              capture_output=True, text=True, timeout=20)
     except (OSError, subprocess.SubprocessError):
         return []
@@ -101,18 +125,30 @@ def untracked_inputs() -> list[str]:
 
 def main() -> int:
     problems, lagging, unstamped = [], [], []
+    root = monitor_checkout()
 
-    for miss in untracked_inputs():
-        problems.append(f"{miss} is NOT COMMITTED in the monitor repository. It may exist on "
-                        f"this machine; CI checks out the repository, so the refresh will fail "
-                        f"there and only there.")
+    if root is None:
+        # Loud, because a quiet skip is the failure mode this whole script exists to prevent.
+        # Whoever reads a green CI run must not come away thinking the committed-ness of the
+        # monitor inputs was checked here. It was not, and it cannot be.
+        print("SKIPPED, and this matters: the ai-monitor checkout is not on this machine, so\n"
+              "the two checks that read it did not run --\n"
+              f"  - are the {len(PROVENANCE)} provenance-backed modules built from the definition they claim\n"
+              "  - are the derived inputs the site reads actually COMMITTED upstream\n"
+              "Those run on a laptop, or anywhere $AI_MONITOR_ROOT points at the checkout.\n"
+              "CI does not cover them. What follows is the half that needs no checkout.\n")
+    else:
+        for miss in untracked_inputs(root):
+            problems.append(f"{miss} is NOT COMMITTED in the monitor repository. It may exist on "
+                            f"this machine; CI checks out the repository, so the refresh will fail "
+                            f"there and only there.")
 
-    for name, rel in sorted(PROVENANCE.items()):
+    for name, rel in sorted(PROVENANCE.items() if root else []):
         f = DATA / name
         if not f.exists():
             problems.append(f"{name}: missing")
             continue
-        says, is_ = claimed(f), actual_from_provenance(rel)
+        says, is_ = claimed(f), actual_from_provenance(root, rel)
         if is_ is None:
             problems.append(f"{name}: no provenance at {rel}. Rebuild it, or move it to DECLARED "
                             f"with a reason.")
@@ -146,7 +182,8 @@ def main() -> int:
             print(f"  - {p}")
         return 1
 
-    print(f"\nOK. No module over-claims. Site definition is {DEF_VERSION}.")
+    scope = "" if root else " (of the modules checkable without the monitor checkout)"
+    print(f"\nOK. No module over-claims{scope}. Site definition is {DEF_VERSION}.")
     if unstamped:
         print(f"  {len(unstamped)} module(s) carry no 'frozen vX' line: {', '.join(unstamped)}")
     if lagging:
