@@ -701,11 +701,23 @@ def main():
 % left both PDFs untouched, so the public download disagreed with the page above its own link
 % on most days of the week.
 %
-% Lato comes from the TeX Live bundle tectonic fetches for itself, so the sheet now typesets
-% anywhere and regenerates with every refresh. It is SIL OFL, so nothing is redistributed
-% here that may not be. The website never used Avenir either -- its --sans is the reader's
-% own system font -- so nothing shared with the site changed.
-\usepackage[default]{{lato}}
+% Iwona, an NFSS Type1 family, because it resolves out of the TeX bundle with NO system font
+% database consulted at all. That property, not the name, is what makes a face usable here.
+%
+% Three candidates failed on the way to it and each failure is worth keeping. Lato looked
+% right and typeset on THIS LAPTOP under the runner's own tectonic 0.17.0 with a cleared
+% cache, and still failed on Linux with `The font "Lato-Regular" cannot be found`: fontspec on
+% macOS can reach Core Text, and on a runner there is nothing to reach. A local pass is not
+% evidence for a font, and the cleared cache did not make it one. URW Gothic (avant) and
+% Nimbus Sans (helvet) are both portable, and both ran the SWEDISH sheet to three pages while
+% English held at two -- helvet still did at scaled=0.90. Swedish sets longer than English
+% here, so it is the binding constraint on any future change of face: test --sv first.
+%
+% Iwona is a humanist geometric sans, so the requirement above is met by its shape rather than
+% by luck, and both languages hold two pages at its natural width with no condensing. The
+% website never used Avenir either -- its --sans is the reader's own system font -- so nothing
+% shared with the site changed.
+\usepackage{{iwona}}\renewcommand{{\familydefault}}{{\sfdefault}}
 
 \definecolor{{ink}}{{HTML}}{{{INK_HEX}}}
 \definecolor{{soft}}{{HTML}}{{{SOFT_HEX}}}
