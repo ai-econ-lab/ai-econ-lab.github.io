@@ -687,11 +687,25 @@ def main():
             pdflang={{{'sv-SE' if lang == 'sv' else 'en-GB'}}},
             pdfsubject={{{C['standfirst_sub']}}}]{{hyperref}}
 
-% Avenir Next rather than the LaTeX default. A serif academic face was signalling "working
-% paper" on a sheet meant for a student or a journalist, and geometric sans is also the more
-% legible choice at the small sizes the vintages need.
-\setmainfont{{Avenir Next}}[
-  UprightFont={{* Regular}}, BoldFont={{* Demi Bold}}, ItalicFont={{* Italic}}]
+% Not the LaTeX default: a serif academic face was signalling "working paper" on a sheet meant
+% for a student or a journalist, and a humanist sans is also the more legible choice at the
+% small sizes the vintages need.
+%
+% That requirement used to be met by \setmainfont{{Avenir Next}}, which is a macOS SYSTEM font,
+% so the sheet could only ever be typeset on one laptop. Nothing said so: build.py caught the
+% failure, kept the committed PDF and carried on, and the guard in build-check.yml that was
+% meant to catch exactly that tested `find -newermt '-30 minutes'` against files a fresh
+% checkout had just stamped, so it could not fail. Meanwhile the sheet prints live-window
+% figures in its body text -- "of the 33,066 most recent advertisements, 1.32%% mention an AI
+% skill" -- and those move DAILY. Seven of the nine live-window refreshes before 24 Aug 2026
+% left both PDFs untouched, so the public download disagreed with the page above its own link
+% on most days of the week.
+%
+% Lato comes from the TeX Live bundle tectonic fetches for itself, so the sheet now typesets
+% anywhere and regenerates with every refresh. It is SIL OFL, so nothing is redistributed
+% here that may not be. The website never used Avenir either -- its --sans is the reader's
+% own system font -- so nothing shared with the site changed.
+\usepackage[default]{{lato}}
 
 \definecolor{{ink}}{{HTML}}{{{INK_HEX}}}
 \definecolor{{soft}}{{HTML}}{{{SOFT_HEX}}}
