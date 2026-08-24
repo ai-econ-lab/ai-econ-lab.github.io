@@ -63,7 +63,15 @@ jobs:
       # run build.py must both have it.
       - name: Install tectonic (the one-pager sheets are typeset, not templated)
         run: |
-          curl -fsSL https://drop-sh.fullyjustified.net | sh
+          # PINNED, and pinned to the version on Magnus's laptop. The installer at
+          # drop-sh.fullyjustified.net fetches whatever is newest, so the laptop sat on 0.15.0
+          # while the runners moved to 0.17.0 and the two typeset from DIFFERENT TeX bundles --
+          # a difference nobody could see, because until 24 Aug 2026 the runners never managed
+          # to typeset the sheet at all. Same binary both places, or "it builds on my machine"
+          # means nothing. Bump both together, or not at all.
+          curl -fsSL -o tectonic.tar.gz \
+            https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-x86_64-unknown-linux-gnu.tar.gz
+          tar xzf tectonic.tar.gz && rm tectonic.tar.gz
           sudo mv ./tectonic /usr/local/bin/tectonic
           tectonic --version
 
