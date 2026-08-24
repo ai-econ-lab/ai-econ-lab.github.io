@@ -87,6 +87,34 @@ def display_date(iso):
     return f"{d.day} {MONTHS[d.month-1]} {d.year}"
 DATA_UPDATED_DISPLAY = display_date(DATA_UPDATED)
 
+def sources_checked():
+    """Date the weekly source sweep last RAN, or None if the record is missing.
+
+    A different fact from DATA_UPDATED, and the strip needs both. DATA_UPDATED is when a
+    series last MOVED; this is when the sources were last ASKED. They come apart exactly when
+    the sweep is working and the world is quiet: on 24 Aug 2026 every source was fetched at
+    05:17 UTC, all five refreshers returned ok, the run printed "changed: nothing" because
+    none of them had published anything new, and the front page went on saying "DATA UPDATED
+    20 Aug 2026 - SOURCES CHECKED WEEKLY". Read together those two clauses say the site is
+    four days behind, which is the opposite of what had happened.
+
+    Written by scripts/weekly_refresh.py into the watcher's state file, and only from CI, for
+    the reason at CI_OWNS_STATE in refresh_capability.py. Absent is normal and not an error:
+    the key does not exist until the first sweep after this was added, and a clone that has
+    never run one has nothing to report. The caller falls back to the old, weaker wording.
+    """
+    f = ROOT / "scripts" / "watch_state.json"
+    try:
+        v = json.loads(f.read_text(encoding="utf-8")).get("sources_checked")
+        return v if isinstance(v, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", v) else None
+    except (OSError, json.JSONDecodeError):
+        return None
+
+SOURCES_CHECKED = sources_checked()
+# "WEEKLY" is the honest fallback: it is what the strip claimed before the date existed, and
+# it stays true whether or not this particular checkout has a record of the last sweep.
+SOURCES_CHECKED_DISPLAY = display_date(SOURCES_CHECKED) if SOURCES_CHECKED else "WEEKLY"
+
 SITE     = load("site.yaml")
 PAPERS   = load("papers.yaml")
 PEOPLE   = load("people.yaml")
@@ -234,6 +262,7 @@ def masthead(active):
     # is typed cannot disagree with its own data loudly enough to be heard.
     reg = "".join(
         f'<span>{s.replace("{data_updated}", DATA_UPDATED_DISPLAY).replace("{distinct_ads}", DISTINCT_ADS)
+                    .replace("{sources_checked}", SOURCES_CHECKED_DISPLAY)
                     .replace("{n_countries}", str(N_COUNTRIES)).replace("{live_status}", LIVE_STATUS)}</span>'
         for s in SITE["registration"])
     return f"""<div class="mast"><div class="wrap"><div class="mastbar">

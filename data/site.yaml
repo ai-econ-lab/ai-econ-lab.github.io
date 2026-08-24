@@ -42,7 +42,18 @@ registration:
   #                                           modules, which until 17 Aug 2026 could only be
   #                                           refreshed by hand from one laptop
   # Remove the claim if both are ever disabled.
-  - "DATA UPDATED <b>{data_updated}</b> · SOURCES CHECKED WEEKLY"
+  #
+  # Reworded 24 Aug 2026. It read "DATA UPDATED <b>{data_updated}</b> · SOURCES CHECKED
+  # WEEKLY", and those two clauses fought each other. {data_updated} is when a SERIES last
+  # moved, which data_updated()'s own docstring calls "a different and weaker claim than 'the
+  # data are current as of this date'" -- but the label said DATA UPDATED, which is that
+  # stronger claim, and the words next to it promised a weekly rhythm without ever saying when
+  # the rhythm last turned. So on a quiet week the strip read as staleness: on 24 Aug every
+  # source was fetched at 05:17, all five refreshers returned ok, none of them had published
+  # anything new, and the front page said "DATA UPDATED 20 Aug 2026 · SOURCES CHECKED WEEKLY"
+  # beside a live chip dated the 24th. Magnus read it as four days behind, correctly given
+  # the words. Both facts are known, so the strip states both and labels each for what it is.
+  - "SOURCES CHECKED <b>{sources_checked}</b> · SERIES LAST MOVED <b>{data_updated}</b>"
   # Derived from the live window's own as-of date — see LIVE_STATUS in build.py. Do not put
   # the badge back as a literal: it read "● LIVE" for five days in August 2026 next to a
   # window that had stopped moving, which is the one thing the badge is supposed to rule out.

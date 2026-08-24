@@ -37,6 +37,9 @@ the gate asserts the augmented field on every run rather than trusting that it
 is still in the generator. The barriers year gate is inverted from all the
 others; the reason for that is in check_barriers.
 """
+import datetime
+import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -221,6 +224,9 @@ JOBS = [
 ]
 
 
+STATE_FILE = Path(__file__).resolve().parent / "watch_state.json"
+
+
 def main():
     failed = []
     for script, target, gate in JOBS:
@@ -239,6 +245,30 @@ def main():
     diff = subprocess.run(["git", "diff", "--name-only", "--", "data/"],
                           cwd=ROOT, capture_output=True, text=True).stdout.strip()
     print("changed: " + (diff.replace("\n", ", ") or "nothing"))
+
+    # Record that the sweep RAN, which is a different fact from whether anything moved, and
+    # the one the front-page strip needs. The strip used to say "SOURCES CHECKED WEEKLY" next
+    # to a date meaning "the series last moved", and a reader -- Magnus, on 24 Aug 2026 --
+    # reasonably read the pair as "this site is four days stale" on a day when every source
+    # had been fetched that morning and none of them had published anything new.
+    #
+    # Stamped even when a gate fired: a gate means a source needs a human, not that it went
+    # unchecked. And stamped under the same CI-ownership rule as the watcher's own state, for
+    # the reason given at CI_OWNS_STATE in refresh_capability.py -- a laptop run must not put
+    # its own vantage into the record the runner reads back.
+    if os.environ.get("GITHUB_ACTIONS") or os.environ.get("AIEL_ALLOW_STATE_WRITE") == "1":
+        state = {}
+        if STATE_FILE.exists():
+            try:
+                state = json.loads(STATE_FILE.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                state = {}
+        state["sources_checked"] = datetime.date.today().isoformat()
+        STATE_FILE.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+    else:
+        print("sources_checked NOT stamped: CI owns watch_state.json "
+              "(see CI_OWNS_STATE in refresh_capability.py)")
+
     if failed:
         sys.exit(f"refresh failed for: {', '.join(failed)}")
 

@@ -4,7 +4,7 @@ meta:
   epoch_asof: '2026-08-14'
   epoch_multiple: 5.19
   epoch_n_models: 322
-flag: External series · checked 20 Aug 2026
+flag: External series · checked 24 Aug 2026
 intro: 'Everything above measures AI in the labour market; this small module tracks the technology itself,
   in the most work-relevant unit there is: how much human working time a single AI run can replace. The
   frontier is jagged, and it moves fast: on novel interactive worlds, where the goal must be inferred
@@ -50,9 +50,9 @@ caveat: These are external research series, quoted with their dates; we summaris
   Figures refresh with the sources' own releases. The compute trend is recomputed here from Epoch's public
   model table on every refresh; the METR and ARC-AGI figures are read by hand when their sources move,
   and each tile carries its own date.
-checked: '2026-08-20'
+checked: '2026-08-24'
 reviewed:
-  arc: '2026-08-18'
+  arc: '2026-08-24'
   metr: '2026-08-12'
 stale: []
 undated: []

@@ -285,7 +285,21 @@ capability:
   #   the pairing stands; having the evidence in the note was not enough, because nobody
   #   asked what the 100% was a measurement OF. The card now states a distance to human
   #   performance and names the system holding the score.
-  reviewed: {metr: 2026-08-12, arc: 2026-08-18}
+  # Re-read 24 Aug 2026 in the browser, after the weekly gate failed on ARC on 17 and 24 Aug.
+  #   Unchanged, and unchanged in all three of the things this card rests on: ARC-AGI-3 is
+  #   still topped by Claude Opus 5 (High) at 30.2, still dated 2026-07-24; GPT-5.6 Sol (Max)
+  #   is still second at 7.8; and the Human Panel row still reads 98.0 / 100.0 / N/A, so ARC
+  #   still publishes no measured human panel for v3 and the "distance to human performance"
+  #   framing set on 18 Aug still holds.
+  #   What moved the page was again an addition that cannot touch the figure: Gemini 3.7 Flash
+  #   (High, Medium, Low) and DeepSeek V4 Pro 0813, all published 2026-08-13, all N/A on
+  #   ARC-AGI-3. That is the third trip in a row caused by a new row rather than a new top
+  #   score. The watcher is right to trip anyway -- a leaderboard addition is exactly when a
+  #   top score might move -- but it is worth noticing that the page hash has now cost four
+  #   re-reads and found no change in any of them, and that ARC publishes no anchor that would
+  #   let it do better. If a fourth follows, the thing to build is a DOM read of the one cell
+  #   (top ARC-AGI-3 score and its date) rather than a hash of the whole page.
+  reviewed: {metr: 2026-08-12, arc: 2026-08-24}
   facts:
     - {num: "12–17 h", lab: "Longest tasks frontier AI agents finish about half the time, in human-expert time.", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}
     - {num: "×2 every ~4 mo", lab: "How quickly that task length has been doubling, on the trend since 2023 (95% CI 3.4–5.2 months).", foot: "METR Time Horizon 1.1 · doubling time · May 2026"}
