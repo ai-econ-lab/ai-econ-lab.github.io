@@ -37,10 +37,21 @@ import json
 import sys
 from pathlib import Path
 
-from monitor_root import MONITOR_ROOT, DEF_VERSION, DEF_FP, bulk_dir
+import monitor_root
+from monitor_root import DEF_VERSION, DEF_FP, bulk_dir
 
-SRC = MONITOR_ROOT / f"data/{bulk_dir()}/derived/series_annual.csv"
-MANIFEST = SRC.parent / "_derived_manifest.json"
+# monitor_root resolves MONITOR_ROOT through a module __getattr__ that raises SystemExit when
+# the checkout is absent. That is right for a refresh and wrong for a check that must run in
+# CI without one, and `from monitor_root import MONITOR_ROOT` triggers it AT IMPORT, before
+# any try block in this file. The first CI run of this guard died on that line, before
+# reaching the stand-down path whose entire job is to survive exactly this case. So the module
+# is imported and the root resolved inside a try, which is what check_vintages.py does.
+try:
+    SRC = monitor_root.monitor_root() / f"data/{bulk_dir()}/derived/series_annual.csv"
+except SystemExit:
+    SRC = None
+MANIFEST = SRC.parent / "_derived_manifest.json" if SRC else None
+HAVE_SRC = SRC is not None and SRC.exists()
 OUT = Path(__file__).resolve().parent.parent / "data" / "trend.yaml"
 
 FIRST_YEAR = 2006
@@ -96,7 +107,7 @@ def definition() -> str:
     The manifest is the same file check_vintages.py reads for the occupations module, so the
     two agree by construction rather than by anyone remembering to keep them aligned.
     """
-    if MANIFEST.exists():
+    if MANIFEST is not None and MANIFEST.exists():
         d = json.loads(MANIFEST.read_text(encoding="utf-8"))
         text = str(d.get("definition") or d.get("version") or "")
         if text:
@@ -148,7 +159,7 @@ def render(years, names, floor, provisional_from, defn, extra=None) -> str:
         "meta:",
         f"  definition: {defn}",
         f"  def_fp: {DEF_FP}",
-        f"  source: ai-monitor/{SRC.relative_to(MONITOR_ROOT)}",
+        f"  source: ai-monitor/data/{bulk_dir()}/derived/series_annual.csv",
         f"  first_year: {years[0]}",
         f"  last_year: {years[-1]}",
     ]
@@ -212,7 +223,7 @@ def check() -> int:
     check_vintages.py states for itself, and it is the rule this defect broke.
     """
     problems = tile_mismatches()
-    if SRC.exists():
+    if HAVE_SRC:
         years, names, floor, prov = read_series()
         full = {r["year"]: r for r in csv.DictReader(SRC.open(encoding="utf-8"))
                 if "-" not in r["year"]}
@@ -226,8 +237,9 @@ def check() -> int:
                 f"has drifted from the generator, which is the state of 19-25 August 2026: a "
                 f"v1.4 series under a v1.5 stamp. Fix: python3 scripts/refresh_trend.py")
     else:
+        where = SRC.parent if SRC else "the default local path"
         print("The series half did NOT run: no ai-monitor checkout at\n"
-              f"  {SRC.parent}\n"
+              f"  {where}\n"
               "so trend.yaml was not compared against the generator. Only the tiles were\n"
               "checked. Set AI_MONITOR_ROOT to run the half that matters most.\n")
 
@@ -236,15 +248,15 @@ def check() -> int:
         for b in problems:
             print(f"  {b}")
         return 1
-    print(f"ok    tiles agree with trend.yaml"
-          + (f", and trend.yaml matches {SRC.name} ({definition()})" if SRC.exists() else ""))
+    print("ok    tiles agree with trend.yaml"
+          + (f", and trend.yaml matches {SRC.name} ({definition()})" if HAVE_SRC else ""))
     return 0
 
 
 def main() -> int:
     if "--check" in sys.argv:
         return check()
-    if not SRC.exists():
+    if not HAVE_SRC:
         raise SystemExit(f"series not found: {SRC}\n  (DEF_VERSION is {DEF_VERSION})")
     years, names, floor, prov = read_series()
     full = {r["year"]: r for r in csv.DictReader(SRC.open(encoding="utf-8")) if "-" not in r["year"]}
