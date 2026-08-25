@@ -1701,6 +1701,7 @@ def adoption_section():
     {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; reference line is the Swedish 10+ headline, {sm['Tot250']}%", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
   </div>
   {akavia_workers_block()}
+  {akavia_movement_block()}
   {population_block()}
   {related_research("adoption")}
 </section></div></div>"""
@@ -1716,6 +1717,86 @@ def related_research(module):
         f' · {h(i["note"])}</li>' for i in items)
     return (f'<div class="related"><p class="rl">Related research from the lab</p>'
             f'<ul class="tight">{lis}</ul></div>')
+
+
+def akavia_movement_svg(mv):
+    """Two rows: where the same people moved on the scale, and their level before and after.
+
+    Deliberately not a Sankey. The finding is one-directional and almost entirely one-way
+    traffic, and a flow diagram would spend most of its ink on ribbons of near-zero width."""
+    W, H = 640, 132
+    x0, x1 = 205, 556
+    X = lambda v: x0 + v / 100 * (x1 - x0)
+    seg = [("more", mv["more_often"]["value"], "Uses AI more often"),
+           ("same", mv["unchanged"]["value"], "As often as before"),
+           ("less", mv["less_often"]["value"], "Less often")]
+    p = [f'<svg class="rankchart mvchart" viewBox="0 0 {W} {H}" role="img" '
+         f'aria-label="Within-person change in AI use, {h(mv["period"])}">']
+    for t in (0, 25, 50, 75, 100):
+        gx = X(t)
+        p.append(f'<line class="grid" x1="{gx:.1f}" y1="14" x2="{gx:.1f}" y2="100"/>')
+        p.append(f'<text class="tick" x="{gx:.1f}" y="{H-10}" text-anchor="middle">{t}%</text>')
+    # Row 1: the movement, stacked, on everyone who answered in both rounds.
+    y, hgt, cursor = 22, 26, 0.0
+    p.append(f'<text class="dname" x="192" y="{y+17:.1f}" text-anchor="end">Direction of change</text>')
+    for cls, v, label in seg:
+        w = X(cursor + v) - X(cursor)
+        p.append(f'<rect class="mv{cls}" x="{X(cursor):.1f}" y="{y}" width="{max(w, 0.6):.1f}" '
+                 f'height="{hgt}" rx="2"><title>{h(label)}: {v}%</title></rect>')
+        if v >= 8:
+            # White reads on the two saturated segments; the neutral middle is too light for it.
+            tone = " dark" if cls == "same" else ""
+            p.append(f'<text class="mvlab{tone}" x="{X(cursor) + w / 2:.1f}" y="{y + 17:.1f}" '
+                     f'text-anchor="middle">{v}%</text>')
+        cursor += v
+    # Row 2: the level among those same people, start and end.
+    y2 = 80
+    a, b = mv["regular_use"]["from"], mv["regular_use"]["to"]
+    p.append(f'<text class="dname" x="192" y="{y2+3.5:.1f}" text-anchor="end">Regular use, same people</text>')
+    p.append(f'<line class="dbtrack" x1="{X(a):.1f}" y1="{y2:.1f}" x2="{X(b):.1f}" y2="{y2:.1f}"/>')
+    p.append(f'<circle class="dblo" cx="{X(a):.1f}" cy="{y2:.1f}" r="4"><title>{h(mv["period"].split(" to ")[0])}: {a}%</title></circle>')
+    p.append(f'<circle class="dbhi" cx="{X(b):.1f}" cy="{y2:.1f}" r="5.5"><title>{h(mv["period"].split(" to ")[-1])}: {b}%</title></circle>')
+    p.append(f'<text class="dval" x="632" y="{y2+3.5:.1f}" text-anchor="end">{a}→{b}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
+def akavia_movement_block():
+    """The one thing a panel can say and a repeated cross-section cannot.
+
+    Every other number in this module is a level: how many used AI this round, how many the
+    round before. A rise is consistent with several different worlds and the levels cannot
+    tell them apart. These are the same respondents in both rounds."""
+    a = AKAVIA; m = a["meta"]; mv = a.get("movement")
+    if not mv:
+        return ""
+    ac = mv["attrition_check"]
+    return f"""<div class="depth"><p class="dk">Sweden, in depth · the same people, twice</p>
+    {folded(f"""A rising level can mean new users arriving or existing users using AI more, and the """
+             f"""rounds above cannot tell them apart. Following the <b>same {mv['more_often']['n']} """
+             f"""respondents</b> from {h(mv['period'])} can: of those who used AI <b>never</b> in the first """
+             f"""round, <b>{mv['started']['value']}% had started</b> by the second, while only """
+             f"""<b>{mv['stopped']['value']}%</b> of the earlier users had stopped. The traffic is almost all """
+             f"""one way. [[note]] These are linked respondents who answered the question in both rounds, """
+             f"""weighted on {h(mv['weighted_on'])}. Two rounds out of six can be compared this way: the rest """
+             f"""ask the question differently, and a change measured across a rewrite is the rewrite. """
+             f"""Following people means following the ones who answered twice, so the base is smaller than a """
+             f"""round and not identical to it: regular use among them was {ac['linked_regular_from']}% at the """
+             f"""start against {ac['full_wave_regular_from']}% in the full round, and """
+             f"""{ac['linked_regular_to']}% against {ac['full_wave_regular_to']}% at the end. Close, but the """
+             f"""gap is real and the numbers here are not adjusted for it.""",
+             style="margin:0 0 14px", label="Which rounds can be followed, and who is in the base")}
+    <div class="dotwrap">{akavia_movement_svg(mv)}</div>
+    <div class="dblegend mvlegend"><span><i class="more"></i>More often</span>
+      <span><i class="same"></i>Unchanged</span><span><i class="less"></i>Less often</span>
+      <span><i class="start"></i>{h(mv['period'].split(' to ')[0])}</span>
+      <span><i class="end"></i>{h(mv['period'].split(' to ')[-1])}</span></div>
+    <p class="psub" style="margin-top:4px">Bars are everyone who answered in both rounds
+      ({mv['more_often']['n']} people). The two subgroup figures rest on smaller bases:
+      {mv['started']['n']} who reported never using AI in the first round, {mv['stopped']['n']} who
+      reported using it.</p>
+    {figfooter("akavia_movement.csv", f"{m['source']}, {h(mv['period'])}; own processing. Linked respondents answering in both rounds. {m['population']}", svg_name="akavia_movement.svg", next_up="with the next Akavia panel wave")}
+  </div>"""
 
 
 def akavia_workers_block():
@@ -2772,6 +2853,29 @@ def emit_data(out):
             cmp_ = "" if prev_lab is None else ("no" if prev_lab in breaks else "yes")
             w.writerow(["all", lab, v, "", "", "", "", cmp_, AKAVIA["meta"]["source"]])
             prev_lab = lab
+    if AKAVIA.get("movement"):
+        _mv = AKAVIA["movement"]
+        with (d / "akavia_movement.csv").open("w", newline="", encoding="utf-8") as f:
+            w = _csv.writer(f)
+            # Each measure states its own base: "started" and "stopped" sit on subgroups of the
+            # linked sample, not on the round, and a download without that reads as one base.
+            w.writerow(["measure", "pct", "respondents", "base", "period", "weighted_on", "source"])
+            _base = {"started": "linked respondents who reported never using AI in the first round",
+                     "stopped": "linked respondents who reported using AI in the first round"}
+            for k in ("started", "stopped", "more_often", "unchanged", "less_often"):
+                w.writerow([k, _mv[k]["value"], _mv[k]["n"],
+                            _base.get(k, "linked respondents answering in both rounds"),
+                            _mv["period"], _mv["weighted_on"], AKAVIA["meta"]["source"]])
+            for k, lab in (("from", "regular_use_start"), ("to", "regular_use_end")):
+                w.writerow([lab, _mv["regular_use"][k], _mv["more_often"]["n"],
+                            "linked respondents answering in both rounds",
+                            _mv["period"], _mv["weighted_on"], AKAVIA["meta"]["source"]])
+            _ac = _mv["attrition_check"]
+            for k, v in _ac.items():
+                w.writerow([f"context_{k}", v, "", "context: linked subsample against the full round",
+                            _mv["period"], _mv["weighted_on"], AKAVIA["meta"]["source"]])
+        (d / "akavia_movement.svg").write_text(
+            chart_standalone(akavia_movement_svg(_mv)), encoding="utf-8")
     _akx = 10 * (max(r["adoption"] for r in AKAVIA["by_profession"]) // 10 + 1)
     (d / "akavia_ai_use.svg").write_text(
         chart_standalone(barplot(AKAVIA["by_profession"], 0, _akx, 0, "adoption", ".0f", what="professions")),
