@@ -358,7 +358,8 @@ COPY = {
   se_body=(r"A \textbf{{range}}, not a single number: the upper line counts an advertisement that "
            r"mentions an AI skill anywhere, the lower one only when the skill is asked of the "
            r"person being hired. Both rose steeply. The broader count went from {v0:.2f}\% of "
-           r"advertisements in {y0} to {v1:.2f}\% in {y1}, about {rise:.0f} times as high, and the "
+           r"advertisements in the pooled {base} base to {v1:.2f}\% in {y1}, about {rise:.0f} "
+           r"times as high, and the "
            r"{y1} range is \textbf{{{fl:.2f}\% to {ceiling}\%}}. Both lines rest on a term list and "
            r"cover only the AI demand that words reveal."),
   se_live=(r"Right now ({asof}): of the {n} most recent advertisements, {names}\% mention an AI "
@@ -454,7 +455,8 @@ COPY = {
   se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: den övre linjen räknar en annons som "
            r"nämner en AI-färdighet någonstans, den nedre bara när färdigheten efterfrågas av den "
            r"som ska anställas. Båda har stigit kraftigt. Den bredare räkningen gick från "
-           r"{v0:.2f}\% av annonserna {y0} till {v1:.2f}\% {y1}, ungefär {rise:.0f} gånger så mycket, "
+           r"{v0:.2f}\% av annonserna i basperioden {base} till {v1:.2f}\% {y1}, ungefär "
+           r"{rise:.0f} gånger så mycket, "
            r"och intervallet för {y1} är \textbf{{{fl:.2f}\% till {ceiling}\%}}. Båda linjerna vilar "
            r"på en termlista och rymmer bara den AI-efterfrågan som orden visar."),
   se_live=(r"Just nu ({asof}): av de {n} senaste annonserna nämner {names}\% en AI-färdighet och "
@@ -531,7 +533,11 @@ def main():
     stamp = (f"{today.day} {SV_MONTH[today.month]} {today.year}" if lang == "sv"
              else today.strftime("%-d %B %Y"))
     ov = {o["k"]: o for o in m["overview"]}
-    tr = m["trend"]
+    # The trend is generated (scripts/refresh_trend.py) and states the definition it was
+    # built from. It used to be a hand-typed block in monitor.yaml, which is how this sheet
+    # printed "about 32 times" under a "frozen v1.5" source line for six days in August 2026.
+    tr_doc = yaml.safe_load((DATA / "trend.yaml").read_text(encoding="utf-8"))
+    tr, tr_meta = tr_doc["trend"], tr_doc["meta"]
     # Same precedence as build.py: monitor.yaml carries the fallback and the framing, and the
     # generated file overrides the figures when it exists. Without this the one-pager would
     # keep printing the hand-placed fallback while the website showed the refreshed window.
@@ -609,9 +615,12 @@ def main():
 
     cap = ov["Capability"]
     hero = range_band(tr["years"], tr["values"], tr["floor_values"], C["band_hi"], C["band_lo"])
-    se_body = C["se_body"].format(v0=tr["values"][0], y0=tr["years"][0],
+    # The multiple is the pooled-base one from the generated file, not v1/v0 recomputed here.
+    # Two bases on one sheet is how the site came to show 32x and 38x at the same time.
+    se_body = C["se_body"].format(v0=tr_meta["base_pct"], y0=tr["years"][0],
+                                  base=tr_meta["base_years"].replace("-", "\\textendash "),
                                   v1=tr["values"][-2], y1=tr["years"][-2],
-                                  rise=tr["values"][-2] / tr["values"][0],
+                                  rise=tr_meta["multiple"],
                                   fl=tr["floor_values"][-2], ceiling=ceiling)
     # Same source and same formatting as the website's live-window block. `n` used to be the
     # string "32,022" in monitor.yaml and is now an integer in the generated file, so the
