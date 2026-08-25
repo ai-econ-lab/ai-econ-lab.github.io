@@ -1773,7 +1773,7 @@ def akavia_movement_block():
     ac = mv["attrition_check"]
     return f"""<div class="depth"><p class="dk">Sweden, in depth · the same people, twice</p>
     {folded(f"""A rising level can mean new users arriving or existing users using AI more, and the """
-             f"""rounds above cannot tell them apart. Following the <b>same {mv['more_often']['n']} """
+             f"""rounds above cannot tell them apart. Following the <b>same {mv['more_often']['n']:,} """
              f"""respondents</b> from {h(mv['period'])} can: of those who used AI <b>never</b> in the first """
              f"""round, <b>{mv['started']['value']}% had started</b> by the second, while only """
              f"""<b>{mv['stopped']['value']}%</b> of the earlier users had stopped. The traffic is almost all """
@@ -1792,8 +1792,8 @@ def akavia_movement_block():
       <span><i class="start"></i>{h(mv['period'].split(' to ')[0])}</span>
       <span><i class="end"></i>{h(mv['period'].split(' to ')[-1])}</span></div>
     <p class="psub" style="margin-top:4px">Bars are everyone who answered in both rounds
-      ({mv['more_often']['n']} people). The two subgroup figures rest on smaller bases:
-      {mv['started']['n']} who reported never using AI in the first round, {mv['stopped']['n']} who
+      ({mv['more_often']['n']:,} people). The two subgroup figures rest on smaller bases:
+      {mv['started']['n']:,} who reported never using AI in the first round, {mv['stopped']['n']:,} who
       reported using it.</p>
     {figfooter("akavia_movement.csv", f"{m['source']}, {h(mv['period'])}; own processing. Linked respondents answering in both rounds. {m['population']}", svg_name="akavia_movement.svg", next_up="with the next Akavia panel wave")}
   </div>"""
@@ -1897,6 +1897,39 @@ def _break_reason(reason):
     return " ".join(keep)[:400]
 
 
+def akavia_policy_flow_block():
+    """The governance half of the panel: the same people, asked again two years later.
+
+    The table above is four levels. A level rising from 30% to 50% is consistent with employers
+    adopting policies, with members moving to employers that had one, and with members simply
+    finding out. Linked respondents separate those. Every sentence here says KNOWS, because that
+    is what the indicator counts: "vet ej" is coded as not-known-to-exist, so a member moving
+    from no to yes came to know of a policy, which is not the same claim as an employer
+    introducing one and is the only one these data support.
+    """
+    mg = AKAVIA.get("movement_governance")
+    if not mg:
+        return ""
+    g, l, lv, ac = mg["gained"], mg["lost"], mg["level"], mg["attrition_check"]
+    return f"""<div class="depth" style="margin-top:22px"><p class="dk">The same people, on governance</p>
+    {folded(f"""Of the <b>{g['n']:,} members who did not know of an AI policy at their workplace</b> in """
+             f"""{h(mg['period'].split(' to ')[0])}, <b>{g['value']}% knew of one</b> by """
+             f"""{h(mg['period'].split(' to ')[-1])} ({g['lo']}–{g['hi']}%). Of the {l['n']:,} who did know, """
+             f"""{l['value']}% no longer did ({l['lo']}–{l['hi']}%). Across all {lv['n']:,} who answered in """
+             f"""both rounds the share went {lv['from']}% to {lv['to']}%. [[note]] These count """
+             f"""<b>knowing of</b> a policy, not employers having one: a member who answers that they do """
+             f"""not know is counted as not knowing of one, so a move from no to yes is a member who came """
+             f"""to know, which can mean their employer introduced a policy, that they changed employer, """
+             f"""or that they found out about one that already existed. The reverse move can equally mean """
+             f"""a job change or a policy nobody has mentioned since. Linked respondents who answered in """
+             f"""both rounds, weighted on {h(mg['weighted_on'])}. This base tracks the rounds it comes """
+             f"""from closely: {ac['linked_from']}% against {ac['full_wave_from']}% at the start and """
+             f"""{ac['linked_to']}% against {ac['full_wave_to']}% at the end.""",
+             style="margin:0 0 10px", label="What this counts, and who is in the base")}
+    {figfooter("akavia_policy_flow.csv", f"{AKAVIA['meta']['source']}, {h(mg['period'])}; own processing. Linked respondents answering in both rounds. {AKAVIA['meta']['population']}", next_up="with the next Akavia panel wave")}
+  </div>"""
+
+
 def akavia_outcomes_block():
     """Outcomes: governance trailing use, the training gap, and who pays for the tools."""
     a = AKAVIA; m = a["meta"]; g = a["governance"]; tg = a["training"]; sh = a["shadow"]
@@ -1946,6 +1979,7 @@ def akavia_outcomes_block():
     {h(m['first_year'])}.</p>
   <table class="minitab"><thead><tr><th>Wave</th><th>Uses AI</th><th>Knows of a policy</th><th>Knows of a strategy</th></tr></thead><tbody>{rows}</tbody></table>
   {footnotes}
+  {akavia_policy_flow_block()}
   <p class="secintro" style="margin-top:14px">What the work actually is, among AI users{uv}:</p>
   <ul class="tight">{uf}</ul>
   {folded(f"""And who provides the tools: <b>{sh['private_account']}%</b> have a private e-mail account """
@@ -2892,6 +2926,26 @@ def emit_data(out):
             cmp_ = "" if prev_lab is None else ("no" if prev_lab in breaks else "yes")
             w.writerow(["all", lab, v, "", "", "", "", cmp_, AKAVIA["meta"]["source"]])
             prev_lab = lab
+    if AKAVIA.get("movement_governance"):
+        _mg = AKAVIA["movement_governance"]
+        with (d / "akavia_policy_flow.csv").open("w", newline="", encoding="utf-8") as f:
+            w = _csv.writer(f)
+            w.writerow(["measure", "pct", "ci_low", "ci_high", "respondents", "base",
+                        "counts", "period", "weighted_on", "source"])
+            for key, base in (
+                    ("gained", "linked respondents who did NOT know of a policy in the first round"),
+                    ("lost", "linked respondents who DID know of a policy in the first round")):
+                r = _mg[key]
+                w.writerow([key, r["value"], r["lo"], r["hi"], r["n"], base, _mg["counts"],
+                            _mg["period"], _mg["weighted_on"], AKAVIA["meta"]["source"]])
+            for key, lab in (("from", "level_start"), ("to", "level_end")):
+                w.writerow([lab, _mg["level"][key], "", "", _mg["level"]["n"],
+                            "linked respondents answering in both rounds", _mg["counts"],
+                            _mg["period"], _mg["weighted_on"], AKAVIA["meta"]["source"]])
+            for k, v in _mg["attrition_check"].items():
+                w.writerow([f"context_{k}", v, "", "", "",
+                            "context: linked subsample against the full round", _mg["counts"],
+                            _mg["period"], _mg["weighted_on"], AKAVIA["meta"]["source"]])
     if AKAVIA.get("movement"):
         _mv = AKAVIA["movement"]
         with (d / "akavia_movement.csv").open("w", newline="", encoding="utf-8") as f:
