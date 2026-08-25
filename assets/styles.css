@@ -431,6 +431,11 @@ button.figdl{background:transparent;font-family:var(--mono);font-size:var(--fs-m
 .mvlegend i.start{background:var(--c3)}
 .mvlegend i.end{background:var(--c1)}
 
+/* a series crossing a change of instrument: the value is real, the continuity is not */
+.minitab td.brk{position:relative}
+.minitab td.brk sup{color:var(--c2);font-weight:700;margin-left:1px}
+.brknote{font-family:var(--mono);font-size:var(--fs-micro);line-height:1.6;color:var(--muted);margin:8px 0 0}
+
 /* AI-in-Demand trend (server-rendered static twin, used on the brief) */
 .trend .grid{stroke:var(--border)}.trend .tick{fill:var(--muted);font-size:9px}
 .trendarea{fill:var(--c1);opacity:.08}

@@ -1,8 +1,8 @@
-wave,pct_uses_ai,pct_knows_of_policy,pct_knows_of_strategy
-May 2023,32,12,11
-Sep 2023,43,18,15
-May 2024,61,30,23
-May 2025,77,50,38
+wave,pct_uses_ai,pct_knows_of_policy,pct_knows_of_strategy,strategy_comparable_with_previous
+May 2023,32,12,11,
+Sep 2023,43,18,15,yes
+May 2024,61,30,23,no
+May 2025,77,50,38,yes
 
 indicator,pct,universe,
 private_account,50,standalone AI tool users,
