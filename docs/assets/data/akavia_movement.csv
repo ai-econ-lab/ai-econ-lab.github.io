@@ -1,0 +1,12 @@
+measure,pct,respondents,base,period,weighted_on,source
+started,77,499,linked respondents who reported never using AI in the first round,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+stopped,4,662,linked respondents who reported using AI in the first round,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+more_often,71,1161,linked respondents answering in both rounds,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+unchanged,24,1161,linked respondents answering in both rounds,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+less_often,5,1161,linked respondents answering in both rounds,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+regular_use_start,28,1161,linked respondents answering in both rounds,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+regular_use_end,67,1161,linked respondents answering in both rounds,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+context_linked_regular_from,26,,context: linked subsample against the full round,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+context_full_wave_regular_from,30,,context: linked subsample against the full round,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+context_linked_regular_to,67,,context: linked subsample against the full round,May 2024 to May 2026,the later wave's weight,Akavia member web panel
+context_full_wave_regular_to,69,,context: linked subsample against the full round,May 2024 to May 2026,the later wave's weight,Akavia member web panel

@@ -411,6 +411,26 @@ button.figdl{background:transparent;font-family:var(--mono);font-size:var(--fs-m
 .dblegend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .dblegend i.lo{background:var(--c3)}.dblegend i.hi{background:var(--c1)}
 
+/* the panel block: within-person movement, same respondents in two rounds (Akavia).
+   Ordered categories, so the encoding is diverging with a neutral middle rather than three
+   arbitrary hues: blue for more, grey for no change, vermillion for less. Same two colours the
+   rest of the Monitor uses, and the middle is deliberately the quietest thing on the row. */
+.mvchart .mvmore{fill:var(--c1);opacity:.92}
+.mvchart .mvsame{fill:var(--muted);opacity:.38}
+.mvchart .mvless{fill:var(--c2);opacity:.88}
+.mvchart .mvlab{fill:#fff;font-size:10px;font-weight:700}
+.mvchart .mvlab.dark{fill:var(--ink-2)}
+.mvchart .dname{fill:var(--ink-2);font-size:10.5px}
+.mvchart .dbtrack{stroke:var(--border);stroke-width:3}
+.mvchart .dblo{fill:var(--c3)}
+.mvchart .dbhi{fill:var(--c1)}
+.mvchart .dval{fill:var(--ink-2);font-size:10.5px;font-weight:700}
+.mvlegend i.more{background:var(--c1)}
+.mvlegend i.same{background:var(--muted);opacity:.45}
+.mvlegend i.less{background:var(--c2)}
+.mvlegend i.start{background:var(--c3)}
+.mvlegend i.end{background:var(--c1)}
+
 /* AI-in-Demand trend (server-rendered static twin, used on the brief) */
 .trend .grid{stroke:var(--border)}.trend .tick{fill:var(--muted);font-size:9px}
 .trendarea{fill:var(--c1);opacity:.08}
