@@ -127,6 +127,9 @@ WAGES    = load("wages.yaml")
 OCCUP    = load("occupations.yaml")
 OCCTIER  = load("occupation_tiers.yaml")
 MONTHLY  = load("monthly_demand.yaml")
+# The trend is generated (scripts/refresh_trend.py) rather than typed into monitor.yaml,
+# and it carries the definition it was built from. See that script for why.
+TREND    = load("trend.yaml")
 
 JOBQ     = load("job_quality.yaml")
 GOV      = load("governance.yaml")
@@ -294,7 +297,7 @@ def shell(title, desc, path, body, jsonld="", need_chart=False):
     canonical = BASE + path
     trend_js = ""
     if need_chart:
-        t = MONITOR["trend"]
+        t = TREND["trend"]
         trend_js = (f'<script>window.AIEL_TREND={{years:{t["years"]},values:{t["values"]},'
                     f'floor:{t.get("floor_values", [])},'
                     f'provisionalFrom:{t["provisionalFrom"]},ymax:{t["ymax"]},yticks:{t["yticks"]}}};</script>')
@@ -1192,22 +1195,22 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
     # The headline sentence is computed from the same trend data the chart draws, never typed
     # in: hardcoded values here survived two freezes unchanged (still v1.1's 1.07%/0.52% after
     # the v1.3 move) until an external reviewer caught the mismatch against the stat tiles.
-    t = MONITOR["trend"]; pf = t["provisionalFrom"]
+    t = TREND["trend"]; pf = t["provisionalFrom"]
     yr_c, ai_c, fl_c = t["years"][pf - 1], t["values"][pf - 1], t["floor_values"][pf - 1]
     yr_p, ai_p, fl_p = t["years"][-1], t["values"][-1], t["floor_values"][-1]
-    fold = round(ai_c / t["values"][0])
+    tm = TREND["meta"]
     return f"""<div class="panel">
     <div class="panelhead"><span class="ttl">{h(title)}</span>
       <span class="livechip"><i></i>live</span></div>
     <div class="panelbody"><p class="psub">Ads naming a specific AI skill anywhere in the ad reached <b>{ai_c:.2f}%</b> in {yr_c},
-        {fold} times the {t["years"][0]} level; the strict floor, ads asking for AI in the job's own requirements, reached
+        {tm["multiple"]:.0f} times the pooled {h(tm["base_years"]).replace("-", "\u2013")} level; the strict floor, ads asking for AI in the job's own requirements, reached
         <b>{fl_c:.2f}%</b>. Both set records in the post-2023 rebound, with generative-AI skills now 27% of the demand,
         and {yr_p} so far runs higher still ({ai_p:.2f}%, floor {fl_p:.2f}%, provisional).</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
-      {figfooter("ai_in_demand_trend.csv", "JobTech / Platsbanken job ads (CC0), 2006 onwards · " + DEF_LABEL + " · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href=method_href, next_up="tier split: built, integrated or simply used")}</div></div>"""
+      {figfooter("ai_in_demand_trend.csv", f"JobTech / Platsbanken job ads (CC0), 2006 onwards · {h(tm['definition'])} term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href=method_href, next_up="tier split: built, integrated or simply used")}</div></div>"""
 
 def livewindow_block():
     """The live 60-day window as its own labelled instrument. Never a point on the archive
@@ -1633,7 +1636,9 @@ def demand_section(tiles, seg):
   <div class="depth" id="ai-in-demand"><p class="dk">Sweden, in depth · our live measure</p>
     {folded(f"""{h(MONITOR['aiindemand_lede'])} We read every open and historical Swedish job ad """
              f"""(JobTech / Platsbanken, 2006 onwards) with a versioned, citable term list, so the level and its """
-             f"""22-fold rise from 2006 to 2025 are reproducible. [[note]] Employers repost, so the archive holds """
+             f"""{TREND['meta']['multiple']:.0f}-fold rise from the pooled """
+             f"""{TREND['meta']['base_years'].replace('-', '\u2013')} base to """
+             f"""{TREND['meta']['last_full_year']} are reproducible. [[note]] Employers repost, so the archive holds """
              f"""<b>{RECORD_ADS[:-1]} million</b> records but <b>{DISTINCT_ADS[:-1]} million</b> distinct """
              f"""advertisements; we count each advertisement once. Two corrections since the first release both """
              f"""raised the rise rather than lowered it: repeat postings inflated the denominator, and a handful """
@@ -1642,7 +1647,7 @@ def demand_section(tiles, seg):
              f"""{h('.'.join(MONITOR['captions']['scope'].split('.')[2:]))}""", cls="psub",
              style="margin:8px 0 0", label="What this measures, and what it does not")}
     <div class="tiles">{tiles}</div>
-    {figfooter("ai_in_demand_trend.csv", f"JobTech / Platsbanken job ads (CC0), 2006 onwards · {DEF_LABEL} · distinct advertisements", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
+    {figfooter("ai_in_demand_trend.csv", f"JobTech / Platsbanken job ads (CC0), 2006 onwards · {TREND['meta']['definition']} term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
     {monthly_block()}
     {livewindow_block()}
     {occupations_block()}
@@ -2188,7 +2193,7 @@ def brief(lang="en"):
     sub = SITE.get("brief_subscribe", "")
 
     cc = CROSS; dm = DEMAND; smd = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
-    tr = MONITOR["trend"]          # our own Swedish series: the floor-to-ceiling range
+    tr = TREND["trend"]            # our own Swedish series: the floor-to-ceiling range
     n_ctry = cc["meta"]["n_countries"]; dver = cc["meta"]["daioe_version"]
     se_share = next(r["share"] for r in cc["countries"] if r["is_se"])
     # NOT an EU average: the set is 36 EU-LFS countries, seven of them outside the EU.
@@ -2806,15 +2811,15 @@ def emit_data(out):
         w = _csv.writer(f); w.writerow(["occupation", "daioe_genai_score", "group", "daioe_version"])
         for it in DAIOE_EXP["most"]:  w.writerow([it["occ"], it["score"], "most_exposed", f"v{DAIOE_EXP['year']}"])
         for it in DAIOE_EXP["least"]: w.writerow([it["occ"], it["score"], "least_exposed", f"v{DAIOE_EXP['year']}"])
-    t = MONITOR["trend"]
+    t = TREND["trend"]
     with (d / "ai_in_demand_trend.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["year", "names_ai_skill_pct", "asks_for_ai_in_role_pct", "definition"])
         fv = t.get("floor_values") or [""] * len(t["years"])
         for y, v, fl in zip(t["years"], t["values"], fv):
-            w.writerow([y, v, fl, f"frozen {DEF_VERSION} fp {DEF_FP} · distinct advertisements"])
+            w.writerow([y, v, fl, f"{TREND['meta']['definition']} fp {TREND['meta']['def_fp']} · distinct advertisements"])
     (d / "ai_in_demand_trend.svg").write_text(chart_standalone(trend_svg(t), "Swedish job ads naming an AI skill, 2006 onwards",
-                                                                 f"JobTech / Platsbanken job ads (CC0) · frozen {DEF_VERSION} · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
+                                                                 f"JobTech / Platsbanken job ads (CC0) · {TREND['meta']['definition']} · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     with (d / "entry_level_squeeze.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         w.writerow(["year", "entry_level_share_least_exposed_pct", "entry_level_share_most_exposed_pct", "gap_pp"])

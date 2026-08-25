@@ -66,6 +66,11 @@ DATA = ROOT / "data"
 # module yaml -> path to a provenance file in the monitor repo, relative to its root.
 PROVENANCE = {
     "occupations.yaml":   f"data/{bulk_dir()}/derived/_derived_manifest.json",
+    # Added 25 Aug 2026. The trend was outside every guard because it was two arrays typed by
+    # hand into monitor.yaml, which has no provenance to check against; it is now generated
+    # into trend.yaml with the definition it was built from. scripts/refresh_trend.py --check
+    # goes further and compares the VALUES, which is the half this file cannot do.
+    "trend.yaml":         f"data/{bulk_dir()}/derived/_derived_manifest.json",
     "monthly_demand.yaml": "data/free_cuts/monthly_ai_share_v11.provenance.json",
     "vocabulary.yaml":    "data/candidates/_extract_definition.json",
 }

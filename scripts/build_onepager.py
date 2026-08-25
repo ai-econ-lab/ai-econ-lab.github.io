@@ -90,6 +90,45 @@ SOFT_HEX, SOFT = "4B5563", "soft"   # darkened from 6B7280: this grey carries th
                                     # and small + low-contrast is the worst case for low vision
 
 
+# The sheet's language, set once per sheet in main(). A module global rather than a parameter
+# because the number formatter is called from a dozen chart helpers that have no business
+# knowing about language, and threading it through all of them would be the larger change.
+SHEET_LANG = "en"
+
+
+def nf(v, dec=None, thousands=True):
+    """A number as the sheet's language writes it.
+
+    The Swedish sheet printed English numbers throughout: decimal points, and thousands
+    separated by commas, so "0.55%" and "33,887" where a Swedish reader expects "0,55 %" and
+    "33 887". It went out that way because every value was formatted at its call site with an
+    f-string, and an f-string has no opinion about locale.
+
+    Only DISPLAYED numbers go through here. TikZ coordinates and LaTeX lengths must stay in
+    English notation whatever the sheet says, which is why this is a helper and not a pass
+    over the finished document.
+    """
+    s = f"{v:,.{dec}f}" if dec is not None else f"{v:,g}"
+    if not thousands:
+        s = s.replace(",", "")
+    if SHEET_LANG != "sv":
+        return s
+    # Swedish: comma decimal, and a thin space for thousands (\, survives in LaTeX text mode).
+    whole, _, frac = s.partition(".")
+    whole = whole.replace(",", "\\,")
+    return f"{whole},{frac}" if frac else whole
+
+
+def pct(v, dec=None):
+    """A percentage as the sheet's language sets it.
+
+    Swedish puts a thin space between the number and the unit, English does not. Doing the
+    decimal separator without this leaves the sheet half-localised, which reads worse than
+    either convention applied consistently.
+    """
+    return f"{nf(v, dec)}\\,\\%" if SHEET_LANG == "sv" else f"{nf(v, dec)}\\%"
+
+
 def tex(s):
     s = html.unescape(re.sub(r"<[^>]+>", "", str(s) if s is not None else ""))
     for a, b in [("\\", r"\textbackslash{}"), ("&", r"\&"), ("%", r"\%"), ("$", r"\$"),
@@ -126,7 +165,7 @@ def range_band(years, hi, lo, lab_hi, lab_lo, w=118, h=17):
         for y in (2006, 2010, 2015, 2020, 2025) if y in years)
     grid = "".join(
         f"\\draw[line width=0.3pt,{SOFT}!25] (0,{Y(g):.2f}) -- ({w},{Y(g):.2f});\n"
-        f"\\node[anchor=east,font=\\tiny,text={SOFT}] at (-1.2,{Y(g):.2f}) {{{g:.1f}\\%}};\n"
+        f"\\node[anchor=east,font=\\tiny,text={SOFT}] at (-1.2,{Y(g):.2f}) {{{pct(g, 1)}}};\n"
         for g in (0.5, 1.0))
     return f"""\\begin{{tikzpicture}}[x=1mm,y=1mm]
 {grid}\\fill[{SE}!14] plot coordinates {{{up}}} -- plot coordinates {{{dn}}} -- cycle;
@@ -154,7 +193,7 @@ def _row(y, val, col, lab, track, w, bw=5.0, ghost=None, ghost_above=False):
     s = (f"\\fill[{SOFT}!12,rounded corners=0.6pt] (0,{y}) rectangle ({w},{y+bw});\n"
          f"\\fill[{col},rounded corners=0.6pt] (0,{y}) rectangle ({L:.2f},{y+bw});\n"
          f"\\node[anchor=west,font=\\small\\bfseries,text=ink] at ({w+2.2},{y+bw/2:.2f}) "
-         f"{{{val:g}\\%}};\n"
+         f"{{{pct(val)}}};\n"
          f"\\node[anchor=east,font=\\tiny,text={SOFT}] at (-1.6,{y+bw/2:.2f}) {{{lab}}};\n")
     if ghost is not None:
         g = ghost / track * w
@@ -201,7 +240,7 @@ def dumbbell(rows, w=44):
 
     rows: [(country_label, colour, most_exposed, least_exposed), ...]
     """
-    sign = lambda v: (f"+{v:g}" if v >= 0 else f"$-${abs(v):g}")
+    sign = lambda v: (f"+{nf(v)}" if v >= 0 else f"$-${nf(abs(v))}")
     vals = [v for r in rows for v in r[2:]]
     lo, hi = min(vals + [0]), max(vals)
     span = (hi - lo) * 1.06 or 1
@@ -266,7 +305,7 @@ def rank_bars(rows, key, w=23, n=6, lang="en"):
         L = max(r["share"] / top * w, 0.5)
         s += (f"\\fill[{SE},rounded corners=0.5pt] (0,{y}) rectangle ({L:.2f},{y+bw});\n"
               f"\\node[anchor=west,font=\\scriptsize\\bfseries,text=ink] at ({L+1.4:.2f},{y+bw/2:.2f}) "
-              f"{{{r['share']:.1f}\\%}};\n"
+              f"{{{pct(r['share'], 1)}}};\n"
               f"\\node[anchor=east,font=\\tiny,text=ink] at (-1.4,{y+bw/2:.2f}) "
               f"{{{tex(shorten(str(r[key]), lang))}}};\n")
     return s + "\\end{tikzpicture}"
@@ -278,9 +317,9 @@ def zero_rows(rows, key, C, n=3, lang="en"):
     volume sitting behind the zero."""
     out = []
     for r in rows[:n]:
-        out.append(f"{{\\scriptsize\\bfseries\\textcolor{{ink}}{{0.0\\%}}}}~"
+        out.append(f"{{\\scriptsize\\bfseries\\textcolor{{ink}}{{{pct(0.0, 1)}}}}}~"
                    f"{{\\scriptsize {tex(shorten(str(r[key]), lang))}}}~"
-                   f"{{\\tiny\\textcolor{{soft}}{{({r['ads']:,} {C['ads_word']})}}}}")
+                   f"{{\\tiny\\textcolor{{soft}}{{({nf(r['ads'])} {C['ads_word']})}}}}")
     return "\\\\[1.3mm]\n".join(out)
 
 
@@ -304,7 +343,7 @@ def barrier_bars(rows, namekey="name", w=20, n=6):
             L = max(val / top * w, 0.4)
             s += (f"\\fill[{col}] (0,{yy}) rectangle ({L:.2f},{yy+bw});\n"
                   f"\\node[anchor=west,font=\\tiny,text=ink] at ({L+1:.2f},{yy+bw/2:.2f}) "
-                  f"{{{val:g}}};\n")
+                  f"{{{nf(val)}}};\n")
         s += (f"\\node[anchor=east,font=\\tiny,text=ink,align=right,text width=32mm] "
               f"at (-1.4,{y+bw+gap/2:.2f}) {{{tex(r[namekey])}}};\n")
     return s + "\\end{tikzpicture}"
@@ -357,12 +396,13 @@ COPY = {
   band_hi="mention an AI skill", band_lo="ask for it in the job itself",
   se_body=(r"A \textbf{{range}}, not a single number: the upper line counts an advertisement that "
            r"mentions an AI skill anywhere, the lower one only when the skill is asked of the "
-           r"person being hired. Both rose steeply. The broader count went from {v0:.2f}\% of "
-           r"advertisements in {y0} to {v1:.2f}\% in {y1}, about {rise:.0f} times as high, and the "
-           r"{y1} range is \textbf{{{fl:.2f}\% to {ceiling}\%}}. Both lines rest on a term list and "
+           r"person being hired. Both rose steeply. The broader count went from {v0} of "
+           r"advertisements in the pooled {base} base to {v1} in {y1}, about {rise} "
+           r"times as high, and the "
+           r"{y1} range is \textbf{{{fl} to {ceiling}}}. Both lines rest on a term list and "
            r"cover only the AI demand that words reveal."),
-  se_live=(r"Right now ({asof}): of the {n} most recent advertisements, {names}\% mention an AI "
-           r"skill and {floor}\% ask for one in the job itself. This is the only figure on the "
+  se_live=(r"Right now ({asof}): of the {n} most recent advertisements, {names} mention an AI "
+           r"skill and {floor} ask for one in the job itself. This is the only figure on the "
            r"sheet that moves daily."),
   cap_q="How capable are AI systems?", cap_cond="at 50\\% success",
   # Taken from the copy table, NOT from monitor.yaml: the yaml is English-only, so pulling
@@ -454,11 +494,12 @@ COPY = {
   se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: den övre linjen räknar en annons som "
            r"nämner en AI-färdighet någonstans, den nedre bara när färdigheten efterfrågas av den "
            r"som ska anställas. Båda har stigit kraftigt. Den bredare räkningen gick från "
-           r"{v0:.2f}\% av annonserna {y0} till {v1:.2f}\% {y1}, ungefär {rise:.0f} gånger så mycket, "
-           r"och intervallet för {y1} är \textbf{{{fl:.2f}\% till {ceiling}\%}}. Båda linjerna vilar "
+           r"{v0} av annonserna i basperioden {base} till {v1} {y1}, ungefär "
+           r"{rise} gånger så mycket, "
+           r"och intervallet för {y1} är \textbf{{{fl} till {ceiling}}}. Båda linjerna vilar "
            r"på en termlista och rymmer bara den AI-efterfrågan som orden visar."),
-  se_live=(r"Just nu ({asof}): av de {n} senaste annonserna nämner {names}\% en AI-färdighet och "
-           r"{floor}\% efterfrågar den i själva jobbet. Det är den enda siffran på bladet som "
+  se_live=(r"Just nu ({asof}): av de {n} senaste annonserna nämner {names} en AI-färdighet och "
+           r"{floor} efterfrågar den i själva jobbet. Det är den enda siffran på bladet som "
            r"ändras dagligen."),
   cap_q="Hur kapabla är AI-systemen?", cap_cond="vid 50\\% träffsäkerhet",
   cap_lab=("de längsta expertuppgifter som AI-agenter klarar; längden har fördubblats var "
@@ -522,8 +563,10 @@ SV_MONTH = {1:"januari",2:"februari",3:"mars",4:"april",5:"maj",6:"juni",7:"juli
 
 
 def main():
+    global SHEET_LANG
     landscape = "--landscape" in sys.argv
     lang = "sv" if "--sv" in sys.argv else "en"
+    SHEET_LANG = lang
     big = "--large" in sys.argv
     C = COPY[lang]
     m = yaml.safe_load((DATA / "monitor.yaml").read_text(encoding="utf-8"))
@@ -531,7 +574,11 @@ def main():
     stamp = (f"{today.day} {SV_MONTH[today.month]} {today.year}" if lang == "sv"
              else today.strftime("%-d %B %Y"))
     ov = {o["k"]: o for o in m["overview"]}
-    tr = m["trend"]
+    # The trend is generated (scripts/refresh_trend.py) and states the definition it was
+    # built from. It used to be a hand-typed block in monitor.yaml, which is how this sheet
+    # printed "about 32 times" under a "frozen v1.5" source line for six days in August 2026.
+    tr_doc = yaml.safe_load((DATA / "trend.yaml").read_text(encoding="utf-8"))
+    tr, tr_meta = tr_doc["trend"], tr_doc["meta"]
     # Same precedence as build.py: monitor.yaml carries the fallback and the framing, and the
     # generated file overrides the figures when it exists. Without this the one-pager would
     # keep printing the hand-placed fallback while the website showed the refreshed window.
@@ -609,18 +656,28 @@ def main():
 
     cap = ov["Capability"]
     hero = range_band(tr["years"], tr["values"], tr["floor_values"], C["band_hi"], C["band_lo"])
-    se_body = C["se_body"].format(v0=tr["values"][0], y0=tr["years"][0],
-                                  v1=tr["values"][-2], y1=tr["years"][-2],
-                                  rise=tr["values"][-2] / tr["values"][0],
-                                  fl=tr["floor_values"][-2], ceiling=ceiling)
+    # The multiple is the pooled-base one from the generated file, not v1/v0 recomputed here.
+    # Two bases on one sheet is how the site came to show 32x and 38x at the same time.
+    se_body = C["se_body"].format(v0=pct(tr_meta["base_pct"], 2), y0=tr["years"][0],
+                                  base=tr_meta["base_years"].replace("-", "\\textendash "),
+                                  v1=pct(tr["values"][-2], 2), y1=tr["years"][-2],
+                                  rise=nf(tr_meta["multiple"], 0),
+                                  fl=pct(tr["floor_values"][-2], 2),
+                                  ceiling=pct(float(ceiling), 2))
     # Same source and same formatting as the website's live-window block. `n` used to be the
     # string "32,022" in monitor.yaml and is now an integer in the generated file, so the
     # thousands separator is applied here rather than being typed into the data; and the two
     # percentages are printed to the same 2 dp as the page, which they previously were only
     # because someone had typed them that way.
-    se_live = C["se_live"].format(asof=tex(str(lw["asof"])), n=f"{int(lw['n']):,}",
-                                  names=f"{float(lw['names_pct']):.2f}",
-                                  floor=f"{float(lw['floor_pct']):.2f}")
+    asof = str(lw["asof"])
+    if lang == "sv":
+        iso = lw.get("asof_iso")
+        if iso:
+            d = iso if isinstance(iso, date) else date.fromisoformat(str(iso))
+            asof = f"{d.day} {SV_MONTH[d.month]} {d.year}"
+    se_live = C["se_live"].format(asof=tex(asof), n=nf(int(lw["n"])),
+                                  names=pct(float(lw["names_pct"]), 2),
+                                  floor=pct(float(lw["floor_pct"]), 2))
     gaps = "\\\\[1.6mm]\n".join(
         f"{{\\scriptsize\\bfseries\\textcolor{{ink}}{{{tex(h)}}}}} "
         f"{{\\scriptsize\\textcolor{{soft}}{{{tex(b)}}}}}" for h, b in C["gaps"])
