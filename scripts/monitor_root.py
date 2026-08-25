@@ -63,6 +63,20 @@ def __getattr__(name):
 # occupations.yaml, the one-pager's source line and refresh_occupations.py still said v1.3.
 # So the same defect recurred at the next freeze, one layer out. It lives here now, where both
 # build.py and the refresh scripts can import it.
+#
+# CHANGING THESE TWO LINES IS NOT THE WHOLE FREEZE. They set what the site CLAIMS. What it
+# SHOWS comes from the modules built off the bulk series, and those do not rebuild themselves:
+#
+#     python3 scripts/refresh_trend.py          # data/trend.yaml
+#     python3 scripts/refresh_occupations.py    # data/occupations.yaml
+#     python3 scripts/refresh_governance.py     # data/governance.yaml, pinned to v1.2 by design
+#     python3 scripts/refresh_trend.py --check  # tiles and series agree
+#     python3 scripts/check_vintages.py         # no module claims a definition it lacks
+#
+# Bumping the version without running them is exactly what happened on 19 August 2026: the
+# label moved to v1.5 and the trend series did not, so the site served v1.4 numbers under a
+# v1.5 stamp for six days, with a 38x tile above a 32x chart. refresh_trend.py --check now
+# fails on that state; it did not exist then.
 DEF_VERSION = "v1.5"
 DEF_FP = "96b1f3f8caa38319"
 DEF_LABEL = f"frozen {DEF_VERSION} term list"

@@ -202,32 +202,54 @@ def tile_mismatches() -> list[str]:
     return out
 
 
+def check() -> int:
+    """Two halves, because they need different things to run.
+
+    The TILE half reads only files in this repository, so it runs anywhere, CI included.
+    The SERIES half needs the ai-monitor checkout, which CI deliberately does not have (see
+    build-check.yml). It stands down loudly rather than passing quietly: a green run must not
+    let anyone believe the series was compared when it was not. That is the same rule
+    check_vintages.py states for itself, and it is the rule this defect broke.
+    """
+    problems = tile_mismatches()
+    if SRC.exists():
+        years, names, floor, prov = read_series()
+        full = {r["year"]: r for r in csv.DictReader(SRC.open(encoding="utf-8"))
+                if "-" not in r["year"]}
+        last_full = str(max(int(y) for y in full))
+        want = render(years, names, floor, prov, definition(), genai_tile(full[last_full]))
+        if not OUT.exists():
+            problems.append(f"{OUT.name} does not exist; run without --check to build it.")
+        elif OUT.read_text(encoding="utf-8") != want:
+            problems.append(
+                f"{OUT.name} is not what {SRC.name} currently produces. The published series "
+                f"has drifted from the generator, which is the state of 19-25 August 2026: a "
+                f"v1.4 series under a v1.5 stamp. Fix: python3 scripts/refresh_trend.py")
+    else:
+        print("The series half did NOT run: no ai-monitor checkout at\n"
+              f"  {SRC.parent}\n"
+              "so trend.yaml was not compared against the generator. Only the tiles were\n"
+              "checked. Set AI_MONITOR_ROOT to run the half that matters most.\n")
+
+    if problems:
+        print("FAIL")
+        for b in problems:
+            print(f"  {b}")
+        return 1
+    print(f"ok    tiles agree with trend.yaml"
+          + (f", and trend.yaml matches {SRC.name} ({definition()})" if SRC.exists() else ""))
+    return 0
+
+
 def main() -> int:
+    if "--check" in sys.argv:
+        return check()
     if not SRC.exists():
         raise SystemExit(f"series not found: {SRC}\n  (DEF_VERSION is {DEF_VERSION})")
     years, names, floor, prov = read_series()
     full = {r["year"]: r for r in csv.DictReader(SRC.open(encoding="utf-8")) if "-" not in r["year"]}
     last_full = str(max(int(y) for y in full))
     text = render(years, names, floor, prov, definition(), genai_tile(full[last_full]))
-
-    if "--check" in sys.argv:
-        if not OUT.exists():
-            print(f"FAIL  {OUT.name} does not exist; run without --check to build it.")
-            return 1
-        if OUT.read_text(encoding="utf-8") != text:
-            print(f"FAIL  {OUT.name} is not what {SRC.name} currently produces.\n"
-                  f"      The published series has drifted from the generator. This is the\n"
-                  f"      defect of 19-25 August 2026: a v1.4 series under a v1.5 stamp.\n"
-                  f"      Fix: python3 scripts/refresh_trend.py")
-            return 1
-        bad = tile_mismatches()
-        if bad:
-            print("FAIL  monitor.yaml tiles disagree with the generated series:")
-            for b in bad:
-                print(f"      {b}")
-            return 1
-        print(f"ok    {OUT.name} matches {SRC.name} ({definition()}), and the tiles agree")
-        return 0
 
     OUT.write_text(text, encoding="utf-8")
     m = multiples(years, names, floor)

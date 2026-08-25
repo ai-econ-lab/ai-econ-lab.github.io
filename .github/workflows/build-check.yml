@@ -100,6 +100,12 @@ jobs:
       - name: Every module states the unit it is computed on
         run: python3 scripts/check_claims.py
 
+      # The tile half runs here; the series half needs the ai-monitor checkout and says so
+      # loudly when it cannot run. Added after the trend spent six days published as v1.4
+      # under a v1.5 stamp with a 38x tile above a 32x chart, seen by nothing.
+      - name: The trend tiles agree with the trend series
+        run: python3 scripts/refresh_trend.py --check
+
       # The refresh scripts are not run here (they need the ai-monitor checkout and the
       # network), but they must at least still import: an ImportError, a syntax error or a
       # module-level side effect in one of them otherwise waits for its schedule to be found.
