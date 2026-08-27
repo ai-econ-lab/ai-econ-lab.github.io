@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Monthly AIEL Monitor Brief draft, emailed to Magnus for review two weeks ahead.
 
-Run by .github/workflows/monthly-brief-draft.yml on the 14th (and manually). Builds NEXT
+Run by .github/workflows/monthly-brief-draft.yml in the month-end window (and manually). Builds NEXT
 month's brief (both languages) via build.py's BRIEF_MONTH_OVERRIDE, extracts the readable
 text, and emails it to Magnus over Gmail SMTP using the GMAIL_APP_PASSWORD repo secret.
 Nothing is published — Magnus reviews, replies "go", and the issue is posted to Substack.
 """
-import os, re, html, smtplib, subprocess, calendar
+import os, re, html, json, smtplib, subprocess, calendar
 from datetime import date
 from email.mime.text import MIMEText
 from pathlib import Path
@@ -21,13 +21,43 @@ TO = FROM = "mlodefalk@gmail.com"
 # monthly fire is expensive here, because the next one is a month later, by which
 # time the issue it was drafting has already published. A daily run costs ~16s and
 # exits immediately on 30 days out of 31.
+# Firing on one nominated day is still one point of failure: on 27 Aug 2026 GitHub dropped
+# every scheduled run in both repositories for a day, which on the 28th would have cost the
+# September issue outright. So the window is the last three days of the month and the send
+# is deduplicated on the month being drafted, exactly the shape the seminar reminder uses
+# (three chances, sent_log.json). The first day that fires does the work; the rest see the
+# month already logged and exit. Short months keep three chances because the window is
+# measured back from the month's end, so February opens on the 26th rather than losing two.
 TARGET_DAY = 28
+SENT_LOG = ROOT / ".github" / "brief_sent.json"
+
 t = date.today()
-_forced = (os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
-           or os.environ.get("BRIEF_FORCE") == "1")
-if not _forced and t.day != TARGET_DAY:
-    print(f"Not the {TARGET_DAY}th (today is the {t.day}), nothing to draft.")
-    raise SystemExit(0)
+_last_day = calendar.monthrange(t.year, t.month)[1]
+_window_opens = min(TARGET_DAY, _last_day - 2)
+# Set by the workflow from its `force` input, never from the event name: see the comment
+# on BRIEF_FORCE there. A watchdog dispatch must still respect the window.
+_forced = os.environ.get("BRIEF_FORCE") == "1"
+
+# The month this run would draft, which is the deduplication key. Stable across every day
+# of the window, so the 29th knows the 28th already did the work.
+_ny, _nm = (t.year + 1, 1) if t.month == 12 else (t.year, t.month + 1)
+TARGET_MONTH = f"{_ny}-{_nm:02d}"
+
+
+def _sent_months():
+    try:
+        return json.loads(SENT_LOG.read_text(encoding="utf-8"))
+    except (FileNotFoundError, ValueError):
+        return []
+
+
+if not _forced:
+    if t.day < _window_opens:
+        print(f"Window opens on the {_window_opens}th (today is the {t.day}), nothing to draft.")
+        raise SystemExit(0)
+    if TARGET_MONTH in _sent_months():
+        print(f"The {TARGET_MONTH} draft already went out this window, nothing to do.")
+        raise SystemExit(0)
 
 # --- next month (roll Dec -> Jan) ---
 ny, nm = (t.year + 1, 1) if t.month == 12 else (t.year, t.month + 1)
@@ -94,3 +124,13 @@ with smtplib.SMTP("smtp.gmail.com", 587, timeout=60) as s:
     s.login(FROM, pw)
     s.send_message(msg)
 print(f"Sent {mname} {ny} draft to {TO} ({len(en)} EN chars, {len(sv)} SV chars).")
+
+# Written only after the SMTP send returned, so a failed send leaves the window open and
+# tomorrow tries again. The workflow commits this file; it is state, not site content,
+# which is why it sits beside the workflow rather than in data/.
+_log = _sent_months()
+if TARGET_MONTH not in _log:
+    _log.append(TARGET_MONTH)
+    SENT_LOG.parent.mkdir(parents=True, exist_ok=True)
+    SENT_LOG.write_text(json.dumps(_log[-24:], indent=2) + "\n", encoding="utf-8")
+    print(f"Logged {TARGET_MONTH} in {SENT_LOG.relative_to(ROOT)}.")

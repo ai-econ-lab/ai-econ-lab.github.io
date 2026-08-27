@@ -5,13 +5,28 @@ name: Monthly Brief draft
 # goes out on the 28th of the prior month. Also runnable on demand.
 on:
   schedule:
-    # Runs DAILY and exits in ~16s unless it is the 28th; scripts/email_brief_draft.py
-    # holds the day guard. Deliberately not "0 7 28 * *": GitHub drops rare cron
-    # schedules under load, and that monthly form silently failed to fire on
-    # 28 Jul 2026. Missing a monthly slot costs a whole issue, since the retry is a
-    # month later, after publication. Daily is the reliable shape.
+    # Runs DAILY and exits in ~16s outside the month-end window; scripts/email_brief_draft.py
+    # holds the guard. Deliberately not "0 7 28 * *": GitHub drops rare cron schedules
+    # under load, and that monthly form silently failed to fire on 28 Jul 2026. Missing a
+    # monthly slot costs a whole issue, since the retry is a month later, after publication.
+    # Daily is the reliable shape. The guard itself spans the last three days of the month
+    # and dedups on the month being drafted, because on 27 Aug 2026 GitHub dropped a whole
+    # day of scheduled runs across both repositories: one nominated day is one point of
+    # failure, three days with a sent log is not.
     - cron: "0 7 * * *"        # 07:00 UTC (~09:00 Europe/Stockholm)
-  workflow_dispatch: {}        # manual "Run workflow" button; bypasses the day guard
+  workflow_dispatch:           # manual "Run workflow" button
+    inputs:
+      force:
+        description: "Draft even outside the month-end window and even if already sent"
+        type: boolean
+        default: true           # pressing the button by hand means "send it now", as before
+
+
+# Least privilege, stated explicitly: an unlisted scope is set to none. contents: write is
+# needed only to commit .github/brief_sent.json, which is how a run on the 29th learns that
+# the 28th already sent. The runner is ephemeral, so the log has to live in the repository.
+permissions:
+  contents: write
 
 jobs:
   draft:
@@ -27,4 +42,30 @@ jobs:
       - name: Build next month's brief and email it
         env:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          # The event alone must not force a send. The schedule watchdog dispatches this
+          # workflow when GitHub's scheduler has gone quiet, and a forced dispatch would mail
+          # a draft on an arbitrary day. So forcing is an explicit input: true from the button,
+          # false from the watchdog, absent (and therefore false) on a schedule.
+          BRIEF_FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force && '1' || '0' }}
         run: python3 scripts/email_brief_draft.py
+      # Only the sent log is committed, and only when the script actually wrote one. The
+      # build products of a draft run are throwaway: the brief that publishes is built from
+      # main by the normal path, not from this run's working tree.
+      - name: Record the send
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain .github/brief_sent.json)" ]; then
+            echo "No send this run; nothing to log."; exit 0
+          fi
+          # The script ran build.py, so docs/ is dirty with throwaway output. Keep the log,
+          # discard everything else, then sync before pushing: site-refresh commits into this
+          # repository daily and can land between checkout and push.
+          cp .github/brief_sent.json "$RUNNER_TEMP/brief_sent.json"
+          git checkout -- .
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase --quiet
+          cp "$RUNNER_TEMP/brief_sent.json" .github/brief_sent.json
+          git add .github/brief_sent.json
+          git commit -m "Brief draft sent, log the month (auto)"
+          git push
