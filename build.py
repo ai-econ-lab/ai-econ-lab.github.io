@@ -2785,11 +2785,32 @@ def methods():
                  "version history with fingerprints, and validation.",
                  "/monitor/methods/", body)
 
+def redirect(dest):
+    """A bare stub for a retired URL that other people's archives still point at.
+
+    The seminar reminder mails carry a link to the series page, and every reminder already
+    sitting in a recipient's mailbox points at /seminars, which this site has no route for:
+    since the 14 Aug 2026 DNS cutover that path has returned 404. A stub costs one file and
+    keeps those links alive. Meta-refresh moves the browser, canonical tells the crawler where
+    the content really is, noindex stops the stub competing with the real page in search, and
+    the visible link covers anyone whose browser ignores the refresh.
+    """
+    return ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
+            f'<meta http-equiv="refresh" content="0; url={dest}">'
+            f'<link rel="canonical" href="{BASE}{dest}">'
+            '<meta name="robots" content="noindex,follow">'
+            '<title>Moved</title></head>'
+            f'<body><p>This page has moved to <a href="{dest}">{dest}</a>.</p></body></html>')
+
+
 PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.html": daioe(),
          "monitor/methods/index.html": methods(),
          "monitor/brief/index.html": brief("en"), "monitor/brief/sv/index.html": brief("sv"),
          "research/index.html": research(), "people/index.html": people(),
-         "events/index.html": events(), "news/index.html": news(), "about/index.html": about()}
+         "events/index.html": events(), "news/index.html": news(), "about/index.html": about(),
+         # Retired route kept alive for the reminder mails already in people's archives.
+         # Deliberately absent from sitemap.xml: a redirect stub is not a page to index.
+         "seminars/index.html": redirect("/events/")}
 
 def chart_standalone(svg, title=None, source=None):
     """Self-contained SVG for download (inline light-theme styles; no page CSS).

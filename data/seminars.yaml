@@ -23,7 +23,9 @@ seasons:
       - {date: "2026-10-09", speaker: "Kristina Palm", affil: "Karlstad University",
          title: "Working with robots — from a work-environment perspective",
          links: [{label: "Speaker", url: "https://www.kau.se/forskare/kristina-palm"}]}
-      - {date: "2026-11-13", speaker: "TBD", affil: "", title: "TBD", links: []}
+      - {date: "2026-11-13", speaker: "Joelle Saad-Lessler", affil: "Stevens Institute of Technology",
+         title: "TBD",
+         links: [{label: "Speaker", url: "https://www.stevens.edu/profile/jsaadles"}]}
       - {date: "2026-12-11", speaker: "Dennis Facius & Roberto Iacono", affil: "EUI · NTNU", title: "TBD",
          links: [{label: "Facius", url: "https://www.eui.eu/people?id=dennis-facius"}, {label: "Iacono", url: "https://robertoiacono.org"}]}
       - {date: "2027-02-12", speaker: "TBD", affil: "", title: "TBD", links: []}
