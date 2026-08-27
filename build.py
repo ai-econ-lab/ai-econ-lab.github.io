@@ -172,8 +172,19 @@ LIVEWINDOW_AGE = _livewindow_age()
 # the emit step or the push has been down since before yesterday, which is a fact about the
 # site and not about the labour market.
 LIVE_OK = LIVEWINDOW_AGE is not None and LIVEWINDOW_AGE <= 2
-LIVE_STATUS = ('<span class="lv">● LIVE · PUBLIC + PARTNER DATA</span>' if LIVE_OK else
-               '<span class="lv stale">◌ FEED DELAYED · PUBLIC + PARTNER DATA</span>')
+# The strip carries THREE clocks and they legitimately differ: the weekly source sweep, the
+# date a stamped series last moved, and the daily job-ads window. Until 27 Aug 2026 only the
+# first two were dated and the fastest showed as a bare "● LIVE", so a reader comparing
+# "SOURCES CHECKED 24 Aug · SERIES LAST MOVED 25 Aug" against today's date saw a site three
+# days stale and had nothing on the strip to correct the impression. Magnus read it exactly
+# that way twice: on 24 Aug, which is why SOURCES CHECKED gained a date at all, and again on
+# 27 Aug, when both dated clocks were correct and the undated one was the current one.
+# Dating the badge closes the class rather than the instance: every clock on the strip now
+# says when it last moved, so no pair of them can imply staleness the third disproves.
+_LW_ASOF = str(LIVEWINDOW.get("asof") or "").strip()
+_LW_SUFFIX = f" {_LW_ASOF}" if _LW_ASOF else ""
+LIVE_STATUS = (f'<span class="lv">● LIVE FEED{_LW_SUFFIX} · PUBLIC + PARTNER DATA</span>' if LIVE_OK else
+               f'<span class="lv stale">◌ FEED DELAYED · WINDOW{_LW_SUFFIX} · PUBLIC + PARTNER DATA</span>')
 
 # Every count the site states about its own corpus and coverage, derived from the file that
 # holds it. Typed counts cannot contradict their data anywhere a build can notice, which is
