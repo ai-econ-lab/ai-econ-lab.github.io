@@ -201,6 +201,21 @@ OUT = ROOT / SITE["build"]["out"]
 BASE = SITE["brand"]["base_url"].rstrip("/")
 h = lambda s: html.escape(str(s), quote=True)   # escape plain-text (titles, names)
 
+def num_html(s):
+    """Escape a tile's headline value, keeping only the one bit of markup it may carry.
+
+    Tile values follow a presentational convention: a <span> wraps the unit, so
+    "30<span>% of human level</span>" sets the unit smaller than the figure. Everything else
+    in the string is data, and capability.yaml is written by refresh_capability.py out of
+    external APIs, so it cannot be trusted to be markup-safe.
+
+    The two failure modes are symmetric and both have shipped. Emitting num raw, as the
+    overview and monitor tiles did, makes an API field an injection path. Escaping it
+    wholesale, as the capability tiles did, printed "30<span>% of human level</span>" on the
+    public page as literal text. So: escape everything, then restore the span wrapper alone.
+    """
+    return (h(s).replace("&lt;span&gt;", "<span>").replace("&lt;/span&gt;", "</span>"))
+
 # Prose helper: escape text but turn [label](url) into a link (for about paragraphs etc.).
 _MDLINK = re.compile(r'\[([^\]]+)\]\((https?://[^)\s]+)\)')
 def linkify(s):
@@ -366,7 +381,7 @@ def home():
     for t in m["tiles"]:
         cls = f' {t["cls"]}' if t["cls"] else ""
         tiles += (f'<div class="tile{cls}"><div class="stripe"></div>'
-                  f'<div class="num">{t["num"]}</div><div class="lab">{h(t["lab"])}</div>'
+                  f'<div class="num">{num_html(t["num"])}</div><div class="lab">{h(t["lab"])}</div>'
                   f'<div class="foot">{h(t["foot"])}</div></div>')
     body = f"""<div class="wrap"><div class="hero"><div class="herogrid">
   <div>
@@ -2099,7 +2114,7 @@ def capability_section():
     # source for the watched facts, and is the fallback if the refresher has never run.
     c = CAPABILITY
     tiles = "".join(
-        f'<div class="tile"><div class="stripe"></div><div class="num">{h(t["num"])}</div>'
+        f'<div class="tile"><div class="stripe"></div><div class="num">{num_html(t["num"])}</div>'
         f'<div class="lab">{h(t["lab"])}</div><div class="foot">{h(t["foot"])}</div></div>'
         for t in c["facts"])
     links = " · ".join(f'<a href="{h(l["url"])}">{h(l["label"])}</a>' for l in c["links"])
@@ -2167,7 +2182,7 @@ def monitor():
     tiles = ""
     for t in m["tiles"]:
         cls = f' {t["cls"]}' if t["cls"] else ""
-        tiles += (f'<div class="tile{cls}"><div class="stripe"></div><div class="num">{t["num"]}</div>'
+        tiles += (f'<div class="tile{cls}"><div class="stripe"></div><div class="num">{num_html(t["num"])}</div>'
                   f'<div class="lab">{h(t["lab"])}</div><div class="foot">{h(t["foot"])}</div></div>')
     seg = ""
     for c in m["segmentation"]["cards"]:
