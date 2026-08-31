@@ -1,0 +1,17 @@
+country,firm_size,pct_using_ai,year,pct_prev_wave,prev_year
+Denmark,250+ employees,74.5,2025,66.2,2021
+Denmark,50–249 employees,58.3,2025,37.2,2021
+Denmark,"All firms, 10+",42.0,2025,23.9,2021
+Denmark,10–49 employees,37.5,2025,19.7,2021
+Finland,250+ employees,79.4,2025,51.2,2021
+Finland,50–249 employees,51.4,2025,26.7,2021
+Finland,"All firms, 10+",37.8,2025,15.8,2021
+Finland,10–49 employees,33.5,2025,12.4,2021
+Sweden,250+ employees,71.9,2025,40.3,2021
+Sweden,50–249 employees,49.6,2025,18.1,2021
+Sweden,"All firms, 10+",35.0,2025,9.9,2021
+Sweden,10–49 employees,30.7,2025,7.6,2021
+Norway,250+ employees,66.0,2025,43.1,2021
+Norway,50–249 employees,45.3,2025,18.8,2021
+Norway,"All firms, 10+",28.9,2025,10.8,2021
+Norway,10–49 employees,25.2,2025,8.9,2021

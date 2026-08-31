@@ -34,6 +34,7 @@ from labels import MAX_LABEL_CHARS, shorten  # noqa: E402
 DATA_FILES = [
     "monitor.yaml", "cross_country.yaml", "cross_country_adoption.yaml",
     "cross_country_demand.yaml", "swe_adoption.yaml", "swe_adoption_sector.yaml", "demand_by_sector.yaml",
+    "nordic_adoption_size.yaml",
     "daioe_exposure.yaml",
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
     "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
@@ -206,6 +207,7 @@ ELS      = load("entry_level_squeeze.yaml")
 SWEAD    = load("swe_adoption.yaml")
 SWESEC   = load("swe_adoption_sector.yaml")   # sibling cut: same table, by industry
 DEMSEC   = load("demand_by_sector.yaml")      # OUR ad series on SCB's industry groups
+NORDSZ   = load("nordic_adoption_size.yaml")  # the one depth cut that goes Nordic
 USRPS    = load("us_adoption_rps.yaml")
 POPAI    = load("population_ai.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
@@ -1710,8 +1712,33 @@ def demand_section(tiles, seg):
   {related_research("demand")}
 </section></div></div>"""
 
+
+def nordic_size_panels():
+    """The firm-size cut across the Nordics, as four small multiples on a shared axis.
+
+    Four panels, not one sixteen-row chart. Country crossed with size class is where a Nordic
+    version actually gets messy, and stacking every row in one chart makes the within-country
+    gradient unreadable while adding nothing. Panels keep the countries comparable because the
+    axis does not move, and unlike a toggle they survive print.
+
+    Full width, one per row: barplot sizes its label gutter and value column in fixed pixels
+    inside a 640-unit viewBox, so at half width the text collides with the bars. A compact mode
+    is the proper fix; until it exists, full width is the correct one.
+    """
+    xmax = 10 * (int(max(z["adoption"] for c in NORDSZ["countries"] for z in c["sizes"]) // 10) + 1)
+    out = []
+    for c in NORDSZ["countries"]:
+        chart = barplot(c["sizes"], 0, xmax, 0, "adoption", ".1f", what="size classes",
+                        cmp_key="prev", series_label=str(NORDSZ["meta"]["year"]),
+                        cmp_label=str(NORDSZ["meta"]["prev_year"]))
+        mark = ' style="font-weight:700"' if c["is_se"] else ""
+        out.append(f'<figure style="margin:0 0 6px"><figcaption class="dk"{mark}>'
+                   f'{h(c["name"])} · {c["headline"]:g}%</figcaption>{chart}</figure>')
+    return "".join(out)
+
 def adoption_section():
-    """Module 3 — Adoption. Cross-country firm AI-adoption (Eurostat), Sweden by firm size as depth cut."""
+    """Module 3 — Adoption. Cross-country firm AI-adoption (Eurostat), then two depth cuts:
+    Sweden by firm size from SCB, and the Nordics by firm size from Eurostat."""
     ad = ADOPT; amt = ad["meta"]
     se = next(r for r in ad["countries"] if r["is_se"])
     swm = SWEAD["meta"]; sm = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
@@ -1746,6 +1773,26 @@ def adoption_section():
       {h(swm['prev_year'])}.</p></details>
     <div class="dotwrap">{barplot(SWEAD['sizes'], sm['Tot250'], swxmax, 0, 'adoption', '.0f', what='firm-size classes', mean_label='Sweden 10+')}</div>
     {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; reference line is the Swedish 10+ headline, {sm['Tot250']}%", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
+  </div>
+  <div class="depth"><p class="dk">The Nordics, in depth · by firm size</p>
+    <p class="secintro" style="margin:0 0 14px">This is the one depth cut that goes Nordic, because Eurostat
+      publishes the size classes for every country and back to {h(NORDSZ['meta']['prev_year'])}. Sweden is
+      <b>third of the four</b> and grew fastest, from {next(z['prev'] for c in NORDSZ['countries'] if c['is_se'] for z in c['sizes'] if z['code']=='GE10')}%
+      to {next(z['adoption'] for c in NORDSZ['countries'] if c['is_se'] for z in c['sizes'] if z['code']=='GE10')}%
+      among firms with ten or more employees, against Denmark's rise from
+      {next(z['prev'] for c in NORDSZ['countries'] if c['code']=='DK' for z in c['sizes'] if z['code']=='GE10')}%
+      to {next(z['adoption'] for c in NORDSZ['countries'] if c['code']=='DK' for z in c['sizes'] if z['code']=='GE10')}%.
+      Growing fastest and still behind is the pattern to read here, and it holds in every size class.</p>
+    <details class="note"><summary>Why four countries, and why size and not industry</summary>
+      <p><b>Iceland has no row in Eurostat's AI table</b>, though it is in the exposure module above. A country
+      missing from a source is missing, so it is absent here rather than shown as a gap.</p>
+      <p><b>Adoption by industry cannot go Nordic.</b> Eurostat publishes a single all-activities NACE
+      aggregate; the industry cut on this site comes from SCB's national release. There is no Nordic equivalent
+      unless DST, SSB and Tilastokeskus each publish their own.</p>
+      <p>The axis is shared across the four panels, so the countries stay comparable; the highlighted row in each
+      is that country's 10+ headline, the same figure the cross-country bar above shows.</p></details>
+    {nordic_size_panels()}
+    {figfooter("nordic_adoption_size.csv", f"{NORDSZ['meta']['source']}, {NORDSZ['meta']['year']} against {NORDSZ['meta']['prev_year']} · {NORDSZ['meta']['unit']}", next_up="Eurostat 2026 wave (expected around year-end)")}
   </div>
   {akavia_workers_block()}
   {akavia_movement_block()}
@@ -3243,6 +3290,14 @@ def emit_data(out):
         w.writerow(["firm_size", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])
         for r in SWEAD["sizes"]:
             w.writerow([r["name"], r["adoption"], SWEAD["meta"]["year"], r.get("prev", ""), SWEAD["meta"]["prev_year"]])
+    with (d / "nordic_adoption_size.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["country", "firm_size", "pct_using_ai", "year", "pct_prev_wave", "prev_year"])
+        for c in NORDSZ["countries"]:
+            for z in c["sizes"]:
+                w.writerow([c["name"], z["name"], z["adoption"], NORDSZ["meta"]["year"],
+                            z.get("prev") if z.get("prev") is not None else "",
+                            NORDSZ["meta"]["prev_year"]])
     _swxmax = 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1)
     (d / "swe_adoption.svg").write_text(
         chart_standalone(barplot(SWEAD["sizes"], SWEAD["meta"]["total"], _swxmax, 0, "adoption", ".0f",

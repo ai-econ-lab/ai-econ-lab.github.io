@@ -1,0 +1,47 @@
+# AI adoption by firm size across the Nordics (Adoption module).
+# Auto-generated; rerun scripts/refresh_nordic_adoption_size.py then build.py. DO NOT hand-edit.
+# Iceland is absent: it has no row in Eurostat's AI table, though it is in the exposure module.
+meta:
+  indicator: "Enterprises using at least one AI technology, by firm size"
+  unit: "% of enterprises"
+  source: "Eurostat, isoc_eb_ai"
+  year: 2025
+  prev_year: 2021
+  countries: 4
+countries:
+  - code: "DK"
+    name: "Denmark"
+    is_se: false
+    headline: 42.0
+    sizes:
+      - {code: "GE250", name: "250+ employees", name_sv: "250+ anställda", adoption: 74.5, prev: 66.2, is_se: false}
+      - {code: "50-249", name: "50–249 employees", name_sv: "50–249 anställda", adoption: 58.3, prev: 37.2, is_se: false}
+      - {code: "GE10", name: "All firms, 10+", name_sv: "Alla företag, 10+", adoption: 42.0, prev: 23.9, is_se: true}
+      - {code: "10-49", name: "10–49 employees", name_sv: "10–49 anställda", adoption: 37.5, prev: 19.7, is_se: false}
+  - code: "FI"
+    name: "Finland"
+    is_se: false
+    headline: 37.8
+    sizes:
+      - {code: "GE250", name: "250+ employees", name_sv: "250+ anställda", adoption: 79.4, prev: 51.2, is_se: false}
+      - {code: "50-249", name: "50–249 employees", name_sv: "50–249 anställda", adoption: 51.4, prev: 26.7, is_se: false}
+      - {code: "GE10", name: "All firms, 10+", name_sv: "Alla företag, 10+", adoption: 37.8, prev: 15.8, is_se: true}
+      - {code: "10-49", name: "10–49 employees", name_sv: "10–49 anställda", adoption: 33.5, prev: 12.4, is_se: false}
+  - code: "SE"
+    name: "Sweden"
+    is_se: true
+    headline: 35.0
+    sizes:
+      - {code: "GE250", name: "250+ employees", name_sv: "250+ anställda", adoption: 71.9, prev: 40.3, is_se: false}
+      - {code: "50-249", name: "50–249 employees", name_sv: "50–249 anställda", adoption: 49.6, prev: 18.1, is_se: false}
+      - {code: "GE10", name: "All firms, 10+", name_sv: "Alla företag, 10+", adoption: 35.0, prev: 9.9, is_se: true}
+      - {code: "10-49", name: "10–49 employees", name_sv: "10–49 anställda", adoption: 30.7, prev: 7.6, is_se: false}
+  - code: "NO"
+    name: "Norway"
+    is_se: false
+    headline: 28.9
+    sizes:
+      - {code: "GE250", name: "250+ employees", name_sv: "250+ anställda", adoption: 66.0, prev: 43.1, is_se: false}
+      - {code: "50-249", name: "50–249 employees", name_sv: "50–249 anställda", adoption: 45.3, prev: 18.8, is_se: false}
+      - {code: "GE10", name: "All firms, 10+", name_sv: "Alla företag, 10+", adoption: 28.9, prev: 10.8, is_se: true}
+      - {code: "10-49", name: "10–49 employees", name_sv: "10–49 anställda", adoption: 25.2, prev: 8.9, is_se: false}
