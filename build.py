@@ -33,7 +33,7 @@ from labels import MAX_LABEL_CHARS, shorten  # noqa: E402
 # adding a news item is not a data refresh and must not move this date.
 DATA_FILES = [
     "monitor.yaml", "cross_country.yaml", "cross_country_adoption.yaml",
-    "cross_country_demand.yaml", "swe_adoption.yaml", "daioe_exposure.yaml",
+    "cross_country_demand.yaml", "swe_adoption.yaml", "swe_adoption_sector.yaml", "daioe_exposure.yaml",
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
     "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
     "occupations.yaml", "occupation_tiers.yaml", "barriers.yaml",
@@ -203,6 +203,7 @@ CAPABILITY = (load("capability.yaml") if (DATA / "capability.yaml").exists()
               else MONITOR["capability"])
 ELS      = load("entry_level_squeeze.yaml")
 SWEAD    = load("swe_adoption.yaml")
+SWESEC   = load("swe_adoption_sector.yaml")   # sibling cut: same table, by industry
 USRPS    = load("us_adoption_rps.yaml")
 POPAI    = load("population_ai.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
@@ -2373,6 +2374,9 @@ def brief(lang="en"):
     sub = SITE.get("brief_subscribe", "")
 
     cc = CROSS; dm = DEMAND; smd = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
+    # Sector cut beside the size cut, read from the generated file for the same reason:
+    # a typed figure went stale through two freezes once already.
+    secd = {r["code"]: r["adoption"] for r in SWESEC["sectors"]}
     tr = TREND["trend"]            # our own Swedish series: the floor-to-ceiling range
     n_ctry = cc["meta"]["n_countries"]; dver = cc["meta"]["daioe_version"]
     se_share = next(r["share"] for r in cc["countries"] if r["is_se"])
@@ -2434,9 +2438,13 @@ def brief(lang="en"):
             "svenska livemätningen av jobbannonser är pulsen ovan."),
         "adoption": L(
             f"Adoption climbs steeply with firm size, from {smd['10-49']}% of small firms (10–49 employees) to "
-            f"{smd['250-']}% of large ones (250+) in {SWEAD['meta']['year']}, every class up sharply since {SWEAD['meta']['prev_year']}.",
+            f"{smd['250-']}% of large ones (250+) in {SWEAD['meta']['year']}, every class up sharply since {SWEAD['meta']['prev_year']}. "
+            f"Industry separates firms further still: from {secd['49-53']}% in transport and storage to "
+            f"{secd['58-63']}% in information and communication, against {SWESEC['meta']['total']}% for all industries.",
             f"Användningen ökar brant med företagsstorlek, från {smd['10-49']}% av småföretagen (10–49 anställda) till "
-            f"{smd['250-']}% av de stora (250+) {SWEAD['meta']['year']}, alla storleksklasser kraftigt upp sedan {SWEAD['meta']['prev_year']}."),
+            f"{smd['250-']}% av de stora (250+) {SWEAD['meta']['year']}, alla storleksklasser kraftigt upp sedan {SWEAD['meta']['prev_year']}. "
+            f"Branschen skiljer ännu mer: från {secd['49-53']}% inom transport och magasinering till "
+            f"{secd['58-63']}% inom information och kommunikation, mot {SWESEC['meta']['total']}% för samtliga branscher."),
         "barriers": L(
             f"Across the EU the obstacle enterprises name most often is people, not money: a lack of "
             f"relevant expertise ranks first of {b_n}, cost only {b_cost_rank}th, and \u201cAI is simply not "
@@ -2530,11 +2538,11 @@ def brief(lang="en"):
             "månad."),
         "adoption": L(
             "Which firms have actually started using AI, and which have not? Adoption is measured by "
-            "asking them, so it records use rather than intent, and it turns out to depend far more on "
-            "how big a firm is than on what it does.",
+            "asking them, so it records use rather than intent. It turns on both how big a firm is and "
+            "what it does, and of the two it is the industry that separates firms further.",
             "Vilka företag har faktiskt börjat använda AI, och vilka har inte? Användning mäts genom "
-            "att fråga dem, så det som fångas är faktisk användning snarare än avsikt, och det beror "
-            "långt mer på hur stort företaget är än på vad det gör."),
+            "att fråga dem, så det som fångas är faktisk användning snarare än avsikt. Det beror både på "
+            "hur stort företaget är och på vad det gör, och av de två skiljer branschen mest."),
         "barriers": L(
             f"Capability is no longer the obvious constraint. Frontier AI agents now finish tasks "
             f"of up to {metr_en} of human-expert work about half the time, and that length has been "
@@ -2607,7 +2615,7 @@ def brief(lang="en"):
                    L("The advertised margin, not demand itself",
                      "Den annonserade marginalen, inte efterfrågan")),
         "adoption": (L("Which firms have started", "Vilka företag har börjat"),
-                     L("It climbs steeply with size", "Den stiger brant med storleken"),
+                     L("Size matters, sector matters more", "Storleken spelar roll, branschen mer"),
                      L("Use is not intensity", "Användning är inte omfattning")),
         "outcomes": (L("Where AI would show up first", "Där AI skulle synas först"),
                      L("The signal is in hiring, not pay",
@@ -2682,7 +2690,25 @@ def brief(lang="en"):
                            series_label=L("Sweden","Sverige"), cmp_label="EU",
                            lang="sv" if sv else "en")
     elif theme == "adoption":
-        th_chart = barplot(SWEAD["sizes"], ADOPT["meta"]["eu_avg"], 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0, "adoption", ".0f", what="firm-size classes")
+        # Two charts, not one. The month is about both cuts, and the sector cut is the one that
+        # carries the finding: the spread across industries is wider than the spread across size
+        # classes, on the same SCB survey and the same year. Sector rows carry name_en/name_sv,
+        # so the Swedish sheet swaps the label the same way the barriers branch does; English
+        # bar labels on a Swedish sheet have shipped once already.
+        _secmax = 10 * (max(r["adoption"] for r in SWESEC["sectors"]) // 10 + 1)
+        rows_s = [{**r, "name": (r["name_sv"] if sv else r["name_en"])} for r in SWESEC["sectors"]]
+        # The size rows had the same defect and nobody had caught it: the Swedish brief was
+        # rendering "250+ employees" and "Headline: 10+" on a Swedish sheet. name_sv added to
+        # swe_adoption.yaml on 31 Aug 2026; swap it in here the same way.
+        rows_z = [{**r, "name": (r.get("name_sv") or r["name"])} for r in SWEAD["sizes"]] if sv else SWEAD["sizes"]
+        th_chart = (
+            barplot(rows_z, ADOPT["meta"]["eu_avg"],
+                    10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0,
+                    "adoption", ".0f", what="firm-size classes")
+            + f'<p class="secintro" style="margin:18px 0 6px">'
+              f'{L("And by industry, on the same survey and the same year.", "Och per bransch, samma undersökning och samma år.")}</p>'
+            + barplot(rows_s, ADOPT["meta"]["eu_avg"], _secmax, 0, "adoption", ".0f",
+                      what="industries"))
     else:
         th_chart = squeeze_svg(ELS)
     th_title = titles[theme]

@@ -1,0 +1,27 @@
+# AI adoption by industry in Sweden (Adoption module, 'Sweden, in depth').
+# Auto-generated; rerun scripts/refresh_swe_adoption_sector.py then build.py. DO NOT hand-edit.
+# Sibling of swe_adoption.yaml: same table, same technology code, same year.
+meta:
+  indicator: "Enterprises using at least one AI technology, by industry"
+  unit: "% of enterprises"
+  source: "SCB, ICT usage in enterprises (NV0116)"
+  year: 2025
+  prev_year: 2021
+  total: 35
+  spread_low: 12
+  spread_high: 88
+sectors:
+  - {code: "58-63", name_en: "Information and communication", name_sv: "Information och kommunikation", adoption: 88, prev: 31, is_se: false}
+  - {code: "68", name_en: "Real estate", name_sv: "Fastighetsverksamhet", adoption: 56, prev: 10, is_se: false}
+  - {code: "69-75, 77-82, 95.1", name_en: "Other services", name_sv: "Övriga tjänsteföretag", adoption: 51, prev: null, is_se: false}
+  - {code: "35-39", name_en: "Energy and recycling", name_sv: "Energi och återvinning", adoption: 44, prev: 17, is_se: false}
+  - {code: "TotSNI", name_en: "All industries", name_sv: "Samtliga branscher", adoption: 35, prev: null, is_se: true}
+  - {code: "10-33", name_en: "Manufacturing", name_sv: "Tillverkning", adoption: 33, prev: 9, is_se: false}
+  - {code: "45-47", name_en: "Trade and motor repair", name_sv: "Handel och motorreparation", adoption: 33, prev: 12, is_se: false}
+  - {code: "55-56", name_en: "Accommodation and food", name_sv: "Hotell och restaurang", adoption: 24, prev: 4, is_se: false}
+  - {code: "41-43", name_en: "Construction", name_sv: "Byggverksamhet", adoption: 15, prev: 2, is_se: false}
+  - {code: "49-53", name_en: "Transport and storage", name_sv: "Transport och magasinering", adoption: 12, prev: 4, is_se: false}
+# Overlaps the industry rows above rather than partitioning them; never plot it
+# alongside them without saying so.
+overlay:
+  - {code: "IKT", name_en: "ICT sector (overlapping definition)", name_sv: "IKT-sektorn (överlappande avgränsning)", adoption: 85, prev: 30}

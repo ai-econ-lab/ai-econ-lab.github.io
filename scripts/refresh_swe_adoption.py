@@ -22,14 +22,17 @@ YEAR, PREV = "2025", "2021"
 # That makes the ladder BELOW the headline something almost nobody else can show, and it is also
 # the honest answer to "35% of what?": SCB's own "totalt" (TotSNI) equals Tot250 exactly, so the
 # headline is a 10+ figure and not an all-firms one.
+# Swedish names added 31 Aug 2026: the Swedish brief and one-pager were rendering these bars
+# with ENGLISH labels, because the yaml carried only `name`. The sector sibling shipped bilingual
+# from the start; this brings the size cut level with it.
 SIZES = [
-    ("250-",   "250+ employees",   False),
-    ("50-249", "50–249 employees", False),
-    ("Tot250", "Headline: 10+",    True),   # the headline that ties to the cross-country bar
-    ("10-49",  "10–49 employees",  False),
-    ("5-9",    "5–9 employees",    False),
-    ("1-4",    "1–4 employees",    False),
-    ("0",      "No employees",     False),
+    ("250-",   "250+ employees",   "250+ anställda",     False),
+    ("50-249", "50–249 employees", "50–249 anställda",   False),
+    ("Tot250", "Headline: 10+",    "Huvudtal: 10+",      True),   # ties to the cross-country bar
+    ("10-49",  "10–49 employees",  "10–49 anställda",    False),
+    ("5-9",    "5–9 employees",    "5–9 anställda",      False),
+    ("1-4",    "1–4 employees",    "1–4 anställda",      False),
+    ("0",      "No employees",     "Inga anställda",     False),
 ]
 
 
@@ -61,11 +64,11 @@ def fetch():
 def main():
     data = fetch()
     rows = []
-    for code, name, hi in SIZES:
+    for code, name, name_sv, hi in SIZES:
         cur, prev = data.get(code, (None, None))
         if cur is None:
             continue
-        rows.append({"code": code, "name": name, "adoption": int(round(cur)),
+        rows.append({"code": code, "name": name, "name_sv": name_sv, "adoption": int(round(cur)),
                      "prev": (None if prev is None else int(round(prev))), "is_se": hi})
     total = next((r["adoption"] for r in rows if r["code"] == "Tot250"), None)
     lines = [
@@ -82,8 +85,8 @@ def main():
     ]
     for r in rows:
         prev = "null" if r["prev"] is None else r["prev"]
-        lines.append(f'  - {{code: "{r["code"]}", name: "{r["name"]}", adoption: {r["adoption"]}, '
-                     f'prev: {prev}, is_se: {str(r["is_se"]).lower()}}}')
+        lines.append(f'  - {{code: "{r["code"]}", name: "{r["name"]}", name_sv: "{r["name_sv"]}", '
+                     f'adoption: {r["adoption"]}, prev: {prev}, is_se: {str(r["is_se"]).lower()}}}')
     out = ROOT / "data" / "swe_adoption.yaml"
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"wrote {out.name}: " + ", ".join(f"{r['name']}={r['adoption']}%" for r in rows))
