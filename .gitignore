@@ -12,3 +12,4 @@ notes/
 # `git add -A`, so an untracked note at the root would be committed and published.
 # Pickups belong in the PRIVATE labour-market-monitor repo.
 SESSION_PICKUP.md
+build/

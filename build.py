@@ -2377,6 +2377,24 @@ def brief(lang="en"):
     # Sector cut beside the size cut, read from the generated file for the same reason:
     # a typed figure went stale through two freezes once already.
     secd = {r["code"]: r["adoption"] for r in SWESEC["sectors"]}
+    # The September finding, computed rather than asserted. The month used to claim that size
+    # matters more than sector, which the same table refutes; the honest and more interesting
+    # story is what has happened to the spread since 2021. Rows without a 2021 value (the
+    # "other services" group) are excluded from the change arithmetic, not silently treated
+    # as zero.
+    _sec = [r for r in SWESEC["sectors"] if r["code"] != "TotSNI"]
+    _sec_prev = [r for r in _sec if r.get("prev")]
+    _hi = max(_sec, key=lambda r: r["adoption"])
+    _lo = min(_sec, key=lambda r: r["adoption"])
+    _gap_now = _hi["adoption"] - _lo["adoption"]
+    _gap_then = _hi["prev"] - _lo["prev"]
+    _gap_x = _gap_now / _gap_then
+    _ratio_now, _ratio_then = _hi["adoption"] / _lo["adoption"], _hi["prev"] / _lo["prev"]
+    _fastest = max(_sec_prev, key=lambda r: r["adoption"] / r["prev"])
+    _fast_x = _fastest["adoption"] / _fastest["prev"]
+    _hi_x = _hi["adoption"] / _hi["prev"]
+    def _nm(r):
+        return (r["name_sv"] if sv else r["name_en"]).lower()
     tr = TREND["trend"]            # our own Swedish series: the floor-to-ceiling range
     n_ctry = cc["meta"]["n_countries"]; dver = cc["meta"]["daioe_version"]
     se_share = next(r["share"] for r in cc["countries"] if r["is_se"])
@@ -2439,12 +2457,20 @@ def brief(lang="en"):
         "adoption": L(
             f"Adoption climbs steeply with firm size, from {smd['10-49']}% of small firms (10–49 employees) to "
             f"{smd['250-']}% of large ones (250+) in {SWEAD['meta']['year']}, every class up sharply since {SWEAD['meta']['prev_year']}. "
-            f"Industry separates firms further still: from {secd['49-53']}% in transport and storage to "
-            f"{secd['58-63']}% in information and communication, against {SWESEC['meta']['total']}% for all industries.",
+            f"But the interesting thing is the change. The industries that adopted least are growing "
+            f"fastest in proportional terms and falling further behind all the same: "
+            f"{_nm(_fastest)} multiplied its adoption by {_fast_x:.1f} since "
+            f"{SWESEC['meta']['prev_year']}, against {_hi_x:.1f} for {_nm(_hi)}, and yet the distance "
+            f"between highest and lowest industry widened from {_gap_then} to {_gap_now} percentage "
+            f"points. Convergence in rates, divergence in levels.",
             f"Användningen ökar brant med företagsstorlek, från {smd['10-49']}% av småföretagen (10–49 anställda) till "
             f"{smd['250-']}% av de stora (250+) {SWEAD['meta']['year']}, alla storleksklasser kraftigt upp sedan {SWEAD['meta']['prev_year']}. "
-            f"Branschen skiljer ännu mer: från {secd['49-53']}% inom transport och magasinering till "
-            f"{secd['58-63']}% inom information och kommunikation, mot {SWESEC['meta']['total']}% för samtliga branscher."),
+            f"Men det intressanta är förändringen. De branscher som använde minst AI växer snabbast "
+            f"relativt sett och halkar ändå efter: {_nm(_fastest)} har {svn(round(_fast_x,1))}-faldigat "
+            f"sin användning sedan {SWESEC['meta']['prev_year']}, mot {svn(round(_hi_x,1))} för "
+            f"{_nm(_hi)}, och ändå "
+            f"har avståndet mellan högsta och lägsta bransch vuxit från {_gap_then} till {_gap_now} "
+            f"procentenheter. Konvergens i takt, divergens i nivå."),
         "barriers": L(
             f"Across the EU the obstacle enterprises name most often is people, not money: a lack of "
             f"relevant expertise ranks first of {b_n}, cost only {b_cost_rank}th, and \u201cAI is simply not "
@@ -2538,11 +2564,13 @@ def brief(lang="en"):
             "månad."),
         "adoption": L(
             "Which firms have actually started using AI, and which have not? Adoption is measured by "
-            "asking them, so it records use rather than intent. It turns on both how big a firm is and "
-            "what it does, and of the two it is the industry that separates firms further.",
+            f"asking them. Every industry uses far more AI than it did in {SWESEC['meta']['prev_year']}, "
+            f"so the interesting question is no longer who has started but whether the ones that "
+            f"started late are catching up.",
             "Vilka företag har faktiskt börjat använda AI, och vilka har inte? Användning mäts genom "
-            "att fråga dem, så det som fångas är faktisk användning snarare än avsikt. Det beror både på "
-            "hur stort företaget är och på vad det gör, och av de två skiljer branschen mest."),
+            f"att fråga dem. Varje bransch använder betydligt mer AI än {SWESEC['meta']['prev_year']}, "
+            f"så den intressanta frågan är inte längre vilka som har börjat utan om de som började "
+            f"sent hinner i kapp."),
         "barriers": L(
             f"Capability is no longer the obvious constraint. Frontier AI agents now finish tasks "
             f"of up to {metr_en} of human-expert work about half the time, and that length has been "
@@ -2614,8 +2642,8 @@ def brief(lang="en"):
                      "Efterfrågan stiger och är fortfarande liten"),
                    L("The advertised margin, not demand itself",
                      "Den annonserade marginalen, inte efterfrågan")),
-        "adoption": (L("Which firms have started", "Vilka företag har börjat"),
-                     L("Size matters, sector matters more", "Storleken spelar roll, branschen mer"),
+        "adoption": (L("Are the laggards catching up?", "Hinner eftersläntrarna i kapp?"),
+                     L("Catching up, and falling behind", "Hinner i kapp, och halkar efter"),
                      L("Use is not intensity", "Användning är inte omfattning")),
         "outcomes": (L("Where AI would show up first", "Där AI skulle synas först"),
                      L("The signal is in hiring, not pay",
@@ -2639,10 +2667,15 @@ def brief(lang="en"):
             "annonseras inte, och en stigande linje betyder att arbetsgivarna oftare efterfrågar "
             "AI-kompetens, inte att AI skapat eller tagit bort ett jobb."),
         "adoption": L(
-            "Use is not intensity. A firm counts here if it uses one AI technology anywhere in the "
-            "business, which says nothing about how much of the work it touches.",
-            "Användning är inte omfattning. Ett företag räknas här om det använder en AI-teknik "
-            "någonstans i verksamheten, vilket inte säger något om hur stor del av arbetet den rör."),
+            "Use is not intensity: a firm counts here if it uses one AI technology anywhere in the "
+            "business, which says nothing about how much of the work it touches. A gap in percentage "
+            "points and a gap in ratios also answer different questions, and neither says whether the "
+            "industries behind will close the distance, only that so far they have not.",
+            "Användning är inte omfattning: ett företag räknas här om det använder en AI-teknik "
+            "någonstans i verksamheten, vilket inte säger något om hur stor del av arbetet den rör. "
+            "Ett avstånd i procentenheter och ett i kvoter svarar dessutom på olika frågor, och "
+            "ingetdera säger om branscherna som ligger efter hinner i kapp, bara att de hittills inte "
+            "har gjort det."),
         "barriers": L(
             f"Read this as how widespread each obstacle is, not as a division of non-adopters "
             f"between causes. Eurostat allows several answers, so the shares do not sum to a total "

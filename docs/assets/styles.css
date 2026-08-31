@@ -569,6 +569,12 @@ main [id]{scroll-margin-top:196px}
 .bfooter{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;padding-top:16px;
   border-top:1px solid var(--border);font-family:var(--mono);font-size:var(--fs-micro);color:var(--muted)}
 
+/* A4, not letter. Chrome's headless print defaults to US letter, so a brief generated for
+   the review mail came out 216x279mm while every reader who prints it in Sweden gets 210x297.
+   Fixing it here rather than in the generator means the button and the script agree. Added
+   31 Aug 2026 when the brief gained a real generated PDF. */
+@page { size: A4; margin: 14mm 14mm 12mm 14mm; }
+
 @media print {
   /* force the light palette so charts print legibly even from dark mode */
   :root, :root[data-theme="dark"] {
