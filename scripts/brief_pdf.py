@@ -92,7 +92,10 @@ def main():
             # An unstyled render is the failure this script exists to prevent, and it is silent:
             # a page with no stylesheet still produces a valid PDF. The styled brief is 3-6 pages
             # and A4; the unstyled one is 2 and letter. Fail loudly rather than attach it.
-            if "595" not in size:
+            # Match on pdfinfo's own paper name, not on a width in points: A4 reports as
+            # "594.96 x 841.92 pts (A4)", so a `"595" in size` test rejects a correct PDF.
+            # That false alarm aborted the run on 31 Aug 2026 after the English render.
+            if "(A4)" not in size:
                 raise SystemExit(f"brief_pdf: {out.name} came out {size.strip()}, not A4. The "
                                  f"stylesheet almost certainly did not load.")
             written.append(out)
