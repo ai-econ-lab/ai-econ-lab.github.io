@@ -376,6 +376,13 @@ footer{background:var(--navy);color:var(--navy-ink);margin-top:20px}
 .dotplot .dot.se{fill:var(--c1)}
 .barplot .bar{fill:var(--muted);opacity:.55}
 .barplot .bar.se{fill:var(--c1);opacity:1}
+/* Second highlight tier, added 31 Aug 2026: the other Nordics, visible against the rest of
+   the distribution but never mistaken for Sweden. The point is that a reader sees the Nordic
+   ranking AND where the Nordics sit in Europe, in one figure, with no toggle. */
+.rankchart .dname.nordic{fill:var(--c1);opacity:.75}
+.rankchart .dval.nordic{fill:var(--c1);opacity:.75}
+.barplot .bar.nordic{fill:var(--c1);opacity:.42}
+.dotplot .dot.nordic{fill:var(--c1);opacity:.55}
 /* Paired comparison series (barplot cmp_key): the international benchmark against Sweden, drawn
    on the same rows. Vermillion is the Monitor's one categorical partner to the blue, used the
    same way everywhere: colour follows the entity, never the panel. */

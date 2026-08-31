@@ -940,6 +940,17 @@ def dotplot(cc):
     p.append("</svg>")
     return "".join(p)
 
+
+# The Nordic set, for the weaker highlight tier on the country charts. Iceland is here even
+# though the adoption table has no row for it: a country missing from a source is missing, and
+# the flag should not quietly differ between two charts.
+NORDIC = {"SE", "DK", "NO", "FI", "IS"}
+
+
+def nordic(rows):
+    """Tag rows for the second highlight tier without touching is_se."""
+    return [dict(r, is_nordic=r.get("code") in NORDIC) for r in rows]
+
 def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countries",
             mean_label="EU27", cmp_key=None, cmp_label="", series_label="", lang="en"):
     """Ranked horizontal bar chart (share; meaningful zero). Bar = latest year; a muted delta
@@ -1018,7 +1029,11 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
         p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-5}" text-anchor="middle">'
                  f'{h(mean_label)} {eu_avg:g}</text>')
     for i, r in enumerate(rows):
-        y = top + i * rowh; se = " se" if r["is_se"] else ""
+        # Two highlight tiers. `is_se` stays Sweden-only, because three call sites do
+        # next(r for r in countries if r["is_se"]) and would break on a second match.
+        # `is_nordic` is the weaker tier: visible, but never mistaken for Sweden.
+        y = top + i * rowh
+        se = " se" if r["is_se"] else (" nordic" if r.get("is_nordic") else "")
         v = r[vkey]
         full = str(r["name"])
         suffix = f" ’{str(r['year'])[-2:]}" if hy and int(r.get("year", hy)) != hy else ""
@@ -1173,7 +1188,7 @@ def exposure_section():
   <h2 class="sec">How much of each country's work is AI-exposed?</h2>
   {folded(f"""<b>{se['share']:.0f}%</b> of Swedish jobs, about four in ten, sit in the most AI-exposed quarter of occupations, and <b>exposure is not displacement</b>: it marks where AI overlaps with the work, not what follows from it. [[note]] DAIOE scores every occupation (ISCO-08) for how far generative AI overlaps with its tasks. We label the <b>top 25% of occupations</b> by that score the most AI-exposed; the bars show the share of each country's jobs in them (Eurostat EU-LFS employment, <b>{h(mt['weight_year'])}</b>; a few countries use their latest year, marked ’YY). On displacement: in the lab's own firm-level panel for Sweden, Denmark and Portugal, exposure shows no robust association with total firm employment, and within firms what it predicts is a shift away from clerical and administrative work rather than broad job loss (AI Unboxed and Jobs, linked below). Where movement has appeared so far, it is in who gets hired rather than in how many: the most exposed occupations hire fewer
     young workers (the Outcomes module below, and the Same Storm, Different Boats paper).""", label="How exposure is measured, and what it says about displacement")}
-  <div class="dotwrap">{barplot(cc['countries'], mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f', mean_label=f"{mt['n_countries']}-country")}</div>
+  <div class="dotwrap">{barplot(nordic(cc['countries']), mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f', mean_label=f"{mt['n_countries']}-country")}</div>
   {figfooter("cross_country.csv", src, "cross_country.svg", next_up="with the DAIOE v2024 release")}
   <div class="depth"><p class="dk">Sweden, in depth</p>
     <p class="secintro" style="margin:0"><b>{se['share']:.0f}%</b> of Swedish jobs are in the most AI-exposed
@@ -1715,7 +1730,7 @@ def adoption_section():
     who use AI at work, so what we can show is a professional-union panel, labelled as such.</p>
     <p>The bars are the share of enterprises using at least one AI technology, with the year-on-year change since
     {h(amt['prev_year'])} shown as <b>+pp</b>.</p></details>
-  <div class="dotwrap">{barplot(ad['countries'], amt['eu_avg'], xmax, amt['year'])}</div>
+  <div class="dotwrap">{barplot(nordic(ad['countries']), amt['eu_avg'], xmax, amt['year'])}</div>
   {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg", next_up="Eurostat 2026 wave (expected around year-end)")}
   <div class="depth"><p class="dk">Sweden, in depth · by firm size</p>
     <p class="secintro" style="margin:0 0 14px">Sweden is among the EU leaders at <b>{se['adoption']:g}%</b> in
@@ -2268,6 +2283,16 @@ def monitor():
       the lab. We publish aggregated figures with attribution and keep the underlying records private; cells
       below 50 respondents are never shown. Akavia does not fund the lab and does not see results before
       publication. The processing, and any error in it, is ours.</p>
+    <h3>Nordic coverage, as of September 2026</h3>
+    <p>The country charts highlight the Nordics, and how far the Nordic frame reaches differs by
+      module, so the state is set out here rather than implied. <b>Exposure</b> covers all five:
+      Sweden, Denmark, Norway, Finland and Iceland. <b>Adoption</b> and the firm-size cut cover
+      four; Iceland has no row in Eurostat's AI table. <b>Adoption by industry</b> is Sweden only,
+      because Eurostat publishes a single all-activities aggregate and the industry breakdown comes
+      from SCB's national release. <b>Demand</b>, from job advertisements, and the <b>entry-level
+      outcomes</b> from the registers are Sweden only, as is the worker survey. Danish and
+      Norwegian advertisement sources are under assessment; a second country enters the demand
+      series only when its coverage has been measured, not when access has been arranged.</p>
     <h3>Caveats, in plain sight</h3><ul style="color:var(--ink-2);font-size:14px;line-height:1.6">{caveats}</ul>
     <h3>How to cite</h3>
     <p>The monitor is a citable public good. Please cite the specific version and date, and the underlying source
@@ -2739,7 +2764,7 @@ def brief(lang="en"):
     }
 
     if theme == "exposure":
-        th_chart = barplot(cc["countries"], ctry_mean, 10 * (int(max(r["share"] for r in cc["countries"]) // 10) + 1),
+        th_chart = barplot(nordic(cc["countries"]), ctry_mean, 10 * (int(max(r["share"] for r in cc["countries"]) // 10) + 1),
                            cc["meta"]["weight_year"], "share", ".0f",
                            mean_label=f'{cc["meta"]["n_countries"]}-country')
     elif theme == "demand":
