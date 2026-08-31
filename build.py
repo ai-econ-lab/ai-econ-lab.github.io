@@ -33,7 +33,8 @@ from labels import MAX_LABEL_CHARS, shorten  # noqa: E402
 # adding a news item is not a data refresh and must not move this date.
 DATA_FILES = [
     "monitor.yaml", "cross_country.yaml", "cross_country_adoption.yaml",
-    "cross_country_demand.yaml", "swe_adoption.yaml", "swe_adoption_sector.yaml", "daioe_exposure.yaml",
+    "cross_country_demand.yaml", "swe_adoption.yaml", "swe_adoption_sector.yaml", "demand_by_sector.yaml",
+    "daioe_exposure.yaml",
     "entry_level_squeeze.yaml", "working_conditions.yaml", "akavia.yaml",
     "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
     "occupations.yaml", "occupation_tiers.yaml", "barriers.yaml",
@@ -204,6 +205,7 @@ CAPABILITY = (load("capability.yaml") if (DATA / "capability.yaml").exists()
 ELS      = load("entry_level_squeeze.yaml")
 SWEAD    = load("swe_adoption.yaml")
 SWESEC   = load("swe_adoption_sector.yaml")   # sibling cut: same table, by industry
+DEMSEC   = load("demand_by_sector.yaml")      # OUR ad series on SCB's industry groups
 USRPS    = load("us_adoption_rps.yaml")
 POPAI    = load("population_ai.yaml")
 # The occupation-search data lives in assets/daioe_occupations.json and is fetched at runtime
@@ -1037,7 +1039,10 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
         else:
             p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
         p.append(f'<text class="dval{se}" x="{W-66}" y="{y+rowh*0.72:.1f}" text-anchor="end">{v:{vfmt}}</text>')
-        if r.get("prev") is not None:
+        # The delta column and the comparison value both sit at x = W-8, so drawing both puts
+        # one on top of the other. When a comparison series is shown the change is already IN
+        # the chart as a second bar, so the delta column is redundant as well as illegible.
+        if not cmp_key and r.get("prev") is not None:
             p.append(f'<text class="ddelta" x="{W-8}" y="{y+rowh*0.72:.1f}" text-anchor="end">{v-r["prev"]:+.0f}</text>')
     p.append("</svg>")
     return "".join(p)
@@ -2395,6 +2400,16 @@ def brief(lang="en"):
     _hi_x = _hi["adoption"] / _hi["prev"]
     def _nm(r):
         return (r["name_sv"] if sv else r["name_en"]).lower()
+
+    # The coda: our own advertisement series on the same industry rows. Only the groups with
+    # enough AI advertisements to estimate are named; five of nine are not, and a chart with
+    # nine bars where five are noise would be worse than no chart. Prose, and only the contrast
+    # the counts support.
+    _dm = {r["code"]: r for r in DEMSEC["sectors"] if r["estimable"]}
+    _d_hi = max(_dm.values(), key=lambda r: r["demand"])
+    _mfg, _svc = _dm.get("10-33"), _dm.get("69-75, 77-82, 95.1")
+    _swap = _mfg["demand"] / _svc["demand"] if _mfg and _svc else None
+    _ad = {r["code"]: r["adoption"] for r in SWESEC["sectors"]}
     tr = TREND["trend"]            # our own Swedish series: the floor-to-ceiling range
     n_ctry = cc["meta"]["n_countries"]; dver = cc["meta"]["daioe_version"]
     se_share = next(r["share"] for r in cc["countries"] if r["is_se"])
@@ -2462,7 +2477,7 @@ def brief(lang="en"):
             f"{_nm(_fastest)} multiplied its adoption by {_fast_x:.1f} since "
             f"{SWESEC['meta']['prev_year']}, against {_hi_x:.1f} for {_nm(_hi)}, and yet the distance "
             f"between highest and lowest industry widened from {_gap_then} to {_gap_now} percentage "
-            f"points. Convergence in rates, divergence in levels.",
+            f"points. The industries behind are running to stay in place.",
             f"Användningen ökar brant med företagsstorlek, från {smd['10-49']}% av småföretagen (10–49 anställda) till "
             f"{smd['250-']}% av de stora (250+) {SWEAD['meta']['year']}, alla storleksklasser kraftigt upp sedan {SWEAD['meta']['prev_year']}. "
             f"Men det intressanta är förändringen. De branscher som använde minst AI växer snabbast "
@@ -2470,7 +2485,7 @@ def brief(lang="en"):
             f"sin användning sedan {SWESEC['meta']['prev_year']}, mot {svn(round(_hi_x,1))} för "
             f"{_nm(_hi)}, och ändå "
             f"har avståndet mellan högsta och lägsta bransch vuxit från {_gap_then} till {_gap_now} "
-            f"procentenheter. Konvergens i takt, divergens i nivå."),
+            f"procentenheter. Branscherna som ligger efter springer för att stå still."),
         "barriers": L(
             f"Across the EU the obstacle enterprises name most often is people, not money: a lack of "
             f"relevant expertise ranks first of {b_n}, cost only {b_cost_rank}th, and \u201cAI is simply not "
@@ -2606,6 +2621,21 @@ def brief(lang="en"):
             "Hittills är den tydligaste signalen inte lönerna utan vem som blir anställd."),
     }
     extras = {
+        "adoption": L(
+            f"One industry is buying AI; another is building it. Using AI and hiring for it are "
+            f"different decisions, and the same industries do not make both. In our own "
+            f"advertisement data, manufacturing asks for a named AI skill {_swap:.0f} times as "
+            f"often as the other service industries, {_mfg['demand']}% of its advertisements "
+            f"against {_svc['demand']}%, even though SCB records the service firms as the heavier "
+            f"users, {_ad['69-75, 77-82, 95.1']}% against {_ad['10-33']}%. Buying a tool needs no "
+            f"new hire; building with one does.",
+            f"Den ena branschen köper AI, den andra bygger den. Att använda AI och att anställa för "
+            f"det är olika beslut, och det är inte samma branscher som fattar båda. I våra egna "
+            f"annonsdata efterfrågar tillverkningen en namngiven AI-kompetens {svn(round(_swap))} "
+            f"gånger så ofta som de övriga tjänsteföretagen, {svn(_mfg['demand'])}% av annonserna "
+            f"mot {svn(_svc['demand'])}%, trots att SCB registrerar tjänsteföretagen som de "
+            f"flitigare användarna, {_ad['69-75, 77-82, 95.1']}% mot {_ad['10-33']}%. Att köpa ett "
+            f"verktyg kräver ingen nyanställning; att bygga med det gör det."),
         "barriers": L(
             "Eurostat surveys the business economy, so the public sector is absent from the chart, "
             "and in Sweden that is a large omission. Our report for the Expert Group on Public "
@@ -2670,12 +2700,18 @@ def brief(lang="en"):
             "Use is not intensity: a firm counts here if it uses one AI technology anywhere in the "
             "business, which says nothing about how much of the work it touches. A gap in percentage "
             "points and a gap in ratios also answer different questions, and neither says whether the "
-            "industries behind will close the distance, only that so far they have not.",
+            f"industries behind will close the distance, only that so far they have not. The "
+            f"advertisement comparison rests on a different population from SCB's: employers among "
+            f"our largest advertisers, {DEMSEC['meta']['coverage_pct']}% of advertisements, business "
+            f"sector only. Read the two series beside each other, never as a difference.",
             "Användning är inte omfattning: ett företag räknas här om det använder en AI-teknik "
             "någonstans i verksamheten, vilket inte säger något om hur stor del av arbetet den rör. "
             "Ett avstånd i procentenheter och ett i kvoter svarar dessutom på olika frågor, och "
             "ingetdera säger om branscherna som ligger efter hinner i kapp, bara att de hittills inte "
-            "har gjort det."),
+            f"har gjort det. Annonsjämförelsen vilar dessutom på en annan population än SCB:s: "
+            f"arbetsgivare bland våra största annonsörer, {svn(DEMSEC['meta']['coverage_pct'])}% av "
+            f"annonserna, endast näringslivet. Läs serierna bredvid varandra, aldrig som en "
+            f"skillnad."),
         "barriers": L(
             f"Read this as how widespread each obstacle is, not as a division of non-adopters "
             f"between causes. Eurostat allows several answers, so the shares do not sum to a total "
@@ -2740,8 +2776,9 @@ def brief(lang="en"):
                     "adoption", ".0f", what="firm-size classes")
             + f'<p class="secintro" style="margin:18px 0 6px">'
               f'{L("And by industry, on the same survey and the same year.", "Och per bransch, samma undersökning och samma år.")}</p>'
-            + barplot(rows_s, ADOPT["meta"]["eu_avg"], _secmax, 0, "adoption", ".0f",
-                      what="industries"))
+            + barplot(rows_s, 0, _secmax, 0, "adoption", ".0f", what="industries",
+                      cmp_key="prev", series_label=str(SWESEC["meta"]["year"]),
+                      cmp_label=str(SWESEC["meta"]["prev_year"]), lang="sv" if sv else "en"))
     else:
         th_chart = squeeze_svg(ELS)
     th_title = titles[theme]
