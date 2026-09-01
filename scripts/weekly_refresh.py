@@ -49,6 +49,11 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 
 
+
+# Twice STALE_DAYS. Past this a figure is not waiting on a source, it is a choice to keep
+# publishing something a year out of date, and that is worth interrupting for.
+ESCALATE_DAYS = 240
+
 def run_refresher(script):
     """Run one refresh script; return True on success."""
     r = subprocess.run([sys.executable, str(ROOT / "scripts" / script)],
@@ -120,11 +125,37 @@ def check_capability(d, prev_year):
     # its failure gate, so this notifies without blocking the Eurostat and SCB auto-refresh.
     # Clearing it is the re-read itself: read the source, update monitor.yaml, re-run
     # refresh_capability.py.
+    # AGE ALONE NO LONGER FAILS THE RUN, changed 1 Sep 2026, and the reasoning matters because
+    # this reverses a deliberate decision made above.
+    #
+    # `stale` fires on the age of the figure we display, not on anything we did or failed to
+    # do. When the source has not published, there is no re-read to perform and no fact to
+    # update, so the instruction this gate printed every Monday -- "read the source, update
+    # monitor.yaml, re-run" -- could not be followed. METR published on 8 May 2026 and nothing
+    # since; the gate crossed 120 days in the summer and has failed the run every week since,
+    # with no action available that would clear it.
+    #
+    # A gate that cannot be cleared teaches people to ignore the channel, and it did: four
+    # genuine build-check failures sat unread in the inbox for two days behind the noise.
+    #
+    # The original intent was that a stale figure must never be shown as though it were
+    # current, and that intent is kept, twice over. `flag` says so on the tile itself
+    # ("External series · checked <date> · two figures awaiting a source update"), and `notes`
+    # below still fails the moment a source actually moves, which IS actionable. What is
+    # removed is only the weekly failure for an external source behaving normally.
+    #
+    # ESCALATE_DAYS is the backstop. Past it the figure is old enough that continuing to
+    # publish it is a decision rather than a wait, and that decision deserves to interrupt.
     stale = d.get("stale") or []
-    assert not stale, ("watched capability sources are overdue a human re-read: "
-                       + "; ".join(stale)
-                       + ". Read the source, update the fact in data/monitor.yaml, and re-run "
-                         "scripts/refresh_capability.py.")
+    ages = d.get("stale_days") or []
+    if stale:
+        print("   NOTE: figure(s) awaiting a source update, shown with their date on the "
+              "tile: " + "; ".join(stale))
+    assert not [a for a in ages if a > ESCALATE_DAYS], (
+        "a watched capability figure has gone past " + str(ESCALATE_DAYS) + " days: "
+        + "; ".join(stale)
+        + ". The source has not published for that long, so this is no longer a wait but a "
+          "choice: update the fact, replace the tile, or state the vintage on the page.")
 
     # The same argument applies one step earlier. `stale` fires only once STALE_DAYS have
     # run out; `notes` fires the moment a watched source page moves, which is the first

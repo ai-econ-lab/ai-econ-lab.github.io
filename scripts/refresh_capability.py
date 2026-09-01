@@ -252,7 +252,7 @@ def main():
     # as August — inventing provenance to silence an alarm, which is worse than the alarm.
     # `reviewed` separates when a figure is from from when we last checked it.
     reviewed = cur.get("reviewed") or {}
-    notes, stale, undated = [], [], []
+    notes, stale, undated, stale_days = [], [], [], []
     for key, cfg in WATCHED.items():
         fp = source_identity(cfg)
         state[f"capability_{key}_checked"] = TODAY.isoformat()
@@ -321,6 +321,10 @@ def main():
                 undated.append(foot)
             elif (TODAY - asof).days > STALE_DAYS:
                 stale.append(f"{foot} ({(TODAY - asof).days} days old)")
+                # The age as a number, not only inside a sentence. The weekly gate needs to
+                # tell "old because the source has not published" from "old enough that we
+                # should decide whether to keep showing it", and it cannot do that on prose.
+                stale_days.append((TODAY - asof).days)
         facts.append({"num": num, "lab": lab, "foot": foot, "mode": mode,
                       "asof": asof.isoformat() if asof else None})
 
@@ -350,6 +354,7 @@ def main():
         # confirmed unchanged, which is not the same thing as when its figure is from
         "reviewed": {k: str(v) for k, v in sorted(reviewed.items())},
         "stale": stale,
+        "stale_days": stale_days,
         "undated": undated,
         "notes": notes,
     }
