@@ -25,9 +25,16 @@ sys.modules["aiel_build"] = B
 spec.loader.exec_module(B)                      # safe: build.py only builds under __main__
 
 NORDIC = ["SE", "DK", "NO", "FI", "IS"]
-SIZE = json.loads((Path("/private/tmp/claude-502/-Users-mslk/"
-                        "1f114a64-5308-4ece-9fea-289e87e8d1bd/scratchpad/nordic_size.json")
-                   ).read_text(encoding="utf-8"))
+# Read the repository's own data file, not a scratch path. The first version of this script
+# loaded the Eurostat pull from a temp directory AT MODULE LEVEL, which imports fine on the
+# machine that produced it and nowhere else. check_imports.py caught it on the first push and
+# the build check went red; I had not looked. An import must not depend on data, a network call
+# or one machine's paths, which is the rule that check states in its own failure message.
+SIZE = {"data": {}, "geo": {}}
+for _c in B.NORDSZ["countries"]:
+    SIZE["geo"][_c["code"]] = _c["name"]
+    for _z in _c["sizes"]:
+        SIZE["data"].setdefault(_z["code"], {})[_c["code"]] = (_z["adoption"], _z.get("prev"))
 
 
 def rows_from(data, key, keep=NORDIC):
