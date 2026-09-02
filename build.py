@@ -412,9 +412,8 @@ def home():
          2025, and the events page and seminars.yaml say so correctly. Do not "harmonise" those
          to match this. -->
     <p class="lede">An economics-led, multi-disciplinary research lab at Örebro University and RATIO,
-      founded in 2019. Örebro is one of three nodes in
-      <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>, the research cluster financed by
-      <a href="https://wasp-hs.org">WASP-HS</a>, which funds part of our team.
+      founded in 2019. Örebro is a node of <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>,
+      the <a href="https://wasp-hs.org">WASP-HS</a> research cluster.
       We combine administrative registers from
       several European countries with job advertisements, surveys and public cross-country data.
       The <b>AIEL Monitor</b> is where
@@ -2338,11 +2337,16 @@ def monitor():
 </div>"""
     body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px"><div class="herogrid">
   <div><div class="eyebrow"><span class="dot"></span> Public monitor · international context, Sweden in depth · updated as the data arrive</div>
-    <p class="psub" style="margin:6px 0 0;font-size:13px">From the <b>AI-Econ Lab</b>, Örebro University and Ratio,
-      since 2019. Örebro is one of AISCAF's three nodes; the cluster, financed by
-      <a href="https://wasp-hs.org">WASP-HS</a>, funds part of the lab's team.</p>
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
+    <!-- A byline, not a paragraph. The first version put three lines of credit ABOVE the H1,
+         where it competed with the headline and read as the page's opening statement. The
+         footer strip carries the full two-facts wording; here one line is enough to make the
+         association visible in the first screen, which was the whole point. -->
+    <p class="psub" style="margin:8px 0 0;font-size:12.5px;opacity:.85">AI-Econ Lab, since 2019 ·
+      Örebro University and Ratio · Örebro is a node of
+      <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>, financed by
+      <a href="https://wasp-hs.org">WASP-HS</a></p>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
       {sheet_pair()}
       <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a></div>
