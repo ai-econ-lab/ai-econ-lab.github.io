@@ -1036,7 +1036,9 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
     # points. It is percentage points. A header rather than a suffix on every row, which would
     # widen the column for no gain.
     if not cmp_key and any(r.get("prev") is not None for r in data):
-        p.append(f'<text class="tick" x="{W-8}" y="10.5" text-anchor="end">pp</text>')
+        # Spelled out in Swedish: "pp" is an English abbreviation and "pe" would be guessed at.
+        unit = "procentenheter" if lang == "sv" else "pp"
+        p.append(f'<text class="tick" x="{W-8}" y="10.5" text-anchor="end">{unit}</text>')
     elif cmp_key:
         # The right-hand column carries the comparison YEAR's value, not a change. Unlabelled it
         # reads as a mystery number beside the bar: "88  31" tells you nothing about what 31 is.
@@ -2854,12 +2856,14 @@ def brief(lang="en"):
             # Shortened on Yifan's review of the September brief: the original ran to five
             # sentences of caveat, three of which were about how to read a gap. This says the
             # two things a reader must not get wrong and stops.
-            "These numbers show whether firms use AI, not how much they use it. The "
+            "These numbers are what firms report in a survey: whether they use AI at all, not how "
+            "much they use it, and not an independent measurement of either. The "
             "job-advertisement data measure something else again: whether firms are hiring for "
             "specific AI skills. The two should be compared with care.",
-            "Talen visar om företagen använder AI, inte hur mycket de använder den. "
-            "Annonsdata mäter något annat: om företagen anställer för specifika AI-kompetenser. "
-            "De två bör jämföras med försiktighet."),
+            "Talen är vad företagen uppger i en enkät: om de använder AI över huvud taget, inte "
+            "hur mycket, och inte en oberoende mätning av något av det. Annonsdata mäter något "
+            "annat: om företagen anställer för specifika AI-kompetenser. De två bör jämföras med "
+            "försiktighet."),
         "barriers": L(
             f"Read this as how widespread each obstacle is, not as a division of non-adopters "
             f"between causes. Eurostat allows several answers, so the shares do not sum to a total "
@@ -2921,7 +2925,7 @@ def brief(lang="en"):
         th_chart = (
             barplot(rows_z, ADOPT["meta"]["eu_avg"],
                     10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0,
-                    "adoption", ".0f", what="firm-size classes")
+                    "adoption", ".0f", what="firm-size classes", lang="sv" if sv else "en")
             + f'<p class="secintro" style="margin:18px 0 6px">'
               f'{L("And by industry, on the same survey and the same year.", "Och per bransch, samma undersökning och samma år.")}</p>'
             + barplot(rows_s, 0, _secmax, 0, "adoption", ".0f", what="industries",
