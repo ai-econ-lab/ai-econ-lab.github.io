@@ -2514,10 +2514,14 @@ def about():
     return shell(f"About & contact · {SITE['brand']['name']}", SITE["brand"]["description"], "/about/", body)
 
 def brief(lang="en"):
-    """Monthly one-page 'AIEL Monitor Brief' (English + Swedish): an auto-generated snapshot (the
-    four spine headline numbers), the always-fresh vacancy pulse, a themed deep-dive that rotates
-    through the spine month by month, and the latest lab news. Same data as the site; print-to-PDF
-    ready. The news items are shown in their original (English) wording in both editions."""
+    """Monthly one-page 'AIEL Monitor Brief' (English + Swedish): the month's argument in three
+    moves, a question, the chart that answers it, and what the answer cannot show, on a theme that
+    rotates through the spine month by month. Same data as the site; print-to-PDF ready.
+
+    The snapshot cards, the vacancy pulse and the lab-news block were removed on 12 Aug 2026
+    (see the rebuild note below): the Monitor landing page already carries them, so a brief that
+    restated them was three quarters not about its own theme. Confirmed for the September issue
+    by ML on 2 Sep 2026. Do not reintroduce them without a decision on record."""
     from datetime import date
     import os as _os
     today = date.today()
