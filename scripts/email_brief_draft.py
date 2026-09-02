@@ -5,6 +5,21 @@ Run by .github/workflows/monthly-brief-draft.yml in the month-end window (and ma
 month's brief (both languages) via build.py's BRIEF_MONTH_OVERRIDE, extracts the readable
 text, and emails it to Magnus over Gmail SMTP using the GMAIL_APP_PASSWORD repo secret.
 Nothing is published — Magnus reviews, replies "go", and the issue is posted to Substack.
+
+STANDING SUBSTACK SETTINGS FOR EVERY ISSUE (decided 2 Sep 2026, do not re-litigate monthly).
+Substack does not offer a publication-wide default for either of these, so both are chosen in
+the publish dialog on each post and both default back to the wrong value:
+
+  * Allow comments from ... -> "No one (disable comments)". Substack defaults to Everyone.
+    A comment thread is a moderation duty nobody at the lab is going to carry, and the brief
+    is a closed argument whose limits are stated inside the issue. Feedback goes to e-mail;
+    the route is on the lab's contact page. Do NOT reach for the publication-wide toggle in
+    Settings -> Community instead: that one switch kills comments, likes AND restacks, and
+    restacks are how a post travels beyond our own list.
+
+  * Delivery "Send via email and the Substack app" -> unchecked, while the comms hold stands
+    (briefs publish but are not promoted until the joint launch with the Oskar and Leo
+    report). Substack both pre-checks this and asks a second time after you uncheck it.
 """
 import os, re, html, json, smtplib, subprocess, calendar
 from datetime import date
