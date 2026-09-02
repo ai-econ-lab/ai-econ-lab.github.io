@@ -20,6 +20,21 @@ the publish dialog on each post and both default back to the wrong value:
   * Delivery "Send via email and the Substack app" -> unchecked, while the comms hold stands
     (briefs publish but are not promoted until the joint launch with the Oskar and Leo
     report). Substack both pre-checks this and asks a second time after you uncheck it.
+
+STANDING CLOSING BLOCK FOR EVERY ISSUE (added 2 Sep 2026). The Substack post is typed by hand
+and drifted from the page: the August issue promised "Subscribers can reply to any issue by
+email", which cannot be true while delivery is unchecked, and it predated the institution and
+funder line. Both were corrected on the live August post. Every issue now ends with these two
+paragraphs, matching the page footer:
+
+    AI-Econ Lab . AIEL Monitor . YYYY-MM. Public data; cite the version and date. The full
+    Monitor is at ai-econlab.com/monitor. Feedback is welcome at ai-econlab.com/about/#contact.
+
+    Orebro University and RATIO. Orebro is one of AISCAF's three nodes; the cluster, financed
+    by WASP-HS, funds part of the lab's team.
+
+The feedback route is the contact page, never "reply to this email": with delivery unchecked
+there is no e-mail to reply to.
 """
 import os, re, html, json, smtplib, subprocess, calendar
 from datetime import date
