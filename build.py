@@ -2286,10 +2286,18 @@ def partner_strip():
                 f'alt="{alt}" style="{st}">'
                 f'<img class="logo-light-ink" src="/assets/logos/{stem}_light_ink_trim.png" '
                 f'alt="{alt}" style="{st}">')
+    # NOT "Part of". The lab was initiated in 2019 and AISCAF in September 2025, and the lab
+    # is not inside the cluster: Örebro is a node, and the cluster funds part of the team.
+    # "Part of" claims the first thing and implies the cluster came first; "contributes to",
+    # which the About page used to say, errs the other way and hides the funding entirely.
+    # Stating the two facts and the date lets a preposition stop doing work it cannot do.
     return (f'<div class="partner-strip">'
-            f'<p class="kicker" style="margin:0 0 12px">Part of</p>'
+            f'<p class="kicker" style="margin:0 0 12px">Research cluster and funder</p>'
             f'<div style="display:flex;align-items:center;gap:34px;flex-wrap:wrap">'
-            f'{mark("aiscaf", 30, "AISCAF")}{mark("wasphs", 15, "WASP-HS")}</div></div>')
+            f'{mark("aiscaf", 30, "AISCAF")}{mark("wasphs", 15, "WASP-HS")}</div>'
+            f'<p class="psub" style="margin:10px 0 0;font-size:12.5px">AI-Econ Lab, since 2019 · '
+            f'Örebro University and Ratio. Örebro is one of AISCAF\'s three nodes; the cluster, '
+            f'financed by WASP-HS, funds part of the lab\'s team.</p></div>')
 
 def monitor():
     m = MONITOR
@@ -2320,6 +2328,9 @@ def monitor():
 </div>"""
     body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px"><div class="herogrid">
   <div><div class="eyebrow"><span class="dot"></span> Public monitor · international context, Sweden in depth · updated as the data arrive</div>
+    <p class="psub" style="margin:6px 0 0;font-size:13px">From the <b>AI-Econ Lab</b>, Örebro University and Ratio,
+      since 2019. Örebro is one of AISCAF's three nodes; the cluster, financed by
+      <a href="https://wasp-hs.org">WASP-HS</a>, funds part of the lab's team.</p>
     <h1 class="title">{h(m['headline'])}</h1>
     <p class="lede">{h(m['lede'])}</p>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
