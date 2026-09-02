@@ -2982,12 +2982,14 @@ def brief(lang="en"):
     <p class="bp">{limits[theme]}</p></section>
 
   <footer class="bfooter">
-    <span>AI-Econ Lab · AIEL Monitor · {issue}. {L("Public data; cite the version and date.","Öppna data; ange version och datum vid citering.")}</span>
-    <span>ai-econlab.com/monitor</span>
+    <div class="bfoot-row">
+      <span>AI-Econ Lab · AIEL Monitor · {issue}. {L("Public data; cite the version and date.","Öppna data; ange version och datum vid citering.")}</span>
+      <span>ai-econlab.com/monitor</span>
+    </div>
     <div class="bpartner">
       <div class="bpartner-marks">{partner_mark("aiscaf", 18, "AISCAF")}{partner_mark("wasphs", 9, "WASP-HS")}</div>
-      <span>{L("Örebro is one of AISCAF&#39;s three nodes; the cluster, financed by WASP-HS, funds part of the lab&#39;s team.",
-                "Örebro är en av AISCAF:s tre noder; klustret, som finansieras av WASP-HS, avlönar en del av labbets medarbetare.")}</span>
+      <span>{L("Örebro University and RATIO. Örebro is one of AISCAF&#39;s three nodes; the cluster, financed by WASP-HS, funds part of the lab&#39;s team.",
+                "Örebro universitet och RATIO. Örebro är en av AISCAF:s tre noder; klustret, som finansieras av WASP-HS, avlönar en del av labbets medarbetare.")}</span>
     </div></footer>
 </article></div>"""
     return shell(f"{L('AIEL Monitor Brief','AIEL Monitor-brief')}, {mname} {today.year} · {SITE['brand']['name']}",

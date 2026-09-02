@@ -573,8 +573,9 @@ main [id]{scroll-margin-top:196px}
 .blist li{font-size:var(--fs-body);color:var(--ink-2);line-height:1.5;padding:9px 0;border-top:1px solid var(--border)}
 .blist li:first-child{border-top:0}
 .bnd{font-family:var(--mono);font-size:var(--fs-micro);color:var(--blue);margin-right:8px;white-space:nowrap}
-.bfooter{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;padding-top:16px;
+.bfooter{display:flex;flex-direction:column;gap:5px;margin-top:18px;padding-top:12px;
   border-top:1px solid var(--border);font-family:var(--mono);font-size:var(--fs-micro);color:var(--muted)}
+.bfoot-row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 /* Cluster and funder, at the foot of every brief. Added 2 Sep 2026 on Magnus's decision that
    the brief is part of the Monitor and so carries the same marks as the Monitor's own strip.
@@ -583,7 +584,7 @@ main [id]{scroll-margin-top:196px}
    The marks are sized on the WORDMARKS (AISCAF 3:1 trimmed, WASP-HS 12.5:1), so the two height
    values differ on purpose; equalising them makes WASP-HS dominate. Kept off the print page
    break so a mark never lands alone on a second sheet. */
-.bpartner{flex:1 0 100%;display:flex;align-items:center;gap:14px;margin-top:6px;line-height:1.4}
+.bpartner{display:flex;align-items:center;gap:14px;line-height:1.4}
 .bpartner-marks{display:flex;align-items:center;gap:16px;flex-shrink:0}
 
 /* A4, not letter. Chrome's headless print defaults to US letter, so a brief generated for

@@ -99,6 +99,15 @@ def main():
                 raise SystemExit(f"brief_pdf: {out.name} came out {size.strip()}, not A4. The "
                                  f"stylesheet almost certainly did not load.")
             written.append(out)
+            # "A monthly ONE-PAGE brief" is the promise in the docstring, on the page and in the
+            # subtitle of every issue. Nothing enforced it: the August 2026 issue silently became
+            # two pages on 2 Sep when the footer gained the cluster-and-funder row, and the only
+            # signal was a page count nobody reads. Warn loudly. Not fatal, because a spill is a
+            # content-length problem for a human to resolve (cut the issue, or accept two pages),
+            # not something the generator should decide by refusing to produce a file.
+            if pages not in ("1", "?"):
+                print(f"  WARNING: {out.name} is {pages} pages, not one. The issue is too long "
+                      f"for the format; shorten it or accept the spill deliberately.")
             print(f"wrote {out.relative_to(ROOT)} ({out.stat().st_size/1024:.0f} kB, {lang}, "
                   f"{pages} pages, {size.split(':',1)[1].strip()})")
     finally:
