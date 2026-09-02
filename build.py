@@ -403,7 +403,7 @@ def home():
   <div>
     <div class="eyebrow"><span class="dot"></span> A multi-country, multi-disciplinary research lab</div>
     <h1 class="title">We study how <em>artificial intelligence</em> is reshaping the world of work.</h1>
-    <!-- NOT "part of AISCAF" and NOT "contributing to" it. The lab was initiated in 2019 and the
+    <!-- NOT "part of AISCAF" and NOT "contributing to" it. The lab was founded in 2019 and the
          cluster began in September 2025, so "part of" implies the cluster came first and that
          the lab sits inside it; "contributing to" errs the other way, putting the lab outside
          and hiding that the cluster funds Lydia, Yifan and part of Magnus's time. State the two
@@ -412,7 +412,7 @@ def home():
          2025, and the events page and seminars.yaml say so correctly. Do not "harmonise" those
          to match this. -->
     <p class="lede">An economics-led, multi-disciplinary research lab at Örebro University and RATIO,
-      initiated in 2019. Örebro is a node of <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>,
+      founded in 2019. Örebro is a node of <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>,
       the <a href="https://wasp-hs.org">WASP-HS</a> research cluster.
       We combine administrative registers from
       several European countries with job advertisements, surveys and public cross-country data.
