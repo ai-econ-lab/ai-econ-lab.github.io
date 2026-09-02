@@ -2289,6 +2289,24 @@ def subnav():
     return f'<nav class="subnav" aria-label="Monitor modules"><div class="wrap">{links}</div></nav>'
 
 
+def partner_mark(stem, h_px, alt):
+    """One partner logo, as the theme-swapped pair of <img> the CSS expects.
+
+    Module level since 2 Sep 2026 because the brief footer needs the same marks as the Monitor
+    strip, and two copies of this markup would drift: the trimmed filenames and the
+    dark-ink/light-ink class pair are the two things that must not be got wrong (see
+    docs/assets/logos/README.md, "Trim the padding, or the mark disappears").
+
+    h_px sizes the WORDMARK, not the image: WASP-HS is 12.5:1 and the trimmed AISCAF mark 3:1,
+    so equal image heights make one of them far too small. Callers pass different numbers.
+    """
+    st = f"height:{h_px}px;width:auto"
+    return (f'<img class="logo-dark-ink" src="/assets/logos/{stem}_dark_ink_trim.png" '
+            f'alt="{alt}" style="{st}">'
+            f'<img class="logo-light-ink" src="/assets/logos/{stem}_light_ink_trim.png" '
+            f'alt="{alt}" style="{st}">')
+
+
 def partner_strip():
     """The "Part of" strip: AISCAF and WASP-HS at the foot of the Monitor.
 
@@ -2312,12 +2330,7 @@ def partner_strip():
     here; they are where the work is done, which is a different thing, and putting all four in
     one row would say there are four sponsors.
     """
-    def mark(stem, h_px, alt):
-        st = f"height:{h_px}px;width:auto"
-        return (f'<img class="logo-dark-ink" src="/assets/logos/{stem}_dark_ink_trim.png" '
-                f'alt="{alt}" style="{st}">'
-                f'<img class="logo-light-ink" src="/assets/logos/{stem}_light_ink_trim.png" '
-                f'alt="{alt}" style="{st}">')
+    mark = partner_mark
     # NOT "Part of". The lab was initiated in 2019 and AISCAF in September 2025, and the lab
     # is not inside the cluster: Örebro is a node, and the cluster funds part of the team.
     # "Part of" claims the first thing and implies the cluster came first; "contributes to",
@@ -2970,7 +2983,12 @@ def brief(lang="en"):
 
   <footer class="bfooter">
     <span>AI-Econ Lab · AIEL Monitor · {issue}. {L("Public data; cite the version and date.","Öppna data; ange version och datum vid citering.")}</span>
-    <span>ai-econlab.com/monitor</span></footer>
+    <span>ai-econlab.com/monitor</span>
+    <div class="bpartner">
+      <div class="bpartner-marks">{partner_mark("aiscaf", 18, "AISCAF")}{partner_mark("wasphs", 9, "WASP-HS")}</div>
+      <span>{L("Örebro is one of AISCAF&#39;s three nodes; the cluster, financed by WASP-HS, funds part of the lab&#39;s team.",
+                "Örebro är en av AISCAF:s tre noder; klustret, som finansieras av WASP-HS, avlönar en del av labbets medarbetare.")}</span>
+    </div></footer>
 </article></div>"""
     return shell(f"{L('AIEL Monitor Brief','AIEL Monitor-brief')}, {mname} {today.year} · {SITE['brand']['name']}",
                  L(f"A monthly one-page snapshot of AI in the labour market from the AI-Econ Lab: {mname} {today.year}.",
