@@ -37,7 +37,19 @@ AISCAF_W = f"{L}/aiscaf_white_ink_trim.png"
 
 # Equal cap height: AISCAF's wordmark is roughly 3.5x the cap height of WASP-HS's at equal
 # image height, so WASP-HS is given the greater image height to compensate.
-CAP = 'style="height:{h}px;width:auto;display:block"'
+CAP = 'style="height:{h}px;width:auto"'
+
+
+def mark(dark_src, light_src, h, alt):
+    """One mark, two files, the page picks. See .logo-dark-ink / .logo-light-ink in styles.css.
+
+    The AISCAF mark is drawn in #2e2e2e. On the dark palette that is black on near-black and the
+    logo effectively disappears, which is how the first two versions of this mock shipped: I was
+    looking at a light screen. Anything placed in the footer has to carry both files.
+    """
+    st = f'height:{h}px;width:auto'
+    return (f'<img class="logo-dark-ink"  src="{dark_src}"  alt="{alt}" style="{st}">'
+            f'<img class="logo-light-ink" src="{light_src}" alt="{alt}" style="{st}">')
 
 
 def opt(n, title, why, html, note=""):
@@ -53,10 +65,10 @@ def main():
     # the rest transparent padding, so 57 per cent of the canvas is empty. Setting a height on
     # the untrimmed file renders a mark barely half the size asked for, which is why it looked
     # almost invisible here. The *_trim.png files are cropped to the alpha bounding box.
-    a = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=30)}>'
-    w = f'<img src="{WASP_B}" alt="WASP-HS" {CAP.format(h=15)}>'
-    w_small = f'<img src="{WASP_B}" alt="WASP-HS" {CAP.format(h=11)}>'
-    a_small = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=22)}>'
+    a = mark(AISCAF, AISCAF_W, 30, "AISCAF")
+    w = mark(WASP_B, WASP_W, 15, "WASP-HS")
+    w_small = mark(WASP_B, WASP_W, 11, "WASP-HS")
+    a_small = mark(AISCAF, AISCAF_W, 22, "AISCAF")
 
     o1 = (f'<p style="font:600 11px/1.4 var(--mono,monospace);letter-spacing:.08em;'
           f'text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px">Part of</p>'
@@ -77,8 +89,10 @@ def main():
           f'<p style="font:600 11px/1.4 monospace;letter-spacing:.08em;text-transform:uppercase;'
           f'color:rgba(255,255,255,.62);margin:0 0 12px">Part of</p>'
           f'<div style="display:flex;align-items:center;gap:34px;flex-wrap:wrap">'
-          f'<img src="{AISCAF_W}" alt="AISCAF" {CAP.format(h=30)}>'
-          f'<img src="{WASP_W}" alt="WASP-HS" {CAP.format(h=17)}></div></div>')
+          # Option 4 carries its own navy ground, so it always uses the light-ink files
+          # whatever the page theme is. This is the one place a single file per mark is right.
+          f'<img src="{AISCAF_W}" alt="AISCAF" style="height:30px;width:auto">'
+          f'<img src="{WASP_W}" alt="WASP-HS" style="height:15px;width:auto"></div></div>')
 
     body = f"""<div class="wrap brief"><article class="briefsheet">
   <header class="bhead"><div>

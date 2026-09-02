@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://ai-econlab.com/sitemap.xml

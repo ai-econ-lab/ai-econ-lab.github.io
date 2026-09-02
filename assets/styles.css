@@ -731,3 +731,26 @@ ul.tight li{margin:2px 0}
   .minitab{display:block;overflow-x:auto;overscroll-behavior-x:contain;font-size:.82rem}
   .minitab th,.minitab td{padding:5px 5px}
 }
+
+/* Partner marks are two files, not one, and the page decides which.
+   Added 2 Sep 2026 after the AISCAF mark rendered near-invisible in dark mode: its ink is
+   #2e2e2e, so on the dark palette it is black on near-black. WASP-HS survived only because its
+   blue happens to read on both. A single logo file cannot serve both themes, and "it looked
+   fine on my screen" is exactly how this ships broken.
+   Mirrors the site's own three-state theme handling: system default, and both explicit
+   overrides, so the toggle wins in both directions. */
+.logo-dark-ink { display: block; }
+.logo-light-ink { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .logo-dark-ink  { display: none; }
+  :root:not([data-theme="light"]) .logo-light-ink { display: block; }
+}
+:root[data-theme="dark"] .logo-dark-ink  { display: none; }
+:root[data-theme="dark"] .logo-light-ink { display: block; }
+:root[data-theme="light"] .logo-dark-ink  { display: block; }
+:root[data-theme="light"] .logo-light-ink { display: none; }
+
+/* The "Part of" strip at the foot of the Monitor. Quiet by design: it is attribution, not
+   sponsorship, and it must not compete with the data above it. */
+.partner-strip { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--hair); }
+.partner-strip img { opacity: .9; }

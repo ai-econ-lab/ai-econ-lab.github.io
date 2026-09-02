@@ -2256,6 +2256,41 @@ def subnav():
     links = "".join(f'<a href="{a}" data-spy="{a[1:]}">{t}</a>' for a, t in items)
     return f'<nav class="subnav" aria-label="Monitor modules"><div class="wrap">{links}</div></nav>'
 
+
+def partner_strip():
+    """The "Part of" strip: AISCAF and WASP-HS at the foot of the Monitor.
+
+    Consent is on record: Magnus asked Christofer (WASP-HS) on 28 Aug 2026 whether both marks
+    could go on the Monitor, and Hanna Nordin sent the official files on 1 Sep. Julia sent the
+    AISCAF files the same week.
+
+    THREE THINGS THIS MARKUP IS DOING, none of them obvious:
+
+    1. TWO FILES PER MARK, swapped by theme in CSS. The AISCAF mark is drawn in #2e2e2e, so on
+       the dark palette it is black on near-black and effectively disappears. A single file
+       cannot serve both themes.
+    2. THE TRIMMED FILES. Julia's PNGs are 561x427 with the ink in the top 185 rows, so 57 per
+       cent of the canvas is transparent padding and a CSS height on the untrimmed file renders
+       a mark half the size asked for.
+    3. SIZED ON THE WORDMARKS, not on image height. WASP-HS is 12.5:1 and the trimmed AISCAF
+       mark 3:1; matching image heights makes one of them far too small either way round.
+
+    "Part of" rather than a row of sponsor logos, because that is the true relationship: the lab
+    contributes to AISCAF, WASP-HS finances the cluster. Örebro and Ratio are deliberately NOT
+    here; they are where the work is done, which is a different thing, and putting all four in
+    one row would say there are four sponsors.
+    """
+    def mark(stem, h_px, alt):
+        st = f"height:{h_px}px;width:auto"
+        return (f'<img class="logo-dark-ink" src="/assets/logos/{stem}_dark_ink_trim.png" '
+                f'alt="{alt}" style="{st}">'
+                f'<img class="logo-light-ink" src="/assets/logos/{stem}_light_ink_trim.png" '
+                f'alt="{alt}" style="{st}">')
+    return (f'<div class="partner-strip">'
+            f'<p class="kicker" style="margin:0 0 12px">Part of</p>'
+            f'<div style="display:flex;align-items:center;gap:34px;flex-wrap:wrap">'
+            f'{mark("aiscaf", 30, "AISCAF")}{mark("wasphs", 15, "WASP-HS")}</div></div>')
+
 def monitor():
     m = MONITOR
     tiles = ""
@@ -2346,6 +2381,7 @@ def monitor():
       shown in each figure's footer (for example DAIOE generative-AI v2023, or Eurostat 2025).</p>
     <p class="citebox">AI-Econ Lab (2026). AIEL Monitor: [module]. Örebro University and Ratio. [source and version
       from the figure footer]. Accessed [date], https://ai-econlab.com/monitor/</p>
+    {partner_strip()}
   </div>
 </section></div></div>"""
     return shell(f"The AI-Econ Lab Monitor · {SITE['brand']['name']}",
