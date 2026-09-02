@@ -1022,10 +1022,25 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
     # A paired chart without a key is a puzzle: two colours and no way to tell which is which.
     if cmp_key:
         gap = int(x0 + 13 + len(series_label) * 6.2 + 10)
-        p.append(f'<rect class="bar se" x="{x0}" y="4" width="9" height="7" rx="2"/>'
+        # PLAIN bar, not `bar se`. It was `se`, so the legend showed blue for the current year
+        # while almost every bar rendered grey, and blue separately meant "highlighted row":
+        # one colour, two meanings, with the legend backing the wrong one. Yifan caught it on
+        # the September brief. In comparison mode the bars now carry no colour highlight at all
+        # and the emphasis moves to the row LABEL, so the chart has two colours and each means
+        # exactly one thing.
+        p.append(f'<rect class="bar" x="{x0}" y="4" width="9" height="7" rx="2"/>'
                  f'<text class="tick" x="{x0+13}" y="10.5">{h(series_label)}</text>'
                  f'<rect class="barcmp" x="{gap}" y="4" width="9" height="7" rx="2"/>'
                  f'<text class="tick" x="{gap+13}" y="10.5">{h(cmp_label)}</text>')
+    # The delta column carried bare numbers, so "+32" could be read as per cent or as percentage
+    # points. It is percentage points. A header rather than a suffix on every row, which would
+    # widen the column for no gain.
+    if not cmp_key and any(r.get("prev") is not None for r in data):
+        p.append(f'<text class="tick" x="{W-8}" y="10.5" text-anchor="end">pp</text>')
+    elif cmp_key:
+        # The right-hand column carries the comparison YEAR's value, not a change. Unlabelled it
+        # reads as a mystery number beside the bar: "88  31" tells you nothing about what 31 is.
+        p.append(f'<text class="tick" x="{W-8}" y="10.5" text-anchor="end">{h(cmp_label)}</text>')
     for t in range(0, int(xmax) + 1, step):
         gx = X(t)
         p.append(f'<line class="grid" x1="{gx:.1f}" y1="{top}" x2="{gx:.1f}" y2="{top+n*rowh}"/>')
@@ -1059,11 +1074,17 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
             cv = r[cmp_key]
             p.append(f'<rect class="barcmp" x="{x0}" y="{y+rowh*0.16:.1f}" '
                      f'width="{max(1.5,X(cv)-x0):.1f}" height="{rowh*0.30:.1f}" rx="2"/>')
-            p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.52:.1f}" '
+            p.append(f'<rect class="bar" x="{x0}" y="{y+rowh*0.52:.1f}" '
                      f'width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.30:.1f}" rx="2"/>')
             p.append(f'<text class="dvalcmp" x="{W-8}" y="{y+rowh*0.72:.1f}" text-anchor="end">{cv:{vfmt}}</text>')
         else:
-            p.append(f'<rect class="bar{se}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
+            # In comparison mode a row with no earlier value still lands here, and it used to
+            # keep the blue highlight while every neighbouring row was grey-and-orange. That is
+            # the mixed rendering Yifan saw: within one chart, blue meant "the current year" on
+            # some rows and "the highlighted row" on others. In comparison mode the bars carry
+            # no highlight at all; the emphasis lives in the row label.
+            _c = "bar" if cmp_key else f"bar{se}"
+            p.append(f'<rect class="{_c}" x="{x0}" y="{y+rowh*0.26:.1f}" width="{max(1.5,X(v)-x0):.1f}" height="{rowh*0.5:.1f}" rx="2"/>')
         p.append(f'<text class="dval{se}" x="{W-66}" y="{y+rowh*0.72:.1f}" text-anchor="end">{v:{vfmt}}</text>')
         # The delta column and the comparison value both sit at x = W-8, so drawing both puts
         # one on top of the other. When a comparison series is shown the change is already IN
@@ -2603,16 +2624,16 @@ def brief(lang="en"):
             "Efterfrågan ungefär fördubblades på ett år i de flesta länder (Sverige 1,3% 2024 till 2,8% 2025). Den "
             "svenska livemätningen av jobbannonser är pulsen ovan."),
         "adoption": L(
-            f"Adoption climbs steeply with firm size, from {smd['10-49']}% of small firms (10–49 employees) to "
-            f"{smd['250-']}% of large ones (250+) in {SWEAD['meta']['year']}, every class up sharply since {SWEAD['meta']['prev_year']}. "
+            f"Adoption climbs steeply with firm size: {smd['10-49']}% among small firms (10–49 employees) "
+            f"against {smd['250-']}% among large ones (250+) in {SWEAD['meta']['year']}, and every size class has risen since {SWEAD['meta']['prev_year']}. "
             f"But the interesting thing is the change. The industries that adopted least are growing "
             f"fastest in proportional terms and falling further behind all the same: "
             f"{_nm(_fastest)} multiplied its adoption by {_fast_x:.1f} since "
             f"{SWESEC['meta']['prev_year']}, against {_hi_x:.1f} for {_nm(_hi)}, and yet the distance "
             f"between highest and lowest industry widened from {_gap_then} to {_gap_now} percentage "
             f"points. The industries behind are running to stay in place.",
-            f"Användningen ökar brant med företagsstorlek, från {smd['10-49']}% av småföretagen (10–49 anställda) till "
-            f"{smd['250-']}% av de stora (250+) {SWEAD['meta']['year']}, alla storleksklasser kraftigt upp sedan {SWEAD['meta']['prev_year']}. "
+            f"Användningen ökar brant med företagsstorlek: {smd['10-49']}% bland småföretagen (10–49 anställda) "
+            f"mot {smd['250-']}% bland de stora (250+) {SWEAD['meta']['year']}, och varje storleksklass har ökat sedan {SWEAD['meta']['prev_year']}. "
             f"Men det intressanta är förändringen. De branscher som använde minst AI växer snabbast "
             f"relativt sett och halkar ändå efter: {_nm(_fastest)} har {svn(round(_fast_x,1))}-faldigat "
             f"sin användning sedan {SWESEC['meta']['prev_year']}, mot {svn(round(_hi_x,1))} för "
@@ -2830,21 +2851,15 @@ def brief(lang="en"):
             "annonseras inte, och en stigande linje betyder att arbetsgivarna oftare efterfrågar "
             "AI-kompetens, inte att AI skapat eller tagit bort ett jobb."),
         "adoption": L(
-            "Use is not intensity: a firm counts here if it uses one AI technology anywhere in the "
-            "business, which says nothing about how much of the work it touches. A gap in percentage "
-            "points and a gap in ratios also answer different questions, and neither says whether the "
-            f"industries behind will close the distance, only that so far they have not. The "
-            f"advertisement comparison rests on a different population from SCB's: employers among "
-            f"our largest advertisers, {DEMSEC['meta']['coverage_pct']}% of advertisements, business "
-            f"sector only. Read the two series beside each other, never as a difference.",
-            "Användning är inte omfattning: ett företag räknas här om det använder en AI-teknik "
-            "någonstans i verksamheten, vilket inte säger något om hur stor del av arbetet den rör. "
-            "Ett avstånd i procentenheter och ett i kvoter svarar dessutom på olika frågor, och "
-            "ingetdera säger om branscherna som ligger efter hinner i kapp, bara att de hittills inte "
-            f"har gjort det. Annonsjämförelsen vilar dessutom på en annan population än SCB:s: "
-            f"arbetsgivare bland våra största annonsörer, {svn(DEMSEC['meta']['coverage_pct'])}% av "
-            f"annonserna, endast näringslivet. Läs serierna bredvid varandra, aldrig som en "
-            f"skillnad."),
+            # Shortened on Yifan's review of the September brief: the original ran to five
+            # sentences of caveat, three of which were about how to read a gap. This says the
+            # two things a reader must not get wrong and stops.
+            "These numbers show whether firms use AI, not how much they use it. The "
+            "job-advertisement data measure something else again: whether firms are hiring for "
+            "specific AI skills. The two should be compared with care.",
+            "Talen visar om företagen använder AI, inte hur mycket de använder den. "
+            "Annonsdata mäter något annat: om företagen anställer för specifika AI-kompetenser. "
+            "De två bör jämföras med försiktighet."),
         "barriers": L(
             f"Read this as how widespread each obstacle is, not as a division of non-adopters "
             f"between causes. Eurostat allows several answers, so the shares do not sum to a total "
@@ -2942,7 +2957,7 @@ def brief(lang="en"):
     {f'<p class="bp">{extras[theme]}</p>' if theme in extras else ''}
     <p class="bsrc">{L("Source","Källa")}: {h(srcs[theme])}. {L("Full method at","Fullständig metod på")} ai-econlab.com/monitor/#method.</p></section>
 
-  <section class="bsec"><h2 class="bh2">{h(h_lim)}</h2>
+  <section class="bsec bsec--note"><h2 class="bh2">{h(h_lim)}</h2>
     <p class="bp">{limits[theme]}</p></section>
 
   <footer class="bfooter">

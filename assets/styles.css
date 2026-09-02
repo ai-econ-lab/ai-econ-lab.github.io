@@ -617,6 +617,10 @@ main [id]{scroll-margin-top:196px}
      column IS the page, so keeping the cap wastes a third of the sheet and pushes the brief
      onto a second page. Set the type down instead, the way a printed brief is set. */
   .bp { max-width:none; font-size:9.9pt; line-height:1.42; margin:0 0 8px; }
+  /* The closing note, quieter in print too. The brief is proofread on PAPER (Yifan reads the
+     English, Lydia the Swedish), so a screen-only rule would not reach the readers it is for. */
+  .bsec--note .bh2 { opacity: .7; }
+  .bsec--note .bp { font-size: 8.7pt; color: var(--ink-2); }
   .bsub { max-width:none; }
   .bsrc { margin-top:5px; }
   .bhead { padding-bottom:10px; margin-bottom:12px; }
@@ -754,3 +758,9 @@ ul.tight li{margin:2px 0}
    sponsorship, and it must not compete with the data above it. */
 .partner-strip { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--hair); }
 .partner-strip img { opacity: .9; }
+
+/* The brief's closing "what this does not show" section, set quieter than the argument above it.
+   Yifan's review of the September issue: it is a note for a careful reader, not information a
+   general audience needs at the same weight as the finding. Smaller and greyer, not hidden. */
+.briefsheet .bsec--note .bh2 { opacity: .72; }
+.briefsheet .bsec--note .bp { font-size: .88em; color: var(--ink-2); opacity: .92; }
