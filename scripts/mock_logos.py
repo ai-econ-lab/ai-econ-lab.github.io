@@ -7,8 +7,8 @@ Four options, same two marks, so the choice is visual rather than described. Wri
 docs/ so it cannot be published by accident.
 
 THE CONSTRAINT THAT DRIVES ALL FOUR. The two marks have very different proportions: WASP-HS is
-1679x134, about 12.5:1, and the AISCAF mark Julia sent is 561x427, about 1.3:1. Set to the
-same image HEIGHT, WASP-HS
+1679x134, about 12.5:1, and the AISCAF mark Julia sent is 561x427 of which only the top 185
+rows carry ink, so trimmed it is 3:1. Set to the same image HEIGHT, WASP-HS
 becomes three times wider and swamps the row. Set to the same WIDTH, AISCAF becomes three times
 taller. Neither is a design; both are what happens when you forget to look. So every option
 below sizes them to equal CAP HEIGHT, which is what the eye actually compares, and that means
@@ -32,8 +32,8 @@ WASP_B = f"{L}/WASP-HS_Logotype_Blue_Full_Name.png"
 WASP_W = f"{L}/WASP-HS_Logotype_White_Full_Name.png"
 # Julia sent a transparent, dark-ink AISCAF mark on 31 Aug 2026. The deck copy used before
 # was a dark PLAQUE and rendered as a black box on the white page; that is what this fixes.
-AISCAF = f"{L}/aiscaf_dark_ink.png"
-AISCAF_W = f"{L}/aiscaf_white_ink.png"
+AISCAF = f"{L}/aiscaf_dark_ink_trim.png"
+AISCAF_W = f"{L}/aiscaf_white_ink_trim.png"
 
 # Equal cap height: AISCAF's wordmark is roughly 3.5x the cap height of WASP-HS's at equal
 # image height, so WASP-HS is given the greater image height to compensate.
@@ -48,13 +48,15 @@ def opt(n, title, why, html, note=""):
 
 
 def main():
-    # The new mark is a roundel plus a small strapline, 1.3:1, so its wordmark occupies a
-    # fraction of the image height. Matching IMAGE height to WASP-HS makes AISCAF look tiny;
-    # these numbers match the two WORDMARKS, which is what a reader actually compares.
-    a = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=56)}>'
+    # Sized on the two WORDMARKS, which is what a reader compares, not on image height.
+    # NOTE the file trim: Julia's AISCAF PNG is 561x427 with the ink in the top 185 rows and
+    # the rest transparent padding, so 57 per cent of the canvas is empty. Setting a height on
+    # the untrimmed file renders a mark barely half the size asked for, which is why it looked
+    # almost invisible here. The *_trim.png files are cropped to the alpha bounding box.
+    a = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=30)}>'
     w = f'<img src="{WASP_B}" alt="WASP-HS" {CAP.format(h=15)}>'
     w_small = f'<img src="{WASP_B}" alt="WASP-HS" {CAP.format(h=11)}>'
-    a_small = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=40)}>'
+    a_small = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=22)}>'
 
     o1 = (f'<p style="font:600 11px/1.4 var(--mono,monospace);letter-spacing:.08em;'
           f'text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px">Part of</p>'
@@ -75,7 +77,7 @@ def main():
           f'<p style="font:600 11px/1.4 monospace;letter-spacing:.08em;text-transform:uppercase;'
           f'color:rgba(255,255,255,.62);margin:0 0 12px">Part of</p>'
           f'<div style="display:flex;align-items:center;gap:34px;flex-wrap:wrap">'
-          f'<img src="{AISCAF_W}" alt="AISCAF" {CAP.format(h=56)}>'
+          f'<img src="{AISCAF_W}" alt="AISCAF" {CAP.format(h=30)}>'
           f'<img src="{WASP_W}" alt="WASP-HS" {CAP.format(h=17)}></div></div>')
 
     body = f"""<div class="wrap brief"><article class="briefsheet">
@@ -84,8 +86,8 @@ def main():
     <h1 class="btitle">Where the AISCAF and WASP-HS marks go</h1>
     <p class="bsub">Four options, same two marks, so the choice is visual. Nothing is placed on
       the live site. Every option sets the two to equal <b>cap height</b>, not equal image
-      height: WASP-HS is 12.5:1 and the new AISCAF mark 1.3:1, so matching image heights makes one
-      times wider and it swamps the row.</p></div></header>
+      height: WASP-HS is 12.5:1 and the trimmed AISCAF mark 3:1, so matching image heights makes
+      one of them far too small whichever way round you do it.</p></div></header>
 
   {opt(1, "Footer strip, &ldquo;Part of&rdquo;",
        "The plainest answer. A quiet label, then the two marks, at the foot of the Monitor above "

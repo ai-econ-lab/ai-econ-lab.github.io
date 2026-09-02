@@ -24,9 +24,19 @@ legacy plaque was 4.3:1, which is a different shape again, so do not reuse old s
 a row at the same height without the WASP-HS wordmark dominating; match them on *cap height* or
 give WASP-HS its own line.
 
+## Trim the padding, or the mark disappears
+
+Julia's AISCAF PNGs are 561x427 **with the ink in the top 185 rows and the rest transparent**,
+so 57 per cent of the canvas is empty. Setting a CSS height on the untrimmed file therefore
+renders a mark barely half the size you asked for, which is exactly how it looked in the first
+mock: present, but almost invisible beside WASP-HS.
+
+**Use `aiscaf_dark_ink_trim.png` and `aiscaf_white_ink_trim.png`**, cropped to the alpha
+bounding box, 561x185, ratio 3:1. The untrimmed originals are kept as delivered.
+
 ## Which AISCAF file to use
 
-**`aiscaf_dark_ink.png` on the site.** It is transparent with near-black ink, so it sits on
+**`aiscaf_dark_ink_trim.png` on the site.** It is transparent with near-black ink, so it sits on
 the Monitor's white page correctly, which the legacy plaque did not. Use `aiscaf_white_ink.png`
 only on a dark ground, and the JPEG only where the background really is white and the mark is
 set large. Julia sent two identical copies of the dark-ink file, `AISCAF logga.png` and
