@@ -7,7 +7,8 @@ Four options, same two marks, so the choice is visual rather than described. Wri
 docs/ so it cannot be published by accident.
 
 THE CONSTRAINT THAT DRIVES ALL FOUR. The two marks have very different proportions: WASP-HS is
-1679x134, about 12.5:1, and AISCAF is 2034x468, about 4.3:1. Set to the same HEIGHT, WASP-HS
+1679x134, about 12.5:1, and the AISCAF mark Julia sent is 561x427, about 1.3:1. Set to the
+same image HEIGHT, WASP-HS
 becomes three times wider and swamps the row. Set to the same WIDTH, AISCAF becomes three times
 taller. Neither is a design; both are what happens when you forget to look. So every option
 below sizes them to equal CAP HEIGHT, which is what the eye actually compares, and that means
@@ -83,7 +84,7 @@ def main():
     <h1 class="btitle">Where the AISCAF and WASP-HS marks go</h1>
     <p class="bsub">Four options, same two marks, so the choice is visual. Nothing is placed on
       the live site. Every option sets the two to equal <b>cap height</b>, not equal image
-      height: WASP-HS is 12.5:1 and AISCAF 4.3:1, so matching image heights makes WASP-HS three
+      height: WASP-HS is 12.5:1 and the new AISCAF mark 1.3:1, so matching image heights makes one
       times wider and it swamps the row.</p></div></header>
 
   {opt(1, "Footer strip, &ldquo;Part of&rdquo;",
