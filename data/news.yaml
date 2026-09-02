@@ -57,7 +57,7 @@ years:
       - {date: "Sep", text: 'Kyvik-Nordås presents "How productivity differences drive trade and technology uptake" (with Klügl) at ETSG (and later at Univ. of Oslo, 9 Nov).'}
       - {date: "Sep 8", text: "New PhD student Lydia Löthman joins the lab, based at Örebro University."}
       - date: "Sep 1"
-        text: "The AI-Econ Lab became part of, and via Örebro University a node for, the new Swedish research cluster on AI, Structural Change and the Future of Work (AISCAF), funded by WASP-HS. Five-year financing; other nodes are Uppsala University and Stockholm University."
+        text: "Örebro University became one of three nodes in the new Swedish research cluster on AI, Structural Change and the Future of Work (AISCAF), funded by WASP-HS, with the lab leading the Örebro node. Five-year financing; the other nodes are Uppsala University and Stockholm University. The cluster funds part of the lab's team; the lab itself was founded in 2019 and is not inside the cluster."
         links: [{label: "AISCAF", url: "https://www.aiscaf.se/w/ac/"}, {label: "WASP-HS", url: "https://wasp-hs.org"}]
       - date: "Jul 8"
         text: 'Paper published in Research Policy: "Artificial Intelligence, Tasks, Skills and Wages: Worker-Level Evidence from Germany" (Engberg, Koch, Lodefalk & Schroeder).'
