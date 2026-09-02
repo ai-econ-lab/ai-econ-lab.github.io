@@ -27,7 +27,12 @@ B = importlib.util.module_from_spec(spec); sys.modules["aiel_build"] = B
 spec.loader.exec_module(B)
 
 L = f"{ROOT}/assets/logos"
-WASP_B, WASP_W, AISCAF = f"{L}/WASP-HS_Logotype_Blue_Full_Name.png", f"{L}/WASP-HS_Logotype_White_Full_Name.png", f"{L}/aiscaf_logo.png"
+WASP_B = f"{L}/WASP-HS_Logotype_Blue_Full_Name.png"
+WASP_W = f"{L}/WASP-HS_Logotype_White_Full_Name.png"
+# Julia sent a transparent, dark-ink AISCAF mark on 31 Aug 2026. The deck copy used before
+# was a dark PLAQUE and rendered as a black box on the white page; that is what this fixes.
+AISCAF = f"{L}/aiscaf_dark_ink.png"
+AISCAF_W = f"{L}/aiscaf_white_ink.png"
 
 # Equal cap height: AISCAF's wordmark is roughly 3.5x the cap height of WASP-HS's at equal
 # image height, so WASP-HS is given the greater image height to compensate.
@@ -42,10 +47,13 @@ def opt(n, title, why, html, note=""):
 
 
 def main():
-    a = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=30)}>'
-    w = f'<img src="{WASP_B}" alt="WASP-HS" {CAP.format(h=17)}>'
-    w_small = f'<img src="{WASP_B}" alt="WASP-HS" {CAP.format(h=13)}>'
-    a_small = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=23)}>'
+    # The new mark is a roundel plus a small strapline, 1.3:1, so its wordmark occupies a
+    # fraction of the image height. Matching IMAGE height to WASP-HS makes AISCAF look tiny;
+    # these numbers match the two WORDMARKS, which is what a reader actually compares.
+    a = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=56)}>'
+    w = f'<img src="{WASP_B}" alt="WASP-HS" {CAP.format(h=15)}>'
+    w_small = f'<img src="{WASP_B}" alt="WASP-HS" {CAP.format(h=11)}>'
+    a_small = f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=40)}>'
 
     o1 = (f'<p style="font:600 11px/1.4 var(--mono,monospace);letter-spacing:.08em;'
           f'text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px">Part of</p>'
@@ -66,7 +74,7 @@ def main():
           f'<p style="font:600 11px/1.4 monospace;letter-spacing:.08em;text-transform:uppercase;'
           f'color:rgba(255,255,255,.62);margin:0 0 12px">Part of</p>'
           f'<div style="display:flex;align-items:center;gap:34px;flex-wrap:wrap">'
-          f'<img src="{AISCAF}" alt="AISCAF" {CAP.format(h=30)}>'
+          f'<img src="{AISCAF_W}" alt="AISCAF" {CAP.format(h=56)}>'
           f'<img src="{WASP_W}" alt="WASP-HS" {CAP.format(h=17)}></div></div>')
 
     body = f"""<div class="wrap brief"><article class="briefsheet">
