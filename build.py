@@ -1054,8 +1054,12 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
         # (the national floor on the occupations cut, the national rate on the population cut),
         # and hardcoding "EU" printed "EU 0.52" and "EU 42" over Sweden's own numbers -- on a
         # chart whose caption directly beneath said "the line marks the national figure".
+        # Magnus, 3 Sep 2026: the Swedish sheet printed "19.9" with a decimal POINT while every
+        # other number on the same page uses a comma. Swedish orthography takes a comma; this
+        # is the one number in the whole brief generated as a raw float rather than through svn().
+        eu_avg_s = f'{eu_avg:g}'.replace(".", ",") if lang == "sv" else f'{eu_avg:g}'
         p.append(f'<text class="meanlab" x="{mx:.1f}" y="{top-5}" text-anchor="middle">'
-                 f'{h(mean_label)} {eu_avg:g}</text>')
+                 f'{h(mean_label)} {eu_avg_s}</text>')
     for i, r in enumerate(rows):
         # Two highlight tiers. `is_se` stays Sweden-only, because three call sites do
         # next(r for r in countries if r["is_se"]) and would break on a second match.
@@ -2650,15 +2654,15 @@ def brief(lang="en"):
             f"{_nm(_fastest)} multiplied its adoption by {_fast_x:.1f} since "
             f"{SWESEC['meta']['prev_year']}, against {_hi_x:.1f} for {_nm(_hi)}, and yet the distance "
             f"between highest and lowest industry widened from {_gap_then} to {_gap_now} percentage "
-            f"points. The industries behind are running to stay in place.",
-            f"Användningen ökar brant med företagsstorlek: {smd['10-49']}% bland småföretagen (10–49 anställda) "
+            f"points.",
+            f"Användningen ökar markant med företagsstorlek: {smd['10-49']}% bland småföretagen (10–49 anställda) "
             f"mot {smd['250-']}% bland de stora (250+) {SWEAD['meta']['year']}, och varje storleksklass har ökat sedan {SWEAD['meta']['prev_year']}. "
             f"De branscher som använde minst AI växer snabbast "
             f"relativt sett och halkar ändå efter: {_nm(_fastest)} har {svn(round(_fast_x,1))}-faldigat "
             f"sin användning sedan {SWESEC['meta']['prev_year']}, mot {svn(round(_hi_x,1))} för "
             f"{_nm(_hi)}, och ändå "
             f"har avståndet mellan högsta och lägsta bransch vuxit från {_gap_then} till {_gap_now} "
-            f"procentenheter. Branscherna som ligger efter springer för att stå still."),
+            f"procentenheter."),
         "barriers": L(
             f"Across the EU the obstacle enterprises name most often is people, not money: a lack of "
             f"relevant expertise ranks first of {b_n}, cost only {b_cost_rank}th, and \u201cAI is simply not "
@@ -2883,13 +2887,13 @@ def brief(lang="en"):
             # Shortened on Yifan's review of the September brief: the original ran to five
             # sentences of caveat, three of which were about how to read a gap. This says the
             # two things a reader must not get wrong and stops.
-            "These numbers are what firms report in a survey: whether they use AI at all, not how "
-            "much they use it, and not an independent measurement of either. The "
-            "job-advertisement data measure something else again: whether firms are hiring for "
+            "These numbers are what firms report in a survey: whether they use AI at all, not "
+            "how much they use it. The "
+            "job-advertisement data measure something else again: whether firms want to hire for "
             "specific AI skills. The two should be compared with care.",
             "Talen är vad företagen uppger i en enkät: om de använder AI över huvud taget, inte "
-            "hur mycket, och inte en oberoende mätning av något av det. Annonsdata mäter något "
-            "annat: om företagen anställer för specifika AI-kompetenser. De två bör jämföras med "
+            "hur mycket. Annonsdata mäter något "
+            "annat: om företagen vill anställa för specifika AI-kompetenser. De två bör jämföras med "
             "försiktighet."),
         "barriers": L(
             f"Read this as how widespread each obstacle is, not as a division of non-adopters "
@@ -2977,7 +2981,7 @@ def brief(lang="en"):
     <div><p class="kicker">{L("AIEL Monitor · monthly brief","AIEL Monitor · månadsbrev")} · {issue}</p>
       <h1 class="btitle">{L("AI and the labour market","AI och arbetsmarknaden")}, {mname} {today.year}</h1>
       <p class="bsub">{L("A monthly snapshot from the AI-Econ Lab: international, with Sweden in depth, on public data.", "En månatlig ögonblicksbild från AI-Econ Lab: internationell, med Sverige på djupet, byggd på öppna data.")}
-        {L("In focus this month","I fokus denna månad")}: {h(th_title)}.</p></div>
+        {L("In focus this month","I fokus denna månad")}: {h(th_title)}{"" if th_title.rstrip()[-1:] in "?!." else "."}</p></div>
     <div class="bactions">
       <button class="btn primary" id="printbrief" type="button">{L("↓ Download PDF","↓ Ladda ner PDF")}</button>
       {subscribe}
