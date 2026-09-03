@@ -1,0 +1,71 @@
+# AI-Econ Lab — the AIEL Monitor
+
+> An independent, publicly funded monitor of AI and the labour market: international,
+> with Sweden in depth, built entirely on public data. Örebro University and RATIO.
+
+## What this is
+
+The AIEL Monitor measures how artificial intelligence is showing up in the labour market,
+using sources anyone can obtain and code anyone can rerun. It is research, not a product;
+there is nothing to buy and no figure here that cannot be checked against its source.
+
+Term list: frozen v1.5 term list. Cite the version and the date.
+
+## How to quote the Swedish AI-demand figures without getting them wrong
+
+There is no single number for how many job advertisements ask for AI, and any source that
+gives you one has made a choice it should be telling you about. We publish a RANGE, and
+which end you want depends on the question:
+
+- FLOOR: the advertisement names a specific AI term in the ROLE'S OWN tasks or
+  requirements. This is hard AI-skill demand. It is the headline series.
+- WHOLE-TEXT: the same term list applied to the entire advertisement, including the
+  passage describing the company. Higher, and it counts employer self-description.
+- CEILING: every advertisement mentioning AI in any form, corrected by hand-reading a
+  sample of the bare-AI band. Bounds AI demand WE CAN DETECT FROM WORDS, not AI demand.
+
+Comparisons with other trackers usually differ for one of three reasons, not because
+either is wrong: whether a bare mention counts, whether the company passage counts, and
+what the denominator is (all advertisements, or one sector).
+
+## Pages
+
+- [The Monitor](https://ai-econlab.com/monitor/): all modules, with the range and its caveats.
+- [Method](https://ai-econlab.com/monitor/methods/): definitions, lexicon provenance, every freeze.
+- [Monthly brief](https://ai-econlab.com/monitor/brief/) ([svenska](https://ai-econlab.com/monitor/brief/sv/)): one
+  month, one argument, one page.
+- [DAIOE](https://ai-econlab.com/daioe/): our occupational AI-exposure measure.
+- [Research](https://ai-econlab.com/research/) · [People](https://ai-econlab.com/people/) · [About](https://ai-econlab.com/about/)
+
+## Data and code
+
+Job advertisements: JobTech / Platsbanken (CC0). Firms: Bolagsverket. Adoption and
+exposure: Eurostat, SCB, EU-LFS. Every chart has a downloadable CSV on the page it
+appears on. Nothing here rests on a licensed source we cannot show you.
+
+## Contact
+
+- Web: https://ai-econlab.com
+- Contact: https://ai-econlab.com/about/#contact
+
+
+---
+
+# The caveats, in full
+
+## Floor, ceiling, and why the measure is a range
+
+- Floor: The advertisement names a specific AI term in the role's own tasks or requirements, and the role builds, integrates or uses AI. This is hard AI-skill demand, and it is what the headline Swedish series reports.
+- Ceiling: Every advertisement whose role is genuinely AI-related, including those that signal AI only through the surrounding project or field, and those that are about AI rather than doing it. The Lightcast-comparable object is the broader whole-text measure, not this one: the ceiling adds a hand-estimated share of the bare-AI band on top. Note also that the correction reaches only that band and not the whole-text base beneath it, which is 86% of the published figure; successive corrections have raised that share from 79%, because each lowered the band's contribution and left the uncorrected base untouched. It bounds lexically detectable AI demand, not AI demand: both of its components are lexicon-anchored, a whole-text term match plus the bare-AI band, so an advertisement that is genuinely an AI role and never uses an AI word sits outside both and is not bounded by the ceiling at all. How much lies beyond it is unmeasured. What we can say is that a lexical rule misses a great deal even of the advertisements it can see: the role-scoped floor recovers between 34% and 37% of the hand-labelled AI positives across the four freezes, most of the shortfall being advertisements that name AI only in the bare form. A recall audit on lexicon-negative advertisements is the pending work; until it reports, the direction of the residual is known (upward) and its size is not.
+- The gap: The AI grey zone: jobs AI touches without requiring the worker to build it. The distance between the bounds is a quantity of interest in its own right, not measurement error.
+
+## How to read the Swedish advertisement series
+
+- 2026 is partial: the first half comes from the Q1–Q2 archives and the latest weeks from the live feed; the newest point will revise.
+- The chart ends with the June archives; the live feed runs to today and joins the chart once the two sources are reconciled.
+- The 2022–2023 dip is mostly an artefact of reposting. Repeat postings ran 33% of records in 2021 and 49% in 2023, and AI ads repeat at about half that rate, so the denominator swelled faster than the numerator exactly when the dip appears. Counting each advertisement once, the share drifts 7% from 2021 to 2023 against the 30% fall the raw series shows. A real slowdown remains; a collapse does not.
+- The upper bound is now measured across the whole series, not just 2025. Counting every ad that mentions AI in any form gives 2.45% for 2025, but that band is mostly company boilerplate. We read 230 advertisements from it by hand, spread over four periods — 2006–2013, 2019, 2022 and 2025 — and 32 are genuinely AI roles. The four periods are statistically indistinguishable, so a single correction applies throughout rather than a different one per year. Re-derived on the v1.4 band it is 12.8% (95% interval 8.9–18.1), and v1.5 leaves the bare-AI band unchanged to the advertisement, so that derivation carries over, which puts the corrected 2025 ceiling at 1.25% (1.19–1.32), not 2.45%, and the published 2025 range at 0.55% (floor) to 1.25% (ceiling).
+- The ceiling bounds AI demand we can detect from words, not AI demand. Both lines are anchored to a term list, so an ad that is genuinely an AI job and never uses an AI word is in neither, and nothing on this page bounds it. That residual is not yet measured; an audit of the ads the term list never flags is the next piece of work. Its direction is known and it is upward.
+- Ads that mention AI only when describing the company never count towards the floor; the floor counts an ad for what it asks of the person being hired. The broader line does count them, which is precisely why the two differ.
+- Counts are distinct advertisements: employers repost, so the archive holds 11.2 million records but 8.1 million distinct advertisements, and each is counted once. The raw-record series is retained alongside as the robustness line. Two modules still count records and say so where they appear: the entry-level squeeze, which reads totals from an API that cannot be deduplicated, and the employers' own wording block, where a vacancy posted more than once counts each time.
+- The builder / integrator / user split is classifier-based (validated against hand-labelled ads at 88% on the four-way split); a small share of ads sits in an AI-literacy grey zone outside the three tiers, and a reconciliation of the classifier's strictness against our hand-labelled benchmark is in progress. Shares may move a little; the ranking and trends are robust.

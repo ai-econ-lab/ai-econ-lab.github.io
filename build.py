@@ -3430,6 +3430,98 @@ def emit_data(out):
 ONEPAGERS = ("aiel-monitor-onepager.pdf", "aiel-monitor-onepager-sv.pdf")
 
 
+def strip_tags(t):
+    """Plain text from a caveat string: the machine digest carries no markup and no placeholders."""
+    t = re.sub(r"<[^>]+>", "", str(t))
+    t = t.replace("{records_m}", RECORD_ADS[:-1]).replace("{distinct_m}", DISTINCT_ADS[:-1])
+    return " ".join(t.split())
+
+
+def emit_llms(out):
+    """Write /llms.txt and /llms-full.txt: the Monitor in plain text, for machine readers.
+
+    WHY. People increasingly ask a language model about the Swedish labour market rather than
+    a search engine, and a model answers from what it can retrieve. Our pages are server-rendered
+    HTML and are retrievable in principle, but a plain-text digest with the numbers, their units
+    and their caveats in one place is what actually survives the trip: it removes the chance that
+    a model lifts a figure and leaves the qualification behind, which is the failure mode we care
+    about most. The convention is llmstxt.org.
+
+    THE POINT IS NOT MARKETING. Every figure here carries its unit, its population and its
+    vintage, in the same words as the page, because an uncited 1.06% is worse than nothing. If a
+    model is going to quote us, the caveat should be the easiest thing for it to quote too.
+
+    Generated from the same YAML the pages render, so it cannot drift from them.
+    """
+    v = DEF_LABEL
+    lines = [
+        "# AI-Econ Lab — the AIEL Monitor",
+        "",
+        "> An independent, publicly funded monitor of AI and the labour market: international,",
+        "> with Sweden in depth, built entirely on public data. Örebro University and RATIO.",
+        "",
+        "## What this is",
+        "",
+        "The AIEL Monitor measures how artificial intelligence is showing up in the labour market,",
+        "using sources anyone can obtain and code anyone can rerun. It is research, not a product;",
+        "there is nothing to buy and no figure here that cannot be checked against its source.",
+        "",
+        f"Term list: {v}. Cite the version and the date.",
+        "",
+        "## How to quote the Swedish AI-demand figures without getting them wrong",
+        "",
+        "There is no single number for how many job advertisements ask for AI, and any source that",
+        "gives you one has made a choice it should be telling you about. We publish a RANGE, and",
+        "which end you want depends on the question:",
+        "",
+        "- FLOOR: the advertisement names a specific AI term in the ROLE'S OWN tasks or",
+        "  requirements. This is hard AI-skill demand. It is the headline series.",
+        "- WHOLE-TEXT: the same term list applied to the entire advertisement, including the",
+        "  passage describing the company. Higher, and it counts employer self-description.",
+        "- CEILING: every advertisement mentioning AI in any form, corrected by hand-reading a",
+        "  sample of the bare-AI band. Bounds AI demand WE CAN DETECT FROM WORDS, not AI demand.",
+        "",
+        "Comparisons with other trackers usually differ for one of three reasons, not because",
+        "either is wrong: whether a bare mention counts, whether the company passage counts, and",
+        "what the denominator is (all advertisements, or one sector).",
+        "",
+        "## Pages",
+        "",
+        f"- [The Monitor]({BASE}/monitor/): all modules, with the range and its caveats.",
+        f"- [Method]({BASE}/monitor/methods/): definitions, lexicon provenance, every freeze.",
+        f"- [Monthly brief]({BASE}/monitor/brief/) ([svenska]({BASE}/monitor/brief/sv/)): one",
+        "  month, one argument, one page.",
+        f"- [DAIOE]({BASE}/daioe/): our occupational AI-exposure measure.",
+        f"- [Research]({BASE}/research/) · [People]({BASE}/people/) · [About]({BASE}/about/)",
+        "",
+        "## Data and code",
+        "",
+        "Job advertisements: JobTech / Platsbanken (CC0). Firms: Bolagsverket. Adoption and",
+        "exposure: Eurostat, SCB, EU-LFS. Every chart has a downloadable CSV on the page it",
+        "appears on. Nothing here rests on a licensed source we cannot show you.",
+        "",
+        "## Contact",
+        "",
+        f"- Web: {BASE}",
+        f"- Contact: {BASE}/about/#contact",
+        "",
+    ]
+    (out / "llms.txt").write_text("\n".join(lines), encoding="utf-8")
+
+    # llms-full.txt: the index above, then the caveats in full. These are the sentences we most
+    # want travelling WITH the numbers.
+    full = list(lines) + ["", "---", "", "# The caveats, in full", ""]
+    rows = METHODS.get("bounds") or []
+    if rows:
+        full += ["## Floor, ceiling, and why the measure is a range", ""]
+        full += [f"- {r['k']}: {strip_tags(r['what'])}" for r in rows] + [""]
+    notes = MONITOR.get("caveats") or []
+    if notes:
+        full += ["## How to read the Swedish advertisement series", ""]
+        full += [f"- {strip_tags(n)}" for n in notes] + [""]
+    (out / "llms-full.txt").write_text("\n".join(full), encoding="utf-8")
+
+
 def build():
     # CARRY THE ONE-PAGER PDFS ACROSS THE WIPE. build() deletes OUT and regenerates the sheets
     # at the end through LaTeX, which only exists on Magnus's Mac (build_onepager.py hardcodes
@@ -3451,8 +3543,21 @@ def build():
     if SITE["build"].get("emit_cname"):   # only at DNS-flip time; otherwise github.io stays previewable
         (OUT / "CNAME").write_text(SITE["brand"]["domain"] + "\n", encoding="utf-8")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
-    (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
-    urls = ["/", "/monitor/", "/monitor/methods/", "/daioe/", "/research/", "/people/", "/events/", "/news/", "/about/"]
+    # robots.txt names the model crawlers explicitly as well as allowing everything. The bare
+    # `User-agent: *` already permits them, so this changes no access; it is a statement that a
+    # publicly funded monitor WANTS to be read by the systems people now ask about the labour
+    # market, and several crawlers are documented as checking for their own name first.
+    (OUT / "robots.txt").write_text(
+        "\n".join(["# The AIEL Monitor is public research. Read it, quote it, cite the version and date.",
+                    "# Machine-readable digests: /llms.txt (index) and /llms-full.txt (full text).",
+                    ""]
+                   + [f"User-agent: {ua}\nAllow: /\n"
+                      for ua in ("GPTBot", "ChatGPT-User", "OAI-SearchBot", "Claude-Web",
+                                 "ClaudeBot", "PerplexityBot", "Googlebot", "Bingbot", "*")]
+                   + [f"Sitemap: {BASE}/sitemap.xml", ""]), encoding="utf-8")
+    emit_llms(OUT)
+    urls = ["/", "/monitor/", "/monitor/methods/", "/monitor/brief/", "/monitor/brief/sv/",
+            "/daioe/", "/research/", "/people/", "/events/", "/news/", "/about/"]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for u in urls:

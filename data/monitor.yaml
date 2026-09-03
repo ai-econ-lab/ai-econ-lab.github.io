@@ -142,7 +142,10 @@ livewindow:
     These numbers run a little higher than the chart's, for two reasons we have measured: the
     live feed carries a somewhat different mix of ads than the yearly archives, and the archives
     store slightly shortened ad texts. Once we can calibrate the two against each other, they
-    will join into one line that runs to today.
+    will join into one line that runs to today. A rolling window also moves with the season, so
+    compare it with the same weeks a year earlier rather than with last month; August is the low
+    point in every year we can measure (0.64% in 2023, 0.84% in 2024 and 0.90% in 2025 on the
+    whole-text measure), and September recovers each time.
 
 # Top ADVERTISEMENT TITLES (verbatim, from the candidate extracts: floor_top_titles.csv),
 # plus taxonomy-level churn. Free-text neologism newcomers: next release.

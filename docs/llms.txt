@@ -1,0 +1,49 @@
+# AI-Econ Lab — the AIEL Monitor
+
+> An independent, publicly funded monitor of AI and the labour market: international,
+> with Sweden in depth, built entirely on public data. Örebro University and RATIO.
+
+## What this is
+
+The AIEL Monitor measures how artificial intelligence is showing up in the labour market,
+using sources anyone can obtain and code anyone can rerun. It is research, not a product;
+there is nothing to buy and no figure here that cannot be checked against its source.
+
+Term list: frozen v1.5 term list. Cite the version and the date.
+
+## How to quote the Swedish AI-demand figures without getting them wrong
+
+There is no single number for how many job advertisements ask for AI, and any source that
+gives you one has made a choice it should be telling you about. We publish a RANGE, and
+which end you want depends on the question:
+
+- FLOOR: the advertisement names a specific AI term in the ROLE'S OWN tasks or
+  requirements. This is hard AI-skill demand. It is the headline series.
+- WHOLE-TEXT: the same term list applied to the entire advertisement, including the
+  passage describing the company. Higher, and it counts employer self-description.
+- CEILING: every advertisement mentioning AI in any form, corrected by hand-reading a
+  sample of the bare-AI band. Bounds AI demand WE CAN DETECT FROM WORDS, not AI demand.
+
+Comparisons with other trackers usually differ for one of three reasons, not because
+either is wrong: whether a bare mention counts, whether the company passage counts, and
+what the denominator is (all advertisements, or one sector).
+
+## Pages
+
+- [The Monitor](https://ai-econlab.com/monitor/): all modules, with the range and its caveats.
+- [Method](https://ai-econlab.com/monitor/methods/): definitions, lexicon provenance, every freeze.
+- [Monthly brief](https://ai-econlab.com/monitor/brief/) ([svenska](https://ai-econlab.com/monitor/brief/sv/)): one
+  month, one argument, one page.
+- [DAIOE](https://ai-econlab.com/daioe/): our occupational AI-exposure measure.
+- [Research](https://ai-econlab.com/research/) · [People](https://ai-econlab.com/people/) · [About](https://ai-econlab.com/about/)
+
+## Data and code
+
+Job advertisements: JobTech / Platsbanken (CC0). Firms: Bolagsverket. Adoption and
+exposure: Eurostat, SCB, EU-LFS. Every chart has a downloadable CSV on the page it
+appears on. Nothing here rests on a licensed source we cannot show you.
+
+## Contact
+
+- Web: https://ai-econlab.com
+- Contact: https://ai-econlab.com/about/#contact
