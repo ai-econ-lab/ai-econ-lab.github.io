@@ -28,7 +28,9 @@ YEAR, PREV = "2025", "2021"
 SIZES = [
     ("250-",   "250+ employees",   "250+ anställda",     False),
     ("50-249", "50–249 employees", "50–249 anställda",   False),
-    ("Tot250", "Headline: 10+",    "Huvudtal: 10+",      True),   # ties to the cross-country bar
+    # Lydia's SV proofread, 3 Sep 2026: "Huvudtal: 10+" did not say 10+ WHAT. Name the unit
+    # on the bar; the source line adds that this is the level comparable with Eurostat.
+    ("Tot250", "Headline: 10+ employees", "Huvudtal: 10+ anställda", True),  # ties to the cross-country bar
     ("10-49",  "10–49 employees",  "10–49 anställda",    False),
     ("5-9",    "5–9 employees",    "5–9 anställda",      False),
     ("1-4",    "1–4 employees",    "1–4 anställda",      False),

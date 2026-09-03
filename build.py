@@ -2645,7 +2645,7 @@ def brief(lang="en"):
         "adoption": L(
             f"Adoption climbs steeply with firm size: {smd['10-49']}% among small firms (10–49 employees) "
             f"against {smd['250-']}% among large ones (250+) in {SWEAD['meta']['year']}, and every size class has risen since {SWEAD['meta']['prev_year']}. "
-            f"But the interesting thing is the change. The industries that adopted least are growing "
+            f"The industries that adopted least are growing "
             f"fastest in proportional terms and falling further behind all the same: "
             f"{_nm(_fastest)} multiplied its adoption by {_fast_x:.1f} since "
             f"{SWESEC['meta']['prev_year']}, against {_hi_x:.1f} for {_nm(_hi)}, and yet the distance "
@@ -2653,7 +2653,7 @@ def brief(lang="en"):
             f"points. The industries behind are running to stay in place.",
             f"Användningen ökar brant med företagsstorlek: {smd['10-49']}% bland småföretagen (10–49 anställda) "
             f"mot {smd['250-']}% bland de stora (250+) {SWEAD['meta']['year']}, och varje storleksklass har ökat sedan {SWEAD['meta']['prev_year']}. "
-            f"Men det intressanta är förändringen. De branscher som använde minst AI växer snabbast "
+            f"De branscher som använde minst AI växer snabbast "
             f"relativt sett och halkar ändå efter: {_nm(_fastest)} har {svn(round(_fast_x,1))}-faldigat "
             f"sin användning sedan {SWESEC['meta']['prev_year']}, mot {svn(round(_hi_x,1))} för "
             f"{_nm(_hi)}, och ändå "
@@ -2700,6 +2700,14 @@ def brief(lang="en"):
                       f"Eurostat, isoc_eb_ain2, {BARRIERS['meta']['year']}"),
         "outcomes": L(f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}",
                       f"{ELS['meta']['source']} × DAIOE generativ AI {ELS['meta']['daioe_version']}"),
+    }
+
+    # Where a chart needs one sentence of reading instruction, it goes on the source line
+    # rather than into the argument, which is a one-page budget.
+    srcnotes = {
+        "adoption": L(
+            " * No 2021 figure is published for these rows.",
+            " * Inget värde för 2021 publiceras för dessa rader."),
     }
 
     # ── the month's argument ──────────────────────────────────────────────────────────────
@@ -2752,11 +2760,11 @@ def brief(lang="en"):
             "månad."),
         "adoption": L(
             "Which firms have actually started using AI, and which have not? Adoption is measured by "
-            f"asking them. Every industry uses far more AI than it did in {SWESEC['meta']['prev_year']}, "
+            f"a survey of firms. Every industry uses far more AI than it did in {SWESEC['meta']['prev_year']}, "
             f"so the interesting question is no longer who has started but whether the ones that "
             f"started late are catching up.",
-            "Vilka företag har faktiskt börjat använda AI, och vilka har inte? Användning mäts genom "
-            f"att fråga dem. Varje bransch använder betydligt mer AI än {SWESEC['meta']['prev_year']}, "
+            "Vilka företag har faktiskt börjat använda AI, och vilka har inte? Användningen mäts "
+            f"genom en enkät till företagen. Varje bransch använder betydligt mer AI än {SWESEC['meta']['prev_year']}, "
             f"så den intressanta frågan är inte längre vilka som har börjat utan om de som började "
             f"sent hinner i kapp."),
         "barriers": L(
@@ -2795,20 +2803,22 @@ def brief(lang="en"):
     }
     extras = {
         "adoption": L(
-            f"One industry is buying AI; another is building it. Using AI and hiring for it are "
+            f"Using AI and hiring for it are "
             f"different decisions, and the same industries do not make both. In our own "
             f"advertisement data, manufacturing asks for a named AI skill {_swap:.0f} times as "
             f"often as the other service industries, {_mfg['demand']}% of its advertisements "
             f"against {_svc['demand']}%, even though SCB records the service firms as the heavier "
-            f"users, {_ad['69-75, 77-82, 95.1']}% against {_ad['10-33']}%. Buying a tool needs no "
-            f"new hire; building with one does.",
-            f"Den ena branschen köper AI, den andra bygger den. Att använda AI och att anställa för "
+            f"users, {_ad['69-75, 77-82, 95.1']}% against {_ad['10-33']}%. One possible explanation: "
+            f"manufacturing more often builds its own AI tools and must hire for them, while "
+            f"service firms use tools that already exist.",
+            f"Att använda AI och att anställa för "
             f"det är olika beslut, och det är inte samma branscher som fattar båda. I våra egna "
-            f"annonsdata efterfrågar tillverkningen en namngiven AI-kompetens {svn(round(_swap))} "
+            f"annonsdata efterfrågar tillverkningsindustrin en namngiven AI-kompetens {svn(round(_swap))} "
             f"gånger så ofta som de övriga tjänsteföretagen, {svn(_mfg['demand'])}% av annonserna "
             f"mot {svn(_svc['demand'])}%, trots att SCB registrerar tjänsteföretagen som de "
-            f"flitigare användarna, {_ad['69-75, 77-82, 95.1']}% mot {_ad['10-33']}%. Att köpa ett "
-            f"verktyg kräver ingen nyanställning; att bygga med det gör det."),
+            f"flitigare användarna, {_ad['69-75, 77-82, 95.1']}% mot {_ad['10-33']}%. En möjlig "
+            f"förklaring är att tillverkningsindustrin oftare bygger egna AI-verktyg och därför "
+            f"behöver rekrytera, medan tjänsteföretagen använder redan framtagna verktyg."),
         "barriers": L(
             "Eurostat surveys the business economy, so the public sector is absent from the chart, "
             "and in Sweden that is a large omission. Our report for the Expert Group on Public "
@@ -2938,7 +2948,13 @@ def brief(lang="en"):
         # The size rows had the same defect and nobody had caught it: the Swedish brief was
         # rendering "250+ employees" and "Headline: 10+" on a Swedish sheet. name_sv added to
         # swe_adoption.yaml on 31 Aug 2026; swap it in here the same way.
-        rows_z = [{**r, "name": (r.get("name_sv") or r["name"])} for r in SWEAD["sizes"]] if sv else SWEAD["sizes"]
+        # Lydia's SV proofread, 3 Sep 2026: four bars carry no pp change and the sheet did not
+        # say why. SCB publishes no 2021 value for the three micro classes or for the 10+ total
+        # (verified against the API, 3 Sep), so the gap is the source's, not ours. Mark those
+        # rows and explain the mark on the source line.
+        rows_z = [{**r, "name": ((r.get("name_sv") or r["name"]) if sv else r["name"])
+                                + ("" if r.get("prev") is not None else "*")}
+                  for r in SWEAD["sizes"]]
         th_chart = (
             barplot(rows_z, ADOPT["meta"]["eu_avg"],
                     10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0,
@@ -2976,7 +2992,7 @@ def brief(lang="en"):
     <div class="bchart">{th_chart}</div>
     <p class="bp">{takeaways[theme]}</p>
     {f'<p class="bp">{extras[theme]}</p>' if theme in extras else ''}
-    <p class="bsrc">{L("Source","Källa")}: {h(srcs[theme])}. {L("Full method at","Fullständig metod på")} ai-econlab.com/monitor/#method.</p></section>
+    <p class="bsrc">{L("Source","Källa")}: {h(srcs[theme])}. {L("Full method at","Fullständig metod på")} ai-econlab.com/monitor/#method.{h(srcnotes.get(theme, ""))}</p></section>
 
   <section class="bsec bsec--note"><h2 class="bh2">{h(h_lim)}</h2>
     <p class="bp">{limits[theme]}</p></section>

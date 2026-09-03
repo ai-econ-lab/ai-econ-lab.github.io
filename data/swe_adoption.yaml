@@ -10,7 +10,7 @@ meta:
 sizes:
   - {code: "250-", name: "250+ employees", name_sv: "250+ anställda", adoption: 72, prev: 40, is_se: false}
   - {code: "50-249", name: "50–249 employees", name_sv: "50–249 anställda", adoption: 50, prev: 18, is_se: false}
-  - {code: "Tot250", name: "Headline: 10+", name_sv: "Huvudtal: 10+", adoption: 35, prev: null, is_se: true}
+  - {code: "Tot250", name: "Headline: 10+ employees", name_sv: "Huvudtal: 10+ anställda", adoption: 35, prev: null, is_se: true}
   - {code: "10-49", name: "10–49 employees", name_sv: "10–49 anställda", adoption: 31, prev: 8, is_se: false}
   - {code: "5-9", name: "5–9 employees", name_sv: "5–9 anställda", adoption: 30, prev: null, is_se: false}
   - {code: "1-4", name: "1–4 employees", name_sv: "1–4 anställda", adoption: 20, prev: null, is_se: false}
