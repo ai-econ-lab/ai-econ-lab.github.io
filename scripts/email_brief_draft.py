@@ -17,9 +17,13 @@ the publish dialog on each post and both default back to the wrong value:
     Settings -> Community instead: that one switch kills comments, likes AND restacks, and
     restacks are how a post travels beyond our own list.
 
-  * Delivery "Send via email and the Substack app" -> unchecked, while the comms hold stands
-    (briefs publish but are not promoted until the joint launch with the Oskar and Leo
-    report). Substack both pre-checks this and asks a second time after you uncheck it.
+  * Delivery "Send via email and the Substack app" -> CHECKED. Subscribers get every issue by
+    email as normal; ML's decision of 31 Aug 2026 holds only PROMOTION (LinkedIn, social push,
+    any push beyond the subscriber list) until the joint launch with the Oskar and Leo report,
+    not delivery to people who already subscribed. A note written here on 2 Sep 2026 read that
+    decision backwards and said to leave delivery unchecked, which would have meant no issue
+    reaching a single subscriber since launch. Corrected 3 Sep 2026, before the September issue
+    was scheduled.
 
 STANDING CLOSING BLOCK FOR EVERY ISSUE (added 2 Sep 2026). The Substack post is typed by hand
 and drifted from the page: the August issue promised "Subscribers can reply to any issue by
@@ -33,8 +37,9 @@ paragraphs, matching the page footer:
     Orebro University and RATIO. Orebro is one of AISCAF's three nodes; the cluster, financed
     by WASP-HS, funds part of the lab's team.
 
-The feedback route is the contact page, never "reply to this email": with delivery unchecked
-there is no e-mail to reply to.
+The feedback route is the contact page, never "reply to this email": the contact page is the
+one channel that is stable whether or not a given reader gets the issue by email, over the app,
+or on the website.
 """
 import os, re, html, json, smtplib, subprocess, calendar
 from datetime import date
