@@ -17,6 +17,13 @@ months:
   # the industry spread is 12-88%, the size spread 14-72%. The sector cut is now built
   # (scripts/refresh_swe_adoption_sector.py), so the month carries both and names both.
   9:  {title_en: "Firm size and sector: who adopts?",      title_sv: "Storlek och bransch: vem använder AI?",     theme: adoption}
-  10: {title_en: "Reskilling and the competence gap",        title_sv: "Omställning och kompetensgap",              theme: demand}
+  # Retheme, 3 Sep 2026. October keeps reskilling as its subject but leads with the measurement
+  # that qualifies it: the bare-AI band (advertisements that say AI and name no specific AI term)
+  # has gone from a fifth of the floor in 2016 to 2.5x it in 2025, and 3.7x in the 2026 part-year.
+  # Talk is growing much faster than demand for the skill, which is the first thing anyone
+  # designing a reskilling response should know. `washing` gets its own chart and text rather
+  # than reusing the `demand` slot, because months 1, 2 and 10 all sit on `demand` and would
+  # otherwise print the same argument three times.
+  10: {title_en: "AI talk and AI skills: the widening gap",  title_sv: "AI-prat och AI-kompetens: det växande gapet", theme: washing}
   11: {title_en: "Job quality and the work environment",     title_sv: "Jobbkvalitet och arbetsmiljö",              theme: outcomes}
   12: {title_en: "The year in review, and outlook",          title_sv: "Året i backspegeln",                        theme: exposure}

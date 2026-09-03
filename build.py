@@ -1123,6 +1123,59 @@ def dumbbell_svg(conds, gkey, active=False):
     p.append("</svg>")
     return "".join(p)
 
+def washing_svg(t, lang="en"):
+    """Two lines for the October brief: AI named as a skill, against AI merely mentioned.
+
+    Deliberately NOT the hero trend chart. That one plots the two demand measures, whole-text
+    and floor, which are both demand. This plots the floor against the BARE-AI BAND: the
+    advertisements that say AI and name no specific AI term at all. The band is not demand for
+    an AI skill and never enters the headline series; it is the talk. Drawn together, the point
+    of the month is visible without a sentence explaining it -- the lines cross in 2022 and the
+    gap opens after.
+
+    Starts at 2016 because both lines sit under 0.02% before that and an axis that accommodates
+    2006 flattens everything after 2020 into the baseline.
+    """
+    ys, fl, bd = t["years"], t["floor_values"], t["band_values"]
+    i0 = ys.index(2016) if 2016 in ys else 0
+    ys, fl, bd = ys[i0:], fl[i0:], bd[i0:]
+    pf = max(1, int(t["provisionalFrom"]) - i0)
+    n = len(ys)
+    W, H = 640, 250
+    x0, x1, top, bot = 46, 600, 30, 208
+    ymax = max(max(fl), max(bd)) * 1.12
+    X = lambda i: x0 + i / (n - 1) * (x1 - x0)
+    Y = lambda v: bot - v / ymax * (bot - top)
+    L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
+    p = [f'<svg class="rankchart trend" viewBox="0 0 {W} {H}" role="img" aria-label="'
+         f'{h(L("AI named as a skill against AI merely mentioned, share of Swedish job advertisements",
+                "AI som efterfrågad kompetens mot AI enbart omnämnt, andel av svenska jobbannonser"))}">']
+    for k in range(4):
+        tk = ymax * k / 3
+        gy = Y(tk)
+        p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
+        p.append(f'<text class="tick" x="{x0-6}" y="{gy+3.5:.1f}" text-anchor="end">{tk:.1f}%</text>')
+    for i, yr in enumerate(ys):
+        if yr % 2 == 0 or i == n - 1:
+            p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-8}" text-anchor="middle">{yr}</text>')
+    for vals, colour, dash in ((bd, "var(--c1)", None), (fl, "var(--c2)", None)):
+        pts = [(X(i), Y(vals[i])) for i in range(n)]
+        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts[:pf])}" '
+                 f'fill="none" stroke="{colour}" stroke-width="2.4"/>')
+        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts[pf-1:])}" '
+                 f'fill="none" stroke="{colour}" stroke-width="2.4" stroke-dasharray="4 3"/>')
+    # Labels on the lines rather than in a key: two lines and a legend is a lookup the reader
+    # should not have to do.
+    p.append(f'<text class="tick" x="{X(n-1)-4:.1f}" y="{Y(bd[-1])-9:.1f}" text-anchor="end" '
+             f'style="fill:var(--c1);font-weight:600">'
+             f'{h(L("mentions AI", "nämner AI"))} {bd[-1]:.1f}%</text>')
+    p.append(f'<text class="tick" x="{X(n-1)-4:.1f}" y="{Y(fl[-1])+20:.1f}" text-anchor="end" '
+             f'style="fill:var(--c2);font-weight:600">'
+             f'{h(L("asks for an AI skill", "efterfrågar AI-kompetens"))} {fl[-1]:.1f}%</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
 def trend_svg(t):
     """Server-rendered static version of the AI-in-Demand trend (the hero panel is JS-drawn;
     this is the downloadable twin). Solid line to the last final year, dashed to the provisional year."""
@@ -2629,6 +2682,18 @@ def brief(lang="en"):
             f"  EU: {[r['name'] for r in b_eu_rank]}\n"
             f"  SE: {[r['name'] for r in b_se_rank]}\n"
             "  Rewrite the sentence in takeaways['barriers']; do not relax this check.")
+    # October's numbers, read from trend.yaml so they cannot drift from the chart beside them.
+    _tt = TREND["trend"]
+    _ti = len(_tt["years"]) - 1
+    _tlast = _tt["years"][_ti]
+    _wfl, _wbd = _tt["floor_values"][_ti], _tt["band_values"][_ti]
+    _wratio = _wbd / _wfl if _wfl else 0.0
+    _i16 = _tt["years"].index(2016)
+    _r16 = _tt["band_values"][_i16] / _tt["floor_values"][_i16]
+    _i25 = _tt["years"].index(2025)
+    _r25 = _tt["band_values"][_i25] / _tt["floor_values"][_i25]
+    _b24, _b25 = _tt["band_values"][_tt["years"].index(2024)], _tt["band_values"][_i25]
+
     takeaways = {
         "exposure": L(
             f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
@@ -2646,6 +2711,21 @@ def brief(lang="en"):
             "live job-ad measure is the pulse shown above.",
             "Efterfrågan ungefär fördubblades på ett år i de flesta länder (Sverige 1,3% 2024 till 2,8% 2025). Den "
             "svenska livemätningen av jobbannonser är pulsen ovan."),
+        "washing": L(
+            f"Two lines, and only one of them is demand. Advertisements that ask for a named AI skill "
+            f"in the role itself reached {_wfl:.2f}% in the {_tlast} part-year. Advertisements that mention AI and "
+            f"name no specific AI term at all reached {_wbd:.2f}%, and that band is not a skill "
+            f"requirement; it is an employer describing itself. In 2016 the band ran at "
+            f"{_r16:.1f} times the skill line. In 2025 it ran at {_r25:.1f} times, and it roughly "
+            f"doubled in that year alone, from {_b24:.2f}% to {_b25:.2f}%. The gap is now "
+            f"{_wratio:.1f} to one.",
+            f"Två linjer, och bara den ena är efterfrågan. Annonser som efterfrågar en namngiven "
+            f"AI-kompetens i själva rollen nådde {svn(f'{_wfl:.2f}')}% under delåret {_tlast}. Annonser som nämner "
+            f"AI utan att ange någon specifik AI-term nådde {svn(f'{_wbd:.2f}')}%, och det bandet är "
+            f"inget kompetenskrav; det är en arbetsgivare som beskriver sig själv. 2016 låg bandet på "
+            f"{svn(round(_r16,1))} gånger kompetenslinjen. 2025 låg det på {svn(round(_r25,1))} gånger, "
+            f"och det ungefär fördubblades bara under det året, från {svn(f'{_b24:.2f}')}% till "
+            f"{svn(f'{_b25:.2f}')}%. Gapet är nu {svn(f'{_wratio:.1f}')} mot ett."),
         "adoption": L(
             f"Adoption climbs steeply with firm size: {smd['10-49']}% among small firms (10–49 employees) "
             f"against {smd['250-']}% among large ones (250+) in {SWEAD['meta']['year']}, and every size class has risen since {SWEAD['meta']['prev_year']}. "
@@ -2700,6 +2780,8 @@ def brief(lang="en"):
         "demand": f"{dm['meta']['source']}, {dm['meta']['year']}",
         "adoption": L(f"{SWEAD['meta']['source']}, {SWEAD['meta']['year']}",
                       f"SCB, IT-användning i företag (NV0116), {SWEAD['meta']['year']}"),
+        "washing": L(f"JobTech / Platsbanken job advertisements, {DEF_LABEL}",
+                     f"JobTech / Platsbanken jobbannonser, {DEF_LABEL}"),
         "barriers": L(f"{BARRIERS['meta']['source']}, {BARRIERS['meta']['year']}",
                       f"Eurostat, isoc_eb_ain2, {BARRIERS['meta']['year']}"),
         "outcomes": L(f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}",
@@ -2762,6 +2844,13 @@ def brief(lang="en"):
             "Exponering är vad AI skulle kunna beröra. Efterfrågan är vad arbetsgivarna faktiskt ber "
             "om, skrivet i deras egna annonser, och det är den enda serien här som rör sig månad för "
             "månad."),
+        "washing": L(
+            f"Reskilling policy starts from a premise worth measuring: that employers increasingly need "
+            f"AI competence. They increasingly mention AI, certainly. However, mentioning AI and asking "
+            f"for an AI skill are different things, and the two have come apart.",
+            f"Omställningspolitiken utgår från ett antagande värt att mäta: att arbetsgivarna i "
+            f"allt högre grad behöver AI-kompetens. Att de allt oftare nämner AI är klart. Men att "
+            f"nämna AI och att efterfråga en AI-kompetens är två olika saker, och de har glidit isär."),
         "adoption": L(
             "Which firms have actually started using AI, and which have not? Adoption is measured by "
             f"a survey of firms. Every industry uses far more AI than it did in {SWESEC['meta']['prev_year']}, "
@@ -2859,6 +2948,9 @@ def brief(lang="en"):
                      "Efterfrågan stiger och är fortfarande liten"),
                    L("The advertised margin, not demand itself",
                      "Den annonserade marginalen, inte efterfrågan")),
+        "washing": (L("Is the talk outrunning the demand?", "Springer pratet ifrån efterfrågan?"),
+                    L("Talk grows faster than skill", "Pratet växer snabbare än kompetensen"),
+                    L("A mention is not a job", "Ett omnämnande är inte ett jobb")),
         "adoption": (L("Are the laggards catching up?", "Hinner eftersläntrarna i kapp?"),
                      L("Catching up, and falling behind", "Hinner i kapp, och halkar efter"),
                      L("Use is not intensity", "Användning är inte omfattning")),
@@ -2883,6 +2975,17 @@ def brief(lang="en"):
             "Detta är den annonserade delen av efterfrågan, inte efterfrågan i sig: allt anställande "
             "annonseras inte, och en stigande linje betyder att arbetsgivarna oftare efterfrågar "
             "AI-kompetens, inte att AI skapat eller tagit bort ett jobb."),
+        "washing": L(
+            "The band is a measurement of language, not of hypocrisy: an employer that mentions AI "
+            "without asking for it may be using AI perfectly well, and the words in an advertisement "
+            "are written to attract applicants. What the gap does show is that the AI most employers "
+            "name is not a competence they are recruiting for, so a reskilling response sized to the "
+            "talk would be sized to the wrong number.",
+            "Bandet mäter språk, inte hyckleri: en arbetsgivare som nämner AI utan att efterfråga det "
+            "kan mycket väl använda AI, och orden i en annons är skrivna för att locka sökande. Vad "
+            "gapet däremot visar är att den AI de flesta arbetsgivare nämner inte är en kompetens de "
+            "rekryterar för, så en omställningsinsats dimensionerad efter pratet skulle dimensioneras "
+            "efter fel tal."),
         "adoption": L(
             # Shortened on Yifan's review of the September brief: the original ran to five
             # sentences of caveat, three of which were about how to read a gap. This says the
@@ -2941,6 +3044,8 @@ def brief(lang="en"):
                            "share", ".1f", what="reasons", cmp_key="eu",
                            series_label=L("Sweden","Sverige"), cmp_label="EU",
                            lang="sv" if sv else "en")
+    elif theme == "washing":
+        th_chart = washing_svg(TREND["trend"], "sv" if sv else "en")
     elif theme == "adoption":
         # Two charts, not one. The month is about both cuts, and the sector cut is the one that
         # carries the finding: the spread across industries is wider than the spread across size
