@@ -3041,6 +3041,21 @@ def methods():
       <ul class="reslist" style="margin-top:10px">{chg}</ul>
       <p class="psub" style="margin-top:10px"><b>Validation.</b> {h(v["validation"])}</p>
       <p class="psub" style="margin-top:6px">{h(v["note"])}</p></div>"""
+    dsr = "".join(
+        f'<tr><td><b>{h(d["name"])}</b></td><td>{h(d["origin"])}</td>'
+        f'<td>{h(d["processing"])}</td><td>{h(d["limits"])}</td>'
+        f'<td>{h(d["check"])}</td></tr>' for d in (md.get("datasets") or {}).get("rows", []))
+    datasets = ("" if not dsr else f"""<div class="rule"><div class="wrap"><section>
+  <p class="kicker">Sources, dataset by dataset</p>
+  <h2 class="sec">Where each number comes from, and where you check it.</h2>
+  <p class="secintro">{h(md["datasets"]["intro"])}</p>
+  <div class="tblwrap" style="margin-top:18px"><table class="dtable">
+    <thead><tr><th>Dataset</th><th>Origin</th><th>What we do to it</th>
+      <th>What it will not bear</th><th>Where you check it</th></tr></thead>
+    <tbody>{dsr}</tbody></table></div>
+</section></div></div>
+
+""")
     pub = "".join(f"<li>{h(x)}</li>" for x in md["status"]["published"])
     pend = "".join(f"<li>{h(x)}</li>" for x in md["status"]["pending"])
     refs = "".join(f"<li>{h(r)}</li>" for r in md["references"])
@@ -3060,7 +3075,7 @@ def methods():
   <div class="two" style="grid-template-columns:1fr 1fr 1fr">{bounds}</div>
 </section></div></div>
 
-<div class="rule"><div class="wrap"><section>
+{datasets}<div class="rule"><div class="wrap"><section>
   <p class="kicker">The lexicon</p>
   <h2 class="sec">Where the words come from.</h2>
   <p class="secintro">{h(md["lexicon"]["intro"])}</p>
