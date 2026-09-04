@@ -455,7 +455,8 @@ button.figdl{background:transparent;font-family:var(--mono);font-size:var(--fs-m
 .trendarea{fill:var(--c1);opacity:.08}
 .trend .trendline,.trend .trenddash{fill:none;stroke:var(--c1);stroke-width:2}
 .trend .trenddash{stroke-dasharray:4 3}
-.trend .trenddot{fill:var(--c1)}.trend .trendval{fill:var(--c1);font-size:11px;font-weight:700}  /* SVG text: chart type does not move, see the note on :root */
+.trend .trenddot{fill:var(--c1)}.trend .trendval,.monthly .trendval{fill:var(--c1);font-size:11px;font-weight:700}  /* SVG text: chart type does not move, see the note on :root. .monthly shares the rule: its end label rendered browser-default black on the dark theme until 4 Sep 2026 */
+.monthly .trendcov{fill:var(--muted);font-size:9px;font-weight:400}
 
 /* entry-level squeeze: two-line time series with the widening gap shaded */
 .squeeze .sqband{fill:var(--c1);opacity:.10}

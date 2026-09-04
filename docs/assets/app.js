@@ -110,6 +110,56 @@ window.drawTrend = function drawTrend(){
 };
 window.drawTrend();
 
+/* Monthly-chart hover — the server-rendered monthly SVG gets the same readout as the hero
+   trend chart (Magnus, 4 Sep 2026). Geometry comes off the SVG's own data-attributes and the
+   series from the #aiel-monthly JSON block, both rendered from the same dict in build.py, so
+   nothing here can drift from what the chart draws. */
+(function monthlyHover(){
+  const svg = document.querySelector("svg.rankchart.monthly");
+  const el = document.getElementById("aiel-monthly");
+  if (!svg || !el) return;
+  let D; try { D = JSON.parse(el.textContent); } catch (e) { return; }
+  const n = D.m.length; if (n < 2) return;
+  const g = svg.dataset, x0 = +g.x0, x1 = +g.x1, top = +g.top, bot = +g.bot, ymax = +g.ymax;
+  const W = (svg.viewBox.baseVal && svg.viewBox.baseVal.width) || 640;
+  const X = i => x0 + i / (n - 1) * (x1 - x0);
+  const Y = v => bot - Math.min(v, ymax) / ymax * (bot - top);
+  const MONTHS = ["January","February","March","April","May","June",
+                  "July","August","September","October","November","December"];
+  const label = m => { const p = m.split("-"); return MONTHS[+p[1] - 1] + " " + p[0]; };
+  const NS = "http://www.w3.org/2000/svg";
+  const hv = document.createElementNS(NS, "line");
+  hv.setAttribute("y1", top); hv.setAttribute("y2", bot); hv.style.opacity = 0;
+  svg.appendChild(hv);
+  const mk = r => { const d = document.createElementNS(NS, "circle");
+    d.setAttribute("r", r); d.style.opacity = 0; svg.appendChild(d); return d; };
+  const dot = mk(4.5), dotF = mk(4);
+  svg.onpointermove = ev => {
+    const b = svg.getBoundingClientRect(), sx = (ev.clientX - b.left) / b.width * W;
+    let i = Math.round((sx - x0) / (x1 - x0) * (n - 1));
+    i = Math.max(0, Math.min(n - 1, i));
+    const xx = X(i);
+    /* colours re-read per move so the theme toggle never leaves stale strokes behind */
+    hv.style.stroke = CSS("--muted");
+    hv.setAttribute("x1", xx); hv.setAttribute("x2", xx); hv.style.opacity = .5;
+    dot.setAttribute("cx", xx); dot.setAttribute("cy", Y(D.ai_ma[i]));
+    dot.setAttribute("fill", CSS("--paper")); dot.setAttribute("stroke", CSS("--c1"));
+    dot.setAttribute("stroke-width", 2.4); dot.style.opacity = 1;
+    dotF.setAttribute("cx", xx); dotF.setAttribute("cy", Y(D.floor_ma[i]));
+    dotF.setAttribute("fill", CSS("--paper")); dotF.setAttribute("stroke", CSS("--c2"));
+    dotF.setAttribute("stroke-width", 2); dotF.style.opacity = 1;
+    /* Row names match the chart legend verbatim, and the 12-month means come first because
+       they are the lines the section says to read. */
+    showTip(`<b>${label(D.m[i])}</b>` +
+      `<div class="r"><span>Names an AI skill, 12-month mean</span><b>${D.ai_ma[i].toFixed(2)}%</b></div>` +
+      `<div class="r"><span>Asks for it in the role (floor), 12-month mean</span><b>${D.floor_ma[i].toFixed(2)}%</b></div>` +
+      `<div class="r"><span>Single month, unsmoothed</span><b>${D.ai[i].toFixed(2)}%</b></div>` +
+      `<div class="r"><span>Distinct advertisements</span><b>${D.ads[i].toLocaleString("en-GB")}</b></div>`,
+      ev.clientX, ev.clientY);
+  };
+  svg.onpointerleave = () => { hv.style.opacity = 0; dot.style.opacity = 0; dotF.style.opacity = 0; hideTip(); };
+})();
+
 /* DAIOE occupation lookup — "how exposed is your job?" (Die Zeit-style), sub-domain switchable */
 (function occSearch(){
   const input = $("#occsearch"); if (!input) return;

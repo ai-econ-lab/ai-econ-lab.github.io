@@ -1350,13 +1350,18 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
     yr_c, ai_c, fl_c = t["years"][pf - 1], t["values"][pf - 1], t["floor_values"][pf - 1]
     yr_p, ai_p, fl_p = t["years"][-1], t["values"][-1], t["floor_values"][-1]
     tm = TREND["meta"]
+    # Name what the part-year point actually covers. The archive advances one JobTech quarter
+    # at a time, so "2026 so far" can stand unchanged for months; a reader who sees the same
+    # 1.20% in September as in July should be able to see why (Magnus, 4 Sep 2026). The window
+    # comes from refresh_trend.py's meta, i.e. from the same rows the point is computed from.
+    cov = f' ({h(tm["part_coverage"])})' if tm.get("part_coverage") else ""
     return f"""<div class="panel">
     <div class="panelhead"><span class="ttl">{h(title)}</span>
       <span class="livechip"><i></i>live</span></div>
     <div class="panelbody"><p class="psub">Ads naming a specific AI skill anywhere in the ad reached <b>{ai_c:.2f}%</b> in {yr_c},
         {tm["multiple"]:.0f} times the pooled {h(tm["base_years"]).replace("-", "\u2013")} level; the strict floor, ads asking for AI in the job's own requirements, reached
         <b>{fl_c:.2f}%</b>. Both set records in the post-2023 rebound, with generative-AI skills now 27% of the demand,
-        and {yr_p} so far runs higher still ({ai_p:.2f}%, floor {fl_p:.2f}%, provisional).</p>
+        and {yr_p} so far{cov} runs higher still ({ai_p:.2f}%, floor {fl_p:.2f}%, provisional).</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
       <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
         <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
@@ -1421,6 +1426,18 @@ def titles_block():
 
 
 
+MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+MONTH_FULL = ["January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December"]
+
+def month_label(ym, full=False):
+    """'2026-06' -> 'Jun 2026' (or 'June 2026'). The monthly chart's end label carries its
+    own date so a reader cannot mistake the archive's latest 12-month mean for today's level:
+    the live 60-day window below it is a different instrument and runs at a different value."""
+    y, m = ym.split("-")
+    return f"{(MONTH_FULL if full else MONTH_ABBR)[int(m) - 1]} {y}"
+
 def monthly_svg(md):
     """The AI-skill share of Swedish vacancies at monthly resolution, 2006 to now.
 
@@ -1432,7 +1449,10 @@ def monthly_svg(md):
     x0, x1, top, bot = 46, 606, 22, 256
     X = lambda i: x0 + i / (n - 1) * (x1 - x0)
     Y = lambda v: bot - min(v, ymax) / ymax * (bot - top)
+    # The geometry travels on the tag so the hover script reads the chart's own mapping
+    # instead of keeping a second copy of these constants in JavaScript.
     p = [f'<svg class="rankchart monthly" viewBox="0 0 {W} {H}" role="img" '
+         f'data-x0="{x0}" data-x1="{x1}" data-top="{top}" data-bot="{bot}" data-ymax="{ymax}" '
          f'aria-label="Share of Swedish job ads requiring an AI skill, by month, '
          f'{md["meta"]["first"]} to {md["meta"]["last"]}">']
     v = 0.0
@@ -1460,6 +1480,8 @@ def monthly_svg(md):
         p.append(f'<polyline points="{pts}" fill="none" stroke="{colour}" stroke-width="2.2"/>')
     lx, ly = X(n - 1), Y(s[-1]["ai_ma"])
     p.append(f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="4" fill="var(--c1)"/>')
+    p.append(f'<text class="trendcov" x="{lx-6:.1f}" y="{ly-22:.1f}" text-anchor="end">'
+             f'12-mo mean, {month_label(md["meta"]["last"])}</text>')
     p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-9:.1f}" text-anchor="end">'
              f'{md["meta"]["last_ma"]:.2f}%</text>')
     p.append("</svg>")
@@ -1475,9 +1497,13 @@ def monthly_block():
             f'{m["n_months"]} months built on <b>{m["total_ads"]:,}</b> distinct advertisements. The faint line is the raw '
             f'month and the bold lines are 12-month trailing means: broad AI demand in blue, the narrower '
             f'skill floor in orange. A single month carries little weight, because Swedish hiring falls '
-            f'sharply every July and again in December, so the trend is the line to read. The broad measure '
-            f'now stands at <b>{m["last_ma"]:.2f}%</b> on that basis, against '
-            f'<b>{m["last_floor_ma"]:.2f}%</b> for the floor.</p>\n'
+            # The level is DATED, never "now": the archive advances one JobTech quarter at a
+            # time, so between releases this number stands still while the live window below
+            # keeps moving (1.18% vs 1.14% read as a contradiction until 4 Sep 2026).
+            f'sharply every July and again in December, so the trend is the line to read. On that basis '
+            f'the broad measure stands at <b>{m["last_ma"]:.2f}%</b> in {month_label(m["last"], full=True)}, '
+            f'the latest month in the quarterly archive, against '
+            f'<b>{m["last_floor_ma"]:.2f}%</b> for the floor; the live feed below tracks the weeks since.</p>\n'
             # The two-lines explainer sits with this chart (moved 12 Aug 2026, Lydia's review):
             # it had floated between the stat tiles and this section, two scrolls from either
             # chart that actually draws the two lines.
@@ -1497,6 +1523,17 @@ def monthly_block():
                 'paper works with), so the denominator moves with the cycle as well.',
                 'Where the dip goes when you count each advertisement once')
             + f'<div class="dotwrap">{monthly_svg(MONTHLY)}</div>\n'
+            # The series travels with the chart so app.js can give it the same hover readout
+            # as the hero trend chart (Magnus, 4 Sep 2026). One source dict for both: the SVG
+            # above and this payload are rendered from MONTHLY in the same build.
+            + '<script type="application/json" id="aiel-monthly">'
+            + json.dumps({"m": [r["m"] for r in MONTHLY["series"]],
+                          "ai": [r["ai"] for r in MONTHLY["series"]],
+                          "ai_ma": [r["ai_ma"] for r in MONTHLY["series"]],
+                          "floor_ma": [r["floor_ma"] for r in MONTHLY["series"]],
+                          "ads": [r["ads"] for r in MONTHLY["series"]]},
+                         separators=(",", ":"))
+            + '</script>\n'
             # Three lines on the flagship chart were identified only in prose, by colour name.
             # A legend beats "the blue line" for anyone reading out of order, printing, or
             # colour-blind; the faint raw series needed naming most, since it is the one a
@@ -3282,6 +3319,7 @@ def chart_standalone(svg, title=None, source=None):
              # trend line
              '.trendarea{fill:#0072b2;opacity:.08}.trendline,.trenddash{fill:none;stroke:#0072b2;stroke-width:2}'
              '.trenddash{stroke-dasharray:4 3}.trenddot{fill:#0072b2}.trendval{fill:#0072b2;font-size:11px;font-weight:700}'
+             '.trendcov{fill:#6d6a63;font-size:9px}'
              # entry-level squeeze
              '.sqband{fill:#0072b2;opacity:.10}.sqlo{fill:none;stroke:#009e73;stroke-width:2}'
              '.sqhi{fill:none;stroke:#0072b2;stroke-width:2.6}.sqdot.lo{fill:#009e73}.sqdot.hi{fill:#0072b2}'

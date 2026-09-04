@@ -165,8 +165,20 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/check_upstream_alive.py
 
+      # Has JobTech published an archive quarter the site has not ingested? The archive charts
+      # can only move when a laptop run incorporates the new file (the bulk re-score refuses to
+      # download by design), so the failure mode is a quarter sitting unincorporated with no
+      # signal anywhere. Weekly on purpose: a red mail a week until the ~2h ingest happens is a
+      # proportionate nag where the daily job going red would train the reader to ignore red.
+      # Same gate pattern as the other watchers: it must not block the publish it watches over.
+      - name: No unincorporated JobTech archive release
+        id: archive
+        if: always()
+        continue-on-error: true
+        run: python3 scripts/check_archive_release.py
+
       - name: Fail the run if refresh, watchers or claim checks failed
-        if: steps.refresh.outcome != 'success' || steps.watch.outcome != 'success' || steps.claims.outcome != 'success' || steps.upstream.outcome != 'success' || steps.vintages.outcome != 'success'
+        if: steps.refresh.outcome != 'success' || steps.watch.outcome != 'success' || steps.claims.outcome != 'success' || steps.upstream.outcome != 'success' || steps.vintages.outcome != 'success' || steps.archive.outcome != 'success'
         run: |
-          echo "refresh: ${{ steps.refresh.outcome }} · watch: ${{ steps.watch.outcome }} · claims: ${{ steps.claims.outcome }} · upstream: ${{ steps.upstream.outcome }} · vintages: ${{ steps.vintages.outcome }}"
+          echo "refresh: ${{ steps.refresh.outcome }} · watch: ${{ steps.watch.outcome }} · claims: ${{ steps.claims.outcome }} · upstream: ${{ steps.upstream.outcome }} · vintages: ${{ steps.vintages.outcome }} · archive: ${{ steps.archive.outcome }}"
           exit 1

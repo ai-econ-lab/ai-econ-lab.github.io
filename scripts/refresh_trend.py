@@ -56,6 +56,26 @@ OUT = Path(__file__).resolve().parent.parent / "data" / "trend.yaml"
 
 FIRST_YEAR = 2006
 
+# What a part-year period label spans, in calendar months. The archive publishes the running
+# year in quarters (2026-Q1, 2026-Q2); halves are handled because the aggregate has used them.
+PERIOD_MONTHS = {"Q1": (1, 3), "Q2": (4, 6), "Q3": (7, 9), "Q4": (10, 12),
+                 "H1": (1, 6), "H2": (7, 12)}
+MONTH_FULL = ["January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December"]
+
+
+def part_coverage(part_labels: list[str]) -> str | None:
+    """'2026-Q1','2026-Q2' -> 'January–June': what the provisional point actually covers.
+
+    Emitted so the page can SAY it. The part-year share advances one JobTech quarter at a
+    time, so the provisional number stands still for months at a stretch; without its window
+    on display, a static "2026 so far" reads as a chart nobody is updating (4 Sep 2026)."""
+    spans = [PERIOD_MONTHS[p] for p in
+             (lbl.split("-", 1)[1] for lbl in part_labels) if p in PERIOD_MONTHS]
+    if not spans:
+        return None
+    return f"{MONTH_FULL[min(s[0] for s in spans) - 1]}–{MONTH_FULL[max(s[1] for s in spans) - 1]}"
+
 
 def genai_tile(rows: dict) -> dict:
     """The generative-AI tile's two numbers, which rotted independently of the trend.
@@ -69,8 +89,9 @@ def genai_tile(rows: dict) -> dict:
             "genai_share_of_ai_pct": round(100 * genai / ai_any)}
 
 
-def read_series() -> tuple[list[int], list[float], list[float], int | None]:
-    """Full calendar years, plus the current part-year folded into one appended point.
+def read_series():
+    """Full calendar years, plus the current part-year folded into one appended point;
+    the final element is the list of part-period labels (e.g. ['2026-Q1', '2026-Q2']).
 
     The part-year rows carry a period suffix (`2026-H1`); the full years do not. They are
     summed rather than averaged, because a share of advertisements has to be recomputed from
@@ -104,7 +125,7 @@ def read_series() -> tuple[list[int], list[float], list[float], int | None]:
         band_raw.append(100 * sum(int(r["band_bare_RAW"]) for r in part) / ads if ads else 0.0)
         years.append(int(part[0]["year"].split("-")[0]))
         provisional_from = len(years) - 1
-    return years, names_raw, floor_raw, band_raw, provisional_from
+    return years, names_raw, floor_raw, band_raw, provisional_from, [r["year"] for r in part]
 
 
 def definition() -> str:
@@ -234,11 +255,14 @@ def check() -> int:
     """
     problems = tile_mismatches()
     if HAVE_SRC:
-        years, names, floor, band, prov = read_series()
+        years, names, floor, band, prov, parts = read_series()
         full = {r["year"]: r for r in csv.DictReader(SRC.open(encoding="utf-8"))
                 if "-" not in r["year"]}
         last_full = str(max(int(y) for y in full))
-        want = render(years, names, floor, band, prov, definition(), genai_tile(full[last_full]))
+        extra = genai_tile(full[last_full])
+        if part_coverage(parts):
+            extra["part_coverage"] = part_coverage(parts)
+        want = render(years, names, floor, band, prov, definition(), extra)
         if not OUT.exists():
             problems.append(f"{OUT.name} does not exist; run without --check to build it.")
         elif OUT.read_text(encoding="utf-8") != want:
@@ -268,10 +292,13 @@ def main() -> int:
         return check()
     if not HAVE_SRC:
         raise SystemExit(f"series not found: {SRC}\n  (DEF_VERSION is {DEF_VERSION})")
-    years, names, floor, band, prov = read_series()
+    years, names, floor, band, prov, parts = read_series()
     full = {r["year"]: r for r in csv.DictReader(SRC.open(encoding="utf-8")) if "-" not in r["year"]}
     last_full = str(max(int(y) for y in full))
-    text = render(years, names, floor, band, prov, definition(), genai_tile(full[last_full]))
+    extra = genai_tile(full[last_full])
+    if part_coverage(parts):
+        extra["part_coverage"] = part_coverage(parts)
+    text = render(years, names, floor, band, prov, definition(), extra)
 
     OUT.write_text(text, encoding="utf-8")
     m = multiples(years, names, floor)
