@@ -50,12 +50,21 @@ links:
   url: https://arcprize.org/arc-agi
 caveat: These are external research series, quoted with their dates; we summarise, we do not produce them.
   Figures refresh with the sources' own releases. The compute trend is recomputed here from Epoch's public
-  model table on every refresh; the METR and ARC-AGI figures are read by hand when their sources move,
-  and each tile carries its own date.
+  model table on every refresh; the METR figures are checked against the source's own published measurements
+  on every refresh and read by hand when they move; the ARC-AGI figure is read by hand when its source
+  moves. Each tile carries its own date.
 checked: '2026-09-04'
 reviewed:
   arc: '2026-09-04'
-  metr: '2026-08-12'
+  metr: '2026-09-04'
+verified:
+  metr:
+    'on': '2026-09-04'
+    doubling_days: 128.744
+    top_p50_hours: 17.41
+    second_p50_hours: 11.98
+checks_configured:
+- metr
 stale:
 - METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026 (126 days old)
 - METR Time Horizon 1.1 · doubling time · May 2026 (126 days old)

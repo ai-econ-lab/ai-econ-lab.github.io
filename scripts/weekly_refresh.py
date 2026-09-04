@@ -162,7 +162,21 @@ def check_capability(d, prev_year):
     # moment a re-read is worth doing. It was left out of this gate, and nothing else reads
     # it: build.py never renders notes, so a detected change reached neither the page nor
     # the run. It went into a YAML file and stopped there.
+    # THE CHECK MUST BE SEEN TO RUN. A source with expected figures in monitor.yaml has to
+    # come back either verified or complained about; silence means the check stopped
+    # happening, which looks exactly like everything being fine. Added 4 Sep 2026 with the
+    # METR figure check itself, because a check nobody notices has failed is worse than no
+    # check at all.
+    configured = d.get("checks_configured") or []
+    verified = d.get("verified") or {}
     notes = d.get("notes") or []
+    unseen = [k for k in configured
+              if k not in verified and not any(n.startswith(k + ":") for n in notes)]
+    assert not unseen, (
+        "the source figure check did not run for: " + ", ".join(unseen)
+        + ". Either capability.check in data/monitor.yaml lost its entry or the figures "
+          "reader in scripts/refresh_capability.py is no longer wired up.")
+
     assert not notes, ("watched capability sources need a human re-read: "
                        + "; ".join(notes)
                        + ". Read the source, update the fact in data/monitor.yaml, and re-run "

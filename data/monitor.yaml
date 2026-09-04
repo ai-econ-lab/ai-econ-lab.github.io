@@ -315,7 +315,21 @@ capability:
   #   defect is latency, not precision: a Monday-only watcher on a source that publishes on a
   #   Wednesday leaves the site up to six days wrong, and this time the number was wrong by a
   #   factor of two. A DOM read of the top ARC-AGI-3 cell, run daily, would fix both.
-  reviewed: {metr: 2026-08-12, arc: 2026-09-04}
+  # When a watched source was last confirmed by a person. Not the date of the figure: METR
+  # published on 8 May 2026 and nothing since, and 4 Sep 2026 is when the page was re-read
+  # and the two tiles checked, number by number, against its own data blob.
+  reviewed: {metr: 2026-09-04, arc: 2026-09-04}
+  # The same two tiles as machine-comparable numbers, which metr.org embeds in
+  # benchmarkDataV1_1. refresh_capability.py reads them on every run and fails the weekly
+  # build if they drift by more than tol_pct, so age alone no longer stands in for doubt:
+  # the figures are either confirmed correct or the run says exactly what moved. Read
+  # 4 Sep 2026 from the v1.1 suite. If a tile is edited, edit these in the same commit.
+  check:
+    metr:
+      doubling_days: 128.744        # from_2023_on point estimate, = 4.2 months, the "~4 mo" tile
+      top_p50_hours: 17.41          # highest 50%-horizon on the suite; the top of the "12-17 h" band
+      second_p50_hours: 11.98       # and its bottom
+      tol_pct: 5
   facts:
     - {num: "12–17 h", lab: "Longest tasks frontier AI agents finish about half the time, in human-expert time.", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}
     - {num: "×2 every ~4 mo", lab: "How quickly that task length has been doubling, on the trend since 2023 (95% CI 3.4–5.2 months).", foot: "METR Time Horizon 1.1 · doubling time · May 2026"}
