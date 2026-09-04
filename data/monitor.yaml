@@ -213,7 +213,9 @@ capability:
     technology itself, in the most work-relevant unit there is: how much human working
     time a single AI run can replace. The frontier is jagged, and it moves fast: on novel
     interactive worlds, where the goal must be inferred without instructions, the best
-    system scored under 1% at the benchmark's launch and 30% of human level by July 2026.
+    system scored under 1% at the benchmark's launch, 30% of human level in July 2026 and
+    63% in September, and 99.9% when the same September model is allowed the context
+    management its own provider designed for it.
     That benchmark is scored against people by construction: every environment is verified
     solvable by a human, and 100% means matching human efficiency, so the figure is a
     distance to human performance rather than a head-to-head result. Frontier capability is
@@ -281,12 +283,44 @@ capability:
   #   re-reads and found no change in any of them, and that ARC publishes no anchor that would
   #   let it do better. If a fourth follows, the thing to build is a DOM read of the one cell
   #   (top ARC-AGI-3 score and its date) rather than a hash of the whole page.
-  reviewed: {metr: 2026-08-12, arc: 2026-08-24}
+  # Re-read 4 Sep 2026, prompted by Magnus rather than by the gate: the weekly watcher runs
+  #   Mondays and last ran 31 Aug, so the 2 Sep publication had not yet been seen. THIS TIME
+  #   THE FIGURE MOVED, and by more than the card's whole previous range. ARC Prize published
+  #   verified results for OpenAI's GPT-6 Astra on 2026-09-02
+  #   (arcprize.org/results/openai-gpt-6-astra, blog at arcprize.org/blog/astra):
+  #     Standard harness        62.7% at max reasoning, $26,098, ARC-AGI-3 Semi-Private
+  #     Provider Adapter        99.9% at high reasoning, $18,817
+  #   Both are ARC Prize Verified and both go on the leaderboard from here, each labelled.
+  #   The card takes the Standard harness figure, because that is the only one comparable to
+  #   the 30.2% it replaces: ARC's own words are that the Standard harness "gives us a
+  #   consistent, apples-to-apples comparison across providers", while the Provider Adapter
+  #   "preserves opaque reasoning state between requests and uses compaction", which is the
+  #   provider's own machinery and not a shared interface. So the like-for-like reading is
+  #   30.2% in July to 62.7% in September, six weeks apart, and the 99.9% is named in the
+  #   card's body rather than as its number.
+  #   Do NOT confuse either with PRO-LONG, a third red-teaming harness with a code sandbox.
+  #   That is the one ARC caveats as "the combined performance of the model and its tools",
+  #   and it is not what the 99.9% was scored under.
+  #   The 18 Aug framing survives and is now doing real work: 100% remains the definition of
+  #   the scale rather than a measured human panel, so 99.9% means "at the benchmark's own
+  #   definition of human efficiency", not "beat a tested group of people". ARC states both
+  #   that "Humans can solve 100% of the environments" and that Astra "used fewer actions than
+  #   the human baseline on 96.0% of levels", the second against a median of ~500 tested
+  #   members of the public. ARC also writes, in the same post, that it is "not claiming that
+  #   it is AGI" and that ARC-AGI-3 "does not represent the complexity and open-endedness of
+  #   the real world". Both belong in any talk that quotes this card.
+  #   On the watcher: the 24 Aug note said that if a fourth hash trip found nothing, the fix
+  #   was to read the one cell instead of hashing the page. The fourth trip is this one and it
+  #   found the largest move the card has ever carried, so the hash earned its keep. The real
+  #   defect is latency, not precision: a Monday-only watcher on a source that publishes on a
+  #   Wednesday leaves the site up to six days wrong, and this time the number was wrong by a
+  #   factor of two. A DOM read of the top ARC-AGI-3 cell, run daily, would fix both.
+  reviewed: {metr: 2026-08-12, arc: 2026-09-04}
   facts:
     - {num: "12–17 h", lab: "Longest tasks frontier AI agents finish about half the time, in human-expert time.", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}
     - {num: "×2 every ~4 mo", lab: "How quickly that task length has been doubling, on the trend since 2023 (95% CI 3.4–5.2 months).", foot: "METR Time Horizon 1.1 · doubling time · May 2026"}
     - {num: "5× per year", lab: "Growth of computing power used to train frontier models, since 2020.", foot: "Epoch AI · Feb 2026"}
-    - {num: "30<span>% of human level</span>", lab: "Frontier AI on novel interactive worlds: explore, infer the goal, plan, with no instructions. The scale is human-calibrated — 100% means beating every game as efficiently as a person — so this is a distance to human performance, not a measured head-to-head. Was under 1% at launch.", foot: "ARC-AGI-3 · Claude Opus 5 (High), 30.2% · Jul 2026"}
+    - {num: "63<span>% of human level</span>", lab: "Frontier AI on novel interactive worlds: explore, infer the goal, plan, with no instructions. The scale is human-calibrated (100% means beating every game as efficiently as a person), so this is a distance to human performance, not a measured head-to-head. Under 1% at launch, 30% in July. Allowed the context management its provider designed for it, the same model scores 99.9%.", foot: "ARC-AGI-3 Semi-Private · GPT-6 Astra (Max), Standard harness, 62.7% · Sep 2026"}
   links:
     - {label: "METR time horizons", url: "https://metr.org/time-horizons/"}
     - {label: "Epoch AI trends", url: "https://epoch.ai/trends"}
