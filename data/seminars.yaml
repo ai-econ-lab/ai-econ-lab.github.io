@@ -9,10 +9,10 @@ series:
   format:
     - "Monthly, online via Zoom"
     - "12:00–13:00 CET (12:30–13:30 from autumn 2026)"
-    # What presenters are actually told since the slot went to a full hour: Magnus wrote
-    # "approx 40-45 minutes, with the rest for questions / discussion / introduction" to the
-    # 11 Sep 2026 presenter on 1 Sep. The old "20-30" would have him prepare half a talk.
-    - "40–45 minutes presentation, then Q&A"
+    # The template, set by ML on 4 Sep 2026. The hour is 12.30-13.30, so 35-40 minutes of
+    # presentation leaves a real quarter of an hour for introduction, questions and
+    # discussion. The page had said 20-30, from the old half-hour slot.
+    - "35–40 minutes presentation, then Q&A"
     - "Slots by invitation, first-come-first-served"
   contact: "Magnus Lodefalk, firstname.surname (at) oru (dot) se"
   zoom: "https://oru-se.zoom.us/j/63703049171?pwd=aEx4Z213VDFxT2NDM1dQY2JwQ3ZtUT09"
