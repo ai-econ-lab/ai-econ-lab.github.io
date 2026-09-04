@@ -61,12 +61,12 @@ datasets:
         raw-record series is retained beside it as a robustness line. Each advertisement is then
         matched against a versioned term list, twice: once over the whole text, and once over the
         role's own tasks and requirements only. We work from the advertisement text rather than from
-        JobTech's structured tags or its JobAd Enrichments API, which are built for a different task:
-        the Enrichments dictionary covers competences across the whole labour market, so an AI
-        vocabulary this narrow and this fast-moving is not what it is for, and its confidence score
-        describes one occurrence in one advertisement rather than a term, which is what its own use
-        needs and not something a term list can absorb. A twenty-year series needs a list we version
-        ourselves and can restate at any past date.
+        the source's own structured tags or its enrichment API, which are built for a different task:
+        that API's competence dictionary covers the whole labour market, so an AI vocabulary this
+        narrow and this fast-moving is not what it is for, and its confidence score describes one
+        occurrence in one advertisement rather than a term, which is what its own use needs and not
+        something a term list can absorb. A twenty-year series needs a list we version ourselves and
+        can restate at any past date.
       limits: >-
         Advertisements measure what employers write when hiring, not hires and not employment.
         Not all vacancies are advertised, and the propensity to advertise differs by sector and
