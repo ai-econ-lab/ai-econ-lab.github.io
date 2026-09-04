@@ -4,9 +4,9 @@
 asof: "4 Sep 2026"
 asof_iso: 2026-09-04
 window_days: 60
-n: 36013
-names_pct: 1.144
-floor_pct: 0.58
-names_ci: [1.039, 1.259]
-floor_ci: [0.507, 0.664]
-generated_at: "2026-09-04T07:03:37+00:00"
+n: 37929
+names_pct: 1.184
+floor_pct: 0.622
+names_ci: [1.08, 1.298]
+floor_ci: [0.548, 0.707]
+generated_at: "2026-09-04T14:10:06+00:00"
