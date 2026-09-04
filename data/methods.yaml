@@ -60,7 +60,11 @@ datasets:
         collapsed to one observation on a digest of its headline, employer and opening text; the
         raw-record series is retained beside it as a robustness line. Each advertisement is then
         matched against a versioned term list, twice: once over the whole text, and once over the
-        role's own tasks and requirements only.
+        role's own tasks and requirements only. JobTech's own structured AI tags and its JobAd
+        Enrichments API were both tested and are not used: the tags undercount, and the Enrichments
+        competence dictionary holds about sixteen usable AI terms while missing deep learning, LLM,
+        generativ AI and PyTorch, with a confidence score that applies to a single occurrence rather
+        than to a term, so it cannot be folded into a term list.
       limits: >-
         Advertisements measure what employers write when hiring, not hires and not employment.
         Not all vacancies are advertised, and the propensity to advertise differs by sector and
@@ -245,7 +249,11 @@ status:
     - "The full technical note (17 pages: estimand, data, lexicon provenance, labelling conventions, validation, benchmarks, the three threats to the trend, and the drift policy). Rewritten 5 August on the corrected figures; two pending diagnostics remain inside it, both named on its own pages."
     - "The term list itself, as a citable download with its version history."
     - "The labelling conventions with worked examples, and the four-period correction note. The 2016 sample (band 83 advertisements, 0.7% of the banded total) is drawn but deliberately not labelled: at that size no plausible correction moves the series."
-    - "A recall audit on advertisements the lexicon does not flag at all. Every published series, the ceiling included, is anchored to a word list, so the quantity none of them bounds is AI demand expressed without AI vocabulary. The audit is designed to run without further hand labelling: rank one year of lexicon-negative advertisements by similarity to confirmed AI advertisements, and read the top slice with the tier classifier already validated on hand-labelled positives. Until it reports, the ceiling is stated as a bound on lexically detectable demand and nothing wider."
+    - "A recall audit on advertisements the lexicon does not flag at all. Every published series, the ceiling included, is anchored to a word list, so the quantity none of them bounds is AI demand expressed without AI vocabulary. The audit is designed to run without further hand labelling: rank one year of lexicon-negative advertisements by similarity to confirmed AI advertisements, and read
+      the top slice. The classifier that ranks them is not allowed to do the counting: measured on
+      the lexicon-negative population rather than on positives, it reaches 68% precision and overstates
+      the 2025 AI share by roughly double, so it selects advertisements for reading and nothing more.
+      Until the audit reports, the ceiling is stated as a bound on lexically detectable demand and nothing wider."
     - "Benchmark levels against Lightcast and the Stanford AI Index. The comparability logic is settled and stated below; the levels themselves are not yet verified against Lightcast's own published material, and we do not publish unverified numbers."
 
 # Funding is disclosed in one place, on the About page, so the list cannot drift between
