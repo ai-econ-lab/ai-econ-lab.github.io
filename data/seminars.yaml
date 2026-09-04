@@ -9,7 +9,10 @@ series:
   format:
     - "Monthly, online via Zoom"
     - "12:00–13:00 CET (12:30–13:30 from autumn 2026)"
-    - "20–30 minutes presentation, then Q&A"
+    # What presenters are actually told since the slot went to a full hour: Magnus wrote
+    # "approx 40-45 minutes, with the rest for questions / discussion / introduction" to the
+    # 11 Sep 2026 presenter on 1 Sep. The old "20-30" would have him prepare half a talk.
+    - "40–45 minutes presentation, then Q&A"
     - "Slots by invitation, first-come-first-served"
   contact: "Magnus Lodefalk, firstname.surname (at) oru (dot) se"
   zoom: "https://oru-se.zoom.us/j/63703049171?pwd=aEx4Z213VDFxT2NDM1dQY2JwQ3ZtUT09"
@@ -18,8 +21,32 @@ series:
 seasons:
   - name: "2026 / 2027"
     seminars:
-      - {date: "2026-09-11", speaker: "Carlo Pizzinelli", affil: "International Monetary Fund", title: "TBD",
-         links: [{label: "Speaker", url: "https://sites.google.com/site/carlopizzinelli/carlo-pizzinelli"}]}
+      - date: "2026-09-11"
+        speaker: "Carlo Pizzinelli"
+        affil: "International Monetary Fund"
+        title: "Labor Market Exposure to AI: Cross-country Differences and Distributional Implications"
+        coauthors: "with Augustus Panton (IMF), Marina Mendes Tavares (IMF), Mauro Cazzaniga (MIT Sloan) and Longji Li (IMF)"
+        # Abstract and slides sent by the presenter 4 Sep 2026, who wrote that we were free to
+        # put the slides on the site. The deck is preliminary: the cross-country results are those
+        # of IMF WP 2023/216, the US commuting-zone validation on Lightcast vacancies is new and
+        # is presented here for the first time.
+        abstract: >-
+          We propose an extension to occupation-level measures of Artificial Intelligence (AI) exposure,
+          accounting for AI's potential as either a complement or a substitute for labor, where
+          complementarity reflects lower risks of job displacement. We validate the classification on US
+          Commuting Zones (CZs) using a large dataset on online job postings. CZs with greater employment
+          in industries with greater AI adoption have witnessed a relatively larger decline in the share of
+          vacancies in high-exposure low-complementarity occupations since 2019. Using worker-level
+          microdata from 2 Advanced Economies (AEs) and 4 Emerging Markets (EMs), we find that AEs feature
+          higher employment shares in high-exposure occupations, roughly evenly distributed between high-
+          and low-complementarity jobs. Within countries, common patterns emerge in AEs and EMs, showing
+          unevenly distributed risks and opportunities. Women and highly educated workers face greater
+          occupational exposure to AI, at both high and low complementarity. Higher-earning workers are more
+          likely to be in occupations with high exposure but also high potential complementarity.
+        links:
+          - {label: "Speaker", url: "https://sites.google.com/site/carlopizzinelli/carlo-pizzinelli"}
+          - {label: "Paper", url: "https://www.imf.org/en/Publications/WP/Issues/2023/10/04/Labor-Market-Exposure-to-AI-Cross-country-Differences-and-Distributional-Implications-539656"}
+          - {label: "Slides", url: "/assets/seminars/2026-09-11_pizzinelli_labor-market-exposure-to-ai_slides.pdf"}
       - {date: "2026-10-09", speaker: "Kristina Palm", affil: "Karlstad University",
          title: "Working with robots — from a work-environment perspective",
          links: [{label: "Speaker", url: "https://www.kau.se/forskare/kristina-palm"}]}

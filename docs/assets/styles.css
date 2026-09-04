@@ -267,6 +267,13 @@ details.faq p{font-size:14.5px;color:var(--ink-2);line-height:1.6;margin:0 0 16p
 .semrow .saff{font-family:var(--mono);font-size:var(--fs-micro);color:var(--muted);font-weight:400}
 .semrow .lk{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 .semrow .tbd{color:var(--muted);font-style:italic}
+.semrow .rco{display:block;font-size:var(--fs-micro);color:var(--muted);margin-top:3px}
+details.semabs{margin-top:6px}
+details.semabs>summary{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;list-style:none}
+details.semabs>summary::-webkit-details-marker{display:none}
+details.semabs>summary::after{content:" ＋"}
+details.semabs[open]>summary::after{content:" －"}
+details.semabs>p{font-size:var(--fs-sec);color:var(--muted);margin:6px 0 0;max-width:62ch;line-height:1.5}
 .semlist .semrow{grid-template-columns:104px 1fr}
 
 /* link chips (papers + seminars) */

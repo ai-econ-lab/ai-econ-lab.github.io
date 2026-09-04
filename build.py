@@ -691,9 +691,14 @@ def events():
     s = SEMINARS; ser = s["series"]
     fmt = "".join(f"<li>{h(x)}</li>" for x in ser["format"])
     def surname(name): return name.split("&")[0].strip().split()[-1] if name and name != "TBD" else name
+    # Three optional keys, all added for the 11 Sep 2026 seminar and all absent-by-default:
+    # coauthors (the presenter is rarely the only author), abstract (folded away, so a long
+    # one cannot push the next seminar off the screen) and a Slides link, which is a chip
+    # rather than the title link because the title already points at the paper.
     def sem_row(e):
-        spk_url = next((l["url"] for l in e.get("links", []) if l["label"] != "Paper"), "")
+        spk_url = next((l["url"] for l in e.get("links", []) if l["label"] not in ("Paper", "Slides")), "")
         paper_url = next((l["url"] for l in e.get("links", []) if l["label"] == "Paper"), "")
+        slides_url = next((l["url"] for l in e.get("links", []) if l["label"] == "Slides"), "")
         speaker = h(e["speaker"])
         if spk_url:   # link the presenter's own name (surname), not a "Speaker" chip
             speaker = speaker.replace(h(surname(e["speaker"])), f'<a href="{spk_url}">{h(surname(e["speaker"]))}</a>', 1)
@@ -702,8 +707,16 @@ def events():
             title = f'<a href="{paper_url}">{h(e["title"])}</a>' if paper_url else h(e["title"])
         else:
             title = '<span class="tbd">To be announced</span>'
+        co = f'<span class="rco">{h(e["coauthors"])}</span>' if e.get("coauthors") else ""
+        abstract = (f'<details class="semabs"><summary>Abstract</summary>'
+                    f'<p>{h(e["abstract"])}</p></details>') if e.get("abstract") else ""
+        chips = (f'<span class="lk"><a class="lchip" href="{slides_url}">Slides</a></span>'
+                 if slides_url else "")
+        # A div, not a span: <details> is flow content and may not sit inside a span. The
+        # grid places whatever the second child is, so the column layout is unchanged.
         return (f'<div class="semrow"><span class="yr tnum">{h(e["date"])}</span>'
-                f'<span><span class="rt">{speaker}{aff}</span><span class="ra">{title}</span></span></div>')
+                f'<div><span class="rt">{speaker}{aff}</span><span class="ra">{title}</span>'
+                f'{co}{abstract}{chips}</div></div>')
     # Only forthcoming seminars are shown; the rest go behind a toggle (ISO dates sort chronologically).
     today = datetime.date.today().isoformat()
     allsem = [e for season in s["seasons"] for e in season["seminars"]]
