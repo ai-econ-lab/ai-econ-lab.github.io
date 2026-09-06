@@ -26,6 +26,9 @@ years:
       # the 12th, so the site's own record of the launch may not post-date the announcement of it.
       # "Published" rather than "went out", because that is true of the brief on the site whether
       # or not the Substack issue has been mailed.
+      - date: "Sep 6"
+        text: 'The DAIOE measure was published as an open, citable dataset: occupation-year AI-exposure scores for 2010–2023 with a 2024 refresh, on five occupational classifications (O*NET-SOC, SOC, ISCO-08, SSYK 96, SSYK 2012), together with the full construction pipeline and documentation.'
+        links: [{label: "Zenodo (DOI)", url: "https://doi.org/10.5281/zenodo.21873968"}, {label: "Pipeline & documentation", url: "https://github.com/Magnus-L/daioe-pipeline"}]
       - date: "Aug 12"
         text: 'The AIEL Monitor launched, on the lab''s own domain and with a rebuilt website: open, dated indicators on AI and work across countries, with Sweden in depth, refreshed from public data. The first issue of the monthly AIEL Monitor Brief was published the same day, on barriers to AI use.'
         links: [{label: "The Monitor", url: "/monitor/"}, {label: "Monthly brief", url: "/monitor/brief/"}]

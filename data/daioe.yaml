@@ -37,7 +37,8 @@ explorers:
     open: "https://huggingface.co/spaces/ai-econ-lab/months"
 
 resources:
-  - {label: "DAIOE datasets (all versions)", href: "https://github.com/ai-econ-lab/daioe_dataset", note: "SOC / ISCO / SSYK, versioned"}
+  - {label: "DAIOE scores on Zenodo (citable, all versions)", href: "https://doi.org/10.5281/zenodo.21873968", note: "the canonical, versioned release; cite the vintage you use"}
+  - {label: "Construction pipeline (open source)", href: "https://github.com/Magnus-L/daioe-pipeline", note: "code, test suite, quick starts in Python and Stata"}
   - {label: "Technical documentation (construction, vintages, reading the scores)", href: "https://github.com/Magnus-L/daioe-pipeline/blob/main/DOCUMENTATION.md", note: "the release's public reference"}
   - {label: "SSYK 2012 & SSYK 96 translation utility", href: "https://github.com/ai-econ-lab/daioe_translations", note: "crosswalk helper"}
 
