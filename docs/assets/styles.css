@@ -267,13 +267,6 @@ details.faq p{font-size:14.5px;color:var(--ink-2);line-height:1.6;margin:0 0 16p
 .semrow .saff{font-family:var(--mono);font-size:var(--fs-micro);color:var(--muted);font-weight:400}
 .semrow .lk{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 .semrow .tbd{color:var(--muted);font-style:italic}
-.semrow .rco{display:block;font-size:var(--fs-micro);color:var(--muted);margin-top:3px}
-details.semabs{margin-top:6px}
-details.semabs>summary{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:pointer;list-style:none}
-details.semabs>summary::-webkit-details-marker{display:none}
-details.semabs>summary::after{content:" ＋"}
-details.semabs[open]>summary::after{content:" －"}
-details.semabs>p{font-size:var(--fs-sec);color:var(--muted);margin:6px 0 0;max-width:62ch;line-height:1.5}
 .semlist .semrow{grid-template-columns:104px 1fr}
 
 /* link chips (papers + seminars) */
@@ -383,13 +376,6 @@ footer{background:var(--navy);color:var(--navy-ink);margin-top:20px}
 .dotplot .dot.se{fill:var(--c1)}
 .barplot .bar{fill:var(--muted);opacity:.55}
 .barplot .bar.se{fill:var(--c1);opacity:1}
-/* Second highlight tier, added 31 Aug 2026: the other Nordics, visible against the rest of
-   the distribution but never mistaken for Sweden. The point is that a reader sees the Nordic
-   ranking AND where the Nordics sit in Europe, in one figure, with no toggle. */
-.rankchart .dname.nordic{fill:var(--c1);opacity:.75}
-.rankchart .dval.nordic{fill:var(--c1);opacity:.75}
-.barplot .bar.nordic{fill:var(--c1);opacity:.42}
-.dotplot .dot.nordic{fill:var(--c1);opacity:.55}
 /* Paired comparison series (barplot cmp_key): the international benchmark against Sweden, drawn
    on the same rows. Vermillion is the Monitor's one categorical partner to the blue, used the
    same way everywhere: colour follows the entity, never the panel. */
@@ -425,38 +411,12 @@ button.figdl{background:transparent;font-family:var(--mono);font-size:var(--fs-m
 .dblegend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .dblegend i.lo{background:var(--c3)}.dblegend i.hi{background:var(--c1)}
 
-/* the panel block: within-person movement, same respondents in two rounds (Akavia).
-   Ordered categories, so the encoding is diverging with a neutral middle rather than three
-   arbitrary hues: blue for more, grey for no change, vermillion for less. Same two colours the
-   rest of the Monitor uses, and the middle is deliberately the quietest thing on the row. */
-.mvchart .mvmore{fill:var(--c1);opacity:.92}
-.mvchart .mvsame{fill:var(--muted);opacity:.38}
-.mvchart .mvless{fill:var(--c2);opacity:.88}
-.mvchart .mvlab{fill:#fff;font-size:10px;font-weight:700}
-.mvchart .mvlab.dark{fill:var(--ink-2)}
-.mvchart .dname{fill:var(--ink-2);font-size:10.5px}
-.mvchart .dbtrack{stroke:var(--border);stroke-width:3}
-.mvchart .dblo{fill:var(--c3)}
-.mvchart .dbhi{fill:var(--c1)}
-.mvchart .dval{fill:var(--ink-2);font-size:10.5px;font-weight:700}
-.mvlegend i.more{background:var(--c1)}
-.mvlegend i.same{background:var(--muted);opacity:.45}
-.mvlegend i.less{background:var(--c2)}
-.mvlegend i.start{background:var(--c3)}
-.mvlegend i.end{background:var(--c1)}
-
-/* a series crossing a change of instrument: the value is real, the continuity is not */
-.minitab td.brk{position:relative}
-.minitab td.brk sup{color:var(--c2);font-weight:700;margin-left:1px}
-.brknote{font-family:var(--mono);font-size:var(--fs-micro);line-height:1.6;color:var(--muted);margin:8px 0 0}
-
 /* AI-in-Demand trend (server-rendered static twin, used on the brief) */
 .trend .grid{stroke:var(--border)}.trend .tick{fill:var(--muted);font-size:9px}
 .trendarea{fill:var(--c1);opacity:.08}
 .trend .trendline,.trend .trenddash{fill:none;stroke:var(--c1);stroke-width:2}
 .trend .trenddash{stroke-dasharray:4 3}
-.trend .trenddot{fill:var(--c1)}.trend .trendval,.monthly .trendval{fill:var(--c1);font-size:11px;font-weight:700}  /* SVG text: chart type does not move, see the note on :root. .monthly shares the rule: its end label rendered browser-default black on the dark theme until 4 Sep 2026 */
-.monthly .trendcov{fill:var(--muted);font-size:9px;font-weight:400}
+.trend .trenddot{fill:var(--c1)}.trend .trendval{fill:var(--c1);font-size:11px;font-weight:700}  /* SVG text: chart type does not move, see the note on :root */
 
 /* entry-level squeeze: two-line time series with the widening gap shaded */
 .squeeze .sqband{fill:var(--c1);opacity:.10}
@@ -581,25 +541,8 @@ main [id]{scroll-margin-top:196px}
 .blist li{font-size:var(--fs-body);color:var(--ink-2);line-height:1.5;padding:9px 0;border-top:1px solid var(--border)}
 .blist li:first-child{border-top:0}
 .bnd{font-family:var(--mono);font-size:var(--fs-micro);color:var(--blue);margin-right:8px;white-space:nowrap}
-.bfooter{display:flex;flex-direction:column;gap:5px;margin-top:18px;padding-top:12px;
+.bfooter{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;padding-top:16px;
   border-top:1px solid var(--border);font-family:var(--mono);font-size:var(--fs-micro);color:var(--muted)}
-.bfoot-row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-
-/* Cluster and funder, at the foot of every brief. Added 2 Sep 2026 on Magnus's decision that
-   the brief is part of the Monitor and so carries the same marks as the Monitor's own strip.
-   The sentence is copied verbatim from partner_strip(), never paraphrased: see the comment at
-   build.py partner_strip() for why no preposition is allowed to do that work.
-   The marks are sized on the WORDMARKS (AISCAF 3:1 trimmed, WASP-HS 12.5:1), so the two height
-   values differ on purpose; equalising them makes WASP-HS dominate. Kept off the print page
-   break so a mark never lands alone on a second sheet. */
-.bpartner{display:flex;align-items:center;gap:14px;line-height:1.4}
-.bpartner-marks{display:flex;align-items:center;gap:16px;flex-shrink:0}
-
-/* A4, not letter. Chrome's headless print defaults to US letter, so a brief generated for
-   the review mail came out 216x279mm while every reader who prints it in Sweden gets 210x297.
-   Fixing it here rather than in the generator means the button and the script agree. Added
-   31 Aug 2026 when the brief gained a real generated PDF. */
-@page { size: A4; margin: 14mm 14mm 12mm 14mm; }
 
 @media print {
   /* force the light palette so charts print legibly even from dark mode */
@@ -636,10 +579,6 @@ main [id]{scroll-margin-top:196px}
      column IS the page, so keeping the cap wastes a third of the sheet and pushes the brief
      onto a second page. Set the type down instead, the way a printed brief is set. */
   .bp { max-width:none; font-size:9.9pt; line-height:1.42; margin:0 0 8px; }
-  /* The closing note, quieter in print too. The brief is proofread on PAPER (Yifan reads the
-     English, Lydia the Swedish), so a screen-only rule would not reach the readers it is for. */
-  .bsec--note .bh2 { opacity: .7; }
-  .bsec--note .bp { font-size: 8.7pt; color: var(--ink-2); }
   .bsub { max-width:none; }
   .bsrc { margin-top:5px; }
   .bhead { padding-bottom:10px; margin-bottom:12px; }
@@ -754,32 +693,3 @@ ul.tight li{margin:2px 0}
   .minitab{display:block;overflow-x:auto;overscroll-behavior-x:contain;font-size:.82rem}
   .minitab th,.minitab td{padding:5px 5px}
 }
-
-/* Partner marks are two files, not one, and the page decides which.
-   Added 2 Sep 2026 after the AISCAF mark rendered near-invisible in dark mode: its ink is
-   #2e2e2e, so on the dark palette it is black on near-black. WASP-HS survived only because its
-   blue happens to read on both. A single logo file cannot serve both themes, and "it looked
-   fine on my screen" is exactly how this ships broken.
-   Mirrors the site's own three-state theme handling: system default, and both explicit
-   overrides, so the toggle wins in both directions. */
-.logo-dark-ink { display: block; }
-.logo-light-ink { display: none; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .logo-dark-ink  { display: none; }
-  :root:not([data-theme="light"]) .logo-light-ink { display: block; }
-}
-:root[data-theme="dark"] .logo-dark-ink  { display: none; }
-:root[data-theme="dark"] .logo-light-ink { display: block; }
-:root[data-theme="light"] .logo-dark-ink  { display: block; }
-:root[data-theme="light"] .logo-light-ink { display: none; }
-
-/* The "Part of" strip at the foot of the Monitor. Quiet by design: it is attribution, not
-   sponsorship, and it must not compete with the data above it. */
-.partner-strip { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--hair); }
-.partner-strip img { opacity: .9; }
-
-/* The brief's closing "what this does not show" section, set quieter than the argument above it.
-   Yifan's review of the September issue: it is a note for a careful reader, not information a
-   general audience needs at the same weight as the finding. Smaller and greyer, not hidden. */
-.briefsheet .bsec--note .bh2 { opacity: .72; }
-.briefsheet .bsec--note .bp { font-size: .88em; color: var(--ink-2); opacity: .92; }
