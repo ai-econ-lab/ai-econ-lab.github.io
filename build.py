@@ -3131,6 +3131,39 @@ def brief(lang="en"):
     sv_cur = ' aria-current="page"' if sv else ''
     subscribe = f'<a class="btn ghost" href="{sub}">{L("Subscribe monthly","Prenumerera")}</a>' if sub else ""
 
+    # One optional lab-news item per issue, keyed by "YYYY-MM". The brief's own reporting stays
+    # the theme; this slot exists for lab news a reader of the brief should not miss (a dataset
+    # release, an acceptance), and stays empty most months so it never becomes a changelog —
+    # same discipline as data/news.yaml. Text reviewed by ML before an issue ships (the
+    # 2026-09 item on 6 Sep 2026: two Swedish wording fixes, "för fem yrkesklassificeringar"
+    # and the "Kom igång" sentence, are his).
+    LABNEWS = {
+        "2026-09": {
+            "en": ('<strong>DAIOE is now an open, citable dataset.</strong> The lab&#39;s Dynamic AI '
+                   'Occupational Exposure measure (occupation-year AI-exposure scores for 2010–2023 '
+                   'with a 2024 refresh, on five occupational classifications including Swedish SSYK) '
+                   'is published on <a href="https://doi.org/10.5281/zenodo.21873968">Zenodo with a '
+                   'DOI</a> (10.5281/zenodo.21873968), together with all the code that builds the '
+                   'measure and the full documentation on '
+                   '<a href="https://github.com/Magnus-L/daioe-pipeline">GitHub</a>. Quick starts in '
+                   'Python and Stata get a ranked list of occupations in a few lines. This is the '
+                   'measure behind several of the Monitor&#39;s exposure indicators; anyone can now '
+                   'use, check and cite the same numbers.'),
+            "sv": ('<strong>DAIOE är nu ett öppet, citerbart dataset.</strong> Labbets mått Dynamic AI '
+                   'Occupational Exposure (AI-exponering per yrke och år 2010–2023 med en '
+                   '2024-uppdatering, för fem yrkesklassificeringar inklusive svenska SSYK) är '
+                   'publicerat på <a href="https://doi.org/10.5281/zenodo.21873968">Zenodo med DOI</a> '
+                   '(10.5281/zenodo.21873968), tillsammans med all kod som bygger måttet och hela '
+                   'dokumentationen på <a href="https://github.com/Magnus-L/daioe-pipeline">GitHub</a>. '
+                   'Kom igång: en kort intro (Python / Stata) ger snabbt en rankad yrkeslista. Det är '
+                   'måttet bakom flera av monitorns exponeringsindikatorer; vem som helst kan nu '
+                   'använda, granska och citera samma siffror.'),
+        },
+    }
+    _news = LABNEWS.get(issue)
+    news_sec = (f'<section class="bsec"><h2 class="bh2">{L("From the lab","Från labbet")}</h2>\n'
+                f'    <p class="bp">{_news["sv" if sv else "en"]}</p></section>') if _news else ""
+
     body = f"""<div class="wrap brief"><article class="briefsheet">
   <header class="bhead">
     <div><p class="kicker">{L("AIEL Monitor · monthly brief","AIEL Monitor · månadsbrev")} · {issue}</p>
@@ -3155,6 +3188,8 @@ def brief(lang="en"):
 
   <section class="bsec bsec--note"><h2 class="bh2">{h(h_lim)}</h2>
     <p class="bp">{limits[theme]}</p></section>
+
+  {news_sec}
 
   <footer class="bfooter">
     <div class="bfoot-row">
