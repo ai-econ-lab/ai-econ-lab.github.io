@@ -1,12 +1,12 @@
 # DAIOE — the lab's Dynamic AI Occupational Exposure measure and its public tools.
-# NB: the old site expands DAIOE as "Dynamic AI Occupational Exposure" (confirm with Magnus).
 headline: "DAIOE"
 tagline: "Dynamic AI Occupational Exposure"
 lede: >-
   DAIOE measures how exposed each occupation is to artificial intelligence, from data rather than
   expert guesswork. It tracks nine AI subdomains annually since 2010, capturing the potential
   applicability of AI capabilities to occupational content, not job-loss forecasts or adoption
-  probabilities. It is openly published, versioned and mapped across the US (SOC), international
+  probabilities. It is openly published and citable (Zenodo,
+  doi:10.5281/zenodo.21873968), versioned, and mapped across the US (SOC), international
   (ISCO) and Swedish (SSYK) classifications, so others can use it directly.
 
 # FAQ — ported verbatim from the old ai-econlab.com/ai-exposure-daioe page (typos fixed). VERIFY.
@@ -14,7 +14,7 @@ faq:
   - {q: "Does “exposure” mean automation or job loss?", a: "No. DAIOE captures the potential applicability of AI capabilities to occupational content. Whether this changes jobs depends on adoption, complements and organisational choices."}
   - {q: "Is it a forecast of AI adoption?", a: "No. DAIOE captures potential applicability. If, when and how AI is applied in an occupation depends on the cost of acquiring, adapting and using the technology, the institutional setting (laws and regulations), and more."}
   - {q: "What is different about DAIOE versus prior indices?", a: "DAIOE is dynamic and grounded in measured AI benchmark progress. It tracks nine subdomains over time and explicitly adjusts for social interaction."}
-  - {q: "How do I read the raw score values?", a: "The index has no natural units: a value is meaningful only relative to other occupation-years. For cross-sectional standing, use the shipped percentile ranks (more exposed than X per cent of occupations that year). Percentiles are ordinal, so they do not show how much exposure has grown; for level and growth, rescale as in the next question."}
+  - {q: "How do I read the raw score values?", a: "The index has no natural units: a value is meaningful only relative to other occupation-years. For cross-sectional standing, use within-year percentiles. One caution: v1.0.0 ships the legacy rank columns, which are order-dependent inside tied groups, so where ties could matter compute the tie-invariant midrank instead (one line: 100 × average-rank within year / count); it ships precomputed from v1.1.0. Percentiles are ordinal, so they do not show how much exposure has grown; for level and growth, rescale as in the next question."}
   - {q: "Can I express scores relative to the most exposed occupation?", a: "Yes: divide by the highest value in the frozen 2010 to 2023 panel you use and multiply by 100 (score_rel_max = 100 x value / max). A score then reads as per cent of the most exposed occupation-year, and growth survives: an occupation at 31 in 2015 and 62 in 2023 doubled its exposure. Keep the 2010 to 2023 maximum as the denominator for later vintages too; values above 100 then mean exposure beyond the frozen-window peak. We document this transformation rather than shipping it, so the raw values remain the single citable version; details are in the technical documentation below."}
   - {q: "Which occupations tend to score highest?", a: "Cognitive, non-physical roles with lower social-interaction intensity, often white-collar, tend to rank higher."}
   - {q: "Do the data say anything about employment outcomes?", a: "Higher DAIOE relates to up-skilling: higher high- to low-skill ratios, and a shift from low-skill clerical toward high-skill work."}
@@ -22,6 +22,11 @@ faq:
   - {q: "What are the nine AI subdomains?", a: "Capabilities across games, vision and language, split into nine subdomains, aggregated into an overall index and a generative-AI sub-index."}
   - {q: "Can I compare across countries or industries?", a: "Yes. Combine occupation-level DAIOE with local workforce structures (firms, industries, regions) to assess exposure distributions."}
   - {q: "Is there a generative-AI version?", a: "Yes. We provide a generative-AI sub-index that combines language modelling and image generation."}
+  - {q: "How do I cite DAIOE?", a: "Cite the release and the paper, and name the object you used. The scores carry a DOI per version (this version: 10.5281/zenodo.21873968; all versions: 10.5281/zenodo.21873967). v1.0.0 contains two objects, so cite the DOI plus the object (frozen 2010–2023 index, or 2024 refresh) plus the filename you loaded; the repository's CITATION.cff carries the machine-readable form."}
+  - {q: "What is a vintage, and which should I use?", a: "A vintage is one released version of the dataset, labelled by its coverage window; vintages are separate, citable objects and are not interchangeable. Use the frozen 2010–2023 index to replicate or compare against published work, and the 2024 refresh for current analysis. The frozen window is carried cell-identically in every later vintage: published values never change."}
+  - {q: "How do I standardise the scores the way the paper does?", a: "The bundle ships the frozen 2010–2020 moments (standardisation_moments_v1.csv: mean and standard deviation per classification and column), so standardising is one line, z = (value − mean) / sd, and cannot be done on the wrong window."}
+  - {q: "How do I get going quickly?", a: "The repository README opens with quick starts in Python and Stata: the full ranking of occupations with percentiles, top and bottom ten with titles, and one occupation's exposure path over time. A code–title lookup for the Swedish classifications ships in the bundle."}
+  - {q: "Will DAIOE be updated, and what happens to old values?", a: "Yes, by annual vintages, with published values never changing: every release verifies cell by cell that the frozen window is identical, and all basket and membership changes take effect at annual chain points, the convention of chain-linked official statistics. A 2025 vintage is forthcoming as v1.1.0, adding agentic task execution and mathematical and scientific reasoning, with companion composites in standardised units."}
 
 # The live interactive tools (Shiny for Python on Hugging Face). Built and maintained in-house.
 # Named "Occupations Explorer" on the site: primarily employment by occupation over time (and, soon,
