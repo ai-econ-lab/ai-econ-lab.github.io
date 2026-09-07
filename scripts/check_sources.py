@@ -58,13 +58,24 @@ BARRIERS_GENERATOR = Path(__file__).resolve().parent / "refresh_barriers.py"
 UA = {"User-Agent": "AIEL-monitor-watch (python-urllib; research use)"}
 
 
-def get(url, timeout=60, ua=True):
+def get(url, timeout=60, ua=True, gh_auth=False):
     """Fetch a URL. ua=False sends no custom User-Agent.
 
     FRED's edge times out on our identifying UA string but serves the stdlib default
     fine, so the RPS watcher passes ua=False. Everywhere else we identify ourselves.
+
+    gh_auth=True attaches GH_TOKEN to an api.github.com call. Unauthenticated, that
+    API allows 60 requests/hour PER IP, and Action runners share a pool of IPs, so
+    the budget is spent by other people's jobs and we get an intermittent 403 (which
+    is what took the Monday run down on 31 Aug and 7 Sep 2026). The token is already
+    in the step's environment for issue creation and lifts the limit to 1,000/hour
+    for this repository. Absent (running locally without a token), we fall back to
+    the unauthenticated call rather than failing.
     """
-    headers = UA if ua else {}
+    headers = dict(UA) if ua else {}
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if gh_auth and token:
+        headers["Authorization"] = f"Bearer {token}"
     with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=timeout) as r:
         return r.read()
 
@@ -84,7 +95,8 @@ def watch_ai_index(state):
 
 
 def watch_daioe_dataset(state):
-    c = json.loads(get("https://api.github.com/repos/ai-econ-lab/daioe_dataset/commits?per_page=1"))
+    c = json.loads(get("https://api.github.com/repos/ai-econ-lab/daioe_dataset/commits?per_page=1",
+                       gh_auth=True))
     sha, date = c[0]["sha"], c[0]["commit"]["committer"]["date"]
     if sha != state["daioe_dataset_seen_sha"]:
         state["daioe_dataset_seen_sha"] = sha
