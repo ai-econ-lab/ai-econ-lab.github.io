@@ -33,6 +33,18 @@ registration:
   # the published unit is the distinct advertisement (8.1M). A banner reading "11.2M
   # SWEDISH ADS" was the page's largest number and the one it tells you not to use.
   - "<b>{distinct_ads}</b> DISTINCT SWEDISH ADS · {n_countries} COUNTRIES"
+  # ORDER: the live clock leads, and that is the point of the sequence. The strip carries
+  # three clocks that legitimately differ (the weekly source sweep, the date a stamped
+  # series last moved, the daily job-ads window), and until 10 Sep 2026 the two slow ones
+  # came first. Dating all three, done 27 Aug 2026, was not enough: on 10 Sep the sweep and
+  # the series both correctly read 7 Sep, the live feed correctly read 9 Sep, and the strip
+  # was read as three days stale for the third time (24 Aug, 27 Aug, 10 Sep). A reader takes
+  # the first date as the site's date, so the first date must be the freshest one. The two
+  # weekly clocks follow as context, which is what they are.
+  # Derived from the live window's own as-of date — see LIVE_STATUS in build.py. Do not put
+  # the badge back as a literal: it read "● LIVE" for five days in August 2026 next to a
+  # window that had stopped moving, which is the one thing the badge is supposed to rule out.
+  - "{live_status}"
   # Derived at build time from the numeric data files' last git commit — see
   # data_updated() in build.py. Do not hand-type a date here; it will drift.
   # The weekly claim is backed by two Actions, and is now a floor rather than the rate:
@@ -54,10 +66,6 @@ registration:
   # beside a live chip dated the 24th. Magnus read it as four days behind, correctly given
   # the words. Both facts are known, so the strip states both and labels each for what it is.
   - "SOURCES CHECKED <b>{sources_checked}</b> · SERIES LAST MOVED <b>{data_updated}</b>"
-  # Derived from the live window's own as-of date — see LIVE_STATUS in build.py. Do not put
-  # the badge back as a literal: it read "● LIVE" for five days in August 2026 next to a
-  # window that had stopped moving, which is the one thing the badge is supposed to rule out.
-  - "{live_status}"
   # "PROTOTYPE" read as unfinished to a first-time visitor arriving from the launch post.
   # "VERSION 1" says the same thing, that this is early and will change, without inviting
   # the reader to discount the numbers, which are not provisional (Magnus, 12 Aug 2026).
