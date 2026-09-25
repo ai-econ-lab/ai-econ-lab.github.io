@@ -3246,6 +3246,11 @@ def methods():
 </section></div></div>
 
 """)
+    brief = ""
+    if md.get("in_brief"):
+        items = "".join(f'<p class="secintro" style="margin:8px 0 0"><b>{h(x["label"])}.</b> {h(x["text"])}</p>'
+                        for x in md["in_brief"])
+        brief = f'<div class="depth" style="margin-bottom:18px"><p class="dk">In brief</p>{items}</div>'
     pub = "".join(f"<li>{h(x)}</li>" for x in md["status"]["published"])
     pend = "".join(f"<li>{h(x)}</li>" for x in md["status"]["pending"])
     refs = "".join(f"<li>{h(r)}</li>" for r in md["references"])
@@ -3254,6 +3259,7 @@ def methods():
   <p class="secintro">{h(md["lede"])}</p></div></div>
 
 <div class="wrap"><section style="padding-top:4px">
+  {brief}
   <div class="depth"><p class="dk">What we are measuring</p>
     <p class="secintro" style="margin:0"><b>{h(md["estimand"]["target"])}</b> {h(md["estimand"]["not"])}</p>
     <p class="secintro" style="margin:10px 0 0">{h(md["estimand"]["naming"])}</p></div>

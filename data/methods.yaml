@@ -19,6 +19,29 @@ lede: >-
   cannot be silently mixed.
 
 # The estimand, stated before anything else. Lifted from method.tex §1.
+# "In brief": the three-step summary a reader gets before the detail. Added 25 Sep 2026 after the
+# WFH Map benchmark (ai-monitor/notes/wfhmap-lessons_2026-09-24.md): their method page leads with
+# what is read, how it is classified and how well it performs, in three short paragraphs.
+# Validation figures are the last full gold-set run (v1.3); v1.4 and v1.5 did not re-run it.
+in_brief:
+  - label: "What is read"
+    text: >-
+      Every advertisement on Platsbanken, the Swedish public job board, from 2006 onwards: 8.1 million
+      distinct advertisements, each counted once however often the employer reposts it.
+  - label: "How it is classified"
+    text: >-
+      A versioned term list, built from three published AI keyword lists with a Swedish layer and a
+      generative-AI addendum, is matched against each advertisement twice: over the whole text, and over
+      the role's own tasks and requirements only. The second, stricter count is the floor. A word
+      list rather than a trained model decides what counts, so every published number can be rebuilt
+      from the public advertisements.
+  - label: "How well it performs"
+    text: >-
+      At the last full check against 369 hand-labelled advertisements, 89 per cent of the advertisements
+      the floor flags are genuine AI demand, and it finds a little over a third of them. The floor is
+      therefore a lower bound by design, and a hand-read correction supplies the upper one: for 2025 the
+      published range is 0.55 to 1.25 per cent of advertisements.
+
 estimand:
   target: >-
     Advertised AI-skill demand: does the advertisement, in the text of the role, ask the worker to know
