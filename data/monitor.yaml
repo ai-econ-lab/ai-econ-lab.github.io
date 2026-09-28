@@ -318,7 +318,11 @@ capability:
   # When a watched source was last confirmed by a person. Not the date of the figure: METR
   # published on 8 May 2026 and nothing since, and 4 Sep 2026 is when the page was re-read
   # and the two tiles checked, number by number, against its own data blob.
-  reviewed: {metr: 2026-09-04, arc: 2026-09-04}
+  # Re-read 28 Sep 2026 in the browser, after the weekly gate failed on ARC. Unchanged: the
+  #   ARC-AGI-3 top is still GPT-6 Astra (Max) at 62.7% Standard, and the Provider Adapter best
+  #   is still 99.9% (Astra High). What moved the page was again new rows below the top:
+  #   GPT-6 Luna (0.0-0.6% on ARC-AGI-3) and Gemini 3.8 Flash Provider Adapter (35.0%).
+  reviewed: {metr: 2026-09-04, arc: 2026-09-28}
   # The same two tiles as machine-comparable numbers, which metr.org embeds in
   # benchmarkDataV1_1. refresh_capability.py reads them on every run and fails the weekly
   # build if they drift by more than tol_pct, so age alone no longer stands in for doubt:
