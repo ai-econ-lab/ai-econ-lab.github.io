@@ -7,9 +7,6 @@
   "capability_metr_checked": "2026-09-28",
   "capability_arc_checked": "2026-09-28",
   "capability_metr_id": "data:benchmarks=METR-Horizon-v1.0,METR-Horizon-v1.1 long_tasks=2ce7f1e0c4f8,799cc9c4b448 swaa=3d2ab4f0662a,f6cc84052e2a",
-  "capability_arc_id": "page:1af05c4fcbbcb33d",
-  "sources_checked": "2026-09-28",
-  "capability_arc_pending_since_asof": "2026-09-01",
-  "capability_arc_pending_detected": "2026-09-28",
-  "capability_arc_pending_id": "page:4cd0f842f6c3bcd6"
+  "capability_arc_id": "page:4cd0f842f6c3bcd6",
+  "sources_checked": "2026-09-28"
 }
