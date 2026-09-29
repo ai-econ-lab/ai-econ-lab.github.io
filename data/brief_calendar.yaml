@@ -24,6 +24,8 @@ months:
   # designing a reskilling response should know. `washing` gets its own chart and text rather
   # than reusing the `demand` slot, because months 1, 2 and 10 all sit on `demand` and would
   # otherwise print the same argument three times.
-  10: {title_en: "AI talk and AI skills: the widening gap",  title_sv: "AI-prat och AI-kompetens: det växande gapet", theme: washing}
+  # Title reworded 29 Sep 2026 (Yifan): "This month: AI talk and AI skills: the widening gap"
+  # put two colons in one sentence. A plain noun phrase reads as part of the standfirst.
+  10: {title_en: "the widening gap between talk of AI and demand for AI skills",  title_sv: "det växande gapet mellan AI-prat och efterfrågad AI-kompetens", theme: washing}
   11: {title_en: "Job quality and the work environment",     title_sv: "Jobbkvalitet och arbetsmiljö",              theme: outcomes}
   12: {title_en: "The year in review, and outlook",          title_sv: "Året i backspegeln",                        theme: exposure}

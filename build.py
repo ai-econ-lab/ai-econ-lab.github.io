@@ -132,6 +132,7 @@ MONTHLY  = load("monthly_demand.yaml")
 # The trend is generated (scripts/refresh_trend.py) rather than typed into monitor.yaml,
 # and it carries the definition it was built from. See that script for why.
 TREND    = load("trend.yaml")
+SAMEM    = load("washing_samemonths.yaml")   # Jan-Jun vs same months a year earlier (brief 2026-10)
 
 JOBQ     = load("job_quality.yaml")
 GOV      = load("governance.yaml")
@@ -1136,57 +1137,380 @@ def dumbbell_svg(conds, gkey, active=False):
     p.append("</svg>")
     return "".join(p)
 
+# Share of the bare-AI band that hand-reading finds to be genuine AI roles: 32 of 230 read over
+# four periods, re-derived on the v1.4 band as 12.8% (95% interval 8.9-18.1); v1.5 leaves the
+# band unchanged to the advertisement, so it carries over. Source of the published ceiling
+# (monitor.yaml, "The upper bound is now measured across the whole series"); 2025 checks out:
+# 1.06 + 0.128 x 1.38 = 1.24%.
+CEIL_BAND_SHARE = 0.128
+
+
+def washing_series(t, start=2016):
+    """Floor, ceiling and bare-AI band from `start`. Ceiling = whole-text + CEIL_BAND_SHARE x band."""
+    ys = t["years"]
+    i0 = ys.index(start) if start in ys else 0
+    fl, wt, bd = t["floor_values"][i0:], t["values"][i0:], t["band_values"][i0:]
+    ce = [w + CEIL_BAND_SHARE * b for w, b in zip(wt, bd)]
+    return ys[i0:], fl, ce, bd, i0
+
+
 def washing_svg(t, lang="en"):
-    """Two lines for the October brief: AI named as a skill, against AI merely mentioned.
+    """The October brief chart: AI-skill demand as a floor-to-ceiling range, against advertisements
+    that only mention AI.
 
-    Deliberately NOT the hero trend chart. That one plots the two demand measures, whole-text
-    and floor, which are both demand. This plots the floor against the BARE-AI BAND: the
-    advertisements that say AI and name no specific AI term at all. The band is not demand for
-    an AI skill and never enters the headline series; it is the talk. Drawn together, the point
-    of the month is visible without a sentence explaining it -- the lines cross in 2022 and the
-    gap opens after.
+    Redesigned 28 Sep 2026 after ML found the first ceiling version hard to read. Demand is ONE
+    entity drawn as a blue range (floor and ceiling are two strictnesses of it); the talk is the
+    contrasting orange line. Labels sit in a gutter to the right of the plot, in ink, each beside
+    a short colour key, so nothing is placed on top of a line and identity is never colour alone.
+    First version (3 Sep) drew the floor alone against the talk; ML: the ceiling captures more
+    without counting the cheap talk, so the comparison must be with the whole range.
 
-    Starts at 2016 because both lines sit under 0.02% before that and an axis that accommodates
-    2006 flattens everything after 2020 into the baseline.
+    Starts at 2016 because every line sits under 0.02% before that.
     """
-    ys, fl, bd = t["years"], t["floor_values"], t["band_values"]
-    i0 = ys.index(2016) if 2016 in ys else 0
-    ys, fl, bd = ys[i0:], fl[i0:], bd[i0:]
+    ys, fl, ce, bd, i0 = washing_series(t)
+    # The naive total, every advertisement that mentions AI at all: named AI term anywhere
+    # (whole-text) plus bare-only. The two do not overlap. ML, 29 Sep 2026: the figure must show
+    # the naive total while making clear which measure we stand behind (the blue band).
+    nv = [w + b for w, b in zip(t["values"][i0:], t["band_values"][i0:])]
     pf = max(1, int(t["provisionalFrom"]) - i0)
     n = len(ys)
-    W, H = 640, 250
-    x0, x1, top, bot = 46, 600, 30, 208
-    ymax = max(max(fl), max(bd)) * 1.12
+    L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
+    pc = (lambda v: f"{v:.1f}".replace(".", ",") + " %") if lang == "sv" else (lambda v: f"{v:.1f}%")
+    W, H = 640, 214                      # the brief's one figure (29 Sep 2026), so it gets the room
+    x0, x1, top, bot = 34, 468, 12, 188
+    ymax = max(nv) * 1.06
     X = lambda i: x0 + i / (n - 1) * (x1 - x0)
     Y = lambda v: bot - v / ymax * (bot - top)
-    L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
-    p = [f'<svg class="rankchart trend" viewBox="0 0 {W} {H}" role="img" aria-label="'
-         f'{h(L("AI named as a skill against AI merely mentioned, share of Swedish job advertisements",
-                "AI som efterfrågad kompetens mot AI enbart omnämnt, andel av svenska jobbannonser"))}">']
-    for k in range(4):
-        tk = ymax * k / 3
+    ink, mute = "var(--ink-2)", "var(--muted)"
+    p = [f'<svg class="rankchart trend" style="max-height:none" viewBox="0 0 {W} {H}" role="img" aria-label="'
+         f'{h(L("AI-skill demand from floor to ceiling, against advertisements that only mention AI, share of Swedish job advertisements",
+                "Efterfrågan på AI-kompetens från golv till tak, mot annonser som bara nämner AI, andel av svenska jobbannonser"))}">']
+    for tk in [v for v in (0, 1, 2, 3) if v <= ymax]:
         gy = Y(tk)
-        p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
-        p.append(f'<text class="tick" x="{x0-6}" y="{gy+3.5:.1f}" text-anchor="end">{tk:.1f}%</text>')
+        p.append(f'<line x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}" stroke="var(--border)" '
+                 f'stroke-width="{1 if tk else 1.2}"/>')
+        p.append(f'<text x="{x0-6}" y="{gy+4:.1f}" text-anchor="end" font-size="11" fill="{mute}">{tk} %</text>'
+                 if lang == "sv" else
+                 f'<text x="{x0-6}" y="{gy+4:.1f}" text-anchor="end" font-size="11" fill="{mute}">{tk}%</text>')
     for i, yr in enumerate(ys):
-        if yr % 2 == 0 or i == n - 1:
-            p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-8}" text-anchor="middle">{yr}</text>')
-    for vals, colour, dash in ((bd, "var(--c1)", None), (fl, "var(--c2)", None)):
+        if yr % 2 == 0:
+            p.append(f'<text x="{X(i):.1f}" y="{H-6}" text-anchor="middle" font-size="11" fill="{mute}">{yr}</text>')
+    # demand range
+    poly = " ".join(f"{X(i):.1f},{Y(fl[i]):.1f}" for i in range(n)) + " " + \
+           " ".join(f"{X(i):.1f},{Y(ce[i]):.1f}" for i in reversed(range(n)))
+    p.append(f'<polygon points="{poly}" fill="var(--c1)" opacity=".13"/>')
+
+    def line(vals, colour, wdt, dash=None):
         pts = [(X(i), Y(vals[i])) for i in range(n)]
-        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts[:pf])}" '
-                 f'fill="none" stroke="{colour}" stroke-width="2.4"/>')
-        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts[pf-1:])}" '
-                 f'fill="none" stroke="{colour}" stroke-width="2.4" stroke-dasharray="4 3"/>')
-    # Labels on the lines rather than in a key: two lines and a legend is a lookup the reader
-    # should not have to do.
-    p.append(f'<text class="tick" x="{X(n-1)-4:.1f}" y="{Y(bd[-1])-9:.1f}" text-anchor="end" '
-             f'style="fill:var(--c1);font-weight:600">'
-             f'{h(L("mentions AI", "nämner AI"))} {bd[-1]:.1f}%</text>')
-    p.append(f'<text class="tick" x="{X(n-1)-4:.1f}" y="{Y(fl[-1])+20:.1f}" text-anchor="end" '
-             f'style="fill:var(--c2);font-weight:600">'
-             f'{h(L("asks for an AI skill", "efterfrågar AI-kompetens"))} {fl[-1]:.1f}%</text>')
+        d = f' stroke-dasharray="{dash}"' if dash else ""
+        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts[:pf])}" fill="none" '
+                 f'stroke="{colour}" stroke-width="{wdt}" stroke-linejoin="round" stroke-linecap="round"{d}/>')
+        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts[pf-1:])}" fill="none" '
+                 f'stroke="{colour}" stroke-width="{wdt}" stroke-dasharray="3 3" stroke-linecap="round"/>')
+        p.append(f'<circle cx="{pts[-1][0]:.1f}" cy="{pts[-1][1]:.1f}" r="3.2" fill="{colour}" '
+                 f'stroke="var(--bg)" stroke-width="1.5"/>')
+    line(nv, "var(--muted)", 1.5, "6 3")
+    line(ce, "var(--c1)", 1.4)
+    line(fl, "var(--c1)", 2.2)
+    line(bd, "var(--c2)", 2.4)
+    # Name the band inside itself, where it is widest before 2024: this is the measure we stand
+    # behind, and the reader should not have to find that out from the legend.
+    cand = [i for i in range(n) if ys[i] <= 2023] or list(range(n))
+    ib = max(cand, key=lambda i: ce[i] - fl[i])
+    p.append(f'<text x="{X(ib):.1f}" y="{(Y(fl[ib]) + Y(ce[ib])) / 2 + 4:.1f}" text-anchor="middle" '
+             f'font-size="10.5" font-weight="600" fill="var(--c1)">'
+             f'{h(L("our estimate of demand", "vår bedömning av efterfrågan"))}</text>')
+    # right-hand labels, spaced so they never overlap
+    labs = sorted([(Y(nv[-1]), L("Every mention of AI", "Alla som nämner AI"), pc(nv[-1]), "var(--muted)"),
+                   (Y(bd[-1]), L("Only mentions AI", "Nämner bara AI"), pc(bd[-1]), "var(--c2)"),
+                   (Y(ce[-1]), L("Ceiling", "Tak"), pc(ce[-1]), "var(--c1)"),
+                   (Y(fl[-1]), L("Floor", "Golv"), pc(fl[-1]), "var(--c1)")])
+    placed, gap = [], 28
+    for y, *rest in labs:
+        y = max(y, placed[-1][0] + gap) if placed else y
+        placed.append((y, *rest))
+    lx = x1 + 16
+    for y, name, val, colour in placed:
+        p.append(f'<rect x="{lx}" y="{y-9:.1f}" width="3" height="22" rx="1.5" fill="{colour}"/>')
+        p.append(f'<text x="{lx+10}" y="{y:.1f}" font-size="11.5" fill="{ink}" font-weight="600">{h(name)}</text>')
+        p.append(f'<text x="{lx+10}" y="{y+13:.1f}" font-size="11" fill="{mute}">{val} · {ys[-1]}*</text>')
     p.append("</svg>")
     return "".join(p)
+
+
+def washing_ladder(t, dm, lang="en"):
+    """ONE bar that shows how the Swedish numbers nest, for the same period the chart ends on.
+
+    Built 29 Sep 2026 after ML found the brief's Swedish numbers impossible to track: three
+    tiles (floor, ceiling, bare mentions) looked like parallel measures. They are nested, not
+    parallel, so this bar stacks them left to right and every number is a point on one ruler:
+
+        floor | + AI term elsewhere in the ad | + bare "AI", a real AI role (1 in 8) | + other bare "AI"
+        '-floor-'
+        '---------------- ceiling -----------------'
+        '------------------------ every mention of AI ------------------------------------'
+                                                '------- only mentions AI (below the bar) ----'
+
+    The bracket UNDER the bar is the chart's orange line, with the same label and number, so the
+    two figures agree (ML, 29 Sep 2026: 2.2 in the chart against 2.44 in a 2025 bar was a clash).
+    Same period as the chart's end point, one decimal like the chart. Replaces washing_tiles().
+    `dm` is kept in the signature for the Lightcast comparison, dropped from the brief 29 Sep.
+    """
+    ys = t["years"]; i = len(ys) - 1
+    fl, wt, bd = t["floor_values"][i], t["values"][i], t["band_values"][i]
+    real = CEIL_BAND_SHARE * bd
+    segs = [fl, wt - fl, real, bd - real]
+    ce, allm = wt + real, wt + bd
+    L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
+    f1 = (lambda v: f"{v:.1f}".replace(".", ",") + " %") if lang == "sv" else (lambda v: f"{v:.1f}%")
+    per = L(f"{ys[i]} so far", f"hittills {ys[i]}")
+    W, H = 640, 166
+    x0, x1 = 8, 632
+    vmax = allm * 1.02
+    X = lambda v: x0 + v / vmax * (x1 - x0)
+    y0, y1 = 66, 92                                    # the bar
+    ink, mute = "var(--ink-2)", "var(--muted)"
+    fills = [("var(--c1)", 1), ("var(--c1)", .55), ("var(--c1)", .28), ("var(--c2)", .8)]
+    # Full print width on purpose: under the brief's 40 mm chart cap the labels print at 6 pt.
+    p = [f'<svg class="rankchart" style="max-height:none" viewBox="0 0 {W} {H}" role="img" aria-label="'
+         f'{h(L(f"How Swedish job advertisements mention AI, {per}", f"Hur svenska jobbannonser nämner AI {per}"))}">']
+    x = X(0); cum = 0
+    for (col, op), v in zip(fills, segs):
+        cum += v; xe = X(cum)
+        p.append(f'<rect x="{x:.1f}" y="{y0}" width="{max(0, xe - x - 1.5):.1f}" height="{y1 - y0}" '
+                 f'fill="{col}" opacity="{op}"/>')
+        x = xe
+    def bracket(v, yb, label):
+        xe = X(v)
+        p.append(f'<path d="M{X(0):.1f},{yb + 6} V{yb} H{xe:.1f} V{yb + 6}" fill="none" '
+                 f'stroke="{ink}" stroke-width="1"/>')
+        p.append(f'<text x="{xe:.1f}" y="{yb - 5}" text-anchor="end" font-size="11.5" fill="{ink}" '
+                 f'font-weight="600">{h(label)}</text>')
+    bracket(allm, 17, L(f"Every mention of AI {f1(allm)}", f"Alla som nämner AI {f1(allm)}"))
+    bracket(ce, 36, L(f"Ceiling {f1(ce)}", f"Tak {f1(ce)}"))
+    bracket(fl, 55, L(f"Floor {f1(fl)}", f"Golv {f1(fl)}"))
+    # under the bar: the light-blue and orange slices together = the chart's orange line
+    xa, xe = X(wt), X(allm)
+    p.append(f'<path d="M{xa:.1f},{y1 + 4} V{y1 + 10} H{xe:.1f} V{y1 + 4}" fill="none" '
+             f'stroke="var(--c2)" stroke-width="1.2"/>')
+    p.append(f'<text x="{(xa + xe) / 2:.1f}" y="{y1 + 24}" text-anchor="middle" font-size="11.5" '
+             f'fill="{ink}" font-weight="600">'
+             f'{h(L(f"Only mentions AI {f1(bd)} (the orange line below)", f"Nämner bara AI {f1(bd)} (den orange linjen nedan)"))}</text>')
+    items = [L("named AI skill in the job", "namngiven AI-kompetens i tjänsten"),
+             L("AI term elsewhere in the ad", "AI-term på annat ställe i annonsen"),
+             L("bare \u201cAI\u201d, a real AI role (1 in 8)", "bara \u201dAI\u201d, verklig AI-tjänst (1 av 8)"),
+             L("bare \u201cAI\u201d, the rest", "bara \u201dAI\u201d, övriga")]
+    for k, ((col, op), txt, v) in enumerate(zip(fills, items, segs)):
+        lx = x0 + (k % 2) * 316; ly = 142 + (k // 2) * 17
+        p.append(f'<rect x="{lx}" y="{ly - 9}" width="11" height="11" fill="{col}" opacity="{op}"/>')
+        p.append(f'<text x="{lx + 17}" y="{ly}" font-size="11" fill="{ink}">{h(txt)} '
+                 f'<tspan fill="{mute}">{f1(v)}</tspan></text>')
+    p.append("</svg>")
+    cap = L(f"How Swedish job advertisements mention AI, {per}, share of all advertisements",
+            f"Hur svenska jobbannonser nämner AI {per}, andel av alla annonser")
+    return f'<p class="bsrc" style="margin:0 0 4px">{h(cap)}</p>' + "".join(p)
+
+
+def washing_stack_svg(t, lang="en"):
+    """The October figure as ONE stacked chart (ML, 29 Sep 2026).
+
+    Bottom to top: the floor (dark blue); up to the ceiling (light blue); up to every advertisement
+    that mentions AI at all (grey). The two blue layers are our estimate of demand, the grey layer
+    is the part of "every mention" we do not trust, and the full height is the naive count. It
+    replaces the four-line chart, where the reader had to work out which lines nest in which.
+
+    Arithmetic: all = whole-text + bare-only (disjoint); ceiling = whole-text + share x bare-only;
+    so grey = all - ceiling = the bare-only mentions that hand-reading does not find to be AI roles.
+    """
+    ys, fl, ce, bd, i0 = washing_series(t)
+    al = [w + b for w, b in zip(t["values"][i0:], t["band_values"][i0:])]
+    n = len(ys)
+    pf = max(1, int(t["provisionalFrom"]) - i0)
+    L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
+    pc = (lambda v: f"{v:.1f}".replace(".", ",") + " %") if lang == "sv" else (lambda v: f"{v:.1f}%")
+    W, H = 640, 208
+    x0, x1, top, bot = 34, 452, 26, 182
+    ymax = max(al) * 1.05
+    X = lambda i: x0 + i / (n - 1) * (x1 - x0)
+    Y = lambda v: bot - v / ymax * (bot - top)
+    ink, mute = "var(--ink-2)", "var(--muted)"
+    p = [f'<svg class="rankchart trend" style="max-height:none" viewBox="0 0 {W} {H}" role="img" aria-label="'
+         f'{h(L("Swedish job advertisements that mention AI, stacked: floor, up to the ceiling, and the rest",
+                "Svenska jobbannonser som nämner AI, staplat: golv, upp till taket och resten"))}">']
+    for tk in range(0, int(ymax) + 1):
+        gy = Y(tk)
+        p.append(f'<line x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}" stroke="var(--border)" '
+                 f'stroke-width="{1 if tk else 1.2}"/>')
+        p.append(f'<text x="{x0-6}" y="{gy+4:.1f}" text-anchor="end" font-size="11" fill="{mute}">'
+                 f'{tk}{" %" if lang == "sv" else "%"}</text>')
+    for i, yr in enumerate(ys):
+        if yr % 2 == 0 and i < n - 1:
+            p.append(f'<text x="{X(i):.1f}" y="{H-6}" text-anchor="middle" font-size="11" fill="{mute}">{yr}</text>')
+    p.append(f'<text x="{X(n - 1):.1f}" y="{H-6}" text-anchor="middle" font-size="11" fill="{mute}">'
+             f'{h(L(f"{ys[-1]} (Jan\u2013Jun)", f"{ys[-1]} (jan\u2013jun)"))}</text>')
+    def band(lo, hi, fill, op):
+        pts = " ".join(f"{X(i):.1f},{Y(hi[i]):.1f}" for i in range(n)) + " " + \
+              " ".join(f"{X(i):.1f},{Y(lo[i]):.1f}" for i in reversed(range(n)))
+        p.append(f'<polygon points="{pts}" fill="{fill}" opacity="{op}"/>')
+    zero = [0] * n
+    band(ce, al, "var(--muted)", .32)
+    band(fl, ce, "var(--c1)", .38)
+    band(zero, fl, "var(--c1)", .95)
+    # the provisional part-year: a light veil and a label, rather than dashing three edges
+    # Part-year: reviewers (29 Sep 2026) found the lighter veil washed out the category colours
+    # and read as part of a label. A dashed rule at the last full year and a named axis tick instead.
+    xp = X(pf - 1)
+    p.append(f'<line x1="{xp:.1f}" y1="{top}" x2="{xp:.1f}" y2="{bot}" stroke="{mute}" stroke-width="1" stroke-dasharray="3 3"/>')
+    p.append(f'<text x="{x0 - 30}" y="{top - 12}" font-size="10.5" fill="{mute}">'
+             f'{h(L("Share of all job advertisements on Platsbanken", "Andel av alla jobbannonser på Platsbanken"))}</text>')
+    # Right-hand gutter as a SUM, read from the bottom up (ML, 29 Sep 2026): each "+" line is one
+    # layer's own size, at the layer's middle; each "=" line is a running total, at the edge it
+    # names. Floor + the addition up to the ceiling = AI demand; + AI talk (grey) = every mention.
+    lx = x1 + 12
+    add, rest = ce[-1] - fl[-1], al[-1] - ce[-1]
+    rows = [  # (y, text, bold, colour, swatch)
+        (Y(fl[-1] / 2), L(f"Floor {pc(fl[-1])}", f"Golv {pc(fl[-1])}"), False, ink, ("var(--c1)", .95)),
+        (Y(fl[-1] + add / 2), L(f"+ up to ceiling {pc(add)}", f"+ upp till taket {pc(add)}"), False, ink, ("var(--c1)", .38)),
+        (Y(ce[-1]), L(f"= AI demand, at most {pc(ce[-1])}", f"= AI-efterfrågan, högst {pc(ce[-1])}"), True, "var(--c1)", None),
+        (Y(ce[-1] + rest / 2), L(f"+ AI talk {pc(rest)}", f"+ AI-prat {pc(rest)}"), False, ink, ("var(--muted)", .32)),
+        (Y(al[-1]), L(f"= every mention of AI {pc(al[-1])}", f"= alla som nämner AI {pc(al[-1])}"), True, ink, None),
+    ]
+    placed = []
+    for r in sorted(rows, key=lambda r: -r[0]):                  # bottom first
+        y = min(r[0], placed[-1][0] - 17) if placed else r[0]
+        placed.append((y,) + r[1:])
+    for y, txt, bold, col, swatch in placed:
+        tx = lx + (14 if swatch else 0)
+        if swatch:
+            p.append(f'<rect x="{lx}" y="{y - 8:.1f}" width="9" height="9" fill="{swatch[0]}" opacity="{swatch[1]}"/>')
+        p.append(f'<text x="{tx}" y="{y + 1:.1f}" font-size="11" fill="{col}"'
+                 f'{" font-weight=\"700\"" if bold else ""}>{h(txt)}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
+def washing_legend(lang="en"):
+    """Legend under the October figure: one line per layer, with a real example where it helps.
+    Rewritten 29 Sep 2026 for the stacked design; the "one in eight" point is now in the text,
+    spelled out, because ML found it unreadable in compressed form."""
+    L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
+    sw = lambda fill, op: (f'<svg width="14" height="12"><rect x="0" y="1" width="14" height="10" '
+                           f'fill="{fill}" opacity="{op}"/></svg>')
+    rows = [
+        (sw("var(--c1)", .95), L("Floor", "Golv"),
+         L("the job itself asks for a named AI skill. Example: a software developer required to use AI "
+           "tools in coding.",
+           "själva tjänsten kräver en namngiven AI-kompetens. Exempel: en systemutvecklare som ska ha "
+           "erfarenhet av AI-verktyg i kodarbetet.")),
+        (sw("var(--c1)", .38), L("Up to the ceiling", "Upp till taket"),
+         L("AI terms elsewhere in the advertisement, and advertisements that only say \u201cAI\u201d "
+           "but turn out, when read by hand, to be genuine AI roles. Example: a specialist advising on "
+           "EU AI regulation.",
+           "AI-termer på andra ställen i annonsen, och annonser som bara säger \u201dAI\u201d men vid "
+           "manuell läsning visar sig gälla en verklig AI-tjänst. Exempel: en specialist som ger råd om "
+           "EU:s AI-regler.")),
+        (sw("var(--muted)", .32), L("AI talk", "AI-prat"),
+         L("advertisements that only say \u201cAI\u201d and name no skill or tool, for instance an "
+           "employer describing itself as AI-driven. We do not count these as demand.",
+           "annonser som bara säger \u201dAI\u201d och inte anger någon kompetens eller något verktyg, "
+           "till exempel en arbetsgivare som beskriver sig som AI-driven. Dem räknar vi inte som "
+           "efterfrågan.")),
+    ]
+    lead = L("Floor + up to the ceiling = AI demand. Adding the AI talk gives every mention of AI.",
+             "Golv + upp till taket = AI-efterfrågan. Med AI-pratet blir det alla som nämner AI.")
+    items = "".join(
+        f'<div style="display:flex;gap:8px;align-items:baseline;margin:2px 0">'
+        f'<span style="flex:0 0 14px">{sw_}</span>'
+        f'<span><b>{h(name)}</b>: {h(txt)}</span></div>' for sw_, name, txt in rows)
+    return (f'<div class="bleg" style="font-size:8.9pt;line-height:1.35;color:var(--ink-2);'
+            f'margin:4px 0 8px">{items}</div>')   # lead line dropped: the chart margin shows the sum
+
+
+def washing_legend_lines(lang="en"):
+    """Superseded 29 Sep 2026 by the stacked design; kept for the four-line chart."""
+    L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
+    rows = [
+        ('<svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke="var(--c1)" stroke-width="3"/></svg>',
+         L("Floor", "Golv"),
+         L("the job itself asks for a named AI skill. Example: a software developer required to use "
+           "AI tools in coding.",
+           "själva tjänsten kräver en namngiven AI-kompetens. Exempel: en systemutvecklare som ska ha "
+           "erfarenhet av AI-verktyg i kodarbetet.")),
+        ('<svg width="22" height="10"><rect x="0" y="0" width="22" height="10" fill="var(--c1)" opacity=".2"/>'
+         '<line x1="0" y1="1" x2="22" y2="1" stroke="var(--c1)" stroke-width="1.5"/></svg>',
+         L("Ceiling", "Tak"),
+         L("also counts AI terms elsewhere in the advertisement, and the one in eight bare mentions "
+           "of \u201cAI\u201d that turn out, when read by hand, to be genuine AI roles. Example: a "
+           "specialist advising on EU AI regulation, whose advertisement names no AI technique. The "
+           "blue band between floor and ceiling is our estimate of demand for AI skills.",
+           "räknar också AI-termer på andra ställen i annonsen, och den var åttonde annons med bara "
+           "ordet AI som vid manuell läsning visar sig gälla en verklig AI-tjänst. Exempel: en "
+           "specialist som ger råd om EU:s AI-regler, vars annons inte nämner någon AI-teknik. Det "
+           "blå bandet mellan golv och tak är vår bedömning av efterfrågan på AI-kompetens.")),
+        ('<svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke="var(--c2)" stroke-width="3"/></svg>',
+         L("Only mentions AI", "Nämner bara AI"),
+         L("says \u201cAI\u201d but names no skill or tool, for instance an employer describing itself "
+           "as AI-driven. The one in eight of these that are genuine AI roles are also counted in the "
+           "ceiling.",
+           "säger \u201dAI\u201d men anger ingen kompetens eller något verktyg, till exempel en "
+           "arbetsgivare som beskriver sig som AI-driven. Den var åttonde av dessa som gäller en "
+           "verklig AI-tjänst räknas också in i taket.")),
+        ('<svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke="var(--muted)" '
+         'stroke-width="2" stroke-dasharray="6 3"/></svg>',
+         L("Every mention of AI", "Alla som nämner AI"),
+         L("the naive count: every advertisement that mentions AI in any way, that is, those that "
+           "only mention AI plus those that name a specific AI term. It is the simplest way to count "
+           "\u201cAI jobs\u201d, and it overstates demand.",
+           "den naiva räkningen: varje annons som nämner AI på något sätt, alltså de som bara nämner "
+           "AI plus de som nämner en specifik AI-term. Det är det enklaste sättet att räkna "
+           "\u201dAI-jobb\u201d, och det överskattar efterfrågan.")),
+    ]
+    items = "".join(
+        f'<div style="display:flex;gap:8px;align-items:baseline;margin:3px 0">'
+        f'<span style="flex:0 0 22px">{sw}</span>'
+        f'<span><b>{h(name)}</b>: {h(txt)}</span></div>' for sw, name, txt in rows)
+    return (f'<div class="bleg" style="font-size:8.9pt;line-height:1.35;color:var(--ink-2);'
+            f'margin:4px 0 8px">{items}</div>')
+
+
+def washing_tiles(t, lang="en"):
+    """Three headline figures above the chart: the reader gets the month in three numbers
+    before reading a line. Replaces the 28 Sep figures table, which repeated the chart."""
+    ys, fl, ce, bd, _ = washing_series(t)
+    L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
+    pc = (lambda v: f"{v:.2f}".replace(".", ",") + "<span> %</span>") if lang == "sv" else (lambda v: f"{v:.2f}<span>%</span>")
+    # Examples added 28 Sep 2026 on ML's suggestion. Both are real 2024 Platsbanken ads from the
+    # hand-labelled gold set (data/gold/gold_labels_master.json), paraphrased, employer unnamed:
+    #   floor   -- ad 31438313, ".NET-utvecklare", live feed Sep 2026, floor=1 on github copilot,
+    #              chatgpt, claude, llm, ai-agenter, all in the role text. Software developers are
+    #              35% of September's floor ads, so this is the modal floor ad. ML chose it on
+    #              28 Sep 2026 from five representative candidates, after rejecting a public-agency
+    #              controller (odd) and an accountant.
+    #   ceiling -- id 007e36a6ab..., "Forskare och specialist på AI regelverk"; gold tier ADJACENT
+    #              (about-AI, ceiling only), stratum S1 bare-AI: it names no AI term, so it reaches
+    #              the ceiling only through the hand-read share of the bare mentions. ML's example
+    #              of a lawyer advising on AI regulation is exactly this tier.
+    #   bare    -- no single ad; monitor.yaml: the band "is mostly company boilerplate".
+    tiles = [("", L("Floor", "Golv"), fl[-1], L("ask for a named AI skill in the role itself",
+                                                  "kräver en namngiven AI-kompetens i själva tjänsten"),
+              L("Example: a software developer required to use AI tools in coding, with AI agents a plus.",
+                "Exempel: en systemutvecklare som ska ha erfarenhet av AI-verktyg i kodarbetet, gärna också av AI-agenter.")),
+             ("", L("Ceiling", "Tak"), ce[-1], L("AI terms anywhere, plus the one in eight bare mentions that are real AI roles",
+                                                  "AI-termer var som helst, plus var åttonde allmänt AI-omnämnande som gäller en verklig AI-tjänst"),
+              L("Example: a specialist advising on EU AI regulation; the ad names no AI technique.",
+                "Exempel: en specialist som ger råd om EU:s AI-regler; annonsen nämner ingen AI-teknik.")),
+             ("b", L("Only mentions AI", "Nämner bara AI"), bd[-1], L("name no specific AI skill or tool",
+                                                                       "anger ingen specifik AI-kompetens eller AI-verktyg"),
+              L("Typically the employer describing itself, not the job.",
+                "Oftast arbetsgivaren som beskriver sig själv, inte tjänsten."))]
+    cells = "".join(f'<div class="bstat {c}" style="padding:10px 12px 9px"><span class="stripe"></span><div class="bk">{h(k)}</div>'
+                    f'<div class="bnum">{pc(v)}</div><div class="blab">{h(lab)}</div>'
+                    f'<div class="blab" style="margin-top:6px;color:var(--muted);font-style:italic">{h(ex)}</div></div>'
+                    for c, k, v, lab, ex in tiles)
+    cap = L(f"Share of Swedish job advertisements, {ys[-1]} so far",
+            f"Andel av svenska jobbannonser, {ys[-1]} hittills")
+    return (f'<div class="bstats" style="grid-template-columns:repeat(3,1fr);gap:10px;margin:2px 0 10px">{cells}</div>'
+            f'<p class="bsrc" style="margin:-6px 0 8px">{h(cap)}</p>')
 
 
 def trend_svg(t):
@@ -2448,8 +2772,9 @@ def partner_strip():
             f'<div style="display:flex;align-items:center;gap:34px;flex-wrap:wrap">'
             f'{mark("aiscaf", 30, "AISCAF")}{mark("wasphs", 15, "WASP-HS")}</div>'
             f'<p class="psub" style="margin:10px 0 0;font-size:12.5px">AI-Econ Lab, since 2019 · '
-            f'Örebro University and Ratio. Örebro is one of AISCAF\'s three nodes; the cluster, '
-            f'financed by WASP-HS, funds part of the lab\'s team.</p></div>')
+            f'The lab is based at Örebro University and Ratio. Örebro University is one of the '
+            f'three nodes of AISCAF, a research cluster financed by WASP-HS. The cluster funds '
+            f'part of the lab\'s team.</p></div>')
 
 def monitor():
     m = MONITOR
@@ -2743,6 +3068,63 @@ def brief(lang="en"):
     _i25 = _tt["years"].index(2025)
     _r25 = _tt["band_values"][_i25] / _tt["floor_values"][_i25]
     _b24, _b25 = _tt["band_values"][_tt["years"].index(2024)], _tt["band_values"][_i25]
+    _wce = _tt["values"][_ti] + CEIL_BAND_SHARE * _wbd          # the published ceiling
+    _wce_ratio = _wbd / _wce if _wce else 0.0
+    # Widest measure, every advertisement that mentions AI at all (ML, 29 Sep 2026): the
+    # bare-only share plus the share naming a specific AI term; the two groups do not overlap.
+    _wtn = _tt["values"][_ti]
+    _all = _wtn + _wbd
+    _all25 = _tt["values"][_i25] + _tt["band_values"][_i25]
+    _bdr = CEIL_BAND_SHARE * _wbd          # bare mentions hand-read as genuine AI roles (in the ceiling)
+    _bdg = _wbd - _bdr                     # the grey layer
+    _sm_ads = SAMEM["current"]["ads"]
+    _sm_ads_sv = f"{_sm_ads:,}".replace(",", "\u00a0")
+    _sm_rise_all = int(round((SAMEM["current"]["all"] / SAMEM["previous"]["all"] - 1) * 100, -1))
+    _sm_talk_prev = SAMEM["previous"]["talk"]
+    _ni = SAMEM["nonict"]            # share of AI demand outside ICT occupations (SSYK 25)
+    # International comparison (ML, 29 Sep 2026: only where Sweden is in the same source, and say
+    # how it is measured). Lightcast, via the Stanford AI Index, counts a posting when its WHOLE
+    # text names an AI skill, generic "AI" included, so its nearest equivalent in our data is the
+    # whole-text count plus every bare mention (the raw ceiling), not the floor.
+    _lc = {r["name"]: r["share"] for r in DEMAND["countries"]}
+    _lc_yr = DEMAND["meta"]["year"]
+    _lc_i = _tt["years"].index(_lc_yr) if _lc_yr in _tt["years"] else _i25
+    _our_lc = _tt["values"][_lc_i] + _tt["band_values"][_lc_i]
+    # Same year as Lightcast, and shown as a sum, so a reader can see why "all mentions" (2.4%)
+    # exceeds the ceiling (1.2%): the ceiling keeps only the hand-read share of bare mentions.
+    # ML, 29 Sep 2026, read 2.21% (bare, 2026) against 2.4% (all mentions, 2025) as a clash.
+    _lc_wt, _lc_bd = _tt["values"][_lc_i], _tt["band_values"][_lc_i]
+    _lc_ce = _lc_wt + CEIL_BAND_SHARE * _lc_bd
+    # Whether the published series already drops recruitment-only mentions (term list v1.6+).
+    _v16 = tuple(int(x) for x in DEF_VERSION.lstrip("v").split(".")) >= (1, 6)
+    _v16_en = "; from term list v1.6 we no longer count them" if _v16 else ""
+    _v16_sv = "; från termlista v1.6 räknas de inte längre" if _v16 else ""
+    _lcs_se, _lcs_us, _lcs_de, _lcs_our, _lcs_wt, _lcs_bd, _lcs_ce = (svn(f"{v:.1f}") for v in
+        (_lc["Sweden"], _lc["United States"], _lc["Germany"], _our_lc, _lc_wt, _lc_bd, _lc_ce))
+    _lc_fl = _tt["floor_values"][_lc_i]
+    _half = round(100 * (1 - CEIL_BAND_SHARE) * _lc_bd / _our_lc)     # share of all mentions that are bare "other"
+    # Reads the ladder left to right, one number per step, each a point on the same bar.
+    # ML, 29 Sep 2026: drop Lightcast, and make the light-blue/orange split concrete with an
+    # example of each. Light blue: the EU-AI-regulation adviser (gold, tier adjacent, a bare "AI"
+    # ad). Orange: self-description and recruitment use (measured, data/v16_scan/band_recruit.csv).
+    washing_read = L(
+        f"So far in {_tlast}, {_all:.1f}% of Swedish job advertisements mention AI in some way, but "
+        f"only {_wfl:.1f}% ask for a named AI skill in the job itself, our floor. Our ceiling, "
+        f"{_wce:.1f}%, adds AI terms elsewhere in the advertisement and the light-blue slice: bare "
+        f"mentions of \u201cAI\u201d that turn out, when read by hand, to be genuine AI roles, about "
+        f"one in eight. An example is a specialist advising on EU AI regulation, whose advertisement "
+        f"says \u201cAI\u201d but names no technique. The orange slice is the rest, such as an employer "
+        f"describing itself as AI-driven. Together the light-blue and orange slices are the "
+        f"advertisements that only mention AI, {_wbd:.1f}%, which is the orange line in the chart below.",
+        f"Hittills i år nämner {svn(f'{_all:.1f}')} procent av de svenska jobbannonserna AI på något "
+        f"sätt, men bara {svn(f'{_wfl:.1f}')} procent efterfrågar en namngiven AI-kompetens i själva "
+        f"tjänsten, vårt golv. Vårt tak, {svn(f'{_wce:.1f}')} procent, lägger till AI-termer på andra "
+        f"ställen i annonsen och den ljusblå delen: annonser med bara ordet AI som vid manuell läsning "
+        f"visar sig gälla en verklig AI-tjänst, ungefär var åttonde. Ett exempel är en specialist som "
+        f"ger råd om EU:s AI-regler, vars annons säger \u201dAI\u201d men inte nämner någon teknik. Den "
+        f"orange delen är resten, till exempel en arbetsgivare som beskriver sig som AI-driven. "
+        f"Tillsammans är den ljusblå och den orange delen de annonser som bara nämner AI, "
+        f"{svn(f'{_wbd:.1f}')} procent, vilket är den orange linjen i diagrammet nedan.")
 
     takeaways = {
         "exposure": L(
@@ -2762,20 +3144,39 @@ def brief(lang="en"):
             "Efterfrågan ungefär fördubblades på ett år i de flesta länder (Sverige 1,3% 2024 till 2,8% 2025). Den "
             "svenska livemätningen av jobbannonser är pulsen ovan."),
         "washing": L(
-            f"Two lines, and only one of them is demand. Advertisements that ask for a named AI skill "
-            f"in the role itself reached {_wfl:.2f}% in the {_tlast} part-year. Advertisements that mention AI and "
-            f"name no specific AI term at all reached {_wbd:.2f}%, and that band is not a skill "
-            f"requirement; it is an employer describing itself. In 2016 the band ran at "
-            f"{_r16:.1f} times the skill line. In 2025 it ran at {_r25:.1f} times, and it roughly "
-            f"doubled in that year alone, from {_b24:.2f}% to {_b25:.2f}%. The gap is now "
-            f"{_wratio:.1f} to one.",
-            f"Två linjer, och bara den ena är efterfrågan. Annonser som efterfrågar en namngiven "
-            f"AI-kompetens i själva rollen nådde {svn(f'{_wfl:.2f}')}% under delåret {_tlast}. Annonser som nämner "
-            f"AI utan att ange någon specifik AI-term nådde {svn(f'{_wbd:.2f}')}%, och det bandet är "
-            f"inget kompetenskrav; det är en arbetsgivare som beskriver sig själv. 2016 låg bandet på "
-            f"{svn(round(_r16,1))} gånger kompetenslinjen. 2025 låg det på {svn(round(_r25,1))} gånger, "
-            f"och det ungefär fördubblades bara under det året, från {svn(f'{_b24:.2f}')}% till "
-            f"{svn(f'{_b25:.2f}')}%. Gapet är nu {svn(f'{_wratio:.1f}')} mot ett."),
+            # 29 Sep 2026: the numbers moved into the ladder and the paragraph that reads it
+            # (washing_read); this line only says what the trend chart shows.
+            # Stacked design, 29 Sep 2026. The text reads the chart and spells out how the 2.2%
+            # "only mentions AI" splits between the ceiling and the grey AI talk; the legend carries
+            # the definitions, so the text does not repeat them.
+            # 29 Sep 2026, after three reviews: same months, not part-year against full year; the
+            # denominator stated; "larger than AI demand", not a colour. Numbers from SAMEM.
+            f"From January to June {_tlast}, {_all:.1f}% of the {_sm_ads:,} advertisements on "
+            f"Platsbanken mentioned AI in some way ({_all25:.1f}% over the whole of 2025), a share about "
+            f"{_sm_rise_all} per cent higher than in the same months of 2025. We count {_wce:.1f}% as AI "
+            f"demand: the floor, {_wfl:.1f}%, and a further {_wce - _wfl:.1f}% up to the ceiling. "
+            f"Strictly, we measure AI demand as a range, currently between {_wfl:.1f}% and "
+            f"{_wce:.1f}%. In all, {_wbd:.1f}% only mention AI. Read by hand, about one in eight of them "
+            f"concern genuine AI roles; those {_bdr:.1f} percentage points are counted in the ceiling, "
+            f"and the remaining {_bdg:.1f}% is the AI talk in grey. It has nearly doubled since the "
+            f"same months of 2025, from {_sm_talk_prev:.1f}%, and is now larger than AI demand. AI "
+            f"demand is also spreading beyond ICT jobs: {_ni['ceiling_now']:.0f}% of it is in other "
+            f"occupations, against {_ni['ceiling_first']:.0f}% in {_ni['first_year']}, while the floor "
+            f"has stayed near {_ni['floor_now']:.0f}%.",
+            f"Från januari till juni {_tlast} nämnde {svn(f'{_all:.1f}')} procent av de "
+            f"{_sm_ads_sv} annonserna på Platsbanken AI på något sätt ({svn(f'{_all25:.1f}')} procent "
+            f"under hela 2025), en andel ungefär {_sm_rise_all} procent högre än samma månader 2025. Som "
+            f"AI-efterfrågan räknar vi {svn(f'{_wce:.1f}')} procent: golvet, {svn(f'{_wfl:.1f}')} "
+            f"procent, och ytterligare {svn(f'{_wce - _wfl:.1f}')} procent upp till taket. Mer nyanserat "
+            f"mäter vi AI-efterfrågan som ett spann, i dag mellan {svn(f'{_wfl:.1f}')} och "
+            f"{svn(f'{_wce:.1f}')} procent. Sammanlagt nämner {svn(f'{_wbd:.1f}')} procent bara AI. Vid "
+            f"manuell läsning visar sig ungefär var åttonde av dem gälla en verklig AI-tjänst; de "
+            f"{svn(f'{_bdr:.1f}')} procentenheterna räknas in i taket och resterande "
+            f"{svn(f'{_bdg:.1f}')} procent är AI-pratet i grått. Det har nästan fördubblats sedan samma "
+            f"månader 2025, från {svn(f'{_sm_talk_prev:.1f}')} procent, och är nu större än "
+            f"AI-efterfrågan. AI-efterfrågan sprids också utanför IT-yrkena: {_ni['ceiling_now']:.0f} "
+            f"procent av den finns i andra yrken, mot {_ni['ceiling_first']:.0f} procent "
+            f"{_ni['first_year']}, medan golvet legat kvar kring {_ni['floor_now']:.0f} procent."),
         "adoption": L(
             f"Adoption climbs steeply with firm size: {smd['10-49']}% among small firms (10–49 employees) "
             f"against {smd['250-']}% among large ones (250+) in {SWEAD['meta']['year']}, and every size class has risen since {SWEAD['meta']['prev_year']}. "
@@ -2831,7 +3232,7 @@ def brief(lang="en"):
         "adoption": L(f"{SWEAD['meta']['source']}, {SWEAD['meta']['year']}",
                       f"SCB, IT-användning i företag (NV0116), {SWEAD['meta']['year']}"),
         "washing": L(f"JobTech / Platsbanken job advertisements, {DEF_LABEL}",
-                     f"JobTech / Platsbanken jobbannonser, {DEF_LABEL}"),
+                     f"JobTech / Platsbanken jobbannonser, termlista {DEF_VERSION}"),
         "barriers": L(f"{BARRIERS['meta']['source']}, {BARRIERS['meta']['year']}",
                       f"Eurostat, isoc_eb_ain2, {BARRIERS['meta']['year']}"),
         "outcomes": L(f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}",
@@ -2844,6 +3245,10 @@ def brief(lang="en"):
         "adoption": L(
             " * No 2021 figure is published for these rows.",
             " * Inget värde för 2021 publiceras för dessa rader."),
+        "washing": L(" 2026 covers January to June. The share of genuine AI roles among advertisements "
+                     "that only say \u201cAI\u201d (about one in eight) rests on 203 advertisements read by hand.",
+                     " 2026 avser januari till juni. Andelen verkliga AI-tjänster bland annonser med bara "
+                     "\u201dAI\u201d (ungefär var åttonde) bygger på 203 handlästa annonser."),
     }
 
     # ── the month's argument ──────────────────────────────────────────────────────────────
@@ -2895,12 +3300,16 @@ def brief(lang="en"):
             "om, skrivet i deras egna annonser, och det är den enda serien här som rör sig månad för "
             "månad."),
         "washing": L(
-            f"Reskilling policy starts from a premise worth measuring: that employers increasingly need "
-            f"AI competence. They increasingly mention AI, certainly. However, mentioning AI and asking "
-            f"for an AI skill are different things, and the two have come apart.",
-            f"Omställningspolitiken utgår från ett antagande värt att mäta: att arbetsgivarna i "
-            f"allt högre grad behöver AI-kompetens. Att de allt oftare nämner AI är klart. Men att "
-            f"nämna AI och att efterfråga en AI-kompetens är två olika saker, och de har glidit isär."),
+            # Rewritten 29 Sep 2026 on Yifan's review: the "certainly" fragment and the doubled
+            # "increasingly" went, and the premise is stated as an assumption, plainly.
+            # ML, 29 Sep 2026: "rests on" claimed more than we know about policy; the debate
+            # carries a general expectation, and that is what the sentence now says.
+            f"Much of the debate on reskilling carries a general expectation that employers will "
+            f"need more and more AI skills. Employers do mention AI more and more, but mentioning AI "
+            f"is not the same as asking for an AI skill, and the two have come apart.",
+            f"I debatten om omställning finns ofta en allmän förväntan att arbetsgivarna kommer att "
+            f"behöva allt mer AI-kompetens. Även om arbetsgivarna nämner AI allt oftare är det inte "
+            f"samma sak som att efterfråga AI-kompetens, och de två har börjat glida isär."),
         "adoption": L(
             "Which firms have actually started using AI, and which have not? Adoption is measured by "
             f"a survey of firms. Every industry uses far more AI than it did in {SWESEC['meta']['prev_year']}, "
@@ -2998,9 +3407,12 @@ def brief(lang="en"):
                      "Efterfrågan stiger och är fortfarande liten"),
                    L("The advertised margin, not demand itself",
                      "Den annonserade marginalen, inte efterfrågan")),
-        "washing": (L("Is the talk outrunning the demand?", "Springer pratet ifrån efterfrågan?"),
-                    L("Talk grows faster than skill", "Pratet växer snabbare än kompetensen"),
-                    L("A mention is not a job", "Ett omnämnande är inte ett jobb")),
+        # Kicker states the finding rather than asking a question (Yifan, 29 Sep 2026, after the
+        # BBC/EBU exemplar): the headline carries the result.
+        "washing": (L("Employers mention AI far more often than they ask for AI skills",
+                      "Arbetsgivarna nämner AI betydligt oftare än de efterfrågar AI-kompetens"),
+                    L("Talk grows faster than skill", "AI-pratet växer snabbare än kompetenskraven"),
+                    L("A mention is not a job", "Att nämna AI är inte att anställa för AI")),
         "adoption": (L("Are the laggards catching up?", "Hinner eftersläntrarna i kapp?"),
                      L("Catching up, and falling behind", "Hinner i kapp, och halkar efter"),
                      L("Use is not intensity", "Användning är inte omfattning")),
@@ -3026,16 +3438,33 @@ def brief(lang="en"):
             "annonseras inte, och en stigande linje betyder att arbetsgivarna oftare efterfrågar "
             "AI-kompetens, inte att AI skapat eller tagit bort ett jobb."),
         "washing": L(
-            "The band is a measurement of language, not of hypocrisy: an employer that mentions AI "
-            "without asking for it may be using AI perfectly well, and the words in an advertisement "
-            "are written to attract applicants. What the gap does show is that the AI most employers "
-            "name is not a competence they are recruiting for, so a reskilling response sized to the "
-            "talk would be sized to the wrong number.",
-            "Bandet mäter språk, inte hyckleri: en arbetsgivare som nämner AI utan att efterfråga det "
-            "kan mycket väl använda AI, och orden i en annons är skrivna för att locka sökande. Vad "
-            "gapet däremot visar är att den AI de flesta arbetsgivare nämner inte är en kompetens de "
-            "rekryterar för, så en omställningsinsats dimensionerad efter pratet skulle dimensioneras "
-            "efter fel tal."),
+            # Softened 28 Sep 2026 (ML): the advertised measures bound demand from below, and
+            # the bare mentions may carry an implicit expectation of AI use.
+            # Yifan, 29 Sep 2026: "not hypocrisy" answered a charge nobody made, and "should"
+            # instructed the reader. Now descriptive throughout.
+            # ML, 29 Sep 2026 (points D and E). A bare mention says SOMETHING, just not what;
+            # and some bare mentions are about the hiring itself. Measured before writing it:
+            # recruitment-only bare mentions were 1.8% of the band in 2025, 2.6% in 2026-Q1 and
+            # 4.8% in 2026-Q2 ("Vi använder AI som stöd i rekryteringsprocessen", Hubert.ai,
+            # Tengai), data/v16_scan/band_recruit.csv. From term list v1.6 they are not counted.
+            "An advertisement that only mentions AI says something about the employer, though not "
+            "exactly what. The employer may be signalling that it is at the forefront, describing "
+            "itself, expecting staff to use AI without naming it as a skill, or looking for "
+            "applicants who are curious about AI. A small but growing share mention AI only to "
+            "describe the hiring itself, such as an AI tool that conducts the first interview, and "
+            "some ask applicants not to use AI when applying" + _v16_en + ". Advertisements rarely "
+            "list everything a job requires, so even the ceiling captures only the demand that is "
+            "written down. How much of the bare mentions reflects "
+            "a real need is hard to judge from the advertisements alone.",
+            "En annons som bara nämner AI säger något om arbetsgivaren, men inte exakt vad. "
+            "Arbetsgivaren kan vilja signalera att den ligger i framkant, beskriva sig själv, räkna "
+            "med att de anställda använder AI utan att skriva det som ett krav, eller söka personer "
+            "som är nyfikna på AI. En liten men växande andel nämner AI bara för att beskriva själva "
+            "rekryteringen, till exempel ett AI-verktyg som håller den första intervjun, och vissa "
+            "ber de sökande att inte använda AI i ansökan" + _v16_sv + ". Annonser räknar dessutom "
+            "sällan upp allt som ett jobb kräver, så även taket fångar bara den efterfrågan som "
+            "faktiskt står i texten. Hur mycket av de allmänna AI-omnämnandena som "
+            "speglar ett verkligt behov är svårt att avgöra med annonserna ensamma."),
         "adoption": L(
             # Shortened on Yifan's review of the September brief: the original ran to five
             # sentences of caveat, three of which were about how to read a gap. This says the
@@ -3095,7 +3524,12 @@ def brief(lang="en"):
                            series_label=L("Sweden","Sverige"), cmp_label="EU",
                            lang="sv" if sv else "en")
     elif theme == "washing":
-        th_chart = washing_svg(TREND["trend"], "sv" if sv else "en")
+        # The ladder explains the numbers; the paragraph under it reads the ladder; the trend
+        # chart then shows the gap widening. The takeaway paragraph below says only that.
+        # ONE figure with a legend beneath (ML, 29 Sep 2026). washing_ladder() and washing_read
+        # are kept in the code but no longer shown.
+        th_chart = (washing_stack_svg(TREND["trend"], "sv" if sv else "en")
+                    + washing_legend("sv" if sv else "en"))
     elif theme == "adoption":
         # Two charts, not one. The month is about both cuts, and the sector cut is the one that
         # carries the finding: the spread across industries is wider than the spread across size
@@ -3168,8 +3602,8 @@ def brief(lang="en"):
   <header class="bhead">
     <div><p class="kicker">{L("AIEL Monitor · monthly brief","AIEL Monitor · månadsbrev")} · {issue}</p>
       <h1 class="btitle">{L("AI and the labour market","AI och arbetsmarknaden")}, {mname} {today.year}</h1>
-      <p class="bsub">{L("A monthly snapshot from the AI-Econ Lab: international, with Sweden in depth, on public data.", "En månatlig ögonblicksbild från AI-Econ Lab: internationell, med Sverige på djupet, byggd på öppna data.")}
-        {L("In focus this month","I fokus denna månad")}: {h(th_title)}{"" if th_title.rstrip()[-1:] in "?!." else "."}</p></div>
+      <p class="bsub">{L("A monthly snapshot of AI in the labour market from the AI-Econ Lab, covering international trends with Sweden in more depth, from public data.", "En månatlig överblick över AI på arbetsmarknaden från AI-Econ Lab, med internationella trender och Sverige på djupet, från öppna data.")}
+        {L("This month","Denna månad")}: {h(th_title)}{"" if th_title.rstrip()[-1:] in "?!." else "."}</p></div>
     <div class="bactions">
       <button class="btn primary" id="printbrief" type="button">{L("↓ Download PDF","↓ Ladda ner PDF")}</button>
       {subscribe}
@@ -3198,8 +3632,8 @@ def brief(lang="en"):
     </div>
     <div class="bpartner">
       <div class="bpartner-marks">{partner_mark("aiscaf", 18, "AISCAF")}{partner_mark("wasphs", 9, "WASP-HS")}</div>
-      <span>{L("Örebro University and RATIO. Örebro is one of AISCAF&#39;s three nodes; the cluster, financed by WASP-HS, funds part of the lab&#39;s team.",
-                "Örebro universitet och RATIO. Örebro är en av AISCAF:s tre noder; klustret, som finansieras av WASP-HS, avlönar en del av labbets medarbetare.")}</span>
+      <span>{L("The AI-Econ Lab is based at Örebro University and RATIO. Örebro University is one of the three nodes of AISCAF, a research cluster financed by WASP-HS. The cluster funds part of the lab&#39;s team.",
+                "AI-Econ Lab är baserat vid Örebro universitet och RATIO. Örebro universitet är en av tre noder i AISCAF, ett forskningskluster som finansieras av WASP-HS. Klustret finansierar en del av labbets medarbetare.")}</span>
     </div></footer>
 </article></div>"""
     return shell(f"{L('AIEL Monitor Brief','AIEL Monitor-brief')}, {mname} {today.year} · {SITE['brand']['name']}",
