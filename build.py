@@ -1138,10 +1138,11 @@ def dumbbell_svg(conds, gkey, active=False):
     return "".join(p)
 
 # Share of the bare-AI band that hand-reading finds to be genuine AI roles: 32 of 230 read over
-# four periods, re-derived on the v1.4 band as 12.8% (95% interval 8.9-18.1); v1.5 leaves the
-# band unchanged to the advertisement, so it carries over. Source of the published ceiling
-# (monitor.yaml, "The upper bound is now measured across the whole series"); 2025 checks out:
-# 1.06 + 0.128 x 1.38 = 1.24%.
+# four periods, re-derived on the v1.4 band as 12.8% (95% interval 8.9-18.1). v1.6 removes from
+# the band only recruitment-process mentions (none an AI role), so it is carried over; on the
+# smaller band it would be ~13.0% (2025) / 13.3% (2026 H1), inside the interval (revision log
+# v1.6). Source of the published ceiling (monitor.yaml, "The upper bound is now measured across
+# the whole series"); 2025 checks out: 1.057 + 0.128 x 1.359 = 1.23%.
 CEIL_BAND_SHARE = 0.128
 
 

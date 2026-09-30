@@ -77,8 +77,8 @@ def __getattr__(name):
 # label moved to v1.5 and the trend series did not, so the site served v1.4 numbers under a
 # v1.5 stamp for six days, with a 38x tile above a 32x chart. refresh_trend.py --check now
 # fails on that state; it did not exist then.
-DEF_VERSION = "v1.5"
-DEF_FP = "96b1f3f8caa38319"
+DEF_VERSION = "v1.6"
+DEF_FP = "f5df448d87c46d0d"
 DEF_LABEL = f"frozen {DEF_VERSION} term list"
 
 

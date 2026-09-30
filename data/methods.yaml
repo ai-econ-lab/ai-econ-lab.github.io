@@ -162,10 +162,26 @@ lexicon:
 # Version history. Transcribed from versions/v1_freeze_2026-07-24.json and
 # versions/v1_1_freeze_2026-07-31.json. Fingerprints are the config checksums.
 versions:
+  - version: "v1.6"
+    frozen: "29 September 2026"
+    fingerprint: "f5df448d87c46d0d"
+    current: true
+    summary: >-
+      The sixth re-freeze, and the first that changes no term. One rule stops text about how an
+      employer recruits from counting as AI demand: a chatbot interview, a notice about using
+      generative AI in the application, or a statement that the employer uses AI in recruitment.
+      It applies to the floor, the whole-text measure and the bare-AI band alike. The full
+      twenty-year series was reprocessed on it on 29 September 2026.
+    changes:
+      - "An AI mention that shares a sentence with, and lies within 120 characters of, an applicant-directed marker (chattintervju, rekryteringsprocess, urvalsprocess, jobbansökan, i din ansökan and similar) counts nowhere. An advertisement is removed only if every one of its AI mentions is of this kind."
+      - "Found in the live feed: from July 2026 one retailer's template invited every applicant to a chat interview with a recruitment chatbot, and 78 advertisements, 7.7% of live floor advertisements since July, entered the floor through the term `chatbot`."
+      - "Nothing moves before 2016, and the change grows with the spread of AI in recruitment: in 2025 the floor falls by 20 advertisements (0.549% to 0.544%), the whole-text measure by 29 and the bare-AI band by 80 (1.4%); in the first half of 2026 the band falls by 3.5%. The rise from a pooled 2006-08 base to 2025 goes from 37.8-fold to 37.5-fold, and the floor from 41.6-fold to 41.2-fold."
+    validation: "The rule was chosen from three drafts, each measured on the whole archive first. Every advertisement it removes was then read: 31 of 32 from the floor are correct, 56 of 69 from the whole-text measure and 327 of 347 from the band. The errors are known and small: archive text from 2016-17 that has no space after a full stop, and recruiter and HR jobs, where AI in recruitment is the job itself. Both are fixed at the next freeze. None of the 370 hand-labelled gold advertisements changes."
+    note: "The ceiling correction is carried over from v1.4. The rule removes only non-AI text from the band, so on the smaller band the correction would be about 13%, inside its interval of 8.9-18.1%, and the first-half 2026 ceiling 1.48% rather than 1.47%."
   - version: "v1.5"
     frozen: "19 August 2026"
     fingerprint: "96b1f3f8caa38319"
-    current: true
+    current: false
     summary: >-
       The fifth re-freeze, and the smallest so far in the series and the largest so far in the
       headline multiple. Four terms were read in the Platsbanken archives before removal rather
