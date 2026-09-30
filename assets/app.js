@@ -87,7 +87,7 @@ window.drawTrend = function drawTrend(){
   // endpoint
   const lx = X(YRS[YRS.length-1]), ly = Y(V[V.length-1]);
   g += `<circle cx="${lx}" cy="${ly}" r="4.5" fill="${CSS('--paper')}" stroke="${col}" stroke-width="2.4"/>`;
-  g += `<text class="ax" x="${lx-2}" y="${ly-11}" text-anchor="end" style="fill:${col};font-family:var(--sans);font-size:12px;font-weight:700">${V[V.length-1].toFixed(2)}%</text>`;
+  g += `<text class="ax" x="${lx-2}" y="${ly-11}" text-anchor="end" style="fill:${col};font-family:var(--sans);font-size:12px;font-weight:700">${hasCeil ? "Ceiling (total) " : ""}${V[V.length-1].toFixed(2)}%</text>`;
   svg.innerHTML = g;
   // hover
   const NS = "http://www.w3.org/2000/svg";
@@ -111,7 +111,7 @@ window.drawTrend = function drawTrend(){
     // Series names match the legend and the methods note: "names" is the whole-text measure,
     // "asks for" is the role-scoped floor. "Broad AI share" matched neither.
     let rows = hasCeil
-      ? `<div class="r"><span>Ceiling</span><b>${CE[bi].toFixed(2)}%</b></div>` +
+      ? `<div class="r"><span>Ceiling (total)</span><b>${CE[bi].toFixed(2)}%</b></div>` +
         `<div class="r"><span>AI term named anywhere</span><b>${N[bi].toFixed(2)}%</b></div>`
       : `<div class="r"><span>AI term named anywhere</span><b>${N[bi].toFixed(2)}%</b></div>`;
     if (hasFloor){
@@ -156,7 +156,7 @@ window.drawTrend();
     /* colours re-read per move so the theme toggle never leaves stale strokes behind */
     hv.style.stroke = CSS("--muted");
     hv.setAttribute("x1", xx); hv.setAttribute("x2", xx); hv.style.opacity = .5;
-    dot.setAttribute("cx", xx); dot.setAttribute("cy", Y(D.ai_ma[i]));
+    dot.setAttribute("cx", xx); dot.setAttribute("cy", Y(D.ceil_ma ? D.ceil_ma[i] : D.ai_ma[i]));
     dot.setAttribute("fill", CSS("--paper")); dot.setAttribute("stroke", CSS("--c1"));
     dot.setAttribute("stroke-width", 2.4); dot.style.opacity = 1;
     dotF.setAttribute("cx", xx); dotF.setAttribute("cy", Y(D.floor_ma[i]));
@@ -165,9 +165,10 @@ window.drawTrend();
     /* Row names match the chart legend verbatim, and the 12-month means come first because
        they are the lines the section says to read. */
     showTip(`<b>${label(D.m[i])}</b>` +
-      `<div class="r"><span>Names an AI skill, 12-month mean</span><b>${D.ai_ma[i].toFixed(2)}%</b></div>` +
+      (D.ceil_ma ? `<div class="r"><span>Ceiling (total), 12-month mean</span><b>${D.ceil_ma[i].toFixed(2)}%</b></div>` : "") +
+      `<div class="r"><span>AI term named anywhere, 12-month mean</span><b>${D.ai_ma[i].toFixed(2)}%</b></div>` +
       `<div class="r"><span>Asks for it in the role (floor), 12-month mean</span><b>${D.floor_ma[i].toFixed(2)}%</b></div>` +
-      `<div class="r"><span>Single month, unsmoothed</span><b>${D.ai[i].toFixed(2)}%</b></div>` +
+      `<div class="r"><span>Ceiling, single month, unsmoothed</span><b>${(D.ceil ? D.ceil[i] : D.ai[i]).toFixed(2)}%</b></div>` +
       `<div class="r"><span>Distinct advertisements</span><b>${D.ads[i].toLocaleString("en-GB")}</b></div>`,
       ev.clientX, ev.clientY);
   };

@@ -393,7 +393,7 @@ COPY = {
   se_sub="Every advertisement on the public job board",
   src_label="Source: ",
   se_src=f"JobTech / Platsbanken job ads (CC0), frozen {DEF_VERSION} term list, distinct advertisements",
-  band_hi="ceiling", band_lo="floor",
+  band_hi="ceiling (total)", band_lo="floor",
   se_body=(r"A \textbf{{range}}, not a single number: the floor counts an advertisement only when "
            r"an AI skill is asked of the person hired; the ceiling adds AI terms anywhere and the "
            r"hand-read share of ads that only say ``AI''. Ads naming an AI term went from {v0} of "
@@ -402,7 +402,7 @@ COPY = {
            r"{y1} range is \textbf{{{fl} to {ceiling}}}. Both lines rest on a term list and "
            r"cover only the AI demand that words reveal."),
   se_live=(r"Right now ({asof}): of the {n} most recent advertisements, AI demand lies between "
-           r"{floor} (floor) and {ceil} (ceiling). This is the only figure on the "
+           r"{floor} (floor) and {ceil} (ceiling, total). This is the only figure on the "
            r"sheet that moves daily."),
   cap_q="How capable are AI systems?", cap_cond="at 50\\% success",
   # Taken from the copy table, NOT from monitor.yaml: the yaml is English-only, so pulling
@@ -490,7 +490,7 @@ COPY = {
   se_sub="Baserat på samtliga annonser på Platsbanken",
   src_label="Källa: ",
   se_src=f"JobTech / Platsbanken (CC0), fryst termlista {DEF_VERSION}, distinkta annonser",
-  band_hi="tak", band_lo="golv",
+  band_hi="tak (totalt)", band_lo="golv",
   se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: golvet räknar en annons bara när en "
            r"AI-kompetens efterfrågas av den som ska anställas; taket lägger till AI-termer var som "
            r"helst i annonsen och var åttonde annons som bara säger ''AI'' men vid manuell läsning "
@@ -501,7 +501,7 @@ COPY = {
            r"och intervallet för {y1} är \textbf{{{fl} till {ceiling}}}. Båda linjerna vilar "
            r"på en termlista och rymmer bara den AI-efterfrågan som orden visar."),
   se_live=(r"Just nu ({asof}): av de {n} senaste annonserna ligger AI-efterfrågan mellan "
-           r"{floor} (golv) och {ceil} (tak). Det är den enda siffran på bladet som "
+           r"{floor} (golv) och {ceil} (tak, totalt). Det är den enda siffran på bladet som "
            r"ändras dagligen."),
   cap_q="Hur kapabla är AI-systemen?", cap_cond="vid 50\\% träffsäkerhet",
   cap_lab=("de längsta expertuppgifter som AI-agenter klarar; längden har fördubblats var "

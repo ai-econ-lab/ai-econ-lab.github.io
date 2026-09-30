@@ -83,12 +83,11 @@ captions:
     created or removed any job. Not all hiring is advertised, so this is the advertised margin
     of demand rather than demand itself.
   guard: >-
-    The two lines differ in where we read. The lower line counts an ad only when AI is named in
-    the job's own requirements, so ads that mention AI while describing the company are left
-    out; the upper line counts a named AI term anywhere in the ad, company description
-    included. The upper line is not the ceiling: the ceiling also counts the one in eight ads
-    that only say "AI" and turn out, read by hand, to be genuine AI roles. That correction is
-    measured by year, so the ceiling is drawn on the annual chart, not the monthly one.
+    The lines differ in where we read. The floor counts an ad only when AI is named in the
+    job's own requirements, so ads that mention AI while describing the company are left out.
+    The thin line counts a named AI term anywhere in the ad, company description included. The
+    ceiling (total) adds the one in eight ads that only say "AI" and turn out, read by hand, to
+    be genuine AI roles.
   floor_sv: >-
     Andelen annonser på Platsbanken som ber den som anställs att arbeta med AI, med en namngiven
     färdighet som maskininlärning bland tjänstens egna krav.

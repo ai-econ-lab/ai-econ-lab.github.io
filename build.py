@@ -1587,7 +1587,8 @@ def trend_svg(t):
                  f'fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3"/>')
     lx, ly = pts[-1]
     p.append(f'<circle class="trenddot" cx="{lx:.1f}" cy="{ly:.1f}" r="4"/>')
-    p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-8:.1f}" text-anchor="end">{vs[-1]:.2f}%</text>')
+    lab = "Ceiling (total) " if t.get("ceiling_values") else ""
+    p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-8:.1f}" text-anchor="end">{lab}{vs[-1]:.2f}%</text>')
     p.append("</svg>")
     return "".join(p)
 
@@ -1723,18 +1724,23 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
     # 30 Sep 2026 (ML): lead with the floor-to-ceiling range, the same numbers and the same
     # words as the brief, so a reader arriving from the brief's 1.5% finds 1.5% here.
     ce_c, ce_p = t["ceiling_values"][pf - 1], t["ceiling_values"][-1]
+    # ML, 30 Sep 2026: say what the naive count would be, every ad that mentions AI in any form.
+    nv_c = t["values"][pf - 1] + t["band_values"][pf - 1]
+    nv_p = t["values"][-1] + t["band_values"][-1]
     return f"""<div class="panel">
     <div class="panelhead"><span class="ttl">{h(title)}</span>
       <span class="livechip"><i></i>live</span></div>
     <div class="panelbody"><p class="psub">We measure AI demand in job ads as a range. The floor counts ads that ask for
-        AI in the job's own requirements; the ceiling adds AI terms anywhere in the ad, and the one in eight ads
-        that only say \u201cAI\u201d which turn out, read by hand, to be genuine AI roles. In {yr_c} AI demand was
+        AI in the job's own requirements; the ceiling (total) adds AI terms anywhere in the ad, and the one in eight
+        ads that only say \u201cAI\u201d which turn out, read by hand, to be genuine AI roles. In {yr_c} AI demand was
         between <b>{fl_c:.2f}%</b> and <b>{ce_c:.2f}%</b> of ads; {yr_p} so far{cov} runs higher, between
-        <b>{fl_p:.2f}%</b> and <b>{ce_p:.2f}%</b> (provisional). Ads naming an AI term anywhere, the thin middle line,
+        <b>{fl_p:.2f}%</b> and <b>{ce_p:.2f}%</b> (provisional). Counting naively every ad that mentions AI in any
+        form, a bare \u201cAI\u201d included, would bring the share to {nv_c:.2f}% in {yr_c} and {nv_p:.2f}% in
+        {yr_p} so far; most of that difference is AI talk rather than demand. Ads naming an AI term anywhere, the thin middle line,
         reached {ai_c:.2f}% in {yr_c}, {tm["multiple"]:.0f} times the pooled {h(tm["base_years"]).replace("-", "\u2013")}
         level, with generative-AI skills now {tm["genai_share_of_ai_pct"]}% of them.</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="AI demand in Swedish job ads, floor to ceiling, 2006 onwards"></svg>
-      <div class="legend"><span><i style="background:var(--c1)"></i>Ceiling</span>
+      <div class="legend"><span><i style="background:var(--c1)"></i>Ceiling (total)</span>
         <span><i style="background:var(--muted);height:2px"></i>AI term named anywhere</span>
         <span><i style="background:var(--c2)"></i>Floor: asks for AI in the role</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
@@ -1764,7 +1770,7 @@ def livewindow_block():
     if lw.get("bare_band_pct") is not None:
         ce = nm + CEIL_BAND_SHARE * float(lw["bare_band_pct"])
         lead = (f"Of the {n} most recent job ads, AI demand lies between {fl:.2f}% (floor) and "
-                f"{ce:.2f}% (ceiling), and {nm:.2f}% name an AI term somewhere in the ad")
+                f"{ce:.2f}% (ceiling, total), and {nm:.2f}% name an AI term somewhere in the ad")
     else:
         lead = (f"Of the {n} most recent job ads, {nm:.2f}% name an AI term somewhere in the ad "
                 f"and {fl:.2f}% ask for one in the job itself (floor)")
@@ -1853,17 +1859,21 @@ def monthly_svg(md):
             p.append(f'<text class="tick" x="{X(i)+5:.1f}" y="{top+10}" text-anchor="start" '
                      f'opacity=".65">ChatGPT released</text>')
             break
-    raw = " ".join(f'{X(i):.1f},{Y(r["ai"]):.1f}' for i, r in enumerate(s))
+    # 30 Sep 2026: the bold blue line is the CEILING (total), as on the annual chart; the
+    # named-anywhere line is thin and muted inside the range. The faint line is the raw month
+    # of the ceiling.
+    raw = " ".join(f'{X(i):.1f},{Y(r["ceil"]):.1f}' for i, r in enumerate(s))
     p.append(f'<polyline points="{raw}" fill="none" stroke="var(--c1)" stroke-width="1" opacity=".32"/>')
-    for key, colour in (("floor_ma", "var(--c2)"), ("ai_ma", "var(--c1)")):
+    for key, colour, wd in (("ai_ma", "var(--muted)", 1.4), ("floor_ma", "var(--c2)", 2.2),
+                            ("ceil_ma", "var(--c1)", 2.2)):
         pts = " ".join(f'{X(i):.1f},{Y(r[key]):.1f}' for i, r in enumerate(s))
-        p.append(f'<polyline points="{pts}" fill="none" stroke="{colour}" stroke-width="2.2"/>')
-    lx, ly = X(n - 1), Y(s[-1]["ai_ma"])
+        p.append(f'<polyline points="{pts}" fill="none" stroke="{colour}" stroke-width="{wd}"/>')
+    lx, ly = X(n - 1), Y(s[-1]["ceil_ma"])
     p.append(f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="4" fill="var(--c1)"/>')
     p.append(f'<text class="trendcov" x="{lx-6:.1f}" y="{ly-22:.1f}" text-anchor="end">'
-             f'12-mo mean, {month_label(md["meta"]["last"])}</text>')
+             f'Ceiling (total), 12-mo mean, {month_label(md["meta"]["last"])}</text>')
     p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-9:.1f}" text-anchor="end">'
-             f'{md["meta"]["last_ma"]:.2f}%</text>')
+             f'{md["meta"]["last_ceil_ma"]:.2f}%</text>')
     p.append("</svg>")
     return "".join(p)
 
@@ -1875,15 +1885,15 @@ def monthly_block():
             f'{h(m["last"])}</div>\n'
             f'<p class="secintro" style="margin-top:4px">The same measure at monthly resolution, '
             f'{m["n_months"]} months built on <b>{m["total_ads"]:,}</b> distinct advertisements. The faint line is the raw '
-            f'month and the bold lines are 12-month trailing means: ads naming an AI term anywhere in blue, '
-            f'the floor in orange. A single month carries little weight, because Swedish hiring falls '
+            f'month of the ceiling and the bold lines are 12-month trailing means: the ceiling (total) in blue, '
+            f'the floor in orange, and the thin grey line between them the ads naming an AI term anywhere. A single month carries little weight, because Swedish hiring falls '
             # The level is DATED, never "now": the archive advances one JobTech quarter at a
             # time, so between releases this number stands still while the live window below
             # keeps moving (1.18% vs 1.14% read as a contradiction until 4 Sep 2026).
             f'sharply every July and again in December, so the trend is the line to read. On that basis '
-            f'the named-anywhere line stands at <b>{m["last_ma"]:.2f}%</b> in {month_label(m["last"], full=True)}, '
-            f'the latest month in the quarterly archive, against '
-            f'<b>{m["last_floor_ma"]:.2f}%</b> for the floor; the live feed below tracks the weeks since.</p>\n'
+            f'AI demand lies between <b>{m["last_floor_ma"]:.2f}%</b> (floor) and <b>{m["last_ceil_ma"]:.2f}%</b> '
+            f'(ceiling, total) in {month_label(m["last"], full=True)}, the latest month in the quarterly archive; '
+            f'the live feed below tracks the weeks since.</p>\n'
             # The two-lines explainer sits with this chart (moved 12 Aug 2026, Lydia's review):
             # it had floated between the stat tiles and this section, two scrolls from either
             # chart that actually draws the two lines.
@@ -1911,6 +1921,8 @@ def monthly_block():
                           "ai": [r["ai"] for r in MONTHLY["series"]],
                           "ai_ma": [r["ai_ma"] for r in MONTHLY["series"]],
                           "floor_ma": [r["floor_ma"] for r in MONTHLY["series"]],
+                          "ceil": [r["ceil"] for r in MONTHLY["series"]],
+                          "ceil_ma": [r["ceil_ma"] for r in MONTHLY["series"]],
                           "ads": [r["ads"] for r in MONTHLY["series"]]},
                          separators=(",", ":"))
             + '</script>\n'
@@ -1919,9 +1931,10 @@ def monthly_block():
             # colour-blind; the faint raw series needed naming most, since it is the one a
             # reader mistakes for noise in the data rather than in hiring.
             + '<div class="dblegend">'
-              '<span><i style="background:var(--c1)"></i>AI term named anywhere, 12-month mean</span>'
+              '<span><i style="background:var(--c1)"></i>ceiling (total), 12-month mean</span>'
+              '<span><i style="background:var(--muted);height:2px"></i>AI term named anywhere, 12-month mean</span>'
               '<span><i style="background:var(--c2)"></i>asks for it in the role (floor), 12-month mean</span>'
-              '<span><i style="background:var(--c1);opacity:.32"></i>single month, unsmoothed</span>'
+              '<span><i style="background:var(--c1);opacity:.32"></i>ceiling, single month, unsmoothed</span>'
               '</div>\n'
             + figfooter("monthly_ai_share.csv",
                         # The monthly block states the definition IT was built from, which is
@@ -3939,10 +3952,11 @@ def emit_data(out):
                                                              "JobTech historical job ads (CC0) · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     with (d / "monthly_ai_share.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
-        w.writerow(["year_month", "ads", "ai_any_pct", "ai_any_pct_12m_mean",
-                    "floor_pct", "floor_pct_12m_mean"])
+        w.writerow(["year_month", "ads", "ceiling_pct", "ceiling_pct_12m_mean", "ai_any_pct",
+                    "ai_any_pct_12m_mean", "floor_pct", "floor_pct_12m_mean"])
         for r in MONTHLY["series"]:
-            w.writerow([r["m"], r["ads"], r["ai"], r["ai_ma"], r["floor"], r["floor_ma"]])
+            w.writerow([r["m"], r["ads"], r["ceil"], r["ceil_ma"], r["ai"], r["ai_ma"],
+                        r["floor"], r["floor_ma"]])
     (d / "monthly_ai_demand.svg").write_text(chart_standalone(monthly_svg(MONTHLY), "Swedish job ads asking for an AI skill, monthly",
                          f'JobTech historical job ads (CC0) · {MONTHLY["meta"].get("definition", f"frozen {DEF_VERSION}")} · distinct advertisements · {MONTHLY["meta"]["first"]}-{MONTHLY["meta"]["last"]} · AI-Econ Lab'), encoding="utf-8")
     with (d / "working_conditions.csv").open("w", newline="", encoding="utf-8") as f:
