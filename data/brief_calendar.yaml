@@ -3,6 +3,13 @@
 # `theme` = which built chart+takeaway to show for now (exposure/demand/adoption/outcomes);
 # months whose dedicated view isn't built yet map to the closest one until the 2-weeks-ahead
 # monthly draft builds it out. `title` is the displayed monthly theme.
+# HOLD (ML, 30 Sep 2026). An issue listed here is not published on its calendar month: without
+# BRIEF_MONTH_OVERRIDE the site keeps showing `show` instead. The October 2026 issue is timed to
+# the joint AISCAF launch with Uppsala/Tillväxtanalys, to be set at the 12 Oct meeting with Oskar;
+# its figures are refreshed right before release. To release: delete the entry and rebuild.
+hold:
+  "2026-10": {show: "2026-09"}
+
 months:
   1:  {title_en: "Augmentation or automation?",              title_sv: "Förstärkning eller automatisering?",       theme: demand}
   2:  {title_en: "Which AI skills employers want",           title_sv: "AI-kompetenser i jobbannonserna",          theme: demand}

@@ -3043,6 +3043,11 @@ def brief(lang="en"):
     _ov = _os.environ.get("BRIEF_MONTH_OVERRIDE")     # "YYYY-MM" to draft a specific issue (monthly Action)
     if _ov:
         _y, _m = _ov.split("-"); today = date(int(_y), int(_m), 1)
+    else:
+        # A held issue is not published on its calendar month (brief_calendar.yaml `hold`).
+        _held = (load("brief_calendar.yaml").get("hold") or {}).get(f"{today.year}-{today.month:02d}")
+        if _held:
+            _y, _m = _held["show"].split("-"); today = date(int(_y), int(_m), 1)
     sv = lang == "sv"
     def L(en, se): return se if sv else en
     def svn(x): return str(x).replace(".", ",") if sv else str(x)
