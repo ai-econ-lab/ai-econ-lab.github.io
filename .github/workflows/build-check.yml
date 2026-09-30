@@ -33,7 +33,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - run: pip install "PyYAML~=6.0"
+      # pandas: check_imports.py imports refresh_washing_samemonths.py, which needs it.
+      - run: pip install "PyYAML~=6.0" "pandas~=3.0"
 
       # The one-pager sheets are typeset, so without this build.py keeps whatever PDFs are
       # committed and says nothing. Installing it here means the LaTeX path is exercised on
