@@ -13,3 +13,9 @@ notes/
 # Pickups belong in the PRIVATE labour-market-monitor repo.
 SESSION_PICKUP.md
 build/
+
+# iCloud conflict copies ("name 2.ext", "folder 2/"), never publish
+* 2.*
+* 2/
+.nojekyll 2
+CNAME 2
