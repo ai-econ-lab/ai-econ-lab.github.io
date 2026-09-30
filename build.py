@@ -2206,7 +2206,11 @@ def demand_section(tiles, seg):
   <h2 class="sec">How much are employers hiring for AI?</h2>
   <p class="secintro">The share of job postings that require AI skills, by country in <b>{h(dmt['year'])}</b>
     ({h(dmt['source'])}), Sweden marked. {h(dmt['note_prev'])} This international series (Lightcast) is a separate
-    source from the lab's own Swedish measure below, so their levels are not directly comparable.</p>
+    source from the lab's own Swedish measure below, so their levels are not directly comparable.
+    Figures: <a href="{h(dmt['links']['lightcast'])}">Lightcast</a> and the
+    <a href="{h(dmt['links']['report_chart'])}">AI Index 2026 country chart</a>, where Sweden appears.
+    Method: <a href="{h(dmt['links']['appendix'])}">the report's appendix, written by Lightcast</a>, and
+    <a href="{h(dmt['links']['method'])}">Lightcast's methodology note</a>.</p>
   <div class="dotwrap">{barplot(dm['countries'], 0, dxmax, 0, 'share', '.1f')}</div>
   {figfooter("cross_country_demand.csv", f"{dmt['source']}, {dmt['year']} · {dmt['unit']}", "cross_country_demand.svg", next_up="Stanford AI Index 2027 (spring 2027)")}
 
@@ -3805,7 +3809,10 @@ def methods():
     <div><div class="grouphdr">Not yet published</div>
       <ul class="reslist">{pend}</ul></div>
   </div>
-  <p class="secintro" style="margin-top:22px"><b>On external benchmarks.</b> {h(md["benchmark_logic"])}</p>
+  <p class="secintro" style="margin-top:22px"><b>On external benchmarks.</b> {h(md["benchmark_logic"])}
+    Sources: <a href="{h(DEMAND['meta']['links']['appendix'])}">AI Index 2026, Appendix, Lightcast section</a>;
+    <a href="{h(DEMAND['meta']['links']['method'])}">Lightcast, Job Posting Analytics methodology</a>;
+    <a href="{h(DEMAND['meta']['links']['lightcast'])}">Lightcast's page for the 2026 figures</a>.</p>
   <p class="secintro" style="margin-top:14px"><b>Who funds this.</b> The Monitor has no dedicated funder.
     The grants and institutions behind the research it is built from are listed in full on the
     <a href="{md.get("funding_href", "/about/#support")}">support disclosure</a>.</p>

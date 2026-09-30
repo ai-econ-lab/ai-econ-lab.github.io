@@ -15,6 +15,15 @@ meta:
   # demand "continued to increase".
   note_prev: "Demand continued to increase in 2025 across the countries tracked (AI Index 2026)."
   n_countries: 22
+  # Sources, linked from the Demand module and the methods page (ML, 30 Sep 2026). Lightcast's
+  # own page for the 2026 figures does not list Sweden, so the Sweden figure links to the
+  # report's country chart (Figure 4.4.2, PDF page 204); the method links to the appendix
+  # section written by Lightcast (PDF page 397) and to Lightcast's methodology note.
+  links:
+    lightcast: "https://lightcast.io/resources/research/stanford-ai-index-2026"
+    report_chart: "https://hai.stanford.edu/assets/files/ai_index_report_2026.pdf#page=204"
+    appendix: "https://hai.stanford.edu/assets/files/ai_index_report_2026.pdf#page=397"
+    method: "https://kb.lightcast.io/en/articles/6957446-job-posting-analytics-jpa-methodology"
 countries:
   - {name: "Singapore", share: 4.69, year: 2025, is_se: false}
   - {name: "Hong Kong", share: 3.48, year: 2025, is_se: false}
