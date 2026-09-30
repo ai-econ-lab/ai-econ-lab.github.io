@@ -9,7 +9,11 @@ meta:
   unit: "% of all job postings"
   source: "Stanford AI Index 2026 (Lightcast)"
   year: 2025
-  note_prev: "Demand roughly doubled in a year for most countries (Sweden 1.3% in 2024 → 2.8% in 2025)."
+  # 30 Sep 2026: was "roughly doubled ... (Sweden 1.3% in 2024)". The 2024 figure came from the
+  # previous AI Index edition, whose skill list was 24 skills and one cluster shorter, so the
+  # comparison mixed a definition change with a change in demand. The 2026 report says only that
+  # demand "continued to increase".
+  note_prev: "Demand continued to increase in 2025 across the countries tracked (AI Index 2026)."
   n_countries: 22
 countries:
   - {name: "Singapore", share: 4.69, year: 2025, is_se: false}

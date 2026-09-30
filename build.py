@@ -3149,9 +3149,10 @@ def brief(lang="en"):
     _sm_talk_prev = SAMEM["previous"]["talk"]
     _ni = SAMEM["nonict"]            # share of AI demand outside ICT occupations (SSYK 25)
     # International comparison (ML, 29 Sep 2026: only where Sweden is in the same source, and say
-    # how it is measured). Lightcast, via the Stanford AI Index, counts a posting when its WHOLE
-    # text names an AI skill, generic "AI" included, so its nearest equivalent in our data is the
-    # whole-text count plus every bare mention (the raw ceiling), not the floor.
+    # how it is measured). 30 Sep 2026, checked against the AI Index 2026 appendix (written by
+    # Lightcast) and the Lightcast KB: a posting is an AI job if its text includes one of 300+ AI
+    # skills (the generic "Artificial Intelligence" among them), found by a context-aware model with
+    # a confidence threshold. No series of ours is its equivalent; see methods benchmark_logic.
     _lc = {r["name"]: r["share"] for r in DEMAND["countries"]}
     _lc_yr = DEMAND["meta"]["year"]
     _lc_i = _tt["years"].index(_lc_yr) if _lc_yr in _tt["years"] else _i25
@@ -3207,9 +3208,9 @@ def brief(lang="en"):
             f"till 5:e om bara de 20 procent mest exponerade yrkena räknas. Exponering visar var AI överlappar med "
             f"arbetet, inte förträngning."),
         "demand": L(
-            "Demand roughly doubled in a year for most countries (Sweden 1.3% in 2024 to 2.8% in 2025). The Swedish "
+            "Demand continued to rise in 2025 in the countries the AI Index tracks (Sweden 2.8%). The Swedish "
             "live job-ad measure is the pulse shown above.",
-            "Efterfrågan ungefär fördubblades på ett år i de flesta länder (Sverige 1,3% 2024 till 2,8% 2025). Den "
+            "Efterfrågan fortsatte att öka 2025 i de länder som AI Index följer (Sverige 2,8%). Den "
             "svenska livemätningen av jobbannonser är pulsen ovan."),
         "washing": L(
             # 29 Sep 2026: the numbers moved into the ladder and the paragraph that reads it
@@ -3812,7 +3813,7 @@ def methods():
 
 <div class="wrap"><section>
   <div class="grouphdr">How to cite</div>
-  <p class="citebox">{h(md["cite"])}</p>
+  <p class="citebox">{h(md["cite"].format(version=DEF_VERSION, fp=DEF_FP))}</p>
   <div class="grouphdr" style="margin-top:24px">References</div>
   <ul class="reslist">{refs}</ul>
   <p style="margin-top:22px"><a class="mono" style="font-size:12.5px" href="/monitor/">← Back to the Monitor</a></p>
