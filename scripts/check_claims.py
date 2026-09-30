@@ -219,6 +219,74 @@ def check_brief_length(problems):
 
 
 
+# Verbs the sentence check accepts outright. The suffix rules below catch most inflected verbs;
+# these lists catch the auxiliaries and common irregulars that the suffix rules miss.
+_EN_VERBS = set("is are was were be been being has have had do does did can could may might "
+                "will would shall should must".split())
+_SV_VERBS = set("är var vara varit har hade ha kan kunde ska skulle bör måste får fick blir blev "
+                "bli finns fanns gör gjorde går gick visar säger".split())
+# A bare verb stem after one of these is a finite verb ("we measure", "only mention").
+_EN_SUBJ = set("we they you i who which that only also to often rarely".split())
+
+
+def _has_verb(sentence, lang):
+    w = re.findall(r"[a-zåäö-]+", sentence.lower())
+    if lang == "en":
+        return (any(x in _EN_VERBS for x in w)
+                or any(re.fullmatch(r"[a-z]{3,}(ed|es|s|ing)", x) for x in w)
+                or any(a in _EN_SUBJ for a in w[:-1]))
+    return (any(x in _SV_VERBS for x in w)
+            or any(re.fullmatch(r"[a-zåäö]{2,}(ar|er|ir|ade|de|te|des|ts|as)", x) for x in w))
+
+
+def check_brief_sentences(problems):
+    """F. Every sentence of brief prose stands alone: at most one colon, and a verb.
+
+    Added 30 Sep 2026 (step 7 of the October brief), on the peer session's reading of that
+    issue: sentences strung on two colons and verbless fragments ("Descriptive, not causal.")
+    read as notes, not as a brief. Applies to the body copy and the standfirst only; the
+    kicker, headings, chart labels and source lines are labels and may be fragments.
+
+    The verb test is a heuristic (auxiliaries, inflection suffixes, a stem after a subject). It
+    is tuned to pass every sentence in the twelve themes as of this date, so a failure is new
+    copy, and the fix is to rewrite the sentence, not to widen the heuristic.
+    Colons between digits (12:00) and in Swedish ordinals (2:a, 6:e) do not count.
+    """
+    import os as _os
+    import html as _html
+    prev = _os.environ.get("BRIEF_MONTH_OVERRIDE")
+    try:
+        sys.path.insert(0, str(ROOT))
+        import importlib
+        build = importlib.import_module("build")
+        for month in range(1, 13):
+            _os.environ["BRIEF_MONTH_OVERRIDE"] = f"2027-{month:02d}"
+            for lang in ("en", "sv"):
+                page = re.sub(r"<svg.*?</svg>", "", build.brief(lang), flags=re.S)
+                for para in re.findall(r'<p class="(?:bp|secintro)"[^>]*>(.*?)</p>', page, re.S):
+                    text = _html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", para)))
+                    for sen in re.split(r'(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9"\u201c\u201d])', text):
+                        sen = sen.strip()
+                        if not sen:
+                            continue
+                        colons = len(re.sub(r"\d:(\d|[a-zåäö]\b)", "", sen).split(":")) - 1
+                        where = f"brief {lang.upper()} month {month}"
+                        if colons >= 2:
+                            problems.append(f"{where}: two colons in one sentence; split it: "
+                                            f"\u201c{sen[:120]}\u201d")
+                        if not _has_verb(sen, lang):
+                            problems.append(f"{where}: sentence has no verb; rewrite it as a "
+                                            f"sentence: \u201c{sen[:120]}\u201d")
+    except Exception as e:                      # a checker must not break the build it guards
+        problems.append(f"brief sentence check could not run: {type(e).__name__}: {e}")
+    finally:
+        if prev is None:
+            _os.environ.pop("BRIEF_MONTH_OVERRIDE", None)
+        else:
+            _os.environ["BRIEF_MONTH_OVERRIDE"] = prev
+
+
+
 def check_stated_counts(docs, problems):
     """E. Every count the site states about its own corpus or coverage must match its generator.
 
@@ -313,6 +381,7 @@ def main():
     check_sources(problems)
     check_aggregates(docs, problems)
     check_brief_length(problems)
+    check_brief_sentences(problems)
     check_stated_counts(docs, problems)
     check_authoring_markers(docs, problems)
 

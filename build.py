@@ -3560,9 +3560,9 @@ def brief(lang="en"):
             f"vinst: undersökningen registrerar vad företagen uppger stoppade dem, inte om det hade "
             f"lönat sig att införa AI."),
         "outcomes": L(
-            "Descriptive, not causal. Entry-level hiring is also more cyclical, and the tightening "
+            "The pattern is descriptive, not causal. Entry-level hiring is also more cyclical, and the tightening "
             "cycle hit these occupations hardest, so this cannot separate AI from the cycle.",
-            "Beskrivande, inte kausalt. Instegsjobb är dessutom mer konjunkturkänsliga, och "
+            "Mönstret är beskrivande, inte kausalt. Instegsjobb är dessutom mer konjunkturkänsliga, och "
             "räntehöjningarna slog hårdast mot just dessa yrken, så AI går inte att skilja från "
             "konjunkturen här."),
     }
@@ -3617,7 +3617,7 @@ def brief(lang="en"):
                     10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0,
                     "adoption", ".0f", what="firm-size classes", lang="sv" if sv else "en")
             + f'<p class="secintro" style="margin:18px 0 6px">'
-              f'{L("And by industry, on the same survey and the same year.", "Och per bransch, samma undersökning och samma år.")}</p>'
+              f'{L("The same survey splits adoption by industry for the same year.", "Samma undersökning delar upp användningen per bransch för samma år.")}</p>'
             + barplot(rows_s, 0, _secmax, 0, "adoption", ".0f", what="industries",
                       cmp_key="prev", series_label=str(SWESEC["meta"]["year"]),
                       cmp_label=str(SWESEC["meta"]["prev_year"]), lang="sv" if sv else "en"))
