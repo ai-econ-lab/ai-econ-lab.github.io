@@ -1404,7 +1404,7 @@ def washing_stack_svg(t, lang="en"):
     rows = [  # (y, text, bold, colour, swatch)
         (Y(fl[-1] / 2), L(f"Floor {pc(fl[-1])}", f"Golv {pc(fl[-1])}"), False, ink, ("var(--c1)", .95)),
         (Y(fl[-1] + add / 2), L(f"+ up to ceiling {pc(add)}", f"+ upp till taket {pc(add)}"), False, ink, ("var(--c1)", .38)),
-        (Y(ce[-1]), L(f"= AI demand, at most {pc(ce[-1])}", f"= AI-efterfrågan, högst {pc(ce[-1])}"), True, "var(--c1)", None),
+        (Y(ce[-1]), L(f"= AI demand, up to {pc(ce[-1])}", f"= AI-efterfrågan, upp till {pc(ce[-1])}"), True, "var(--c1)", None),
         (Y(ce[-1] + rest / 2), L(f"+ AI talk {pc(rest)}", f"+ AI-prat {pc(rest)}"), False, ink, ("var(--muted)", .32)),
         (Y(al[-1]), L(f"= every mention of AI {pc(al[-1])}", f"= alla som nämner AI {pc(al[-1])}"), True, ink, None),
     ]
@@ -1587,7 +1587,7 @@ def trend_svg(t):
                  f'fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3"/>')
     lx, ly = pts[-1]
     p.append(f'<circle class="trenddot" cx="{lx:.1f}" cy="{ly:.1f}" r="4"/>')
-    lab = "Ceiling (total) " if t.get("ceiling_values") else ""
+    lab = "Ceiling (broadest measure) " if t.get("ceiling_values") else ""
     p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-8:.1f}" text-anchor="end">{lab}{vs[-1]:.2f}%</text>')
     p.append("</svg>")
     return "".join(p)
@@ -1731,7 +1731,8 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
     <div class="panelhead"><span class="ttl">{h(title)}</span>
       <span class="livechip"><i></i>live</span></div>
     <div class="panelbody"><p class="psub">We measure AI demand in job ads as a range. The floor counts ads that ask for
-        AI in the job's own requirements; the ceiling (total) adds AI terms anywhere in the ad, and the one in eight
+        AI in the job's own requirements; the ceiling, our broadest measure of AI demand written in words, adds AI
+        terms anywhere in the ad, and the one in eight
         ads that only say \u201cAI\u201d which turn out, read by hand, to be genuine AI roles. In {yr_c} AI demand was
         between <b>{fl_c:.2f}%</b> and <b>{ce_c:.2f}%</b> of ads; {yr_p} so far{cov} runs higher, between
         <b>{fl_p:.2f}%</b> and <b>{ce_p:.2f}%</b> (provisional). Counting naively every ad that mentions AI in any
@@ -1740,7 +1741,7 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
         reached {ai_c:.2f}% in {yr_c}, {tm["multiple"]:.0f} times the pooled {h(tm["base_years"]).replace("-", "\u2013")}
         level, with generative-AI skills now {tm["genai_share_of_ai_pct"]}% of them.</p>
       <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="AI demand in Swedish job ads, floor to ceiling, 2006 onwards"></svg>
-      <div class="legend"><span><i style="background:var(--c1)"></i>Ceiling (total)</span>
+      <div class="legend"><span><i style="background:var(--c1)"></i>Ceiling (broadest measure)</span>
         <span><i style="background:var(--muted);height:2px"></i>AI term named anywhere</span>
         <span><i style="background:var(--c2)"></i>Floor: asks for AI in the role</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
@@ -1764,16 +1765,12 @@ def livewindow_block():
     if not lw or lw.get("n") is None:
         return ""
     n = f"{int(lw['n']):,}"
-    # 30 Sep 2026: the same floor-to-ceiling range as the annual chart and the brief. The
-    # ceiling is only stated when the feed carries the bare-"AI" share it is built from.
+    # 30 Sep 2026: no live CEILING until v1.7 is live. The feed scored every ad with the
+    # ungated term list before v1.7 (the annual series is gated), so a ceiling built on it would
+    # not be the annual chart's ceiling. Restore it after the v1.7 reseed.
     nm, fl = float(lw["names_pct"]), float(lw["floor_pct"])
-    if lw.get("bare_band_pct") is not None:
-        ce = nm + CEIL_BAND_SHARE * float(lw["bare_band_pct"])
-        lead = (f"Of the {n} most recent job ads, AI demand lies between {fl:.2f}% (floor) and "
-                f"{ce:.2f}% (ceiling, total), and {nm:.2f}% name an AI term somewhere in the ad")
-    else:
-        lead = (f"Of the {n} most recent job ads, {nm:.2f}% name an AI term somewhere in the ad "
-                f"and {fl:.2f}% ask for one in the job itself (floor)")
+    lead = (f"Of the {n} most recent job ads, {nm:.2f}% name an AI term somewhere in the ad "
+            f"and {fl:.2f}% ask for one in the job itself, our floor")
     ci = ""
     if lw.get("names_ci") and lw.get("floor_ci"):
         nlo, nhi = lw["names_ci"]; flo, fhi = lw["floor_ci"]
@@ -1871,7 +1868,7 @@ def monthly_svg(md):
     lx, ly = X(n - 1), Y(s[-1]["ceil_ma"])
     p.append(f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="4" fill="var(--c1)"/>')
     p.append(f'<text class="trendcov" x="{lx-6:.1f}" y="{ly-22:.1f}" text-anchor="end">'
-             f'Ceiling (total), 12-mo mean, {month_label(md["meta"]["last"])}</text>')
+             f'Ceiling (broadest measure), 12-mo mean, {month_label(md["meta"]["last"])}</text>')
     p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-9:.1f}" text-anchor="end">'
              f'{md["meta"]["last_ceil_ma"]:.2f}%</text>')
     p.append("</svg>")
@@ -1885,7 +1882,7 @@ def monthly_block():
             f'{h(m["last"])}</div>\n'
             f'<p class="secintro" style="margin-top:4px">The same measure at monthly resolution, '
             f'{m["n_months"]} months built on <b>{m["total_ads"]:,}</b> distinct advertisements. The faint line is the raw '
-            f'month of the ceiling and the bold lines are 12-month trailing means: the ceiling (total) in blue, '
+            f'month of the ceiling and the bold lines are 12-month trailing means: the ceiling (broadest measure) in blue, '
             f'the floor in orange, and the thin grey line between them the ads naming an AI term anywhere. A single month carries little weight, because Swedish hiring falls '
             # The level is DATED, never "now": the archive advances one JobTech quarter at a
             # time, so between releases this number stands still while the live window below
@@ -1931,7 +1928,7 @@ def monthly_block():
             # colour-blind; the faint raw series needed naming most, since it is the one a
             # reader mistakes for noise in the data rather than in hiring.
             + '<div class="dblegend">'
-              '<span><i style="background:var(--c1)"></i>ceiling (total), 12-month mean</span>'
+              '<span><i style="background:var(--c1)"></i>ceiling (broadest measure), 12-month mean</span>'
               '<span><i style="background:var(--muted);height:2px"></i>AI term named anywhere, 12-month mean</span>'
               '<span><i style="background:var(--c2)"></i>asks for it in the role (floor), 12-month mean</span>'
               '<span><i style="background:var(--c1);opacity:.32"></i>ceiling, single month, unsmoothed</span>'

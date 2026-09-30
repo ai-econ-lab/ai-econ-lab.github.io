@@ -77,6 +77,37 @@ def part_coverage(part_labels: list[str]) -> str | None:
     return f"{MONTH_FULL[min(s[0] for s in spans) - 1]}–{MONTH_FULL[max(s[1] for s in spans) - 1]}"
 
 
+def multiple_intervals(full, last_full) -> dict:
+    """95% intervals for the three growth multiples, computed, never typed (30 Sep 2026).
+
+    Before this the tiles carried "33-44x" and "6.0-6.4" as typed characters, and neither
+    reproduced (32-43 and 6.0-6.6 on the v1.6 counts). Method: a log-ratio interval on the
+    counts, se = sqrt((1-p1)/x1 + (1-p0)/x0) with the base years pooled, applied around the
+    published point (last year over the mean of the base years' shares).
+    """
+    import math
+    out = {}
+    specs = [("multiple_ci", "ai_any", (2006, 2007, 2008)),
+             ("multiple_floor_ci", "floor", (2006, 2007, 2008)),
+             ("multiple_stable_ci", "ai_any", (2015, 2016, 2017))]
+    full = {str(k): v for k, v in full.items()}
+    last_full = str(last_full)
+    for key, col, base in specs:
+        base = tuple(str(y) for y in base)
+        if not all(y in full for y in base) or last_full not in full:
+            continue
+        x1, n1 = int(full[last_full][col]), int(full[last_full]["ads"])
+        x0 = sum(int(full[y][col]) for y in base)
+        n0 = sum(int(full[y]["ads"]) for y in base)
+        p1, p0 = x1 / n1, x0 / n0
+        pt = p1 / (sum(int(full[y][col]) / int(full[y]["ads"]) for y in base) / len(base))
+        se = math.sqrt((1 - p1) / x1 + (1 - p0) / x0)
+        lo, hi = pt * math.exp(-1.96 * se), pt * math.exp(1.96 * se)
+        nd = 1 if pt < 10 else 0
+        out[key] = f"{lo:.{nd}f}-{hi:.{nd}f}"
+    return out
+
+
 def genai_tile(rows: dict) -> dict:
     """The generative-AI tile's two numbers, which rotted independently of the trend.
 
@@ -230,6 +261,14 @@ def tile_mismatches() -> list[str]:
             m = _re.search(r"floor rose (\d+)", lab)
             if m and abs(int(m.group(1)) - round(doc["multiple_floor"])) > 0.5:
                 out.append(f"tile floor says {m.group(1)}x, series gives {doc['multiple_floor']:g}x")
+            m = _re.search(r"95% interval (\d+)–(\d+)×", lab)
+            if m and doc.get("multiple_ci") and f"{m.group(1)}-{m.group(2)}" != doc["multiple_ci"]:
+                out.append(f"tile interval says {m.group(1)}–{m.group(2)}×, series gives "
+                           f"{doc['multiple_ci']}")
+            m = _re.search(r"the rise is [\d.]+× \(([\d.]+)–([\d.]+)\)", lab)
+            if m and doc.get("multiple_stable_ci") and f"{m.group(1)}-{m.group(2)}" != doc["multiple_stable_ci"]:
+                out.append(f"tile stable-base interval says {m.group(1)}–{m.group(2)}, series gives "
+                           f"{doc['multiple_stable_ci']}")
             m = _re.search(r"the rise is ([\d.]+)×", lab)
             if m and abs(float(m.group(1)) - doc["multiple_stable_base"]) > 0.05:
                 out.append(f"tile stable-base says {m.group(1)}×, series gives "
@@ -271,7 +310,7 @@ def check() -> int:
         full = {r["year"]: r for r in csv.DictReader(SRC.open(encoding="utf-8"))
                 if "-" not in r["year"]}
         last_full = str(max(int(y) for y in full))
-        extra = genai_tile(full[last_full])
+        extra = {**genai_tile(full[last_full]), **multiple_intervals(full, last_full)}
         if part_coverage(parts):
             extra["part_coverage"] = part_coverage(parts)
         want = render(years, names, floor, band, prov, definition(), extra)
@@ -307,7 +346,7 @@ def main() -> int:
     years, names, floor, band, prov, parts = read_series()
     full = {r["year"]: r for r in csv.DictReader(SRC.open(encoding="utf-8")) if "-" not in r["year"]}
     last_full = str(max(int(y) for y in full))
-    extra = genai_tile(full[last_full])
+    extra = {**genai_tile(full[last_full]), **multiple_intervals(full, last_full)}
     if part_coverage(parts):
         extra["part_coverage"] = part_coverage(parts)
     text = render(years, names, floor, band, prov, definition(), extra)
