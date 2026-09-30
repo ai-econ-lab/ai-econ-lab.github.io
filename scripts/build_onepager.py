@@ -393,16 +393,16 @@ COPY = {
   se_sub="Every advertisement on the public job board",
   src_label="Source: ",
   se_src=f"JobTech / Platsbanken job ads (CC0), frozen {DEF_VERSION} term list, distinct advertisements",
-  band_hi="mention an AI skill", band_lo="ask for it in the job itself",
-  se_body=(r"A \textbf{{range}}, not a single number: the upper line counts an advertisement that "
-           r"mentions an AI skill anywhere, the lower one only when the skill is asked of the "
-           r"person being hired. Both rose steeply. The broader count went from {v0} of "
+  band_hi="ceiling", band_lo="floor",
+  se_body=(r"A \textbf{{range}}, not a single number: the floor counts an advertisement only when "
+           r"an AI skill is asked of the person hired; the ceiling adds AI terms anywhere and the "
+           r"hand-read share of ads that only say ``AI''. Ads naming an AI term went from {v0} of "
            r"advertisements in the pooled {base} base to {v1} in {y1}, about {rise} "
            r"times as high, and the "
            r"{y1} range is \textbf{{{fl} to {ceiling}}}. Both lines rest on a term list and "
            r"cover only the AI demand that words reveal."),
-  se_live=(r"Right now ({asof}): of the {n} most recent advertisements, {names} mention an AI "
-           r"skill and {floor} ask for one in the job itself. This is the only figure on the "
+  se_live=(r"Right now ({asof}): of the {n} most recent advertisements, AI demand lies between "
+           r"{floor} (floor) and {ceil} (ceiling). This is the only figure on the "
            r"sheet that moves daily."),
   cap_q="How capable are AI systems?", cap_cond="at 50\\% success",
   # Taken from the copy table, NOT from monitor.yaml: the yaml is English-only, so pulling
@@ -490,16 +490,18 @@ COPY = {
   se_sub="Baserat på samtliga annonser på Platsbanken",
   src_label="Källa: ",
   se_src=f"JobTech / Platsbanken (CC0), fryst termlista {DEF_VERSION}, distinkta annonser",
-  band_hi="nämner en AI-färdighet", band_lo="efterfrågar den i själva jobbet",
-  se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: den övre linjen räknar en annons som "
-           r"nämner en AI-färdighet någonstans, den nedre bara när färdigheten efterfrågas av den "
-           r"som ska anställas. Båda har stigit kraftigt. Den bredare räkningen gick från "
+  band_hi="tak", band_lo="golv",
+  se_body=(r"Ett \textbf{{intervall}}, inte en enda siffra: golvet räknar en annons bara när en "
+           r"AI-kompetens efterfrågas av den som ska anställas; taket lägger till AI-termer var som "
+           r"helst i annonsen och var åttonde annons som bara säger ''AI'' men vid manuell läsning "
+           r"visar sig gälla en verklig AI-tjänst. Båda har stigit kraftigt. Annonser som nämner en "
+           r"AI-term gick från "
            r"{v0} av annonserna i basperioden {base} till {v1} {y1}, ungefär "
            r"{rise} gånger så mycket, "
            r"och intervallet för {y1} är \textbf{{{fl} till {ceiling}}}. Båda linjerna vilar "
            r"på en termlista och rymmer bara den AI-efterfrågan som orden visar."),
-  se_live=(r"Just nu ({asof}): av de {n} senaste annonserna nämner {names} en AI-färdighet och "
-           r"{floor} efterfrågar den i själva jobbet. Det är den enda siffran på bladet som "
+  se_live=(r"Just nu ({asof}): av de {n} senaste annonserna ligger AI-efterfrågan mellan "
+           r"{floor} (golv) och {ceil} (tak). Det är den enda siffran på bladet som "
            r"ändras dagligen."),
   cap_q="Hur kapabla är AI-systemen?", cap_cond="vid 50\\% träffsäkerhet",
   cap_lab=("de längsta expertuppgifter som AI-agenter klarar; längden har fördubblats var "
@@ -655,7 +657,18 @@ def main():
             + cards[2] + "\\hfill" + cards[3])
 
     cap = ov["Capability"]
-    hero = range_band(tr["years"], tr["values"], tr["floor_values"], C["band_hi"], C["band_lo"])
+    # The band's top edge is the CEILING, not the whole-text line (30 Sep 2026: the site and the
+    # brief now draw the ceiling, and a band topped at 1.06% beside a printed 1.23% was the same
+    # mismatch). The hand-read share is read from build.py, where the ceiling is defined, so the
+    # sheet carries no second copy of the 12.8%; the caveat's 2025 figure is checked against it.
+    share = float(re.search(r"^CEIL_BAND_SHARE = ([\d.]+)",
+                            (ROOT / "build.py").read_text(encoding="utf-8"), re.M).group(1))
+    i25 = tr["years"].index(int(tr_meta["last_full_year"]))
+    if abs(tr["values"][i25] + share * tr["band_values"][i25] - float(ceiling)) > 0.006:
+        raise SystemExit("build_onepager: the caveat's corrected ceiling no longer matches "
+                         "the series and CEIL_BAND_SHARE. Fix the caveat in monitor.yaml.")
+    ceil_series = [w + share * b for w, b in zip(tr["values"], tr["band_values"])]
+    hero = range_band(tr["years"], ceil_series, tr["floor_values"], C["band_hi"], C["band_lo"])
     # The multiple is the pooled-base one from the generated file, not v1/v0 recomputed here.
     # Two bases on one sheet is how the site came to show 32x and 38x at the same time.
     se_body = C["se_body"].format(v0=pct(tr_meta["base_pct"], 2), y0=tr["years"][0],
@@ -677,7 +690,9 @@ def main():
             asof = f"{d.day} {SV_MONTH[d.month]} {d.year}"
     se_live = C["se_live"].format(asof=tex(asof), n=nf(int(lw["n"])),
                                   names=pct(float(lw["names_pct"]), 2),
-                                  floor=pct(float(lw["floor_pct"]), 2))
+                                  floor=pct(float(lw["floor_pct"]), 2),
+                                  ceil=pct(float(lw["names_pct"])
+                                           + share * float(lw.get("bare_band_pct") or 0), 2))
     gaps = "\\\\[1.6mm]\n".join(
         f"{{\\scriptsize\\bfseries\\textcolor{{ink}}{{{tex(h)}}}}} "
         f"{{\\scriptsize\\textcolor{{soft}}{{{tex(b)}}}}}" for h, b in C["gaps"])

@@ -86,6 +86,10 @@ def main():
         f"floor_pct: {d['floor_pct']}",
         f"names_ci: [{nlo}, {nhi}]",
         f"floor_ci: [{flo}, {fhi}]",
+        # Bare "AI" with no named term; the site adds the hand-read share of it to give the
+        # live ceiling, the same construction as the annual series (30 Sep 2026).
+        f"bare_band_pct: {d.get('bare_band_pct')}",
+        f"excluded_off_definition: {d.get('excluded_off_definition', 0)}",
         f"generated_at: \"{d['generated_at']}\"",
         "",
     ]

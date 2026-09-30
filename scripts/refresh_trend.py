@@ -234,6 +234,18 @@ def tile_mismatches() -> list[str]:
             if m and abs(float(m.group(1)) - doc["multiple_stable_base"]) > 0.05:
                 out.append(f"tile stable-base says {m.group(1)}×, series gives "
                            f"{doc['multiple_stable_base']:g}×")
+        if "from the floor" in lab and "to the ceiling" in lab:
+            # The range tile: floor and ceiling of the last full year. The hand-read share is
+            # read from build.py, where the ceiling is defined, so there is one copy of it.
+            share = float(_re.search(r"^CEIL_BAND_SHARE = ([\d.]+)",
+                                     (site.parent / "build.py").read_text(encoding="utf-8"),
+                                     _re.M).group(1))
+            tr = yaml.safe_load((site / "trend.yaml").read_text(encoding="utf-8"))["trend"]
+            i = tr["years"].index(doc["last_full_year"])
+            fl, ce = tr["floor_values"][i], tr["values"][i] + share * tr["band_values"][i]
+            lo, hi = (float(x) for x in _re.findall(r"[\d.]+", num)[:2])
+            if abs(lo - round(fl, 2)) > 0.005 or abs(hi - round(ce, 2)) > 0.005:
+                out.append(f"range tile says {lo}–{hi}%, series gives {fl:.2f}–{ce:.2f}%")
         if "per 10,000" in lab:
             if abs(float(num) - doc["genai_per_10k"]) > 0.05:
                 out.append(f"tile says {num} per 10,000, series gives {doc['genai_per_10k']}")

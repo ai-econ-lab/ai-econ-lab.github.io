@@ -331,7 +331,7 @@ def shell(title, desc, path, body, jsonld="", need_chart=False):
     if need_chart:
         t = TREND["trend"]
         trend_js = (f'<script>window.AIEL_TREND={{years:{t["years"]},values:{t["values"]},'
-                    f'floor:{t.get("floor_values", [])},'
+                    f'floor:{t.get("floor_values", [])},ceiling:{t["ceiling_values"]},'
                     f'provisionalFrom:{t["provisionalFrom"]},ymax:{t["ymax"]},yticks:{t["yticks"]}}};</script>')
     ld = f'<script type="application/ld+json">{jsonld}</script>' if jsonld else ""
     return f"""<!doctype html><html lang="en"><head>
@@ -1144,6 +1144,29 @@ def dumbbell_svg(conds, gkey, active=False):
 # v1.6). Source of the published ceiling (monitor.yaml, "The upper bound is now measured across
 # the whole series"); 2025 checks out: 1.057 + 0.128 x 1.359 = 1.23%.
 CEIL_BAND_SHARE = 0.128
+CEIL_BAND_LO, CEIL_BAND_HI = 0.089, 0.181     # its 95% interval, same derivation
+
+
+def _add_ceiling(t):
+    """Attach the ceiling series to the trend block, so every surface draws the same number.
+
+    30 Sep 2026 (ML): the October brief put the ceiling at 1.5% for January-June 2026 while the
+    site's upper line read 1.20%, because the site only ever drew the whole-text line and gave
+    the ceiling (1.23% for 2025) in a methods caveat. A reader moving from the brief to the site
+    saw two different upper bounds. The ceiling is now a series in its own right, drawn, exported
+    and quoted wherever the floor is."""
+    ce = [round(w + CEIL_BAND_SHARE * b, 3) for w, b in zip(t["values"], t["band_values"])]
+    t["ceiling_values"] = ce
+    t["ceiling_lo"] = [round(w + CEIL_BAND_LO * b, 3) for w, b in zip(t["values"], t["band_values"])]
+    t["ceiling_hi"] = [round(w + CEIL_BAND_HI * b, 3) for w, b in zip(t["values"], t["band_values"])]
+    # The axis in trend.yaml was sized for the whole-text line; make room for the ceiling.
+    top = max(ce)
+    if top > 0.95 * t["ymax"]:
+        t["ymax"] = 0.5 * (int(top * 1.1 / 0.5) + 1)      # 10% headroom for the end label
+        t["yticks"] = [round(0.5 * k, 1) for k in range(int(t["ymax"] / 0.5) + 1)]
+
+
+_add_ceiling(TREND["trend"])
 
 
 def washing_series(t, start=2016):
@@ -1312,6 +1335,12 @@ def washing_ladder(t, dm, lang="en"):
     return f'<p class="bsrc" style="margin:0 0 4px">{h(cap)}</p>' + "".join(p)
 
 
+def _solid(col, op):
+    """A translucent colour as an opaque one, mixed on the page colour (see washing_stack_svg)."""
+    op = float(op)
+    return col if op >= 1 else f"color-mix(in srgb, {col} {op * 100:.0f}%, var(--paper))"
+
+
 def washing_stack_svg(t, lang="en"):
     """The October figure as ONE stacked chart (ML, 29 Sep 2026).
 
@@ -1329,8 +1358,9 @@ def washing_stack_svg(t, lang="en"):
     pf = max(1, int(t["provisionalFrom"]) - i0)
     L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
     pc = (lambda v: f"{v:.1f}".replace(".", ",") + " %") if lang == "sv" else (lambda v: f"{v:.1f}%")
-    W, H = 640, 208
-    x0, x1, top, bot = 34, 452, 26, 182
+    # 170/144 (was 208/182), 30 Sep 2026: Lydia's longer Swedish text needed the lines.
+    W, H = 640, 170
+    x0, x1, top, bot = 34, 452, 26, 144
     ymax = max(al) * 1.05
     X = lambda i: x0 + i / (n - 1) * (x1 - x0)
     Y = lambda v: bot - v / ymax * (bot - top)
@@ -1352,7 +1382,9 @@ def washing_stack_svg(t, lang="en"):
     def band(lo, hi, fill, op):
         pts = " ".join(f"{X(i):.1f},{Y(hi[i]):.1f}" for i in range(n)) + " " + \
               " ".join(f"{X(i):.1f},{Y(lo[i]):.1f}" for i in reversed(range(n)))
-        p.append(f'<polygon points="{pts}" fill="{fill}" opacity="{op}"/>')
+        # Solid, pre-mixed on the page colour, never `opacity`: in the PDF a translucent fill
+        # becomes a soft mask, which simple viewers skip (Lydia lost the chart's middle, 30 Sep 2026).
+        p.append(f'<polygon points="{pts}" style="fill:{_solid(fill, op)}"/>')
     zero = [0] * n
     band(ce, al, "var(--muted)", .32)
     band(fl, ce, "var(--c1)", .38)
@@ -1383,7 +1415,7 @@ def washing_stack_svg(t, lang="en"):
     for y, txt, bold, col, swatch in placed:
         tx = lx + (14 if swatch else 0)
         if swatch:
-            p.append(f'<rect x="{lx}" y="{y - 8:.1f}" width="9" height="9" fill="{swatch[0]}" opacity="{swatch[1]}"/>')
+            p.append(f'<rect x="{lx}" y="{y - 8:.1f}" width="9" height="9" style="fill:{_solid(swatch[0], swatch[1])}"/>')
         p.append(f'<text x="{tx}" y="{y + 1:.1f}" font-size="11" fill="{col}"'
                  f'{" font-weight=\"700\"" if bold else ""}>{h(txt)}</text>')
     p.append("</svg>")
@@ -1396,7 +1428,7 @@ def washing_legend(lang="en"):
     spelled out, because ML found it unreadable in compressed form."""
     L = (lambda a, b: b) if lang == "sv" else (lambda a, b: a)
     sw = lambda fill, op: (f'<svg width="14" height="12"><rect x="0" y="1" width="14" height="10" '
-                           f'fill="{fill}" opacity="{op}"/></svg>')
+                           f'style="fill:{_solid(fill, op)}"/></svg>')
     rows = [
         (sw("var(--c1)", .95), L("Floor", "Golv"),
          L("the job itself asks for a named AI skill. Example: a software developer required to use AI "
@@ -1517,7 +1549,9 @@ def washing_tiles(t, lang="en"):
 def trend_svg(t):
     """Server-rendered static version of the AI-in-Demand trend (the hero panel is JS-drawn;
     this is the downloadable twin). Solid line to the last final year, dashed to the provisional year."""
-    ys = t["years"]; vs = t["values"]; ymax = t["ymax"]; pf = int(t["provisionalFrom"]); n = len(ys)
+    # Top line = the ceiling (30 Sep 2026); the whole-text line is drawn thin inside the range.
+    ys = t["years"]; vs = t.get("ceiling_values") or t["values"]; ymax = t["ymax"]
+    pf = int(t["provisionalFrom"]); n = len(ys)
     W, H = 640, 300
     x0, x1, top, bot = 46, 606, 22, 262
     X = lambda i: x0 + i / (n - 1) * (x1 - x0)
@@ -1545,6 +1579,12 @@ def trend_svg(t):
                  f'fill="none" stroke="var(--c2)" stroke-width="2"/>')
         p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x,y in fpts[pf-1:])}" '
                  f'fill="none" stroke="var(--c2)" stroke-width="2" stroke-dasharray="4 3"/>')
+    if t.get("ceiling_values"):
+        npts = [(X(i), Y(t["values"][i])) for i in range(n)]
+        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x,y in npts[:pf])}" '
+                 f'fill="none" stroke="var(--muted)" stroke-width="1.4"/>')
+        p.append(f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x,y in npts[pf-1:])}" '
+                 f'fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="4 3"/>')
     lx, ly = pts[-1]
     p.append(f'<circle class="trenddot" cx="{lx:.1f}" cy="{ly:.1f}" r="4"/>')
     p.append(f'<text class="trendval" x="{lx-6:.1f}" y="{ly-8:.1f}" text-anchor="end">{vs[-1]:.2f}%</text>')
@@ -1680,16 +1720,23 @@ def sweden_trend_panel(method_href, title="Sweden, in depth · AI in Demand · s
     # 1.20% in September as in July should be able to see why (Magnus, 4 Sep 2026). The window
     # comes from refresh_trend.py's meta, i.e. from the same rows the point is computed from.
     cov = f' ({h(tm["part_coverage"])})' if tm.get("part_coverage") else ""
+    # 30 Sep 2026 (ML): lead with the floor-to-ceiling range, the same numbers and the same
+    # words as the brief, so a reader arriving from the brief's 1.5% finds 1.5% here.
+    ce_c, ce_p = t["ceiling_values"][pf - 1], t["ceiling_values"][-1]
     return f"""<div class="panel">
     <div class="panelhead"><span class="ttl">{h(title)}</span>
       <span class="livechip"><i></i>live</span></div>
-    <div class="panelbody"><p class="psub">Ads naming a specific AI skill anywhere in the ad reached <b>{ai_c:.2f}%</b> in {yr_c},
-        {tm["multiple"]:.0f} times the pooled {h(tm["base_years"]).replace("-", "\u2013")} level; the strict floor, ads asking for AI in the job's own requirements, reached
-        <b>{fl_c:.2f}%</b>. Both set records in the post-2023 rebound, with generative-AI skills now 27% of the demand,
-        and {yr_p} so far{cov} runs higher still ({ai_p:.2f}%, floor {fl_p:.2f}%, provisional).</p>
-      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="Share of Swedish job ads naming or asking for AI skills, 2006 onwards"></svg>
-      <div class="legend"><span><i style="background:var(--c1)"></i>Names an AI skill</span>
-        <span><i style="background:var(--c2)"></i>Asks for AI in the role (floor)</span>
+    <div class="panelbody"><p class="psub">We measure AI demand in job ads as a range. The floor counts ads that ask for
+        AI in the job's own requirements; the ceiling adds AI terms anywhere in the ad, and the one in eight ads
+        that only say \u201cAI\u201d which turn out, read by hand, to be genuine AI roles. In {yr_c} AI demand was
+        between <b>{fl_c:.2f}%</b> and <b>{ce_c:.2f}%</b> of ads; {yr_p} so far{cov} runs higher, between
+        <b>{fl_p:.2f}%</b> and <b>{ce_p:.2f}%</b> (provisional). Ads naming an AI term anywhere, the thin middle line,
+        reached {ai_c:.2f}% in {yr_c}, {tm["multiple"]:.0f} times the pooled {h(tm["base_years"]).replace("-", "\u2013")}
+        level, with generative-AI skills now {tm["genai_share_of_ai_pct"]}% of them.</p>
+      <svg id="trend" viewBox="0 0 640 300" role="img" aria-label="AI demand in Swedish job ads, floor to ceiling, 2006 onwards"></svg>
+      <div class="legend"><span><i style="background:var(--c1)"></i>Ceiling</span>
+        <span><i style="background:var(--muted);height:2px"></i>AI term named anywhere</span>
+        <span><i style="background:var(--c2)"></i>Floor: asks for AI in the role</span>
         <span class="mono" style="color:var(--muted);font-size:11px">╌ newest point provisional</span></div>
       {figfooter("ai_in_demand_trend.csv", f"JobTech / Platsbanken job ads (CC0), 2006 onwards · {h(tm['definition'])} term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", method_href=method_href, next_up="tier split: built, integrated or simply used")}</div></div>"""
 
@@ -1711,13 +1758,21 @@ def livewindow_block():
     if not lw or lw.get("n") is None:
         return ""
     n = f"{int(lw['n']):,}"
-    lead = (f"Of the {n} most recent job ads, {float(lw['names_pct']):.2f}% name a specific AI "
-            f"skill and {float(lw['floor_pct']):.2f}% ask for one in the job itself")
+    # 30 Sep 2026: the same floor-to-ceiling range as the annual chart and the brief. The
+    # ceiling is only stated when the feed carries the bare-"AI" share it is built from.
+    nm, fl = float(lw["names_pct"]), float(lw["floor_pct"])
+    if lw.get("bare_band_pct") is not None:
+        ce = nm + CEIL_BAND_SHARE * float(lw["bare_band_pct"])
+        lead = (f"Of the {n} most recent job ads, AI demand lies between {fl:.2f}% (floor) and "
+                f"{ce:.2f}% (ceiling), and {nm:.2f}% name an AI term somewhere in the ad")
+    else:
+        lead = (f"Of the {n} most recent job ads, {nm:.2f}% name an AI term somewhere in the ad "
+                f"and {fl:.2f}% ask for one in the job itself (floor)")
     ci = ""
     if lw.get("names_ci") and lw.get("floor_ci"):
         nlo, nhi = lw["names_ci"]; flo, fhi = lw["floor_ci"]
-        ci = (f" (95% intervals {float(nlo):.2f}–{float(nhi):.2f} and "
-              f"{float(flo):.2f}–{float(fhi):.2f})")
+        ci = (f" (95% intervals: floor {float(flo):.2f}–{float(fhi):.2f}, named anywhere "
+              f"{float(nlo):.2f}–{float(nhi):.2f})")
     note = lw.get("note") or ""
     age = LIVEWINDOW_AGE
     chip = (f"last {int(lw.get('window_days', 60))} days, as of {h(str(lw['asof']))}"
@@ -1820,13 +1875,13 @@ def monthly_block():
             f'{h(m["last"])}</div>\n'
             f'<p class="secintro" style="margin-top:4px">The same measure at monthly resolution, '
             f'{m["n_months"]} months built on <b>{m["total_ads"]:,}</b> distinct advertisements. The faint line is the raw '
-            f'month and the bold lines are 12-month trailing means: broad AI demand in blue, the narrower '
-            f'skill floor in orange. A single month carries little weight, because Swedish hiring falls '
+            f'month and the bold lines are 12-month trailing means: ads naming an AI term anywhere in blue, '
+            f'the floor in orange. A single month carries little weight, because Swedish hiring falls '
             # The level is DATED, never "now": the archive advances one JobTech quarter at a
             # time, so between releases this number stands still while the live window below
             # keeps moving (1.18% vs 1.14% read as a contradiction until 4 Sep 2026).
             f'sharply every July and again in December, so the trend is the line to read. On that basis '
-            f'the broad measure stands at <b>{m["last_ma"]:.2f}%</b> in {month_label(m["last"], full=True)}, '
+            f'the named-anywhere line stands at <b>{m["last_ma"]:.2f}%</b> in {month_label(m["last"], full=True)}, '
             f'the latest month in the quarterly archive, against '
             f'<b>{m["last_floor_ma"]:.2f}%</b> for the floor; the live feed below tracks the weeks since.</p>\n'
             # The two-lines explainer sits with this chart (moved 12 Aug 2026, Lydia's review):
@@ -1864,7 +1919,7 @@ def monthly_block():
             # colour-blind; the faint raw series needed naming most, since it is the one a
             # reader mistakes for noise in the data rather than in hiring.
             + '<div class="dblegend">'
-              '<span><i style="background:var(--c1)"></i>names an AI skill, 12-month mean</span>'
+              '<span><i style="background:var(--c1)"></i>AI term named anywhere, 12-month mean</span>'
               '<span><i style="background:var(--c2)"></i>asks for it in the role (floor), 12-month mean</span>'
               '<span><i style="background:var(--c1);opacity:.32"></i>single month, unsmoothed</span>'
               '</div>\n'
@@ -3098,8 +3153,10 @@ def brief(lang="en"):
     _lc_ce = _lc_wt + CEIL_BAND_SHARE * _lc_bd
     # Whether the published series already drops recruitment-only mentions (term list v1.6+).
     _v16 = tuple(int(x) for x in DEF_VERSION.lstrip("v").split(".")) >= (1, 6)
-    _v16_en = "; from term list v1.6 we no longer count them" if _v16 else ""
-    _v16_sv = "; från termlista v1.6 räknas de inte längre" if _v16 else ""
+    _v16_en = (". In the latest version of our classification such mentions are no longer "
+               "counted at all") if _v16 else ""
+    _v16_sv = (". I den senaste versionen av vår klassificering räknas sådana omnämnanden inte "
+               "längre alls") if _v16 else ""
     _lcs_se, _lcs_us, _lcs_de, _lcs_our, _lcs_wt, _lcs_bd, _lcs_ce = (svn(f"{v:.1f}") for v in
         (_lc["Sweden"], _lc["United States"], _lc["Germany"], _our_lc, _lc_wt, _lc_bd, _lc_ce))
     _lc_fl = _tt["floor_values"][_lc_i]
@@ -3164,20 +3221,27 @@ def brief(lang="en"):
             f"demand is also spreading beyond ICT jobs: {_ni['ceiling_now']:.0f}% of it is in other "
             f"occupations, against {_ni['ceiling_first']:.0f}% in {_ni['first_year']}, while the floor "
             f"has stayed near {_ni['floor_now']:.0f}%.",
+            # Lydia Löthman, 30 Sep 2026: rewritten for clarity, in two steps (demand, then
+            # AI talk). "redan" added so the 0,3 is read as part of the 0,9, not on top of it.
             f"Från januari till juni {_tlast} nämnde {svn(f'{_all:.1f}')} procent av de "
-            f"{_sm_ads_sv} annonserna på Platsbanken AI på något sätt ({svn(f'{_all25:.1f}')} procent "
-            f"under hela 2025), en andel ungefär {_sm_rise_all} procent högre än samma månader 2025. Som "
-            f"AI-efterfrågan räknar vi {svn(f'{_wce:.1f}')} procent: golvet, {svn(f'{_wfl:.1f}')} "
-            f"procent, och ytterligare {svn(f'{_wce - _wfl:.1f}')} procent upp till taket. Mer nyanserat "
-            f"mäter vi AI-efterfrågan som ett spann, i dag mellan {svn(f'{_wfl:.1f}')} och "
-            f"{svn(f'{_wce:.1f}')} procent. Sammanlagt nämner {svn(f'{_wbd:.1f}')} procent bara AI. Vid "
-            f"manuell läsning visar sig ungefär var åttonde av dem gälla en verklig AI-tjänst; de "
-            f"{svn(f'{_bdr:.1f}')} procentenheterna räknas in i taket och resterande "
-            f"{svn(f'{_bdg:.1f}')} procent är AI-pratet i grått. Det har nästan fördubblats sedan samma "
-            f"månader 2025, från {svn(f'{_sm_talk_prev:.1f}')} procent, och är nu större än "
-            f"AI-efterfrågan. AI-efterfrågan sprids också utanför IT-yrkena: {_ni['ceiling_now']:.0f} "
-            f"procent av den finns i andra yrken, mot {_ni['ceiling_first']:.0f} procent "
-            f"{_ni['first_year']}, medan golvet legat kvar kring {_ni['floor_now']:.0f} procent."),
+            f"{_sm_ads_sv} annonserna på Platsbanken AI på något sätt, jämfört med "
+            f"{svn(f'{_all25:.1f}')} procent under hela 2025. Det är en ökning med ungefär "
+            f"{_sm_rise_all} procent jämfört med samma månader 2025. Av annonserna innehåller "
+            f"{svn(f'{_wfl:.1f}')} procent en tydligt angiven AI-kompetens och utgör därför vårt golv "
+            f"för AI-efterfrågan. Ytterligare {svn(f'{_wce - _wfl:.1f}')} procentenheter innehåller "
+            f"andra indikationer på AI-efterfrågan och ingår i vårt övre mått. Vi uppskattar därför "
+            f"den efterfrågade AI-kompetensen till mellan {svn(f'{_wfl:.1f}')} och "
+            f"{svn(f'{_wce:.1f}')} procent av alla annonser. Samtidigt nämner "
+            f"{svn(f'{_wbd:.1f}')} procent av annonserna AI utan att ange en specifik AI-kompetens. "
+            f"Manuell granskning visar att ungefär var åttonde av dessa ändå avser en faktisk "
+            f"AI-tjänst. Dessa, cirka {svn(f'{_bdr:.1f}')} procentenheter, ingår redan i det övre "
+            f"måttet. Resterande cirka "
+            f"{svn(f'{_bdg:.1f}')} procentenheter klassificerar vi som \u201dAI-prat\u201d. Denna "
+            f"andel har nästan fördubblats från {svn(f'{_sm_talk_prev:.1f}')} procent under samma "
+            f"månader 2025 och är nu större än den uppskattade AI-efterfrågan. AI-efterfrågan har "
+            f"samtidigt spridits utanför IT-yrkena: {_ni['ceiling_now']:.0f} procent finns nu i andra "
+            f"yrken, jämfört med {_ni['ceiling_first']:.0f} procent {_ni['first_year']}, medan "
+            f"motsvarande andel för golvet har legat kvar kring {_ni['floor_now']:.0f} procent."),
         "adoption": L(
             f"Adoption climbs steeply with firm size: {smd['10-49']}% among small firms (10–49 employees) "
             f"against {smd['250-']}% among large ones (250+) in {SWEAD['meta']['year']}, and every size class has risen since {SWEAD['meta']['prev_year']}. "
@@ -3248,8 +3312,7 @@ def brief(lang="en"):
             " * Inget värde för 2021 publiceras för dessa rader."),
         "washing": L(" 2026 covers January to June. The share of genuine AI roles among advertisements "
                      "that only say \u201cAI\u201d (about one in eight) rests on 203 advertisements read by hand.",
-                     " 2026 avser januari till juni. Andelen verkliga AI-tjänster bland annonser med bara "
-                     "\u201dAI\u201d (ungefär var åttonde) bygger på 203 handlästa annonser."),
+                     " Andelen verkliga AI-tjänster (var åttonde) bygger på 203 handlästa annonser."),
     }
 
     # ── the month's argument ──────────────────────────────────────────────────────────────
@@ -3448,23 +3511,23 @@ def brief(lang="en"):
             # recruitment-only bare mentions were 1.8% of the band in 2025, 2.6% in 2026-Q1 and
             # 4.8% in 2026-Q2 ("Vi använder AI som stöd i rekryteringsprocessen", Hubert.ai,
             # Tengai), data/v16_scan/band_recruit.csv. From term list v1.6 they are not counted.
-            "An advertisement that only mentions AI says something about the employer, though not "
-            "exactly what. The employer may be signalling that it is at the forefront, describing "
+            # Yifan, 30 Sep 2026: the old opening ("says something ... though not exactly what")
+            # was vague. His points 1-2 applied; point 3 (drop the closing caveat) not, per ML.
+            "An advertisement that only mentions AI may do so for various reasons. The employer may be signalling that it is at the forefront, describing "
             "itself, expecting staff to use AI without naming it as a skill, or looking for "
             "applicants who are curious about AI. A small but growing share mention AI only to "
-            "describe the hiring itself, such as an AI tool that conducts the first interview, and "
-            "some ask applicants not to use AI when applying" + _v16_en + ". Advertisements rarely "
+            "describe the hiring itself, such as an AI tool that conducts the first interview. Others "
+            "ask applicants not to use AI when applying" + _v16_en + ". Advertisements rarely "
             "list everything a job requires, so even the ceiling captures only the demand that is "
             "written down. How much of the bare mentions reflects "
             "a real need is hard to judge from the advertisements alone.",
-            "En annons som bara nämner AI säger något om arbetsgivaren, men inte exakt vad. "
+            "En annons som bara nämner AI kan göra det av olika skäl. "
             "Arbetsgivaren kan vilja signalera att den ligger i framkant, beskriva sig själv, räkna "
             "med att de anställda använder AI utan att skriva det som ett krav, eller söka personer "
             "som är nyfikna på AI. En liten men växande andel nämner AI bara för att beskriva själva "
-            "rekryteringen, till exempel ett AI-verktyg som håller den första intervjun, och vissa "
+            "rekryteringen, till exempel ett AI-verktyg som håller den första intervjun. Andra "
             "ber de sökande att inte använda AI i ansökan" + _v16_sv + ". Annonser räknar dessutom "
-            "sällan upp allt som ett jobb kräver, så även taket fångar bara den efterfrågan som "
-            "faktiskt står i texten. Hur mycket av de allmänna AI-omnämnandena som "
+            "sällan upp allt ett jobb kräver, så även taket fångar bara uttalad efterfrågan. Hur mycket av de allmänna AI-omnämnandena som "
             "speglar ett verkligt behov är svårt att avgöra med annonserna ensamma."),
         "adoption": L(
             # Shortened on Yifan's review of the September brief: the original ran to five
@@ -4005,11 +4068,15 @@ def emit_data(out):
     t = TREND["trend"]
     with (d / "ai_in_demand_trend.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
-        w.writerow(["year", "names_ai_skill_pct", "asks_for_ai_in_role_pct", "definition"])
+        w.writerow(["year", "ceiling_pct", "ceiling_lo95_pct", "ceiling_hi95_pct",
+                    "names_ai_skill_pct", "asks_for_ai_in_role_pct", "bare_ai_only_pct", "definition"])
         fv = t.get("floor_values") or [""] * len(t["years"])
-        for y, v, fl in zip(t["years"], t["values"], fv):
-            w.writerow([y, v, fl, f"{TREND['meta']['definition']} fp {TREND['meta']['def_fp']} · distinct advertisements"])
-    (d / "ai_in_demand_trend.svg").write_text(chart_standalone(trend_svg(t), "Swedish job ads naming an AI skill, 2006 onwards",
+        for i, (y, v, fl) in enumerate(zip(t["years"], t["values"], fv)):
+            w.writerow([y, t["ceiling_values"][i], t["ceiling_lo"][i], t["ceiling_hi"][i], v, fl,
+                        t["band_values"][i],
+                        f"{TREND['meta']['definition']} fp {TREND['meta']['def_fp']} · distinct advertisements"
+                        f" · ceiling = names + {CEIL_BAND_SHARE} x bare"])
+    (d / "ai_in_demand_trend.svg").write_text(chart_standalone(trend_svg(t), "AI demand in Swedish job ads, floor to ceiling, 2006 onwards",
                                                                  f"JobTech / Platsbanken job ads (CC0) · {TREND['meta']['definition']} · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     with (d / "entry_level_squeeze.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)

@@ -38,7 +38,12 @@ const hideTip = () => { if (tip) tip.style.opacity = 0; };
 /* the trend line — broad AI-in-demand share, with a dashed provisional final year */
 window.drawTrend = function drawTrend(){
   const svg = $("#trend"); if (!svg || !window.AIEL_TREND) return;
-  const YRS = window.AIEL_TREND.years, V = window.AIEL_TREND.values;
+  // The top line is the CEILING (30 Sep 2026): whole-text plus the hand-read share of bare "AI".
+  // The whole-text line ("an AI term named anywhere") is drawn thin between ceiling and floor.
+  // Falls back to the whole-text line if a page carries no ceiling.
+  const YRS = window.AIEL_TREND.years, N = window.AIEL_TREND.values;
+  const CE = window.AIEL_TREND.ceiling, hasCeil = CE && CE.length === YRS.length;
+  const V = hasCeil ? CE : N;
   const provIdx = window.AIEL_TREND.provisionalFrom;           // index where "provisional" begins
   const W = 640, H = 300, m = {l:44, r:58, t:16, b:34};
   const xmin = YRS[0], xmax = YRS[YRS.length-1], ymax = window.AIEL_TREND.ymax || 2.2;
@@ -72,6 +77,13 @@ window.drawTrend = function drawTrend(){
     const fx = X(YRS[YRS.length-1]), fy = Y(F[F.length-1]);
     g += `<circle cx="${fx}" cy="${fy}" r="3.5" fill="${CSS('--paper')}" stroke="${col2}" stroke-width="2"/>`;
   }
+  // whole-text line, thin and muted: a step inside the range, not a bound
+  if (hasCeil){
+    const cm = CSS("--muted");
+    let dn = ""; for (let i=0;i<=s;i++){ const x=X(YRS[i]),y=Y(N[i]); dn += (dn?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" "; }
+    g += `<path d="${dn}" fill="none" stroke="${cm}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+    g += `<path d="M${X(YRS[s]).toFixed(1)} ${Y(N[s]).toFixed(1)} L${X(YRS[YRS.length-1]).toFixed(1)} ${Y(N[N.length-1]).toFixed(1)}" fill="none" stroke="${cm}" stroke-width="1.4" stroke-dasharray="4 3" stroke-linecap="round"/>`;
+  }
   // endpoint
   const lx = X(YRS[YRS.length-1]), ly = Y(V[V.length-1]);
   g += `<circle cx="${lx}" cy="${ly}" r="4.5" fill="${CSS('--paper')}" stroke="${col}" stroke-width="2.4"/>`;
@@ -98,11 +110,13 @@ window.drawTrend = function drawTrend(){
     const prov = bi>=provIdx-1 && bi===YRS.length-1 ? " <span style='color:var(--warn)'>· provisional</span>" : "";
     // Series names match the legend and the methods note: "names" is the whole-text measure,
     // "asks for" is the role-scoped floor. "Broad AI share" matched neither.
-    let rows = `<div class="r"><span>Names an AI skill</span><b>${V[bi].toFixed(3)}%</b></div>`;
+    let rows = hasCeil
+      ? `<div class="r"><span>Ceiling</span><b>${CE[bi].toFixed(2)}%</b></div>` +
+        `<div class="r"><span>AI term named anywhere</span><b>${N[bi].toFixed(2)}%</b></div>`
+      : `<div class="r"><span>AI term named anywhere</span><b>${N[bi].toFixed(2)}%</b></div>`;
     if (hasFloor){
       dotF.setAttribute("cx",xx); dotF.setAttribute("cy",Y(F[bi])); dotF.style.opacity=1;
-      rows += `<div class="r"><span>Asks for AI in the role</span><b>${F[bi].toFixed(3)}%</b></div>`;
-      rows += `<div class="r"><span>Grey zone (gap)</span><b>${(V[bi]-F[bi]).toFixed(3)}%</b></div>`;
+      rows += `<div class="r"><span>Floor: asks for AI in the role</span><b>${F[bi].toFixed(2)}%</b></div>`;
     }
     showTip(`<b>${YRS[bi]}</b>${rows}${prov}`, ev.clientX, ev.clientY);
   };

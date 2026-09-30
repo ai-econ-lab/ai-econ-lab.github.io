@@ -602,6 +602,9 @@ main [id]{scroll-margin-top:196px}
 @page { size: A4; margin: 14mm 14mm 12mm 14mm; }
 
 @media print {
+  /* 30 Sep 2026: system-ui embeds as Type 3 in Chrome's PDF, which simple viewers render
+     badly; a named TrueType face embeds cleanly. */
+  :root{--sans:'Helvetica Neue',Helvetica,Arial,sans-serif}
   /* force the light palette so charts print legibly even from dark mode */
   :root, :root[data-theme="dark"] {
     --paper:#fff; --raise:#fff; --bg:#fff; --ink:#161d2b; --ink-2:#3a4657; --muted:#65717f;

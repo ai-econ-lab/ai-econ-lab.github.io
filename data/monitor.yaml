@@ -85,8 +85,10 @@ captions:
   guard: >-
     The two lines differ in where we read. The lower line counts an ad only when AI is named in
     the job's own requirements, so ads that mention AI while describing the company are left
-    out; the upper line counts a named AI skill anywhere in the ad, company description
-    included. The gap between them is the reason we publish a range rather than a number.
+    out; the upper line counts a named AI term anywhere in the ad, company description
+    included. The upper line is not the ceiling: the ceiling also counts the one in eight ads
+    that only say "AI" and turn out, read by hand, to be genuine AI roles. That correction is
+    measured by year, so the ceiling is drawn on the annual chart, not the monthly one.
   floor_sv: >-
     Andelen annonser på Platsbanken som ber den som anställs att arbeta med AI, med en namngiven
     färdighet som maskininlärning bland tjänstens egna krav.
@@ -105,7 +107,8 @@ captions:
 # source · vintage, never description; anything descriptive belongs in the label, which
 # ends with a full stop.
 tiles:
-  - {num: "1.06<span>%</span>", lab: "of 2025 job advertisements name a specific AI skill; 0.54% ask for it in the job's own requirements.", foot: "Platsbanken · frozen v1.6 · distinct ads · 2025", cls: ""}
+  # 30 Sep 2026 (ML): the range, floor to ceiling, as in the brief; checked by refresh_trend.py --check.
+  - {num: "0.54–1.23<span>%</span>", lab: "of 2025 job advertisements ask for AI skills, from the floor (asked of the person hired) to the ceiling (AI terms anywhere, plus the hand-read share of ads that only say “AI”).", foot: "Platsbanken · frozen v1.6 · distinct ads · 2025", cls: ""}
   - {num: "38×", lab: "rise in ads naming an AI skill, from a pooled 2006–08 base to 2025 (0.028% → 1.06%, 95% interval 33–44×); the strict floor rose 41×. Measured instead from a 2015–17 base, where the term list has been stable across freezes, the rise is 6.3× (6.0–6.4).", foot: "Platsbanken · base 2006–08 (675,259 ads, 190 flagged) · 2025", cls: "b"}
   - {num: "28.8", lab: "ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023; 27% of AI demand.", foot: "Platsbanken · 2025", cls: "c"}
   - {num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations, a gap widening since 2020; descriptive, and not separable from the rate cycle.", foot: "JobTech · 2020–2025", cls: "d"}
