@@ -316,7 +316,7 @@ window.drawTrend();
     const cmp = Math.abs(gap) < 5
       ? `<b>${oL}</b> places it about the same: more exposed than ${Math.round(q)}%.`
       : `<b>${oL}</b> places it ${gap > 0 ? "higher" : "lower"}: more exposed than ${Math.round(q)}%.` +
-        (Math.abs(gap) >= 10 ? ` The abilities this job relies on overlap ${(M === "genai") === (gap < 0) ? "more" : "less"} with what generative AI does, producing text and images, than with AI's other areas, such as recognising images and speech.` : "");
+        (Math.abs(gap) >= 10 ? ` The two measures count different AI capabilities, and the abilities this job relies on match the generative ones ${(M === "genai") === (gap < 0) ? "more" : "less"} closely than AI's other application areas.` : "");
     const drift = Math.round(p) - Math.round(first.pct);
     const trendTxt = Math.abs(drift) < 3
       ? `Exposure has grown since ${Y0}, as it has for every occupation, but its position among them has held steady (${Math.round(first.pct)}% in ${Y0}, ${Math.round(p)}% in ${Y1}).`
