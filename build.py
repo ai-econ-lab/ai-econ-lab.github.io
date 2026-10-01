@@ -3860,7 +3860,9 @@ PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.htm
          "events/index.html": events(), "news/index.html": news(), "about/index.html": about(),
          # Retired route kept alive for the reminder mails already in people's archives.
          # Deliberately absent from sitemap.xml: a redirect stub is not a page to index.
-         "seminars/index.html": redirect("/events/")}
+         "seminars/index.html": redirect("/events/"),
+         # Printed in the Same Storm R1 manuscript and appendix (EL67898R1) as the latest-version URL.
+         "papers/index.html": redirect("/research/")}
 
 def chart_standalone(svg, title=None, source=None):
     """Self-contained SVG for download (inline light-theme styles; no page CSS).
