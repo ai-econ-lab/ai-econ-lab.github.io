@@ -108,10 +108,10 @@ working:
       - {label: "IZA DP 18267", url: "https://www.iza.org/publications/dp/18267/the-effects-of-artificial-intelligence-on-jobs-evidence-from-an-ai-subsidy-program"}
       - {label: "GLO DP 1692", url: "https://ideas.repec.org/p/zbw/glodps/1692.html"}
     abstract: "Artificial intelligence (AI) is expected to reshape labor markets, yet causal evidence remains scarce. We exploit a novel Swedish subsidy program that encouraged small and mid-sized firms to adopt AI. Using a synthetic difference-in-differences design comparing awarded and non-awarded firms, we find that AI subsidies led to a sustained increase in job postings over five years, but with no statistically detectable change in employment. This pattern reflects hiring signals concentrated in AI occupations and white-collar roles. Our findings align with task-based models of automation, in which AI adoption reconfigures work and spurs demand for new skills, but hiring frictions and the need for complementary investments delay workforce expansion"
-  - title: "Same Storm, Different Boats: Generative AI and the Age Gradient in Hiring"
+  - title: "Same Storm, Different Boats: Generative AI and the Age Gradient Within Firms"
     authors: "Lodefalk, M., Löthman, L., Koch, M. & E. Engberg"
     year: 2026
-    venue: "Revise and resubmit, Economics Letters"
+    venue: "Resubmitted to Economics Letters"
     coverage:
       - {name: "Sveriges Radio", url: "https://www.sverigesradio.se/artikel/blir-allt-svarare-for-unga-att-fa-jobb-efter-sakra-utbildningar"}
       - {name: "SvD", url: "https://www.svd.se/a/9pzVaM/laskigaste-kurvan-visar-ai-tar-jobb-fran-unga-i-sverige"}
@@ -119,10 +119,10 @@ working:
       - {name: "Arbetsvärlden", url: "https://www.arbetsvarlden.se/unga-blev-forlorare-nar-chatgpt-forandrade-arbetet/"}
     links:
       - {label: "Paper (PDF)", url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/main.pdf"}
-      - {label: "One-pager", url: "https://magnus-l.github.io/canaries-sweden/onepager/onepager.pdf"}
-      - {label: "ORU WP 2/2026", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2026/wp-2-2026.pdf"}
+      - {label: "One-pager (first version)", url: "https://magnus-l.github.io/canaries-sweden/onepager/onepager.pdf"}
+      - {label: "ORU WP 2/2026 (first version)", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2026/wp-2-2026.pdf"}
       - {label: "Appendix", url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/appendix.pdf"}
-    abstract: "We show that the age composition of employment within Swedish employers shifts after the arrival of generative AI, with no corresponding reduction in aggregate labour demand. Using 4.6 million job advertisements from Sweden’s largest recruitment platform, we find that the broad decline in postings since 2022 aligns with monetary tightening rather than AI, exploiting Sweden’s seven-month gap between the Riksbank’s first rate hike and the launch of ChatGPT as a timing test. We then use full-population employer– employee register data and an employer-level difference-in-differences design to estimate how AI exposure affects employment composition across six age groups. An event study documents an accelerating decline in employment of 22–25-year-olds in high-AI-exposure occupations, reaching 5.5 per cent by early 2025 relative to less exposed occupations within the same employers, while employment of workers over 50 rose by 1.3 per cent. The widening age gradient suggests that generative AI reshapes hiring composition rather than aggregate demand, with the adjustment burden falling disproportionately on entry-level workers"
+    abstract: "From 2022 to 2026, Swedish job postings fell while share prices rose, coinciding with monetary tightening from April 2022 and ChatGPT’s release that November. Aggregate postings show no clear link to either explanation, but advertising within employers shifts away from AI-exposed occupations after the release. Payroll records are clearer. From 2023 to 2024–25, the young-to-older employment ratio at ages 22 to 25 fell 3.9 per cent more at exposed employers, with separations rising and no significant change in hiring. The oldest workers gained most. Among the young, women’s ratio fell 7.4 per cent and men’s did not detectably change."
   - title: "Who Adopts AI? Evidence on Firms, Technologies and Workers"
     authors: "Pulito, G., Pytlikova, M., Schroeder, S. & M. Lodefalk"
     year: 2026

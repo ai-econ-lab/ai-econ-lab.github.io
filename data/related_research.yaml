@@ -32,10 +32,10 @@ adoption:
     where: "IZA DP 18267"
 
 outcomes:
-  - title: "Same Storm, Different Boats: Generative AI and the Age Gradient in Hiring"
+  - title: "Same Storm, Different Boats: Generative AI and the Age Gradient Within Firms"
     note: "the register-based version of the entry-level signal shown here"
-    url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2026/wp-2-2026.pdf"
-    where: "ORU WP 2/2026"
+    url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/main.pdf"
+    where: "Resubmitted to Economics Letters"
   - title: "Artificial Intelligence and Worker Stress: Evidence from Germany"
     note: "AI and working conditions, at worker level"
     url: "https://rdcu.be/d8No5"
