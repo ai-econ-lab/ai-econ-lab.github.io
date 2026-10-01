@@ -79,6 +79,7 @@ working:
     year: 2026
     venue: "Working paper"
     coverage:
+      - {name: "RND", url: "https://www.rnd.de/wirtschaft/welche-jobs-sind-am-staerksten-von-ki-bedroht-neue-studie-liefert-antworten-7V2NJ4H7AJDADOCBYAOKSNPQZ4.html"}
       - {name: "Il Foglio", url: "https://www.ilfoglio.it/tecnologia/2026/02/12/news/l-ai-non-distrugge-i-posti-di-lavoro-li-cambia-uno-studio-tedesco--8647321/"}
       - {name: "Die Zeit", url: "https://www.zeit.de/wirtschaft/2026-05/automatisierungsrisiko-arbeitnehmer-ki-arbeitsmarkt-bedrohung"}
       - {name: "Focus", url: "https://www.focus.de/finanzen/arbeit-veraendert-sich-gerade-fuer-alle-was-beschaeftigte-aushalten-muessen_80a1aba4-fc2e-4493-9437-9991be50c929.html"}
