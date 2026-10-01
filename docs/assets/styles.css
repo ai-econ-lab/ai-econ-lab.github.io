@@ -294,27 +294,80 @@ details.semabs>p{font-size:var(--fs-sec);color:var(--muted);margin:6px 0 0;max-w
 .pbody .pmeta2{font-size:var(--fs-sec);color:var(--ink-2);margin:0 0 8px}
 .pbody .plinks{margin:0}
 
-/* DAIOE occupation lookup */
-.occtool{margin-top:22px;max-width:660px}
-.occrow1{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
-.occsearchbox{position:relative;flex:1 1 300px}
+/* DAIOE occupation lookup. Each measure carries its own colour through the switch, the
+   definition rule, the badge, the pin and the trend line, so it is always clear which AI the
+   numbers describe. --m-all is a darker Okabe-Ito green so white text clears 4.5:1. */
+.occtool{margin-top:22px;max-width:720px;scroll-margin-top:150px;--m-gen:#0072b2;--m-all:#00795b;--on-m:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .occtool{--m-gen:#4ea6de;--m-all:#37b98a;--on-m:#0a0e1c}}
+:root[data-theme="dark"] .occtool{--m-gen:#4ea6de;--m-all:#37b98a;--on-m:#0a0e1c}
+.occtool[data-measure="genai"]{--mcol:var(--m-gen);--ocol:var(--m-all)}
+.occtool[data-measure="allapps"]{--mcol:var(--m-all);--ocol:var(--m-gen)}
+.occmeasure{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.occmlab{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.occseg{display:inline-flex;gap:2px;border:1px solid var(--border-2);border-radius:999px;padding:3px;background:var(--paper)}
+.occsegbtn{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--ink-2);font-family:var(--sans);font-size:14px;font-weight:600;padding:8px 16px;border-radius:999px;cursor:pointer;transition:background .2s,color .2s}
+.occsegbtn[data-m="genai"]{--b:var(--m-gen)} .occsegbtn[data-m="allapps"]{--b:var(--m-all)}
+.occsw{width:9px;height:9px;border-radius:50%;background:var(--b)}
+.occsegbtn[aria-checked="true"]{background:var(--b);color:var(--on-m)}
+.occsegbtn[aria-checked="true"] .occsw{background:var(--on-m)}
+.occsegbtn:hover:not([aria-checked="true"]){color:var(--ink);background:var(--raise)}
+.occdef{margin:12px 0 16px;padding:2px 0 2px 12px;border-left:3px solid var(--mcol);font-size:var(--fs-sec);color:var(--ink-2);line-height:1.5;max-width:64ch;transition:border-color .2s}
+.occsearchbox{position:relative}
 #occsearch{width:100%;font-family:var(--sans);font-size:16px;padding:13px 15px;border:1px solid var(--border-2);border-radius:10px;background:var(--paper);color:var(--ink)}
-#occsearch:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--c1-soft)}
-.occdomwrap{display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-#occdom{font-family:var(--sans);font-size:var(--fs-sec);padding:11px 12px;border:1px solid var(--border-2);border-radius:10px;background:var(--paper);color:var(--ink);cursor:pointer}
-.occsugg{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--paper);border:1px solid var(--border-2);border-radius:10px;box-shadow:var(--shadow);z-index:12;overflow:hidden;max-height:290px;overflow-y:auto}
-.occopt{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);font-family:var(--sans);font-size:var(--fs-body);padding:10px 14px;cursor:pointer;border-top:1px solid var(--hair)}
-.occopt:first-child{border-top:0} .occopt:hover{background:var(--raise);color:var(--blue)}
-.occopt .tnum{color:var(--muted);font-family:var(--mono);font-size:var(--fs-sec)}
-.occresult{display:none;margin-top:20px;background:var(--paper);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
-.occresult .occname{font-family:var(--serif);font-size:20px;font-weight:600}
-.occresult .occscore{margin-top:4px;font-family:var(--serif);font-size:30px;color:var(--blue);font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
-.occresult .occunit{font-family:var(--mono);font-size:var(--fs-micro);color:var(--muted);font-weight:400;text-transform:uppercase;letter-spacing:.06em}
-.occscale{position:relative;height:10px;margin:28px 0 10px;background:linear-gradient(90deg,var(--c2),var(--c4),var(--c1));border-radius:6px}
-.occmark{position:absolute;top:-5px;width:4px;height:20px;background:var(--ink);border-radius:2px;transform:translateX(-2px);box-shadow:0 0 0 2px var(--paper)}
-.occlab{position:absolute;top:15px;font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.occlab.lo{left:0} .occlab.hi{right:0}
-.occsent{font-size:var(--fs-body);color:var(--ink-2);margin:26px 0 0;line-height:1.55}
+#occsearch:focus{outline:none;border-color:var(--mcol);box-shadow:0 0 0 3px var(--c1-soft)}
+.occsugg{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--paper);border:1px solid var(--border-2);border-radius:10px;box-shadow:var(--shadow);z-index:12;max-height:330px;overflow-y:auto}
+.occopt{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-top:1px solid var(--hair);font-size:var(--fs-body);color:var(--ink)}
+.occopt:first-child{border-top:0}
+.occopt:hover,.occopt[aria-selected="true"]{background:var(--raise);color:var(--mcol)}
+.occoptname{flex:1;min-width:0}
+.occopttag{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--muted);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+.occoptpct{font-family:var(--mono);font-size:var(--fs-sec);color:var(--mcol);min-width:3.2em;text-align:right}
+.occnone{padding:12px 14px;font-size:var(--fs-sec);color:var(--muted)}
+.occchips,.occnear{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:12px}
+.occsub{font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0 4px 0 0}
+.occnear .occsub,.occtrend .occsub{flex-basis:100%;margin:0 0 2px}
+.occchip{text-align:left;border:1px solid var(--border-2);border-radius:999px;background:var(--paper);font-family:var(--sans);font-size:12.5px;padding:5px 12px;color:var(--ink-2);cursor:pointer}
+.occchip:hover{border-color:var(--mcol);color:var(--mcol)}
+.occchip .tnum{font-family:var(--mono);color:var(--muted);margin-left:4px}
+.occresult{display:none;margin-top:20px;background:var(--paper);border:1px solid var(--border);border-top:4px solid var(--mcol);border-radius:14px;padding:22px 22px 18px;box-shadow:var(--shadow)}
+.occhead{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.occbadge{font-family:var(--mono);font-size:var(--fs-micro);font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--mcol);color:var(--on-m);border-radius:5px;padding:3px 8px}
+.occcode{font-size:var(--fs-micro);color:var(--muted);letter-spacing:.04em}
+.occresult .occname{font-family:var(--serif);font-size:23px;line-height:1.25;margin:10px 0 0}
+.occbig{font-family:var(--serif);font-size:18px;line-height:1.4;margin:8px 0 0;color:var(--ink-2)}
+.occbig b{display:block;font-size:46px;line-height:1.05;color:var(--mcol);margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.occbandchip{display:inline-block;margin-left:6px;font-family:var(--mono);font-size:var(--fs-micro);letter-spacing:.07em;text-transform:uppercase;border:1px solid var(--mcol);color:var(--mcol);border-radius:999px;padding:2px 9px;vertical-align:2px}
+.occscale2{position:relative;height:8px;margin:46px 4px 50px;border-radius:4px;background:linear-gradient(90deg,var(--hair),var(--border-2))}
+.occtick{position:absolute;top:-3px;width:1px;height:14px;background:var(--paper)}
+.occbandlab{position:absolute;top:16px;transform:translateX(-50%);font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.occbandlab.on{color:var(--mcol);font-weight:700}
+.occpin{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;transform:translate(-50%,-50%);transition:left .45s cubic-bezier(.2,.8,.2,1)}
+.occpin.me{background:var(--mcol);box-shadow:0 0 0 3px var(--paper);z-index:2}
+.occpin.ghost{width:13px;height:13px;background:var(--paper);border:2.5px solid var(--ocol)}
+.occpinlab{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10.5px;font-weight:700;white-space:nowrap;color:var(--mcol)}
+.occpin.r .occpinlab{left:auto;right:-6px;transform:none}
+.occpin.l .occpinlab{left:-6px;transform:none}
+.occpin.ghost .occpinlab{color:var(--ocol);font-weight:400;bottom:auto;top:calc(100% + 26px)}
+.occsent{font-size:var(--fs-body);color:var(--ink-2);margin:14px 0 0;line-height:1.55}
+.occsent b{color:var(--ocol)}
+.occtrend{margin-top:22px;padding-top:16px;border-top:1px solid var(--hair)}
+.occtrendsvg{width:100%;height:auto;display:block;margin-top:6px;overflow:visible}
+.occband80{fill:var(--mcol);opacity:.12}
+.occmed{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 4}
+.occline{fill:none;stroke:var(--mcol);stroke-width:2.75;stroke-linejoin:round;stroke-linecap:round}
+.occdot{fill:var(--mcol);stroke:var(--paper);stroke-width:2}
+.occlbl{font-family:var(--mono);font-size:11px;fill:var(--muted)} .occlblme{fill:var(--mcol);font-weight:700}
+.occax{font-family:var(--mono);font-size:10.5px;fill:var(--muted)}
+.occkey{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center;margin:6px 0 0;font-family:var(--mono);font-size:var(--fs-micro);color:var(--muted)}
+.occkey .k{display:inline-block;width:18px;height:3px;margin-right:6px;vertical-align:middle;background:var(--mcol);border-radius:2px}
+.occkey .k.med{background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 8px)}
+.occkey .k.band{height:10px;background:var(--mcol);opacity:.18}
+.occfoot{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:space-between;align-items:center;margin-top:18px;padding-top:12px;border-top:1px solid var(--hair);font-size:var(--fs-micro);color:var(--muted);line-height:1.5}
+.occfoot span{flex:1 1 300px}
+.occcopy{border:1px solid var(--border-2);background:transparent;color:var(--ink-2);border-radius:8px;padding:5px 10px;font-family:var(--mono);font-size:var(--fs-micro);cursor:pointer}
+.occcopy:hover{border-color:var(--mcol);color:var(--mcol)}
+@media(max-width:560px){.occresult{padding:18px 16px 14px}.occbig b{font-size:40px}.occbandlab{font-size:8.5px;letter-spacing:0}.occsegbtn{padding:8px 13px}}
+@media(prefers-reduced-motion:reduce){.occpin,.occsegbtn,.occdef{transition:none}}
 
 /* DAIOE beeswarm scrollytelling */
 .scrolly{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;margin-top:22px;align-items:start}

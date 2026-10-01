@@ -43,6 +43,9 @@ The masthead's "SOURCES CHECKED WEEKLY" claim rests on this Action — remove th
 claim if the Action is disabled. When DAIOE becomes an annually auto-updated
 index, promote its watcher to the auto-apply tier and sync with its release
 cycle (re-export the exposure chart, occupation search and View A weights).
+The DAIOE page's occupation search, beeswarm and most/least lists are built by
+`scripts/build_daioe_occupations.py` from the published release bundle (checked
+against its SHA256SUMS); run it, then `build.py`.
 
 ## Deploy / domain
 - Preview: `https://ai-econ-lab.github.io` (while `build.emit_cname: false`).

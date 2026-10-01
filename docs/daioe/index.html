@@ -7,7 +7,7 @@
 <meta property="og:description" content="DAIOE: the lab&#x27;s open, data-driven measure of occupational AI exposure, mapped across SOC / ISCO / SSYK."><meta property="og:url" content="https://ai-econlab.com/daioe/">
 <meta property="og:site_name" content="AI-Econ Lab">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/styles.css?v=e0641d76"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "DAIOE — data-driven AI Occupational Exposure", "description": "DAIOE measures how exposed each occupation is to artificial intelligence, from data rather than expert guesswork. It tracks AI capability subdomains annually since 2010, capturing the potential applicability of AI capabilities to occupational content, not job-loss forecasts or adoption probabilities. It is openly published and citable (Zenodo, doi:10.5281/zenodo.21873968), versioned, and mapped across the US (SOC), international (ISCO) and Swedish (SSYK) classifications, so others can use it directly.", "license": "https://creativecommons.org/licenses/by/4.0/", "creator": {"@type": "Organization", "name": "AI-Econ Lab"}, "isAccessibleForFree": true, "distribution": {"@type": "DataDownload", "contentUrl": "https://doi.org/10.5281/zenodo.21873968", "encodingFormat": ["text/csv", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/x-stata-dta"]}, "url": "https://ai-econlab.com/daioe/"}</script>
+<link rel="stylesheet" href="/assets/styles.css?v=6798ea88"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "DAIOE — data-driven AI Occupational Exposure", "description": "DAIOE measures how exposed each occupation is to artificial intelligence, from data rather than expert guesswork. It tracks AI capability subdomains annually since 2010, capturing the potential applicability of AI capabilities to occupational content, not job-loss forecasts or adoption probabilities. It is openly published and citable (Zenodo, doi:10.5281/zenodo.21873968), versioned, and mapped across the US (SOC), international (ISCO) and Swedish (SSYK) classifications, so others can use it directly.", "license": "https://creativecommons.org/licenses/by/4.0/", "creator": {"@type": "Organization", "name": "AI-Econ Lab"}, "isAccessibleForFree": true, "distribution": {"@type": "DataDownload", "contentUrl": "https://doi.org/10.5281/zenodo.21873968", "encodingFormat": ["text/csv", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/x-stata-dta"]}, "url": "https://ai-econlab.com/daioe/"}</script>
 </head><body>
 <a class="skip" href="#main">Skip to content</a>
 <div class="mast"><div class="wrap"><div class="mastbar">
@@ -15,7 +15,7 @@
     <span class="brandtext"><b>AI-Econ Lab</b><small>Örebro University · RATIO</small></span></a>
   <nav class="top"><a href="/monitor/">Monitor</a><a href="/daioe/" aria-current="page">AI exposure (DAIOE)</a><a href="/research/">Research</a><a href="/people/">People</a><a href="/events/">Events &amp; news</a><a href="/about/">About</a></nav>
   <button class="tbtn" id="themebtn" aria-label="Toggle colour theme">◐ Theme</button>
-</div></div><div class="regstrip"><div class="wrap"><div class="reg"><span>SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS · Akavia</span><span><b>8.1M</b> DISTINCT SWEDISH ADS · 36 COUNTRIES</span><span><span class="lv">● LIVE FEED 1 Oct 2026 · PUBLIC + PARTNER DATA</span></span><span>SOURCES CHECKED <b>28 Sep 2026</b> · SERIES LAST MOVED <b>30 Sep 2026</b></span><span>MONITOR <b>VERSION 1</b></span></div></div></div></div>
+</div></div><div class="regstrip"><div class="wrap"><div class="reg"><span>SOURCES <b>JobTech</b> · Eurostat · AI Index · SCB · EU-LFS · Akavia</span><span><b>8.1M</b> DISTINCT SWEDISH ADS · 36 COUNTRIES</span><span><span class="lv">● LIVE FEED 1 Oct 2026 · PUBLIC + PARTNER DATA</span></span><span>SOURCES CHECKED <b>28 Sep 2026</b> · SERIES LAST MOVED <b>1 Oct 2026</b></span><span>MONITOR <b>VERSION 1</b></span></div></div></div></div>
 <main id="main"><div class="wrap"><div class="hero" style="padding-bottom:6px"><div>
   <div class="eyebrow"><span class="dot"></span> Dynamic AI Occupational Exposure</div>
   <h1 class="title" style="max-width:16ch">DAIOE: how exposed is each job to AI?</h1>
@@ -24,27 +24,41 @@
     <a class="btn ghost" href="/monitor/#occupations-explorer">See it applied in the Monitor</a></div>
 </div></div></div>
 
-<div class="rule"><div class="wrap"><section>
+<div class="rule" id="find"><div class="wrap"><section>
   <p class="kicker">How exposed is your job?</p>
   <h2 class="sec">Find your occupation.</h2>
-  <p class="secintro">Type an occupation to see its DAIOE exposure and where it sits among roughly 424 occupations.
-    Generative AI by default; switch the sub-domain to compare.
+  <p class="secintro">Search 424 occupations in English (ISCO-08, the international classification) or
+    423 in Swedish (SSYK 2012), and see where each sits among all occupations in 2024.
     <a class="mono" style="font-size:12px;white-space:nowrap" href="https://www.zeit.de/wirtschaft/2026-05/automatisierungsrisiko-arbeitnehmer-ki-arbeitsmarkt-bedrohung">As featured in Die Zeit ↗</a></p>
-  <div class="occtool">
-    <div class="occrow1">
-      <div class="occsearchbox">
-        <input id="occsearch" type="text" autocomplete="off" aria-label="Search occupation"
-          placeholder="e.g. Economists, Software developers, Roofers…">
-        <div id="occsugg" class="occsugg" role="listbox"></div>
+  <div class="occtool" data-measure="genai">
+    <div class="occmeasure">
+      <span class="occmlab" id="occmlab">Exposure to</span>
+      <div class="occseg" role="radiogroup" aria-labelledby="occmlab">
+        <button type="button" role="radio" class="occsegbtn" data-m="genai" aria-checked="true"><span class="occsw"></span>Generative AI</button>
+        <button type="button" role="radio" class="occsegbtn" data-m="allapps" aria-checked="false"><span class="occsw"></span>All AI</button>
       </div>
-      <label class="occdomwrap">Sub-domain<select id="occdom" aria-label="DAIOE sub-domain"></select></label>
     </div>
+    <p class="occdef" id="occdef">AI that produces text and images: language modelling (the technology behind chatbots such as ChatGPT) and image generation.</p>
+    <div class="occsearchbox">
+      <input id="occsearch" type="search" autocomplete="off" spellcheck="false" role="combobox"
+        aria-autocomplete="list" aria-expanded="false" aria-controls="occsugg" aria-describedby="occdef"
+        aria-label="Search for an occupation, in English or Swedish"
+        placeholder="Your occupation, e.g. nurse, economist, lärare…">
+      <div id="occsugg" class="occsugg" role="listbox" aria-label="Matching occupations"></div>
+    </div>
+    <div class="occchips" id="occchips" aria-label="Examples"></div>
     <div id="occresult" class="occresult" aria-live="polite"></div>
+    <noscript><p class="occsent">The lookup needs JavaScript. The full scores are in the
+      <a href="https://doi.org/10.5281/zenodo.21873968">published data</a>.</p></noscript>
   </div>
+  <p class="prov" style="margin-top:14px">Source: DAIOE v1.0.0, 2024 refresh,
+    <a href="https://doi.org/10.5281/zenodo.21873968">doi:10.5281/zenodo.21873968</a>. Exposure measures how far AI capabilities
+    overlap with the abilities an occupation uses. It is not a forecast of job loss: exposed work can be
+    complemented by AI as well as replaced.</p>
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
-  <p class="kicker">The whole landscape · generative AI, 2023</p>
+  <p class="kicker">The whole landscape · generative AI, 2024</p>
   <h2 class="sec">Every occupation, placed by its exposure.</h2>
   <div class="scrolly">
     <div class="scrolly-chart">
@@ -58,22 +72,22 @@
       <div class="step" data-hl="hi"><p><b>It cuts against intuition.</b> The more schooling a job needs, the more exposed it tends to be. Exposure is not replacement, but the pattern is stark.</p></div>
     </div>
   </div>
-  <p class="prov" style="margin-top:8px">Source: DAIOE v2023 · ISCO-08. Look up your own job in the search above.</p>
+  <p class="prov" style="margin-top:8px">Source: DAIOE v2024 · ISCO-08. Look up your own job in the search above.</p>
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
-  <p class="kicker">The named extremes · generative AI, 2023</p>
+  <p class="kicker">The named extremes · generative AI, 2024</p>
   <h2 class="sec">Where generative AI reaches, and where it doesn't.</h2>
   <p class="secintro">DAIOE's generative-AI exposure across roughly 424 occupations. Writers, marketers, programmers
     and, yes, economists sit at the very top; hands-on manual, craft and outdoor work sits at the bottom.</p>
   <div class="expgrid">
     <div><div class="exphead"><span class="dotc hi"></span>Most exposed to generative AI</div>
-      <div class="expbars"><div class="exprow"><span class="expocc">Coding, proof-reading and related clerks</span><span class="expval tnum">5.17</span><div class="expbarwrap"><div class="expbar hi" style="width:100.0%"></div></div></div><div class="exprow"><span class="expocc">Authors and related writers</span><span class="expval tnum">4.74</span><div class="expbarwrap"><div class="expbar hi" style="width:91.7%"></div></div></div><div class="exprow"><span class="expocc">Mathematicians, actuaries and statisticians</span><span class="expval tnum">4.69</span><div class="expbarwrap"><div class="expbar hi" style="width:90.7%"></div></div></div><div class="exprow"><span class="expocc">Advertising and marketing professionals</span><span class="expval tnum">4.63</span><div class="expbarwrap"><div class="expbar hi" style="width:89.6%"></div></div></div><div class="exprow"><span class="expocc">Applications programmers</span><span class="expval tnum">4.63</span><div class="expbarwrap"><div class="expbar hi" style="width:89.6%"></div></div></div><div class="exprow"><span class="expocc">Software developers</span><span class="expval tnum">4.42</span><div class="expbarwrap"><div class="expbar hi" style="width:85.5%"></div></div></div><div class="exprow"><span class="expocc">Economists</span><span class="expval tnum">4.38</span><div class="expbarwrap"><div class="expbar hi" style="width:84.7%"></div></div></div><div class="exprow"><span class="expocc">Statistical, mathematical and related associate professionals</span><span class="expval tnum">4.35</span><div class="expbarwrap"><div class="expbar hi" style="width:84.1%"></div></div></div><div class="exprow"><span class="expocc">Chemical engineers</span><span class="expval tnum">4.29</span><div class="expbarwrap"><div class="expbar hi" style="width:83.0%"></div></div></div><div class="exprow"><span class="expocc">Physicists and astronomers</span><span class="expval tnum">4.28</span><div class="expbarwrap"><div class="expbar hi" style="width:82.8%"></div></div></div></div></div>
+      <div class="expbars"><div class="exprow"><span class="expocc">Coding, proof-reading and related clerks</span><span class="expval tnum">5.18</span><div class="expbarwrap"><div class="expbar hi" style="width:100.0%"></div></div></div><div class="exprow"><span class="expocc">Authors and related writers</span><span class="expval tnum">4.75</span><div class="expbarwrap"><div class="expbar hi" style="width:91.7%"></div></div></div><div class="exprow"><span class="expocc">Mathematicians, actuaries and statisticians</span><span class="expval tnum">4.70</span><div class="expbarwrap"><div class="expbar hi" style="width:90.7%"></div></div></div><div class="exprow"><span class="expocc">Advertising and marketing professionals</span><span class="expval tnum">4.64</span><div class="expbarwrap"><div class="expbar hi" style="width:89.6%"></div></div></div><div class="exprow"><span class="expocc">Applications programmers</span><span class="expval tnum">4.64</span><div class="expbarwrap"><div class="expbar hi" style="width:89.6%"></div></div></div><div class="exprow"><span class="expocc">Software developers</span><span class="expval tnum">4.43</span><div class="expbarwrap"><div class="expbar hi" style="width:85.5%"></div></div></div><div class="exprow"><span class="expocc">Economists</span><span class="expval tnum">4.39</span><div class="expbarwrap"><div class="expbar hi" style="width:84.7%"></div></div></div><div class="exprow"><span class="expocc">Statistical, mathematical and related associate professionals</span><span class="expval tnum">4.36</span><div class="expbarwrap"><div class="expbar hi" style="width:84.2%"></div></div></div><div class="exprow"><span class="expocc">Chemical engineers</span><span class="expval tnum">4.30</span><div class="expbarwrap"><div class="expbar hi" style="width:83.0%"></div></div></div><div class="exprow"><span class="expocc">Physicists and astronomers</span><span class="expval tnum">4.29</span><div class="expbarwrap"><div class="expbar hi" style="width:82.8%"></div></div></div></div></div>
     <div><div class="exphead"><span class="dotc lo"></span>Least exposed</div>
-      <div class="expbars"><div class="exprow"><span class="expocc">Hand launderers and pressers</span><span class="expval tnum">1.12</span><div class="expbarwrap"><div class="expbar lo" style="width:21.7%"></div></div></div><div class="exprow"><span class="expocc">Athletes and sports players</span><span class="expval tnum">1.21</span><div class="expbarwrap"><div class="expbar lo" style="width:23.4%"></div></div></div><div class="exprow"><span class="expocc">Roofers</span><span class="expval tnum">1.22</span><div class="expbarwrap"><div class="expbar lo" style="width:23.6%"></div></div></div><div class="exprow"><span class="expocc">Miners and quarriers</span><span class="expval tnum">1.28</span><div class="expbarwrap"><div class="expbar lo" style="width:24.8%"></div></div></div><div class="exprow"><span class="expocc">Garden and horticultural labourers</span><span class="expval tnum">1.30</span><div class="expbarwrap"><div class="expbar lo" style="width:25.1%"></div></div></div><div class="exprow"><span class="expocc">Water and firewood collectors</span><span class="expval tnum">1.31</span><div class="expbarwrap"><div class="expbar lo" style="width:25.3%"></div></div></div><div class="exprow"><span class="expocc">Crop farm labourers</span><span class="expval tnum">1.32</span><div class="expbarwrap"><div class="expbar lo" style="width:25.5%"></div></div></div><div class="exprow"><span class="expocc">Subsistence crop farmers</span><span class="expval tnum">1.32</span><div class="expbarwrap"><div class="expbar lo" style="width:25.5%"></div></div></div><div class="exprow"><span class="expocc">Earthmoving and related plant operators</span><span class="expval tnum">1.33</span><div class="expbarwrap"><div class="expbar lo" style="width:25.7%"></div></div></div><div class="exprow"><span class="expocc">Fibre preparing, spinning and winding machine operators</span><span class="expval tnum">1.33</span><div class="expbarwrap"><div class="expbar lo" style="width:25.7%"></div></div></div></div></div>
+      <div class="expbars"><div class="exprow"><span class="expocc">Hand launderers and pressers</span><span class="expval tnum">1.12</span><div class="expbarwrap"><div class="expbar lo" style="width:21.6%"></div></div></div><div class="exprow"><span class="expocc">Athletes and sports players</span><span class="expval tnum">1.21</span><div class="expbarwrap"><div class="expbar lo" style="width:23.4%"></div></div></div><div class="exprow"><span class="expocc">Roofers</span><span class="expval tnum">1.22</span><div class="expbarwrap"><div class="expbar lo" style="width:23.6%"></div></div></div><div class="exprow"><span class="expocc">Miners and quarriers</span><span class="expval tnum">1.29</span><div class="expbarwrap"><div class="expbar lo" style="width:24.9%"></div></div></div><div class="exprow"><span class="expocc">Garden and horticultural labourers</span><span class="expval tnum">1.30</span><div class="expbarwrap"><div class="expbar lo" style="width:25.1%"></div></div></div><div class="exprow"><span class="expocc">Water and firewood collectors</span><span class="expval tnum">1.32</span><div class="expbarwrap"><div class="expbar lo" style="width:25.5%"></div></div></div><div class="exprow"><span class="expocc">Subsistence crop farmers</span><span class="expval tnum">1.32</span><div class="expbarwrap"><div class="expbar lo" style="width:25.5%"></div></div></div><div class="exprow"><span class="expocc">Crop farm labourers</span><span class="expval tnum">1.32</span><div class="expbarwrap"><div class="expbar lo" style="width:25.5%"></div></div></div><div class="exprow"><span class="expocc">Structural-metal preparers and erectors</span><span class="expval tnum">1.33</span><div class="expbarwrap"><div class="expbar lo" style="width:25.7%"></div></div></div><div class="exprow"><span class="expocc">Fibre preparing, spinning and winding machine operators</span><span class="expval tnum">1.33</span><div class="expbarwrap"><div class="expbar lo" style="width:25.7%"></div></div></div></div></div>
   </div>
-  <div class="figfoot"><a class="figdl" href="/assets/data/daioe_most_least.csv" download>↓ Data (CSV)</a><span class="figsrc">Source: DAIOE generative-AI v2023 · ISCO-08</span><span class="fignext">Next: with the DAIOE v2024 release</span></div>
-  <p class="prov" style="margin-top:16px">Source: DAIOE v2023 · ISCO-08 · higher score = more exposed.
+  <div class="figfoot"><a class="figdl" href="/assets/data/daioe_most_least.csv" download>↓ Data (CSV)</a><span class="figsrc">Source: DAIOE generative-AI v2024 · ISCO-08</span><span class="fignext">Next: with the DAIOE v2025 release</span></div>
+  <p class="prov" style="margin-top:16px">Source: DAIOE v2024 · ISCO-08 · higher score = more exposed.
     Explore every occupation in the <a href="/monitor/#occupations-explorer">Occupations Explorer</a>.</p>
 </section></div></div>
 
@@ -117,5 +131,5 @@
   <span>PUBLIC DATA · MONITOR PROTOTYPE · CITE THE VERSION AND DATE</span>
 </div></div></footer>
 <div class="tip" id="tip"></div>
-<script src="/assets/app.js?v=016af9cd"></script>
+<script src="/assets/app.js?v=ce8fa9ef"></script>
 </body></html>

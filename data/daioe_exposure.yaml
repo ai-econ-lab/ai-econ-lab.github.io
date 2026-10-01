@@ -1,65 +1,66 @@
 note: DAIOE generative-AI exposure by occupation (ISCO-08). Higher = more exposed.
-source: DAIOE v2023 (public release), AI-Econ Lab
-year: 2023
+source: DAIOE v1.0.0 (refresh-2024), doi:10.5281/zenodo.21873968, AI-Econ Lab; built
+  by scripts/build_daioe_occupations.py
+year: 2024
 most:
 - occ: Coding, proof-reading and related clerks
-  score: 5.17
-  pctl: 99.9
+  score: 5.18
+  pctl: 100.0
 - occ: Authors and related writers
-  score: 4.74
-  pctl: 99.7
+  score: 4.75
+  pctl: 99.8
 - occ: Mathematicians, actuaries and statisticians
-  score: 4.69
-  pctl: 99.4
+  score: 4.7
+  pctl: 99.5
 - occ: Advertising and marketing professionals
-  score: 4.63
-  pctl: 99.2
+  score: 4.64
+  pctl: 99.3
 - occ: Applications programmers
-  score: 4.63
-  pctl: 98.9
+  score: 4.64
+  pctl: 99.1
 - occ: Software developers
-  score: 4.42
-  pctl: 98.7
+  score: 4.43
+  pctl: 98.8
 - occ: Economists
-  score: 4.38
-  pctl: 98.5
+  score: 4.39
+  pctl: 98.6
 - occ: Statistical, mathematical and related associate professionals
-  score: 4.35
-  pctl: 98.2
+  score: 4.36
+  pctl: 98.3
 - occ: Chemical engineers
-  score: 4.29
-  pctl: 98.0
+  score: 4.3
+  pctl: 98.1
 - occ: Physicists and astronomers
-  score: 4.28
-  pctl: 97.8
+  score: 4.29
+  pctl: 97.9
 least:
 - occ: Fibre preparing, spinning and winding machine operators
   score: 1.33
-  pctl: 2.2
-- occ: Earthmoving and related plant operators
+  pctl: 2.4
+- occ: Structural-metal preparers and erectors
   score: 1.33
-  pctl: 2.5
+  pctl: 2.1
+- occ: Crop farm labourers
+  score: 1.32
+  pctl: 1.8
 - occ: Subsistence crop farmers
   score: 1.32
   pctl: 1.8
-- occ: Crop farm labourers
-  score: 1.32
-  pctl: 1.5
 - occ: Water and firewood collectors
-  score: 1.31
-  pctl: 1.3
+  score: 1.32
+  pctl: 1.4
 - occ: Garden and horticultural labourers
   score: 1.3
-  pctl: 1.1
+  pctl: 1.2
 - occ: Miners and quarriers
-  score: 1.28
-  pctl: 0.8
+  score: 1.29
+  pctl: 0.9
 - occ: Roofers
   score: 1.22
-  pctl: 0.6
+  pctl: 0.7
 - occ: Athletes and sports players
   score: 1.21
-  pctl: 0.3
+  pctl: 0.5
 - occ: Hand launderers and pressers
   score: 1.12
-  pctl: 0.1
+  pctl: 0.2

@@ -175,52 +175,227 @@ window.drawTrend();
   svg.onpointerleave = () => { hv.style.opacity = 0; dot.style.opacity = 0; dotF.style.opacity = 0; hideTip(); };
 })();
 
-/* DAIOE occupation lookup — "how exposed is your job?" (Die Zeit-style), sub-domain switchable */
+/* DAIOE occupation lookup: "how exposed is your job?"
+   Data: /assets/daioe_occupations.json, built by scripts/build_daioe_occupations.py from the
+   published DAIOE release. Two measures (generative AI by default, all AI on the switch) and two
+   classifications (ISCO-08 in English, SSYK 2012 in Swedish). Ranks are computed here from the
+   raw index values: within year and classification, ties share a midrank, so an occupation is
+   "more exposed than p% of the other occupations". Deep links: ?job=isco-2512&ai=allapps#find */
 (function occSearch(){
-  const input = $("#occsearch"); if (!input) return;
-  const sugg = $("#occsugg"), result = $("#occresult"), domSel = $("#occdom");
-  let DATA = null, di = 0, current = null;
-  fetch("/assets/daioe_occupations.json").then(r => r.json()).then(d => {
-    DATA = d;
-    domSel.innerHTML = d.domains.map((dm, i) => `<option value="${i}">${dm[1]}</option>`).join("");
-    domSel.value = "0";
-  }).catch(() => { result.innerHTML = '<p class="occsent">Occupation data could not load.</p>'; result.style.display = "block"; });
-  const scoreOf = r => r[1 + di][0], pctlOf = r => r[1 + di][1];
-  function render(row){
-    current = row; const s = scoreOf(row), p = pctlOf(row);
-    const rank = DATA.occ.filter(r => scoreOf(r) > s).length + 1, N = DATA.occ.length;
-    const dl = DATA.domains[di][1];
-    result.innerHTML = `<div class="occname">${row[0]}</div>
-      <div class="occscore"><span class="tnum">${s.toFixed(2)}</span> <span class="occunit">${dl} exposure</span></div>
-      <div class="occscale"><div class="occmark" style="left:${p}%"></div>
-        <span class="occlab lo">less exposed</span><span class="occlab hi">more exposed</span></div>
-      <p class="occsent">More exposed to ${dl} than <b>${Math.round(p)}%</b> of occupations
-        (rank ${rank} of ${N}, ISCO-08 ${DATA.year}).</p>`;
+  const tool = $(".occtool"), input = $("#occsearch"); if (!tool || !input) return;
+  const sugg = $("#occsugg"), result = $("#occresult"), def = $("#occdef"), chips = $("#occchips");
+  const segs = [...tool.querySelectorAll(".occsegbtn")];
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const OTHER = { genai: "allapps", allapps: "genai" };
+  const SETNAME = { isco: "ISCO-08", ssyk: "SSYK 2012" };
+  const EXAMPLES = [["isco","Economists"],["isco","Software developers"],["isco","Nursing professionals"],
+    ["isco","Primary school teachers"],["isco","Accountants"],["isco","Roofers"],["ssyk","Grundskollärare"],["ssyk","Undersköterskor, mottagning"]];
+  let D = null, M = "genai", current = null, list = [], active = -1;
+  const cache = {};
+
+  // ---- ranks -------------------------------------------------------------------------------
+  const val = (o, m, yi) => o[m === "genai" ? 2 : 3][yi];
+  function sorted(set, m, yi){ const k = set + m + yi;
+    return cache[k] || (cache[k] = D.sets[set].occ.map(o => val(o, m, yi)).sort((a, b) => a - b)); }
+  function lowerBound(a, v){ let lo = 0, hi = a.length; while (lo < hi){ const mid = (lo + hi) >> 1; if (a[mid] < v) lo = mid + 1; else hi = mid; } return lo; }
+  function standing(o, set, m, yi){
+    const a = sorted(set, m, yi), v = val(o, m, yi), n = a.length;
+    const below = lowerBound(a, v), eq = lowerBound(a, v + 1e-12) - below;
+    const pct = 100 * (below + (eq - 1) / 2) / (n - 1);            // share of the OTHER occupations
+    return { pct, rank: n - below - eq + 1, n, v };
+  }
+  const band = p => p >= 80 ? "Very high" : p >= 60 ? "High" : p >= 40 ? "Middle" : p >= 20 ? "Low" : "Very low";
+  const LAST = () => D.years.length - 1;
+  const lc = s => s.charAt(0).toLowerCase() + s.slice(1);          // "Generative AI" -> "generative AI"
+  const edge = x => x > 82 ? " r" : x < 18 ? " l" : "";             // keep pin labels inside the card
+
+  // ---- search ------------------------------------------------------------------------------
+  function index(){
+    for (const set of ["isco", "ssyk"]) D.sets[set].occ.forEach(o => {
+      o._set = set; o._n = norm(o[1]); o._w = o._n.split(/[^a-z0-9]+/).filter(Boolean); });
+    D._alias = Object.entries(D.aliases).map(([k, cs]) => [norm(k), cs]);
+  }
+  function score(o, q, toks){
+    let s = 0;
+    if (/^\d{3,4}$/.test(q)) return o[0].startsWith(q) ? 50 : 0;
+    if (o._set === "isco") for (const [k, cs] of D._alias)
+      if (q.length >= 2 && (k.startsWith(q) || q === k || q.startsWith(k + " ")) && cs.includes(o[0])) s = Math.max(s, 60);
+    let tokScore = 0;
+    for (const t of toks){
+      // Light stemming so singulars find plural titles in both languages: "sjuksköterska" finds
+      // "sjuksköterskor", "accountant" finds "Accountants". Inner matches ("lärare" in
+      // "Gymnasielärare") count, but less than a match at the start of a word.
+      const stems = [t];
+      if (t.length > 4 && t.endsWith("s")) stems.push(t.slice(0, -1));
+      if (t.length >= 6) stems.push(t.slice(0, -1));
+      if (t.length >= 8) stems.push(t.slice(0, -2));
+      if (o._w.some(w => stems.some(s => w.startsWith(s)))) tokScore += 10;
+      else if (t.length >= 3 && stems.some(s => o._n.includes(s))) tokScore += 6;
+      else { tokScore = 0; break; }
+    }
+    s = Math.max(s, tokScore);
+    if (!s) return 0;
+    if (o._n.startsWith(q)) s += 5;
+    return s - o[1].length / 200;
+  }
+  function matches(raw){
+    const q = norm(raw).trim(); if (!q || !D) return [];
+    const toks = q.split(/[^a-z0-9]+/).filter(Boolean);
+    const all = [...D.sets.isco.occ, ...D.sets.ssyk.occ];
+    return all.map(o => [score(o, q, toks), o]).filter(x => x[0] > 0)
+      .sort((a, b) => b[0] - a[0]).slice(0, 8).map(x => x[1]);
+  }
+  function showSugg(){
+    list = matches(input.value); active = -1;
+    if (!list.length){
+      sugg.innerHTML = input.value.trim().length > 1
+        ? `<div class="occnone">No match. Try a broader word, e.g. <i>teacher</i>, <i>engineer</i> or <i>lärare</i>.</div>` : "";
+      sugg.style.display = sugg.innerHTML ? "block" : "none"; input.setAttribute("aria-expanded", "false"); return; }
+    const yi = LAST();
+    sugg.innerHTML = list.map((o, i) => { const st = standing(o, o._set, M, yi);
+      return `<div class="occopt" role="option" id="occo-${i}" data-i="${i}" aria-selected="false">
+        <span class="occoptname">${esc(o[1])}</span>
+        <span class="occopttag" title="${SETNAME[o._set]}">${o._set === "isco" ? "EN" : "SV"}</span>
+        <span class="occoptpct tnum">${Math.round(st.pct)}%</span></div>`; }).join("");
+    sugg.style.display = "block"; input.setAttribute("aria-expanded", "true");
+  }
+  function setActive(i){
+    const opts = [...sugg.querySelectorAll(".occopt")]; if (!opts.length) return;
+    active = (i + opts.length) % opts.length;
+    opts.forEach((el, j) => el.setAttribute("aria-selected", j === active ? "true" : "false"));
+    input.setAttribute("aria-activedescendant", opts[active].id); opts[active].scrollIntoView({ block: "nearest" });
+  }
+  function closeSugg(){ sugg.style.display = "none"; input.setAttribute("aria-expanded", "false"); input.removeAttribute("aria-activedescendant"); }
+  function choose(o){ input.value = o[1]; closeSugg(); render(o, true);
+    if (o._set === "isco" && window.beeHighlight) window.beeHighlight(o[1]); }
+
+  // ---- measure switch ----------------------------------------------------------------------
+  function setMeasure(m, rerender){
+    M = m; tool.dataset.measure = m;
+    segs.forEach(b => b.setAttribute("aria-checked", b.dataset.m === m ? "true" : "false"));
+    if (D) def.textContent = D.measures[m].def;
+    if (rerender && current) render(current, true);
+    if (sugg.style.display === "block") showSugg();
+  }
+  segs.forEach(b => b.addEventListener("click", () => setMeasure(b.dataset.m, true)));
+  tool.querySelector(".occseg").addEventListener("keydown", e => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === "ArrowDown" || e.key === "ArrowUp"){
+      e.preventDefault(); const m = OTHER[M]; setMeasure(m, true); segs.find(b => b.dataset.m === m).focus(); } });
+
+  // ---- result card -------------------------------------------------------------------------
+  function trendSVG(o, set, m){
+    const ys = D.years, dist = D.sets[set].dist[m], s = o[m === "genai" ? 2 : 3];
+    // Size the viewBox to the card, so the labels keep their real size on a phone
+    // instead of shrinking with a fixed 640-wide drawing.
+    const W = Math.max(300, Math.min(640, (result.clientWidth || 640) - 44)), H = W < 420 ? 150 : 176;
+    const L = 8, R = W < 420 ? 74 : 92, T = 12, B = 26;
+    const top = Math.max(...dist.p90, ...s) * 1.06;
+    const X = i => L + i * (W - L - R) / (ys.length - 1), Y = v => T + (1 - v / top) * (H - T - B);
+    const line = a => a.map((v, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join("");
+    const area = line(dist.p90) + dist.p10.map((v, i) => [i, v]).reverse().map(([i, v]) => `L${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join("") + "Z";
+    const k = ys.length - 1, lab = lc(D.measures[m].label);
+    const yTicks = (W < 420 ? [2012, 2018, 2024] : [2012, 2016, 2020, 2024]).filter(y => ys.includes(y))
+      .map(y => `<text x="${X(ys.indexOf(y)).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="occax">${y}</text>`).join("");
+    const yo = Y(s[k]), ym = Y(dist.p50[k]); const sep = Math.abs(yo - ym) < 13 ? (yo < ym ? -7 : 7) : 0;
+    return `<svg class="occtrendsvg" viewBox="0 0 ${W} ${H}" role="img"
+      aria-label="${esc(o[1])}: DAIOE ${lab} index from ${ys[0]} to ${ys[k]}, against the median occupation and the middle 80 per cent of occupations">
+      <path d="${area}" class="occband80"/>
+      <path d="${line(dist.p50)}" class="occmed"/>
+      <path d="${line(s)}" class="occline"/>
+      <circle cx="${X(k)}" cy="${yo}" r="4.5" class="occdot"/>
+      <text x="${X(k) + 9}" y="${(yo + sep + 4).toFixed(1)}" class="occlbl occlblme">This job</text>
+      <text x="${X(k) + 9}" y="${(ym - sep + 4).toFixed(1)}" class="occlbl">Median job</text>
+      ${yTicks}</svg>`;
+  }
+  function render(o, push){
+    result.style.display = "block";                                  // measured by trendSVG
+    current = o; const set = o._set, yi = LAST(), Y0 = D.years[0], Y1 = D.years[yi];
+    const me = standing(o, set, M, yi), ot = standing(o, set, OTHER[M], yi), first = standing(o, set, M, 0);
+    const mL = D.measures[M].label, oL = D.measures[OTHER[M]].label, p = me.pct, q = ot.pct, gap = q - p;
+    const cmp = Math.abs(gap) < 5
+      ? `<b>${oL}</b> places it about the same: more exposed than ${Math.round(q)}%.`
+      : `<b>${oL}</b> places it ${gap > 0 ? "higher" : "lower"}: more exposed than ${Math.round(q)}%.` +
+        (Math.abs(gap) >= 10 ? ` The abilities this job relies on overlap ${(M === "genai") === (gap < 0) ? "more" : "less"} with what generative AI does, producing text and images, than with AI's other areas, such as recognising images and speech.` : "");
+    const drift = Math.round(p) - Math.round(first.pct);
+    const trendTxt = Math.abs(drift) < 3
+      ? `Exposure has grown since ${Y0}, as it has for every occupation, but its position among them has held steady (${Math.round(first.pct)}% in ${Y0}, ${Math.round(p)}% in ${Y1}).`
+      : `Exposure has grown since ${Y0} for every occupation, and this one has moved ${drift > 0 ? "up" : "down"} the ranking: more exposed than ${Math.round(first.pct)}% in ${Y0}, ${Math.round(p)}% in ${Y1}.`;
+    const occs = D.sets[set].occ.slice().sort((a, b) => val(a, M, yi) - val(b, M, yi)), at = occs.indexOf(o);
+    const near = [at + 2, at + 1, at - 1, at - 2].filter(i => i >= 0 && i < occs.length && i !== at).map(i => occs[i]);
+    result.innerHTML = `
+      <div class="occhead"><span class="occbadge">${esc(mL)}</span>
+        <span class="occcode mono">${SETNAME[set]} ${esc(o[0])} · ${Y1}</span></div>
+      <h3 class="occname">${esc(o[1])}</h3>
+      <p class="occbig">More exposed to ${esc(lc(mL))} than
+        <b class="tnum">${Math.round(p)}%</b> of the other ${me.n - 1} occupations
+        <span class="occbandchip">${band(p)} exposure</span></p>
+      <div class="occscale2" aria-hidden="true">
+        ${[20, 40, 60, 80].map(x => `<span class="occtick" style="left:${x}%"></span>`).join("")}
+        ${["Very low", "Low", "Middle", "High", "Very high"].map((t, i) => `<span class="occbandlab${band(p) === t ? " on" : ""}" style="left:${i * 20 + 10}%">${t}</span>`).join("")}
+        <span class="occpin ghost${edge(q)}" style="left:${q}%"><span class="occpinlab">${esc(oL)} ${Math.round(q)}%</span></span>
+        <span class="occpin me${edge(p)}" style="left:${p}%"><span class="occpinlab">${esc(mL)} ${Math.round(p)}%</span></span>
+      </div>
+      <p class="occsent">Rank ${me.rank} of ${me.n} (1 = most exposed). ${cmp}</p>
+      <div class="occtrend"><p class="occsub">How exposure has grown, ${Y0} to ${Y1}</p>
+        ${trendSVG(o, set, M)}
+        <p class="occkey"><span class="k me"></span>This job <span class="k med"></span>Median job <span class="k band"></span>Middle 80% of jobs</p>
+        <p class="occsent">${trendTxt}</p></div>
+      ${near.length ? `<div class="occnear"><p class="occsub">Nearby in the ranking</p>
+        ${near.map(n => `<button type="button" class="occchip" data-set="${set}" data-code="${esc(n[0])}">${esc(n[1])} <span class="tnum">${Math.round(standing(n, set, M, yi).pct)}%</span></button>`).join("")}</div>` : ""}
+      <div class="occfoot"><span>Index value ${me.v.toFixed(M === "genai" ? 2 : 1)} (${esc(lc(mL))}, ${Y1}).
+        The two measures use different units, so compare rankings, not index values.
+        ${set === "ssyk" ? "Swedish (SSYK) and international (ISCO) occupations are ranked separately, and the two classifications draw their lines differently, so the same job can rank differently in each." : ""}</span>
+        <button type="button" class="occcopy">Copy link to this result</button></div>`;
     result.style.display = "block";
+    if (push) history.replaceState(null, "", `?job=${set}-${o[0]}&ai=${M}#find`);
   }
-  function matches(q){ q = q.toLowerCase().trim(); if (!q || !DATA) return [];
-    return DATA.occ.filter(r => r[0].toLowerCase().includes(q)).sort((a, b) => scoreOf(b) - scoreOf(a)).slice(0, 7); }
-  function showSugg(list){
-    if (!list.length){ sugg.style.display = "none"; return; }
-    sugg.innerHTML = list.map(r => `<button type="button" class="occopt" data-t="${r[0].replace(/"/g, "&quot;")}">${r[0]} <span class="tnum">${scoreOf(r).toFixed(2)}</span></button>`).join("");
-    sugg.style.display = "block";
-  }
-  input.addEventListener("input", () => showSugg(matches(input.value)));
-  input.addEventListener("focus", () => { if (input.value) showSugg(matches(input.value)); });
-  input.addEventListener("keydown", e => { if (e.key === "Enter"){ const m = matches(input.value); if (m.length){ input.value = m[0][0]; sugg.style.display = "none"; render(m[0]); } } });
-  sugg.addEventListener("click", e => { const b = e.target.closest(".occopt"); if (!b) return;
-    const row = DATA.occ.find(r => r[0] === b.dataset.t); input.value = row[0]; sugg.style.display = "none"; render(row); });
-  domSel.addEventListener("change", () => { di = +domSel.value; if (current) render(current); if (input.value) showSugg(matches(input.value)); });
-  document.addEventListener("click", e => { if (!e.target.closest(".occsearchbox")) sugg.style.display = "none"; });
-  input.addEventListener("keydown", e => { if (e.key === "Enter" && window.beeHighlight) { const m = matches(input.value); if (m.length) window.beeHighlight(m[0][0]); } });
-  sugg.addEventListener("click", e => { const b = e.target.closest(".occopt"); if (b && window.beeHighlight) window.beeHighlight(b.dataset.t); });
+  let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (current) render(current, false); }, 200); });
+  result.addEventListener("click", e => {
+    const c = e.target.closest(".occchip");
+    if (c){ const o = D.sets[c.dataset.set].occ.find(x => x[0] === c.dataset.code); if (o) choose(o); return; }
+    const b = e.target.closest(".occcopy");
+    if (b && navigator.clipboard) navigator.clipboard.writeText(location.href).then(() => { b.textContent = "Link copied"; setTimeout(() => b.textContent = "Copy link to this result", 1800); });
+  });
+
+  // ---- wiring ------------------------------------------------------------------------------
+  input.addEventListener("input", showSugg);
+  input.addEventListener("focus", () => { if (input.value) showSugg(); });
+  input.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown"){ e.preventDefault(); if (sugg.style.display !== "block") showSugg(); setActive(active + 1); }
+    else if (e.key === "ArrowUp"){ e.preventDefault(); setActive(active - 1); }
+    else if (e.key === "Enter"){ e.preventDefault(); const o = list[active >= 0 ? active : 0]; if (o) choose(o); }
+    else if (e.key === "Escape") closeSugg();
+  });
+  sugg.addEventListener("mousedown", e => e.preventDefault());
+  sugg.addEventListener("click", e => { const el = e.target.closest(".occopt"); if (el) choose(list[+el.dataset.i]); });
+  document.addEventListener("click", e => { if (!e.target.closest(".occsearchbox")) closeSugg(); });
+  chips.addEventListener("click", e => { const c = e.target.closest(".occchip"); if (!c) return;
+    const o = D.sets[c.dataset.set].occ.find(x => x[0] === c.dataset.code); if (o) choose(o); });
+
+  fetch("/assets/daioe_occupations.json?v=1.0.0-2024").then(r => r.json()).then(d => {
+    D = d; index();
+    chips.innerHTML = `<span class="occsub">Try</span>` + EXAMPLES.map(([s, t]) => {
+      const o = D.sets[s].occ.find(x => x[1] === t);
+      return o ? `<button type="button" class="occchip" data-set="${s}" data-code="${o[0]}">${esc(t)}</button>` : ""; }).join("");
+    const P = new URLSearchParams(location.search), ai = P.get("ai"), job = (P.get("job") || "").split("-");
+    setMeasure(ai === "allapps" ? "allapps" : "genai", false);
+    if (job.length === 2 && D.sets[job[0]]){ const o = D.sets[job[0]].occ.find(x => x[0] === job[1]);
+      if (o){ input.value = o[1]; render(o, false);
+        requestAnimationFrame(() => tool.scrollIntoView({ block: "start", behavior: "auto" })); } }
+  }).catch(() => { result.innerHTML = '<p class="occsent">Occupation data could not load.</p>'; result.style.display = "block"; });
 })();
 
 /* DAIOE beeswarm — every occupation placed by generative-AI exposure, with scroll steps */
 (function beeswarm(){
   const svg = $("#beeswarm"); if (!svg) return;
-  fetch("/assets/daioe_occupations.json").then(r => r.json()).then(d => {
-    const occ = d.occ.map(r => ({ t: r[0], s: r[1][0], p: r[1][1] }));  // genAI = domain 0
+  fetch("/assets/daioe_occupations.json?v=1.0.0-2024").then(r => r.json()).then(d => {
+    // Generative AI, ISCO-08, latest year; percentile = midrank share of the other occupations,
+    // the same convention as the lookup above.
+    const yi = d.years.length - 1, raw = d.sets.isco.occ.map(r => r[2][yi]), n = raw.length;
+    const occ = d.sets.isco.occ.map(r => { const v = r[2][yi];
+      const below = raw.filter(x => x < v).length, eq = raw.filter(x => x === v).length;
+      return { t: r[1], s: v, p: 100 * (below + (eq - 1) / 2) / (n - 1) }; });
     const W = 760, H = 340, pad = 28, r = 3.4, colW = 2 * r + 1.2, cy = H / 2;
     const ss = occ.map(o => o.s), smin = Math.min(...ss), smax = Math.max(...ss);
     const X = v => pad + (v - smin) / (smax - smin) * (W - 2 * pad);
@@ -238,7 +413,7 @@ window.drawTrend();
     const circles = [...svg.querySelectorAll(".bee")];
     svg.addEventListener("pointermove", ev => { const t = ev.target;
       if (t.classList && t.classList.contains("bee")) { const o = occ[+t.dataset.i];
-        showTip(`<b>${o.t}</b><div class="r"><span>genAI exposure</span><b>${o.s.toFixed(2)}</b></div><div class="r"><span>percentile</span><b>${Math.round(o.p)}</b></div>`, ev.clientX, ev.clientY);
+        showTip(`<b>${o.t}</b><div class="r"><span>More exposed to generative AI than</span><b>${Math.round(o.p)}%</b></div><div class="r"><span>Index value</span><b>${o.s.toFixed(2)}</b></div>`, ev.clientX, ev.clientY);
       } else hideTip(); });
     svg.addEventListener("pointerleave", hideTip);
     function setHL(mode){ circles.forEach((c,i) => { const p = occ[i].p;

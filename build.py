@@ -196,8 +196,10 @@ DISTINCT_ADS = f"{MONTHLY['meta']['total_ads'] / 1e6:.1f}M"
 RECORD_ADS   = f"{MONTHLY['meta']['total_records'] / 1e6:.1f}M"
 N_COUNTRIES  = CROSS['meta']['n_countries']
 # The occupation explorer plots assets/daioe_occupations.json, so the count comes from there.
-N_OCCUPATIONS = len(json.loads((ROOT / 'assets' / 'daioe_occupations.json')
-                              .read_text(encoding='utf-8'))['occ'])
+# Built by scripts/build_daioe_occupations.py from the published DAIOE release.
+DAIOE_OCC = json.loads((ROOT / 'assets' / 'daioe_occupations.json').read_text(encoding='utf-8'))
+N_OCCUPATIONS = DAIOE_OCC['sets']['isco']['n']
+N_OCC_SSYK = DAIOE_OCC['sets']['ssyk']['n']
 
 AKAVIA   = load("akavia.yaml")
 RELATED  = load("related_research.yaml")
@@ -603,23 +605,37 @@ def daioe():
     <a class="btn ghost" href="/monitor/#occupations-explorer">See it applied in the Monitor</a></div>
 </div></div></div>
 
-<div class="rule"><div class="wrap"><section>
+<div class="rule" id="find"><div class="wrap"><section>
   <p class="kicker">How exposed is your job?</p>
   <h2 class="sec">Find your occupation.</h2>
-  <p class="secintro">Type an occupation to see its DAIOE exposure and where it sits among roughly {N_OCCUPATIONS} occupations.
-    Generative AI by default; switch the sub-domain to compare.
+  <p class="secintro">Search {N_OCCUPATIONS} occupations in English (ISCO-08, the international classification) or
+    {N_OCC_SSYK} in Swedish (SSYK 2012), and see where each sits among all occupations in {DAIOE_OCC['year']}.
     <a class="mono" style="font-size:12px;white-space:nowrap" href="https://www.zeit.de/wirtschaft/2026-05/automatisierungsrisiko-arbeitnehmer-ki-arbeitsmarkt-bedrohung">As featured in Die Zeit ↗</a></p>
-  <div class="occtool">
-    <div class="occrow1">
-      <div class="occsearchbox">
-        <input id="occsearch" type="text" autocomplete="off" aria-label="Search occupation"
-          placeholder="e.g. Economists, Software developers, Roofers…">
-        <div id="occsugg" class="occsugg" role="listbox"></div>
+  <div class="occtool" data-measure="genai">
+    <div class="occmeasure">
+      <span class="occmlab" id="occmlab">Exposure to</span>
+      <div class="occseg" role="radiogroup" aria-labelledby="occmlab">
+        <button type="button" role="radio" class="occsegbtn" data-m="genai" aria-checked="true"><span class="occsw"></span>Generative AI</button>
+        <button type="button" role="radio" class="occsegbtn" data-m="allapps" aria-checked="false"><span class="occsw"></span>All AI</button>
       </div>
-      <label class="occdomwrap">Sub-domain<select id="occdom" aria-label="DAIOE sub-domain"></select></label>
     </div>
+    <p class="occdef" id="occdef">{h(DAIOE_OCC['measures']['genai']['def'])}</p>
+    <div class="occsearchbox">
+      <input id="occsearch" type="search" autocomplete="off" spellcheck="false" role="combobox"
+        aria-autocomplete="list" aria-expanded="false" aria-controls="occsugg" aria-describedby="occdef"
+        aria-label="Search for an occupation, in English or Swedish"
+        placeholder="Your occupation, e.g. nurse, economist, lärare…">
+      <div id="occsugg" class="occsugg" role="listbox" aria-label="Matching occupations"></div>
+    </div>
+    <div class="occchips" id="occchips" aria-label="Examples"></div>
     <div id="occresult" class="occresult" aria-live="polite"></div>
+    <noscript><p class="occsent">The lookup needs JavaScript. The full scores are in the
+      <a href="{DAIOE['resources'][0]['href']}">published data</a>.</p></noscript>
   </div>
+  <p class="prov" style="margin-top:14px">Source: DAIOE v{DAIOE_OCC['version']}, {DAIOE_OCC['year']} refresh,
+    <a href="https://doi.org/{DAIOE_OCC['doi']}">doi:{DAIOE_OCC['doi']}</a>. Exposure measures how far AI capabilities
+    overlap with the abilities an occupation uses. It is not a forecast of job loss: exposed work can be
+    complemented by AI as well as replaced.</p>
 </section></div></div>
 
 <div class="rule"><div class="wrap"><section>
@@ -651,7 +667,7 @@ def daioe():
     <div><div class="exphead"><span class="dotc lo"></span>Least exposed</div>
       <div class="expbars">{least}</div></div>
   </div>
-  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI v{DAIOE_EXP['year']} · ISCO-08", next_up="with the DAIOE v2024 release")}
+  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI v{DAIOE_EXP['year']} · ISCO-08", next_up="with the DAIOE v2025 release")}
   <p class="prov" style="margin-top:16px">Source: DAIOE v{DAIOE_EXP['year']} · ISCO-08 · higher score = more exposed.
     Explore every occupation in the <a href="/monitor/#occupations-explorer">Occupations Explorer</a>.</p>
 </section></div></div>
