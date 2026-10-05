@@ -9,32 +9,32 @@ meta:
   unit: "% of persons aged 16–74"
   source: "SCB, Befolkningens it-användning / ICT use among the population (LE0108T82)"
   url: "https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__LE__LE0108__LE0108Q/"
-  year: 2025
+  year: 2026
   first_year: 2024
   design: "probability sample, official statistics; margins of error published"
   reference_period: "first quarter of the survey year"
-  headline: 42
+  headline: 53
   headline_moe: 2
   headline_first: 28
-  men: 45
-  women: 38
+  men: 54
+  women: 52
   men_first: 33
   women_first: 23
 by_age:
-  - {group: "16–24", adoption: 67, moe: 4, prev: 55.0}
-  - {group: "25–34", adoption: 58, moe: 5, prev: 40.0}
-  - {group: "35–44", adoption: 49, moe: 5, prev: 33.0}
-  - {group: "45–54", adoption: 43, moe: 4, prev: 23.0}
-  - {group: "55–64", adoption: 23, moe: 3, prev: 11.0}
-  - {group: "65–74", adoption: 7, moe: 1, prev: 4.0}
+  - {group: "16–24", adoption: 71, moe: 4, prev: 55.0}
+  - {group: "25–34", adoption: 62, moe: 5, prev: 40.0}
+  - {group: "35–44", adoption: 62, moe: 4, prev: 33.0}
+  - {group: "45–54", adoption: 57, moe: 4, prev: 23.0}
+  - {group: "55–64", adoption: 42, moe: 3, prev: 11.0}
+  - {group: "65–74", adoption: 20, moe: 2, prev: 4.0}
 purpose_latest:
-  # 2025 cross-section only. Multiple response, share of ALL persons 16–74.
+  # 2026 cross-section only. Multiple response, share of ALL persons 16–74.
   # The 2024 wave is deliberately omitted: its base is not reconcilable with this
   # one (purposes sum to 41 against 28% total use in 2024, 66 against 42 in 2025;
   # formal education halves while private quadruples). Confirm SCB's base before
   # using either wave as a series.
-  year: 2025
+  year: 2026
   shares:
-    - {purpose: "formal education", pct: 11}
-    - {purpose: "professional or work-related", pct: 21}
-    - {purpose: "private", pct: 34}
+    - {purpose: "formal education", pct: 14}
+    - {purpose: "professional or work-related", pct: 28}
+    - {purpose: "private", pct: 45}
