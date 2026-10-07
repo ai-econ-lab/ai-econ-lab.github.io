@@ -133,7 +133,7 @@ def untracked_inputs(root: Path) -> list[str]:
               "data/free_cuts/job_quality_v11.provenance.json",
               f"data/free_cuts/tier_by_occupation_{DEF_VERSION}.csv",
               f"data/free_cuts/tier_by_occupation_{DEF_VERSION}.provenance.json",
-              f"data/demand_by_sector/demand_by_sector_pooled_{DEF_VERSION}_raw.json"]
+              f"data/demand_by_sector/demand_by_sector_pooled_{DEF_VERSION}_distinct.json"]
     try:
         out = subprocess.run(["git", "-C", str(root), "ls-files", "--", *wanted],
                              capture_output=True, text=True, timeout=20)
