@@ -18,6 +18,7 @@ Run:  python3 scripts/refresh_job_quality.py
 """
 
 import csv
+import json
 from pathlib import Path
 
 from monitor_root import MONITOR_ROOT
@@ -25,10 +26,19 @@ from monitor_root import MONITOR_ROOT
 SRC = (MONITOR_ROOT
        / "data/free_cuts/job_quality_v11.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "job_quality.yaml"
+PROV = SRC.with_name("job_quality_v11.provenance.json")
 FIRST = 2018
 
 
 def main():
+    # 7 Oct 2026: the series names its definition. Until then the CSV was built from a
+    # hard-coded bulk_v11 and job_quality.yaml said nothing about which definition it was on.
+    if not PROV.exists():
+        raise SystemExit(f"refresh_job_quality: {PROV.name} missing. Rebuild with "
+                         f"build_job_quality_v11.py --bulk=<the published bulk dir>.")
+    prov = json.loads(PROV.read_text(encoding="utf-8"))
+    if not prov.get("definition_fp") or prov.get("version", "UNNAMED") == "UNNAMED":
+        raise SystemExit(f"refresh_job_quality: {PROV.name} names no frozen definition: {prov}")
     rows = list(csv.DictReader(SRC.open(encoding="utf-8")))
     by = {(r["year"], r["group"]): r for r in rows}
     years = sorted({r["year"] for r in rows if int(r["year"]) >= FIRST})
@@ -64,7 +74,10 @@ def main():
              f"  pm_flip_year: {flip if flip else 'null'}",
              f"  ymin: {int(lo) - 2}", f"  ymax: {int(hi) + 3}",
              f"  n_ai_last: {last['n_ai']}",
-             "  source: JobTech historical job ads (Arbetsförmedlingen), CC0",
+             f"  definition: {prov['version']}",
+             f"  definition_fp: {prov['definition_fp']}",
+             f"  source: JobTech historical job ads (Arbetsförmedlingen), CC0, frozen {prov['version']} "
+             f"term list, distinct advertisements",
              "series:"]
     for r in series:
         lines.append(

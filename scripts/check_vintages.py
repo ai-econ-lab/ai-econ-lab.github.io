@@ -35,7 +35,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import monitor_root  # noqa: E402
-from monitor_root import DEF_VERSION, bulk_dir  # noqa: E402
+from monitor_root import DEF_FP, DEF_VERSION, bulk_dir  # noqa: E402
 
 
 def monitor_checkout() -> Path | None:
@@ -73,15 +73,24 @@ PROVENANCE = {
     "trend.yaml":         f"data/{bulk_dir()}/derived/_derived_manifest.json",
     "monthly_demand.yaml": "data/free_cuts/monthly_ai_share_v11.provenance.json",
     "vocabulary.yaml":    "data/candidates/_extract_definition.json",
+    "job_quality.yaml":   "data/free_cuts/job_quality_v11.provenance.json",
+    "occupation_tiers.yaml": f"data/free_cuts/tier_by_occupation_{DEF_VERSION}.provenance.json",
 }
 
 # module yaml -> (declared definition, why it is not checked against a file).
 DECLARED = {
     "governance.yaml":          ("v1.2", "refresh_governance.py reads data/bulk_v12 by design."),
-    "occupation_tiers.yaml":    ("v1.1", "free_cuts/tier_by_occupation.csv, from the tier classification."),
-    "job_quality.yaml":         ("v1.1", "build_job_quality_v11.py reads data/bulk_v11."),
     "entry_level_squeeze.yaml": ("v1.1", "data/entry_level_squeeze.csv, on JobTech API record counts."),
 }
+
+# Modules that must carry the site's definition FINGERPRINT, not just a version word
+# (7 Oct 2026). A missing or different `definition_fp:` FAILS, with no lagging allowance:
+# the livewindow had no stamp at all, and job_quality, demand_by_sector and occupation_tiers
+# were built on older lexicons with nothing in the file saying which. Needs no monitor
+# checkout, so it runs in CI too. Add a module here when its generator writes the stamp.
+STAMPED = ["livewindow.yaml", "vocabulary.yaml", "job_quality.yaml",
+           "demand_by_sector.yaml", "occupation_tiers.yaml"]
+STAMP = re.compile(r'^\s*definition_fp:\s*["\']?([0-9a-f]{16})["\']?\s*$', re.M)
 
 CLAIM = re.compile(r"frozen (v\d+(?:\.\d+)?)")
 
@@ -118,7 +127,13 @@ def untracked_inputs(root: Path) -> list[str]:
               f"data/{bulk_dir()}/derived/_derived_manifest.json",
               "data/free_cuts/monthly_ai_share_v11.csv",
               "data/free_cuts/monthly_ai_share_v11.provenance.json",
-              "data/diagnostics/term_composition.csv"]
+              "data/diagnostics/term_composition.csv",
+              # 7 Oct 2026: the four modules that now carry a definition stamp
+              "data/free_cuts/job_quality_v11.csv",
+              "data/free_cuts/job_quality_v11.provenance.json",
+              f"data/free_cuts/tier_by_occupation_{DEF_VERSION}.csv",
+              f"data/free_cuts/tier_by_occupation_{DEF_VERSION}.provenance.json",
+              f"data/demand_by_sector/demand_by_sector_pooled_{DEF_VERSION}_raw.json"]
     try:
         out = subprocess.run(["git", "-C", str(root), "ls-files", "--", *wanted],
                              capture_output=True, text=True, timeout=20)
@@ -180,6 +195,22 @@ def main() -> int:
         elif version_key(declared) < version_key(DEF_VERSION):
             lagging.append(f"{name}: {declared}, declared ({why})")
         print(f"  {'ok' if says else '--':4} {name:26} declared {declared}")
+
+    for name in STAMPED:
+        f = DATA / name
+        if not f.exists():
+            problems.append(f"{name}: missing")
+            continue
+        found = STAMP.findall(f.read_text(encoding="utf-8"))
+        if not found:
+            problems.append(f"{name}: carries no definition_fp stamp. Its generator must write "
+                            f"one; the site publishes {DEF_VERSION} ({DEF_FP}).")
+        elif set(found) != {DEF_FP}:
+            problems.append(f"{name}: stamped {', '.join(sorted(set(found)))}, the site publishes "
+                            f"{DEF_VERSION} ({DEF_FP}). Rebuild it on {DEF_VERSION}, or do not "
+                            f"publish the site's definition change yet.")
+        else:
+            print(f"  ok   {name:26} stamped {DEF_FP}")
 
     if problems:
         print("\nFAIL. A published module names a definition its data has not been through:")

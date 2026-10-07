@@ -24,15 +24,23 @@ exactly the kind of quiet drift the hand-maintained file allowed.
 Run:  python3 scripts/refresh_occupation_tiers.py
 """
 import csv
+import json
+import sys
 from pathlib import Path
 
 import yaml
 
-from monitor_root import MONITOR_ROOT
+from monitor_root import MONITOR_ROOT, DEF_VERSION
 from labels import shorten  # noqa: E402
 
+# 7 Oct 2026: the floor these tiers are drawn from is now a NAMED definition's
+# (build_free_cuts.py --tiers-def=<label>, which selects floor ads by score() of that
+# definition and joins the July tier verdicts by ad id). The old tier_by_occupation.csv took its
+# floor from the tier files' own flag, an older lexicon nothing stamped.
+LABEL = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--def=")), DEF_VERSION)
 SRC = (MONITOR_ROOT
-       / "data/free_cuts/tier_by_occupation.csv")          # distinct advertisements
+       / f"data/free_cuts/tier_by_occupation_{LABEL}.csv")  # distinct advertisements
+PROV = SRC.with_name(f"tier_by_occupation_{LABEL}.provenance.json")
 OUT = Path(__file__).resolve().parent.parent / "data" / "occupation_tiers.yaml"
 
 YEAR = "2025"
@@ -74,6 +82,10 @@ CAVEAT = (
 
 
 def main():
+    if not (SRC.exists() and PROV.exists()):
+        raise SystemExit(f"refresh_occupation_tiers: {SRC.name} or its provenance is missing. In "
+                         f"ai-monitor run: python3 scripts/build_free_cuts.py --tiers-def={LABEL}")
+    prov = json.loads(PROV.read_text(encoding="utf-8"))
     prev = yaml.safe_load(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
 
     rows, dropped = [], []
@@ -101,8 +113,11 @@ def main():
         "meta": {
             "year": int(YEAR),
             "min_ads": MIN_ADS,
-            "source": "JobTech / Platsbanken job ads (CC0) · tier classifier, rubric v2.1 · "
-                      "distinct advertisements",
+            "definition": prov["definition_label"],
+            "definition_fp": prov["definition_fp"],
+            "source": f"JobTech / Platsbanken job ads (CC0) · floor ads on the frozen "
+                      f"{prov['definition_label']} term list · tier classifier, rubric v2.1 · "
+                      f"distinct advertisements",
             "validation": prev.get("meta", {}).get(
                 "validation",
                 "88.9% agreement with hand-labelled ads on the four-way split, 93.8% on the "
