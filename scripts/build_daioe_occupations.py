@@ -14,7 +14,8 @@ to run if SHA256SUMS does not match, so the page cannot silently drift off the d
 Two measures (VINTAGES.md):
   genai    generative AI: from v1.1.0 the second-generation composite daioe_g2gen (language
            modelling, image generation, conversation, software engineering; standardised units)
-  allapps  all AI: the nine original application areas, genai's two included
+  allapps  all AI: from v1.1.0 the second-generation composite daioe_g2all (all thirteen
+           applications; standardised units)
 
 Two classifications:
   isco     ISCO-08, English titles (424 occupations with scores)
@@ -63,11 +64,17 @@ MEASURES = {
                "software engineering. Its 2025 step comes mostly from software engineering's first "
                "measured year and may be revised as more evaluations accumulate.",
     },
+    # From v1.1.0 (8 Oct 2026, ML): the overall view uses daioe_g2all (all thirteen
+    # applications, standardised units), not the legacy nine-application daioe_allapps.
     "allapps": {
+        "col": "daioe_g2all",
         "label": "All AI",
         "short": "all AI",
-        "def": "AI as a whole: nine application areas, from image and speech recognition, "
-               "translation and reading comprehension to games, plus the two generative ones.",
+        "def": "AI as a whole: thirteen application areas, from image and speech recognition, "
+               "translation and reading comprehension to games, the generative ones, and, from "
+               "2024, agentic task execution and mathematical and scientific reasoning. About "
+               "three quarters of its 2025 step comes from areas in their first measured year, "
+               "so that step may be revised as more evaluations accumulate.",
     },
 }
 
