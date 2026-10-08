@@ -373,7 +373,7 @@ window.drawTrend();
   chips.addEventListener("click", e => { const c = e.target.closest(".occchip"); if (!c) return;
     const o = D.sets[c.dataset.set].occ.find(x => x[0] === c.dataset.code); if (o) choose(o); });
 
-  fetch("/assets/daioe_occupations.json?v=1.0.0-2024").then(r => r.json()).then(d => {
+  fetch("/assets/daioe_occupations.json?v=1.1.0-2025").then(r => r.json()).then(d => {
     D = d; index();
     chips.innerHTML = `<span class="occsub">Try</span>` + EXAMPLES.map(([s, t]) => {
       const o = D.sets[s].occ.find(x => x[1] === t);
@@ -389,7 +389,7 @@ window.drawTrend();
 /* DAIOE beeswarm — every occupation placed by generative-AI exposure, with scroll steps */
 (function beeswarm(){
   const svg = $("#beeswarm"); if (!svg) return;
-  fetch("/assets/daioe_occupations.json?v=1.0.0-2024").then(r => r.json()).then(d => {
+  fetch("/assets/daioe_occupations.json?v=1.1.0-2025").then(r => r.json()).then(d => {
     // Generative AI, ISCO-08, latest year; percentile = midrank share of the other occupations,
     // the same convention as the lookup above.
     const yi = d.years.length - 1, raw = d.sets.isco.occ.map(r => r[2][yi]), n = raw.length;
