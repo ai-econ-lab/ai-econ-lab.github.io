@@ -11,8 +11,9 @@ Source: the DAIOE v1.1.0 scores bundle (Zenodo, doi:10.5281/zenodo.22551410), fo
 and 2025 at the seam (until 8 Oct 2026: v1.0.0, `refresh-2024/`). The bundle is read from the pipeline's local `dist/` copy; the script refuses
 to run if SHA256SUMS does not match, so the page cannot silently drift off the deposit.
 
-Two measures, both legacy columns whose membership never changes (VINTAGES.md):
-  genai    generative AI: language modelling + image generation
+Two measures (VINTAGES.md):
+  genai    generative AI: from v1.1.0 the second-generation composite daioe_g2gen (language
+           modelling, image generation, conversation, software engineering; standardised units)
   allapps  all AI: the nine original application areas, genai's two included
 
 Two classifications:
@@ -49,11 +50,18 @@ FIRST_YEAR = 2012          # 2010 and 2011 are empty in every panel (benchmark c
 N_EXTREMES = 10            # rows in each of the page's most/least lists
 
 MEASURES = {
+    # From v1.1.0 (8 Oct 2026, ML): the page's generative measure is the second-generation
+    # generative composite daioe_g2gen (four members, standardised units), not the legacy
+    # daioe_genai (two members), whose language-modelling member has no 2025 source. The key
+    # stays "genai" because assets/app.js reads it.
     "genai": {
+        "col": "daioe_g2gen",
         "label": "Generative AI",
         "short": "genAI",
-        "def": "AI that produces text and images: language modelling (the technology behind "
-               "chatbots such as ChatGPT) and image generation.",
+        "def": "AI that produces text, images, dialogue and code: language modelling (the "
+               "technology behind chatbots such as ChatGPT), image generation, conversation and "
+               "software engineering. Its 2025 step comes mostly from software engineering's first "
+               "measured year and may be revised as more evaluations accumulate.",
     },
     "allapps": {
         "label": "All AI",
@@ -111,7 +119,7 @@ def load(tax: str) -> pd.DataFrame:
     d = pd.read_csv(BUNDLE / VINTAGE / f"daioe_{tax}.tsv", sep="\t", dtype=str)
     d["year"] = d["year"].astype(float).astype(int)
     for m in MEASURES:
-        d[m] = pd.to_numeric(d[f"daioe_{m}"])
+        d[m] = pd.to_numeric(d[MEASURES[m].get("col", f"daioe_{m}")])
     if tax == "isco08":
         d["code"] = d["occ_code_isco08"].str.zfill(4)
         d["title"] = d["occ_title_isco08"]

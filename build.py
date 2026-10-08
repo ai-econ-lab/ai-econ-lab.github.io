@@ -667,7 +667,7 @@ def daioe():
     <div><div class="exphead"><span class="dotc lo"></span>Least exposed</div>
       <div class="expbars">{least}</div></div>
   </div>
-  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI v{DAIOE_EXP['year']} · ISCO-08", next_up="with the DAIOE v2026 release")}
+  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI composite (g2gen) v{DAIOE_EXP['year']} · ISCO-08", next_up="with the DAIOE v2026 release")}
   <p class="prov" style="margin-top:16px">Source: DAIOE v{DAIOE_EXP['year']} · ISCO-08 · higher score = more exposed.
     Explore every occupation in the <a href="/monitor/#occupations-explorer">Occupations Explorer</a>.</p>
 </section></div></div>
@@ -4104,7 +4104,7 @@ def emit_data(out):
             w.writerow([f"used_for_{r['label']}", r["value"], "AI users", ""])
 
     with (d / "daioe_most_least.csv").open("w", newline="", encoding="utf-8") as f:
-        w = _csv.writer(f); w.writerow(["occupation", "daioe_genai_score", "group", "daioe_version"])
+        w = _csv.writer(f); w.writerow(["occupation", "daioe_g2gen_score", "group", "daioe_version"])
         for it in DAIOE_EXP["most"]:  w.writerow([it["occ"], it["score"], "most_exposed", f"v{DAIOE_EXP['year']}"])
         for it in DAIOE_EXP["least"]: w.writerow([it["occ"], it["score"], "least_exposed", f"v{DAIOE_EXP['year']}"])
     t = TREND["trend"]

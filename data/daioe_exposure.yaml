@@ -4,63 +4,63 @@ source: DAIOE v1.1.0 (vintage-2025), doi:10.5281/zenodo.22551410, AI-Econ Lab; b
 year: 2025
 most:
 - occ: Coding, proof-reading and related clerks
-  score: 5.22
+  score: 14.66
   pctl: 100.0
 - occ: Authors and related writers
-  score: 4.79
+  score: 14.02
   pctl: 99.8
-- occ: Mathematicians, actuaries and statisticians
-  score: 4.74
-  pctl: 99.5
 - occ: Advertising and marketing professionals
-  score: 4.68
+  score: 13.37
+  pctl: 99.5
+- occ: Mathematicians, actuaries and statisticians
+  score: 12.66
   pctl: 99.3
-- occ: Applications programmers
-  score: 4.68
+- occ: Journalists
+  score: 12.54
   pctl: 99.1
-- occ: Software developers
-  score: 4.47
+- occ: Applications programmers
+  score: 12.48
   pctl: 98.8
-- occ: Economists
-  score: 4.42
+- occ: Philosophers, historians and political scientists
+  score: 12.35
   pctl: 98.6
-- occ: Statistical, mathematical and related associate professionals
-  score: 4.4
+- occ: Economists
+  score: 12.25
   pctl: 98.3
-- occ: Chemical engineers
-  score: 4.34
+- occ: Software developers
+  score: 12.15
   pctl: 98.1
-- occ: Physicists and astronomers
-  score: 4.33
+- occ: Personnel clerks
+  score: 11.92
   pctl: 97.9
 least:
-- occ: Fibre preparing, spinning and winding machine operators
-  score: 1.35
-  pctl: 2.4
-- occ: Structural-metal preparers and erectors
-  score: 1.34
-  pctl: 2.1
-- occ: Crop farm labourers
-  score: 1.34
-  pctl: 1.8
-- occ: Subsistence crop farmers
-  score: 1.34
-  pctl: 1.8
-- occ: Water and firewood collectors
-  score: 1.33
-  pctl: 1.4
 - occ: Garden and horticultural labourers
-  score: 1.31
+  score: 3.2
+  pctl: 2.4
+- occ: Mobile farm and forestry plant operators
+  score: 3.12
+  pctl: 2.1
+- occ: Metal production process controllers
+  score: 3.12
+  pctl: 1.9
+- occ: Mining and quarrying labourers
+  score: 3.07
+  pctl: 1.7
+- occ: Civil engineering labourers
+  score: 3.07
+  pctl: 1.4
+- occ: Earthmoving and related plant operators
+  score: 2.99
   pctl: 1.2
-- occ: Miners and quarriers
-  score: 1.3
+- occ: Ships' deck crews and related workers
+  score: 2.98
   pctl: 0.9
-- occ: Roofers
-  score: 1.24
+- occ: Miners and quarriers
+  score: 2.96
   pctl: 0.7
-- occ: Athletes and sports players
-  score: 1.22
+- occ: Roofers
+  score: 2.92
   pctl: 0.5
 - occ: Hand launderers and pressers
-  score: 1.13
+  score: 2.66
   pctl: 0.2
