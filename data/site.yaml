@@ -153,7 +153,7 @@ links:
   explorer: "/daioe/"                    # legacy alias used on home/about
   explorer_years: "https://huggingface.co/spaces/ai-econ-lab/daioe-explorer-years"
   explorer_months: "https://huggingface.co/spaces/ai-econ-lab/months"
-  daioe_dataset: "https://doi.org/10.5281/zenodo.21873968"
+  daioe_dataset: "https://doi.org/10.5281/zenodo.21873967"
 
 footer:
   columns:

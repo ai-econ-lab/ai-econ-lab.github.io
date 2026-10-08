@@ -102,10 +102,10 @@ def watch_daioe_dataset(state):
         state["daioe_dataset_seen_sha"] = sha
         return (f"DAIOE dataset repo updated ({date[:10]}) — check for a new vintage",
                 f"New commit {sha[:12]} on ai-econ-lab/daioe_dataset. If this is a new released "
-                "vintage (e.g. v2025): point scripts/build_daioe_occupations.py at the new "
+                "vintage (e.g. v2026): point scripts/build_daioe_occupations.py at the new "
                 "bundle and run it (rebuilds the occupation search, beeswarm and most/least "
                 "lists), bump the ?v= on its JSON in assets/app.js, refresh View A weights to "
-                "the matching EU-LFS year, and bump the 'Next: with the DAIOE v2025 release' "
+                "the matching EU-LFS year, and bump the 'Next: with the DAIOE v2026 release' "
                 "figure lines.")
     return None
 

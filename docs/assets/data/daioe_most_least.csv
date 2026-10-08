@@ -1,21 +1,21 @@
-occupation,daioe_genai_score,group,daioe_version
-"Coding, proof-reading and related clerks",5.18,most_exposed,v2024
-Authors and related writers,4.75,most_exposed,v2024
-"Mathematicians, actuaries and statisticians",4.7,most_exposed,v2024
-Advertising and marketing professionals,4.64,most_exposed,v2024
-Applications programmers,4.64,most_exposed,v2024
-Software developers,4.43,most_exposed,v2024
-Economists,4.39,most_exposed,v2024
-"Statistical, mathematical and related associate professionals",4.36,most_exposed,v2024
-Chemical engineers,4.3,most_exposed,v2024
-Physicists and astronomers,4.29,most_exposed,v2024
-"Fibre preparing, spinning and winding machine operators",1.33,least_exposed,v2024
-Structural-metal preparers and erectors,1.33,least_exposed,v2024
-Crop farm labourers,1.32,least_exposed,v2024
-Subsistence crop farmers,1.32,least_exposed,v2024
-Water and firewood collectors,1.32,least_exposed,v2024
-Garden and horticultural labourers,1.3,least_exposed,v2024
-Miners and quarriers,1.29,least_exposed,v2024
-Roofers,1.22,least_exposed,v2024
-Athletes and sports players,1.21,least_exposed,v2024
-Hand launderers and pressers,1.12,least_exposed,v2024
+occupation,daioe_g2gen_score,group,daioe_version
+"Coding, proof-reading and related clerks",14.66,most_exposed,v2025
+Authors and related writers,14.02,most_exposed,v2025
+Advertising and marketing professionals,13.37,most_exposed,v2025
+"Mathematicians, actuaries and statisticians",12.66,most_exposed,v2025
+Journalists,12.54,most_exposed,v2025
+Applications programmers,12.48,most_exposed,v2025
+"Philosophers, historians and political scientists",12.35,most_exposed,v2025
+Economists,12.25,most_exposed,v2025
+Software developers,12.15,most_exposed,v2025
+Personnel clerks,11.92,most_exposed,v2025
+Garden and horticultural labourers,3.2,least_exposed,v2025
+Mobile farm and forestry plant operators,3.12,least_exposed,v2025
+Metal production process controllers,3.12,least_exposed,v2025
+Mining and quarrying labourers,3.07,least_exposed,v2025
+Civil engineering labourers,3.07,least_exposed,v2025
+Earthmoving and related plant operators,2.99,least_exposed,v2025
+Ships' deck crews and related workers,2.98,least_exposed,v2025
+Miners and quarriers,2.96,least_exposed,v2025
+Roofers,2.92,least_exposed,v2025
+Hand launderers and pressers,2.66,least_exposed,v2025

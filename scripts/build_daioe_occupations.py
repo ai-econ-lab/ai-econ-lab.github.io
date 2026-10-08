@@ -6,14 +6,16 @@ most/least-exposed lists all read these two files. Until 1 Oct 2026 the JSON was
 by hand from the frozen 2010-2023 window; this script rebuilds both from the PUBLISHED
 release so every number on the page traces to a citable deposit (verification rule V14).
 
-Source: the DAIOE v1.0.0 scores bundle (Zenodo, doi:10.5281/zenodo.21873968), folder
-`refresh-2024/`, which carries the frozen 2010-2023 window cell-identically and chains 2024
-at the seam. The bundle is read from the pipeline's local `dist/` copy; the script refuses
+Source: the DAIOE v1.1.0 scores bundle (Zenodo, doi:10.5281/zenodo.22551410), folder
+`vintage-2025/`, which carries the frozen 2010-2023 window cell-identically and chains 2024
+and 2025 at the seam (until 8 Oct 2026: v1.0.0, `refresh-2024/`). The bundle is read from the pipeline's local `dist/` copy; the script refuses
 to run if SHA256SUMS does not match, so the page cannot silently drift off the deposit.
 
-Two measures, both legacy columns whose membership never changes (VINTAGES.md):
-  genai    generative AI: language modelling + image generation
-  allapps  all AI: the nine original application areas, genai's two included
+Two measures (VINTAGES.md):
+  genai    generative AI: from v1.1.0 the second-generation composite daioe_g2gen (language
+           modelling, image generation, conversation, software engineering; standardised units)
+  allapps  all AI: from v1.1.0 the second-generation composite daioe_g2all (all thirteen
+           applications; standardised units)
 
 Two classifications:
   isco     ISCO-08, English titles (424 occupations with scores)
@@ -38,26 +40,41 @@ import pandas as pd
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-WORKSPACE = ROOT.parents[1]
-BUNDLE = WORKSPACE / "lab-infrastructure/daioe-pipeline/dist/daioe-v1.0.0-scores"
-VERSION = "1.0.0"
-DOI = "10.5281/zenodo.21873968"
-VINTAGE = "refresh-2024"
+import os
+# AIEL_WORKSPACE overrides the default when the site is checked out elsewhere (e.g. a worktree)
+WORKSPACE = Path(os.environ.get("AIEL_WORKSPACE", ROOT.parents[1]))
+BUNDLE = WORKSPACE / "lab-infrastructure/daioe-pipeline/dist/daioe-v1.1.0-scores"
+VERSION = "1.1.0"
+DOI = "10.5281/zenodo.22551410"
+VINTAGE = "vintage-2025"
 FIRST_YEAR = 2012          # 2010 and 2011 are empty in every panel (benchmark coverage starts 2012)
 N_EXTREMES = 10            # rows in each of the page's most/least lists
 
 MEASURES = {
+    # From v1.1.0 (8 Oct 2026, ML): the page's generative measure is the second-generation
+    # generative composite daioe_g2gen (four members, standardised units), not the legacy
+    # daioe_genai (two members), whose language-modelling member has no 2025 source. The key
+    # stays "genai" because assets/app.js reads it.
     "genai": {
+        "col": "daioe_g2gen",
         "label": "Generative AI",
         "short": "genAI",
-        "def": "AI that produces text and images: language modelling (the technology behind "
-               "chatbots such as ChatGPT) and image generation.",
+        "def": "AI that produces text, images, dialogue and code: language modelling (the "
+               "technology behind chatbots such as ChatGPT), image generation, conversation and "
+               "software engineering. Its 2025 step comes mostly from software engineering's first "
+               "measured year and may be revised as more evaluations accumulate.",
     },
+    # From v1.1.0 (8 Oct 2026, ML): the overall view uses daioe_g2all (all thirteen
+    # applications, standardised units), not the legacy nine-application daioe_allapps.
     "allapps": {
+        "col": "daioe_g2all",
         "label": "All AI",
         "short": "all AI",
-        "def": "AI as a whole: nine application areas, from image and speech recognition, "
-               "translation and reading comprehension to games, plus the two generative ones.",
+        "def": "AI as a whole: thirteen application areas, from image and speech recognition, "
+               "translation and reading comprehension to games, the generative ones, and, from "
+               "2024, agentic task execution and mathematical and scientific reasoning. About "
+               "three quarters of its 2025 step comes from areas in their first measured year, "
+               "so that step may be revised as more evaluations accumulate.",
     },
 }
 
@@ -109,7 +126,7 @@ def load(tax: str) -> pd.DataFrame:
     d = pd.read_csv(BUNDLE / VINTAGE / f"daioe_{tax}.tsv", sep="\t", dtype=str)
     d["year"] = d["year"].astype(float).astype(int)
     for m in MEASURES:
-        d[m] = pd.to_numeric(d[f"daioe_{m}"])
+        d[m] = pd.to_numeric(d[MEASURES[m].get("col", f"daioe_{m}")])
     if tax == "isco08":
         d["code"] = d["occ_code_isco08"].str.zfill(4)
         d["title"] = d["occ_title_isco08"]

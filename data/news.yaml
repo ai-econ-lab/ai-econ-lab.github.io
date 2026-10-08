@@ -26,6 +26,9 @@ years:
       # the 12th, so the site's own record of the launch may not post-date the announcement of it.
       # "Published" rather than "went out", because that is true of the brief on the site whether
       # or not the Substack issue has been mailed.
+      - date: "Oct 8"
+        text: 'The 2025 vintage of DAIOE was published as version 1.1.0: occupation-year AI-exposure scores now run through 2025, with agentic task execution and mathematical and scientific reasoning added as new application areas, and the frozen 2010–2023 scores carried unchanged.'
+        links: [{label: "Zenodo (DOI)", url: "https://doi.org/10.5281/zenodo.22551410"}, {label: "Pipeline & documentation", url: "https://github.com/Magnus-L/daioe-pipeline"}]
       - date: "Sep 6"
         text: 'The DAIOE measure was published as an open, citable dataset: occupation-year AI-exposure scores for 2010–2023 with a 2024 refresh, on five occupational classifications (O*NET-SOC, SOC, ISCO-08, SSYK 96, SSYK 2012), together with the full construction pipeline and documentation.'
         links: [{label: "Zenodo (DOI)", url: "https://doi.org/10.5281/zenodo.21873968"}, {label: "Pipeline & documentation", url: "https://github.com/Magnus-L/daioe-pipeline"}]

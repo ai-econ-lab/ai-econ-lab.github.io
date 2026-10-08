@@ -632,7 +632,7 @@ def daioe():
     <noscript><p class="occsent">The lookup needs JavaScript. The full scores are in the
       <a href="{DAIOE['resources'][0]['href']}">published data</a>.</p></noscript>
   </div>
-  <p class="prov" style="margin-top:14px">Source: DAIOE v{DAIOE_OCC['version']}, {DAIOE_OCC['year']} refresh,
+  <p class="prov" style="margin-top:14px">Source: DAIOE v{DAIOE_OCC['version']}, {DAIOE_OCC['year']} vintage,
     <a href="https://doi.org/{DAIOE_OCC['doi']}">doi:{DAIOE_OCC['doi']}</a>. Exposure measures how far AI capabilities
     overlap with the abilities an occupation uses. It is not a forecast of job loss: exposed work can be
     complemented by AI as well as replaced.</p>
@@ -667,7 +667,7 @@ def daioe():
     <div><div class="exphead"><span class="dotc lo"></span>Least exposed</div>
       <div class="expbars">{least}</div></div>
   </div>
-  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI v{DAIOE_EXP['year']} · ISCO-08", next_up="with the DAIOE v2025 release")}
+  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI composite (g2gen) v{DAIOE_EXP['year']} · ISCO-08", next_up="with the DAIOE v2026 release")}
   <p class="prov" style="margin-top:16px">Source: DAIOE v{DAIOE_EXP['year']} · ISCO-08 · higher score = more exposed.
     Explore every occupation in the <a href="/monitor/#occupations-explorer">Occupations Explorer</a>.</p>
 </section></div></div>
@@ -4104,7 +4104,7 @@ def emit_data(out):
             w.writerow([f"used_for_{r['label']}", r["value"], "AI users", ""])
 
     with (d / "daioe_most_least.csv").open("w", newline="", encoding="utf-8") as f:
-        w = _csv.writer(f); w.writerow(["occupation", "daioe_genai_score", "group", "daioe_version"])
+        w = _csv.writer(f); w.writerow(["occupation", "daioe_g2gen_score", "group", "daioe_version"])
         for it in DAIOE_EXP["most"]:  w.writerow([it["occ"], it["score"], "most_exposed", f"v{DAIOE_EXP['year']}"])
         for it in DAIOE_EXP["least"]: w.writerow([it["occ"], it["score"], "least_exposed", f"v{DAIOE_EXP['year']}"])
     t = TREND["trend"]

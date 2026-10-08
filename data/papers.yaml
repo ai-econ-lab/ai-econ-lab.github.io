@@ -88,6 +88,7 @@ working:
       - {name: "SVT", url: "https://www.svt.se/nyheter/ekonomi/anders-hansen-om-framtidens-ai-jobb-det-ar-som-att-bli-omhandertagen-av-en-psykopat"}
       - {name: "Frankfurter Rundschau", url: "https://www.fr.de/wissen/sorge-vor-ki-als-jobkiller-obwohl-kaum-arbeitsplaetze-verloren-gehen-zr-94146761.html"}
       - {name: "Staatsanzeiger", url: "https://www.staatsanzeiger.de/beruf-und-karriere/einsatz-von-ki-veraendert-die-arbeitsplaetze/"}
+      - {name: "LO report (2026)", url: "https://www.lo.se/lo-fakta/ai-och-arbetsmarknaden/"}
     links:
       - {label: "ORU WP 13/2023", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2023/wp-13-2023.pdf"}
       - {label: "Ratio WP 370", url: "https://cms.ratio.se/app/uploads/2023/12/wp-370-ai-unboxed.pdf"}
@@ -118,6 +119,7 @@ working:
       - {name: "SvD", url: "https://www.svd.se/a/9pzVaM/laskigaste-kurvan-visar-ai-tar-jobb-fran-unga-i-sverige"}
       - {name: "DN", url: "https://www.dn.se/debatt/ja-ai-hotar-ungas-jobb-men-inte-som-vi-trott/"}
       - {name: "Arbetsvärlden", url: "https://www.arbetsvarlden.se/unga-blev-forlorare-nar-chatgpt-forandrade-arbetet/"}
+      - {name: "LO report (2026)", url: "https://www.lo.se/lo-fakta/ai-och-arbetsmarknaden/"}
     links:
       - {label: "Paper (PDF)", url: "https://github.com/Magnus-L/canaries-sweden/raw/main/paper/main.pdf"}
       - {label: "One-pager (first version)", url: "https://magnus-l.github.io/canaries-sweden/onepager/onepager.pdf"}

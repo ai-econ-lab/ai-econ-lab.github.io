@@ -343,7 +343,7 @@ window.drawTrend();
         <p class="occsent">${trendTxt}</p></div>
       ${near.length ? `<div class="occnear"><p class="occsub">Nearby in the ranking</p>
         ${near.map(n => `<button type="button" class="occchip" data-set="${set}" data-code="${esc(n[0])}">${esc(n[1])} <span class="tnum">${Math.round(standing(n, set, M, yi).pct)}%</span></button>`).join("")}</div>` : ""}
-      <div class="occfoot"><span>Index value ${me.v.toFixed(M === "genai" ? 2 : 1)} (${esc(lc(mL))}, ${Y1}).
+      <div class="occfoot"><span>Index value ${me.v.toFixed(2)} (${esc(lc(mL))}, ${Y1}).
         The two measures use different units, so compare rankings, not index values.
         ${set === "ssyk" ? "Swedish (SSYK) and international (ISCO) occupations are ranked separately, and the two classifications draw their lines differently, so the same job can rank differently in each." : ""}</span>
         <button type="button" class="occcopy">Copy link to this result</button></div>`;
@@ -373,7 +373,7 @@ window.drawTrend();
   chips.addEventListener("click", e => { const c = e.target.closest(".occchip"); if (!c) return;
     const o = D.sets[c.dataset.set].occ.find(x => x[0] === c.dataset.code); if (o) choose(o); });
 
-  fetch("/assets/daioe_occupations.json?v=1.0.0-2024").then(r => r.json()).then(d => {
+  fetch("/assets/daioe_occupations.json?v=1.1.0-2025g2all").then(r => r.json()).then(d => {
     D = d; index();
     chips.innerHTML = `<span class="occsub">Try</span>` + EXAMPLES.map(([s, t]) => {
       const o = D.sets[s].occ.find(x => x[1] === t);
@@ -389,7 +389,7 @@ window.drawTrend();
 /* DAIOE beeswarm — every occupation placed by generative-AI exposure, with scroll steps */
 (function beeswarm(){
   const svg = $("#beeswarm"); if (!svg) return;
-  fetch("/assets/daioe_occupations.json?v=1.0.0-2024").then(r => r.json()).then(d => {
+  fetch("/assets/daioe_occupations.json?v=1.1.0-2025g2all").then(r => r.json()).then(d => {
     // Generative AI, ISCO-08, latest year; percentile = midrank share of the other occupations,
     // the same convention as the lookup above.
     const yi = d.years.length - 1, raw = d.sets.isco.occ.map(r => r[2][yi]), n = raw.length;
