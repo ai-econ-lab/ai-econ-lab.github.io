@@ -14,10 +14,10 @@ ROOT = Path(__file__).resolve().parent.parent
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 TITLES = {"en": ("Swedish job ads mention AI far more often than they ask for AI skills",
-                 "Share of all job advertisements on Platsbanken, 2016 to June {y}",
+                 "Share of all job advertisements on Platsbanken, 2016 to {mo_en} {y}",
                  "Source: JobTech / Platsbanken. AI-Econ Lab, AIEL Monitor {m}. ai-econlab.com/monitor"),
           "sv": ("Svenska jobbannonser nämner AI betydligt oftare än de efterfrågar AI-kompetens",
-                 "Andel av alla jobbannonser på Platsbanken, 2016 till juni {y}",
+                 "Andel av alla jobbannonser på Platsbanken, 2016 till {mo_sv} {y}",
                  "Källa: JobTech / Platsbanken. AI-Econ Lab, AIEL Monitor {m}. ai-econlab.com/monitor")}
 
 def main():
@@ -27,12 +27,22 @@ def main():
     docs = ROOT / "docs"; out = ROOT / "build" / "social"; out.mkdir(parents=True, exist_ok=True)
     card_dir = docs / "_card"; card_dir.mkdir(exist_ok=True)
     y = a.month[:4]
+    # The part-year's last month comes from the same file the brief's text and chart use (it was
+    # typed "June" until 2026-Q3 arrived on 8 Oct 2026 and moved the brief to January-September).
+    import yaml
+    sm = yaml.safe_load((ROOT / "data" / "washing_samemonths.yaml").read_text(encoding="utf-8"))
+    mi = int(sm["months"]) - 1
+    mo_en = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+             "October", "November", "December"][mi]
+    mo_sv = mo_en.lower().replace("may", "maj").replace("june", "juni").replace("july", "juli").replace(
+        "august", "augusti").replace("october", "oktober").replace("january", "januari").replace(
+        "february", "februari").replace("march", "mars")
     for lang, rel in (("en", "monitor/brief/index.html"), ("sv", "monitor/brief/sv/index.html")):
         page = (docs / rel).read_text(encoding="utf-8")
         svg = re.search(r'<div class="bchart">(<svg.*?</svg>)', page, re.S).group(1)
         # The card's subtitle carries the unit; drop the chart's own axis caption so it is not said twice.
         svg = re.sub(r'<text[^>]*>(Share of all job advertisements on Platsbanken|Andel av alla jobbannonser på Platsbanken)</text>', '', svg)
-        title, sub, src = (t.format(y=y, m=a.month) for t in TITLES[lang])
+        title, sub, src = (t.format(y=y, m=a.month, mo_en=mo_en, mo_sv=mo_sv) for t in TITLES[lang])
         html = f"""<!doctype html><html lang="{lang}" data-theme="light"><head><meta charset="utf-8">
 <link rel="stylesheet" href="/assets/styles.css"><style>
 html,body{{margin:0;background:#fff}} .card{{width:1200px;height:675px;box-sizing:border-box;padding:44px 56px 30px;

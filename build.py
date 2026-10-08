@@ -194,6 +194,18 @@ LIVE_STATUS = (f'<span class="lv">● LIVE FEED{_LW_SUFFIX} · PUBLIC + PARTNER 
 # how the monthly series came to say 16,113,466 while the masthead said 8.1M (13 Aug 2026).
 DISTINCT_ADS = f"{MONTHLY['meta']['total_ads'] / 1e6:.1f}M"
 RECORD_ADS   = f"{MONTHLY['meta']['total_records'] / 1e6:.1f}M"
+# The archive's last month, for caveat prose that names it (monitor.yaml placeholders
+# {archive_month} and {archive_quarters}). Typed as "June" and "Q1–Q2" until 8 Oct 2026, when
+# 2026-Q3 arrived and both would have gone stale without anyone noticing.
+_ARCH_M = int(str(MONTHLY["meta"]["last"])[5:7])
+ARCHIVE_MONTH = ["January", "February", "March", "April", "May", "June", "July", "August",
+                 "September", "October", "November", "December"][_ARCH_M - 1]
+ARCHIVE_QUARTERS = "Q1" if _ARCH_M <= 3 else f"Q1–Q{(_ARCH_M + 2) // 3}"
+
+
+def fill_placeholders(t):
+    return (str(t).replace("{records_m}", RECORD_ADS[:-1]).replace("{distinct_m}", DISTINCT_ADS[:-1])
+            .replace("{archive_month}", ARCHIVE_MONTH).replace("{archive_quarters}", ARCHIVE_QUARTERS))
 N_COUNTRIES  = CROSS['meta']['n_countries']
 # The occupation explorer plots assets/daioe_occupations.json, so the count comes from there.
 # Built by scripts/build_daioe_occupations.py from the published DAIOE release.
@@ -1154,11 +1166,11 @@ def dumbbell_svg(conds, gkey, active=False):
     return "".join(p)
 
 # Share of the bare-AI band that hand-reading finds to be genuine AI roles: 32 of 230 read over
-# four periods, re-derived on the v1.4 band as 12.8% (95% interval 8.9-18.1). v1.6 removes from
-# the band only recruitment-process mentions (none an AI role), so it is carried over; on the
-# smaller band it would be ~13.0% (2025) / 13.3% (2026 H1), inside the interval (revision log
-# v1.6). Source of the published ceiling (monitor.yaml, "The upper bound is now measured across
-# the whole series"); 2025 checks out: 1.057 + 0.128 x 1.359 = 1.23%.
+# four periods, re-derived on the v1.4 band as 12.8% (95% interval 8.9-18.1). v1.7 re-scored
+# the labels with its own score(): 26 of 203 still in the band are AI roles, 12.8%, identical to
+# v1.4 (v1.6's score() band gave 14.5%, 30/207, because score() missed ML-only ads until rule 8;
+# v1.7 revision log). Source of the published ceiling (monitor.yaml, "The upper bound is now
+# measured across the whole series"); 2025 checks out: 1.055 + 0.128 x 1.344 = 1.23%.
 CEIL_BAND_SHARE = 0.128
 CEIL_BAND_LO, CEIL_BAND_HI = 0.089, 0.181     # its 95% interval, same derivation
 
@@ -1393,8 +1405,9 @@ def washing_stack_svg(t, lang="en"):
     for i, yr in enumerate(ys):
         if yr % 2 == 0 and i < n - 1:
             p.append(f'<text x="{X(i):.1f}" y="{H-6}" text-anchor="middle" font-size="11" fill="{mute}">{yr}</text>')
+    _pm = MONTHS[SAMEM["months"] - 1]     # the part-year's last month (Jun until 2026-Q3 arrived)
     p.append(f'<text x="{X(n - 1):.1f}" y="{H-6}" text-anchor="middle" font-size="11" fill="{mute}">'
-             f'{h(L(f"{ys[-1]} (Jan\u2013Jun)", f"{ys[-1]} (jan\u2013jun)"))}</text>')
+             f'{h(L(f"{ys[-1]} (Jan\u2013{_pm})", f"{ys[-1]} (jan\u2013{_pm.lower()})"))}</text>')
     def band(lo, hi, fill, op):
         pts = " ".join(f"{X(i):.1f},{Y(hi[i]):.1f}" for i in range(n)) + " " + \
               " ".join(f"{X(i):.1f},{Y(lo[i]):.1f}" for i in reversed(range(n)))
@@ -1610,7 +1623,8 @@ def trend_svg(t):
 
 def squeeze_svg(els):
     """Two-line time series: the entry-level share of openings in least- vs most-AI-exposed
-    occupations. The vertical gap between the lines is the 'squeeze'; it widens over time."""
+    occupations (employment-weighted occupations since v1.7). The vertical gap between the lines
+    is the 'squeeze'; the aria label states its first and last value rather than a direction."""
     s = els["series"]; ymax = int(els["meta"]["ymax"]); n = len(s)
     W, H = 640, 292
     x0, x1, top, bot = 60, 540, 22, 250
@@ -1618,7 +1632,7 @@ def squeeze_svg(els):
     Y = lambda v: bot - v / ymax * (bot - top)
     p = [f'<svg class="rankchart squeeze" viewBox="0 0 {W} {H}" role="img" '
          f'aria-label="Entry-level share of job openings in least- versus most-AI-exposed occupations, '
-         f'{s[0]["year"]} to {s[-1]["year"]}, with a widening gap">']
+         f'{s[0]["year"]} to {s[-1]["year"]}; gap {s[0]["gap"]:+.1f} to {s[-1]["gap"]:+.1f} percentage points">']
     for t in range(0, ymax + 1, 10):
         gy = Y(t)
         p.append(f'<line class="grid" x1="{x0}" y1="{gy:.1f}" x2="{x1}" y2="{gy:.1f}"/>')
@@ -2639,13 +2653,18 @@ def akavia_outcomes_block():
   {figfooter("akavia_governance.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. {m['population']}", next_up="with the next Akavia panel wave")}
   {akavia_provenance(m)}"""
 
-def squeeze_widens(em, series):
-    """True only when the data carry the module's original reading: every year's gap negative
-    and the last wider than the first. On 8 Oct 2026 the exposure input moved to DAIOE g2gen
-    v2025 and, on the module's ad-pooled aggregation, the gap became small and changed sign
-    (+0.3pp 2020, -0.6pp 2025). The prose must follow the data, so it is chosen here, not typed.
-    How to aggregate is Magnus's ruling (v1.7 revision log, "Exposure input moved to DAIOE v1.1.0")."""
-    return all(r["gap"] < 0 for r in series) and em["gap_last"] < em["gap_first"]
+def squeeze_reading(em, series):
+    """Which sentence the data allow: 'widens' (every gap negative, last wider than first),
+    'level' (every gap negative, not wider at the end) or 'mixed' (the sign changes).
+
+    History. Until v1.7 the module pooled ad records within each tier and read -3.1 -> -5.3pp,
+    "widening", on the 2023 legacy index. On DAIOE g2gen v2025 the pooled gap became +0.3 ->
+    -0.6pp. Magnus ruled on 8 Oct 2026: weight occupations by employment; the gap is then about
+    -5pp and has not widened (-5.8pp 2020, -4.7pp 2025). The prose is chosen here from the data,
+    never typed, so a reading cannot outlive its numbers again."""
+    if all(r["gap"] < 0 for r in series):
+        return "widens" if em["gap_last"] < em["gap_first"] else "level"
+    return "mixed"
 
 
 def squeeze_gap_pp(x):
@@ -2670,23 +2689,34 @@ def outcomes_section(explorers):
 
   {akavia_outcomes_block()}
 
-  <div class="grouphdr" style="margin-top:36px">Entry-level squeeze</div>
+  <div class="grouphdr" style="margin-top:36px">Entry-level openings and AI exposure</div>
   {note(
-    (f"""In the most AI-exposed occupations, a smaller share of openings ask for no prior experience than in the
+    {"widens": f"""In the most AI-exposed occupations, a smaller share of openings ask for no prior experience than in the
     least-exposed occupations, every year since {h(em['first_year'])}, and the gap has widened from
-    −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. This is consistent with the
-    canaries finding of our Same Storm, Different Boats study (the most AI-exposed occupations hire fewer young
-    workers, the labour market's canaries in the coal mine), but it is not independent evidence for it, and
-    <b>this module counts ad records rather than distinct advertisements</b>.""" if squeeze_widens(em, ELS["series"]) else
-    f"""Pooling all ad records in each third of occupations, the share of openings that ask for no prior
-    experience is about the same in the most and the least AI-exposed occupations: the gap is
-    {squeeze_gap_pp(em['gap_first'])}pp in {h(em['first_year'])} and <b>{squeeze_gap_pp(em['gap_last'])}pp in
-    {h(em['last_year'])}</b>, and it changes sign in between. The pooled figure is driven by a few large occupations
-    near the tier boundaries, so it is not evidence either way on the canaries finding of our Same Storm, Different
-    Boats study, and <b>this module counts ad records rather than distinct advertisements</b>."""),
+    {squeeze_gap_pp(em['gap_first'])}pp to <b>{squeeze_gap_pp(em['gap_last'])}pp in {h(em['last_year'])}</b>, with
+    occupations weighted by employment. This is consistent with the canaries finding of our Same Storm, Different Boats
+    study, but it is not independent evidence for it, and <b>this module counts ad records rather than distinct
+    advertisements</b>.""",
+     "level": f"""Exposed occupations advertise somewhat fewer entry-level openings. In the most AI-exposed third of
+    occupations, {ELS['series'][-1]['high']:.1f}% of openings in {h(em['last_year'])} asked for no prior experience,
+    against {ELS['series'][-1]['low']:.1f}% in the least exposed third: a gap of <b>{squeeze_gap_pp(em['gap_last'])}pp</b>,
+    with occupations weighted by employment. <b>The gap has not widened</b>: it was {squeeze_gap_pp(em['gap_first'])}pp
+    in {h(em['first_year'])}, and widest, {squeeze_gap_pp(em['gap_min'])}pp, in {h(em['gap_min_year'])}. A stable gap
+    in levels is not evidence that AI is squeezing entry-level hiring, nor independent evidence for the canaries
+    finding of our Same Storm, Different Boats study, and <b>this module counts ad records rather than distinct
+    advertisements</b>.""",
+     "mixed": f"""With occupations weighted by employment, the share of openings that ask for no prior experience is
+    about the same in the most and the least AI-exposed occupations: the gap is {squeeze_gap_pp(em['gap_first'])}pp in
+    {h(em['first_year'])} and <b>{squeeze_gap_pp(em['gap_last'])}pp in {h(em['last_year'])}</b>, and it changes sign in
+    between. It is not evidence either way on the canaries finding of our Same Storm, Different Boats study, and
+    <b>this module counts ad records rather than distinct advertisements</b>."""}[squeeze_reading(em, ELS["series"])],
     f"""Entry-level hiring is more cyclical than experienced
     hiring, the tightening cycle that began in April 2022 fell hardest on exactly these occupations, and this series
-    starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the cycle. It counts records because
+    starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the cycle. Each occupation's own share
+    counts in proportion to its employment (SCB, 2024; occupations with at least 50 ad records a year), so a third of
+    occupations reads as its typical job, not its typical ad. Until v1.7 the module pooled ad records instead, which let
+    a few high-volume occupations near the boundaries between the thirds decide the gap; the widening it showed did
+    not hold up (see the method's version history). It counts records because
     it reads totals from the JobTech API, which cannot be deduplicated; elsewhere on this page, counting
     records rather than advertisements manufactured an artefact of about thirty points.
     The Same Storm paper can separate them, because it observes employers and workers\u2019 ages and identifies
@@ -2696,7 +2726,7 @@ def outcomes_section(explorers):
     "How this is counted, and what it cannot show")}
   <div class="dotwrap">{squeeze_svg(ELS)}</div>
   <div class="dblegend"><span><i class="lo"></i>least-exposed occupations</span><span><i class="hi"></i>most-exposed occupations</span></div>
-  {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']} · ad records, not distinct advertisements (see the note)", svg_name="entry_level_squeeze.svg", next_up="annually, with the JobTech year files")}
+  {figfooter("entry_level_squeeze.csv", f"{em['source']} × DAIOE {em['daioe_variant']} {em['daioe_version']} · occupations weighted by SCB employment 2024 · ad records, not distinct advertisements (see the note)", svg_name="entry_level_squeeze.svg", next_up="annually, with the JobTech year files")}
   {jobquality_block()}
   {wages_block()}
   {related_research("outcomes")}
@@ -2791,6 +2821,26 @@ def stat_overview():
     technology the four are measured against, and they render as a full-width band rather than
     as another card. Before 4 Aug 2026 capability sat in the grid as a fifth peer, which
     put five cards under a sentence promising four questions."""
+    # The Exposure card is typed prose over a generated file: check it, as refresh_trend.py
+    # --check does for the tiles (v1.7, 8 Oct 2026: the card said 37% and "among the highest"
+    # while the module said 36.5% and third).
+    _cm = CROSS["meta"]
+    _rank = sorted(CROSS["countries"], key=lambda r: -r["share"])
+    _se = next(i for i, r in enumerate(_rank) if r["is_se"])
+    _ord = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"]
+    for o in MONITOR["overview"]:
+        if o["k"] != "Exposure":
+            continue
+        want = [f'{_cm["mean_share"]:.1f}<span>%</span>' == o["num"],
+                f'across {_cm["n_countries"]} European countries' in o["lab"],
+                f'Sweden {_rank[_se]["share"]:.1f}%, {_ord[_se]} of the {_cm["n_countries"]}' in o["lab"],
+                f'{_cm["variant"]} {_cm["daioe_version"]}' in o["foot"],
+                f'EU-LFS {_cm["weight_year"]}' in o["foot"]]
+        if not all(want):
+            raise SystemExit(f"monitor.yaml overview Exposure card disagrees with cross_country.yaml "
+                             f"(mean {_cm['mean_share']:.1f}%, Sweden {_rank[_se]['share']:.1f}% {_ord[_se]} of "
+                             f"{_cm['n_countries']}, {_cm['variant']} {_cm['daioe_version']}, EU-LFS "
+                             f"{_cm['weight_year']}); checks {want}. Retype the card.")
     cards = ""
     for o in MONITOR["overview"]:
         if o.get("role") == "driver":
@@ -2902,8 +2952,7 @@ def monitor():
     # same placeholder convention as the masthead and is substituted here. It states both
     # corpus counts in one sentence, which is exactly the kind of figure that goes stale.
     def _fill(txt):
-        return (txt.replace("{records_m}", RECORD_ADS[:-1])
-                   .replace("{distinct_m}", DISTINCT_ADS[:-1]))
+        return fill_placeholders(txt)
     caveats = "".join(f"<li>{_fill(c)}</li>" for c in m["caveats"])
     explorers = ""
     for e in DAIOE["explorers"]:
@@ -3198,6 +3247,23 @@ def brief(lang="en"):
     _sm_rise_all = int(round((SAMEM["current"]["all"] / SAMEM["previous"]["all"] - 1) * 100, -1))
     _sm_talk_prev = SAMEM["previous"]["talk"]
     _ni = SAMEM["nonict"]            # share of AI demand outside ICT occupations (SSYK 25)
+    # The part-year span follows the archive (v1.7, 8 Oct 2026: 2026-Q3 made it January to
+    # September; it was typed "January to June"). The same-months file and the trend's part-year
+    # point must cover the same months, and the words the text uses must still be true.
+    _sm_mo_en, _sm_mo_sv = MO["en"][SAMEM["months"] - 1], MO["sv"][SAMEM["months"] - 1]
+    _tcov = TREND["meta"].get("part_coverage", "")
+    if SAMEM["year"] != _tlast or (_tcov and not _tcov.endswith(_sm_mo_en)):
+        raise SystemExit(f"brief: washing_samemonths.yaml covers {SAMEM['year']} to month {SAMEM['months']}, "
+                         f"but the trend's part-year point is {_tlast} ({_tcov}). Rerun "
+                         f"refresh_washing_samemonths.py and refresh_trend.py on the same bulk.")
+    _talk_x = SAMEM["current"]["talk"] / SAMEM["previous"]["talk"]
+    # "nearly doubled" at x1.6-1.9 (Jan-Jun 2026: x1.82), "doubled" at x1.9-2.2 (Jan-Sep: x2.05).
+    _dbl_en, _dbl_sv = (("nearly doubled", "nästan fördubblats") if _talk_x < 1.9
+                        else ("doubled", "fördubblats"))
+    if not (1.6 <= _talk_x < 2.2) or not (_bdg > _wce):
+        raise SystemExit(f"brief: '{_dbl_en}' needs AI talk x1.6-2.2 (it is x{_talk_x:.2f}) and "
+                         f"'larger than AI demand' needs talk {_bdg:.2f} > ceiling {_wce:.2f}. Reword "
+                         f"takeaways['washing'] (EN and SV).")
     # International comparison (ML, 29 Sep 2026: only where Sweden is in the same source, and say
     # how it is measured). 30 Sep 2026, checked against the AI Index 2026 appendix (written by
     # Lightcast) and the Lightcast KB: a posting is an AI job if its text includes one of 300+ AI
@@ -3270,21 +3336,21 @@ def brief(lang="en"):
             # the definitions, so the text does not repeat them.
             # 29 Sep 2026, after three reviews: same months, not part-year against full year; the
             # denominator stated; "larger than AI demand", not a colour. Numbers from SAMEM.
-            f"From January to June {_tlast}, {_all:.1f}% of the {_sm_ads:,} advertisements on "
+            f"From January to {_sm_mo_en} {_tlast}, {_all:.1f}% of the {_sm_ads:,} advertisements on "
             f"Platsbanken mentioned AI in some way ({_all25:.1f}% over the whole of 2025), a share about "
             f"{_sm_rise_all} per cent higher than in the same months of 2025. We count {_wce:.1f}% as AI "
             f"demand: the floor, {_wfl:.1f}%, and a further {_wce - _wfl:.1f}% up to the ceiling. "
             f"Strictly, we measure AI demand as a range, currently between {_wfl:.1f}% and "
             f"{_wce:.1f}%. In all, {_wbd:.1f}% only mention AI. Read by hand, about one in eight of them "
             f"concern genuine AI roles; those {_bdr:.1f} percentage points are counted in the ceiling, "
-            f"and the remaining {_bdg:.1f}% is the AI talk in grey. It has nearly doubled since the "
+            f"and the remaining {_bdg:.1f}% is the AI talk in grey. It has {_dbl_en} since the "
             f"same months of 2025, from {_sm_talk_prev:.1f}%, and is now larger than AI demand. AI "
             f"demand is also spreading beyond ICT jobs: {_ni['ceiling_now']:.0f}% of it is in other "
             f"occupations, against {_ni['ceiling_first']:.0f}% in {_ni['first_year']}, while the floor "
             f"has stayed near {_ni['floor_now']:.0f}%.",
             # Lydia Löthman, 30 Sep 2026: rewritten for clarity, in two steps (demand, then
             # AI talk). "redan" added so the 0,3 is read as part of the 0,9, not on top of it.
-            f"Från januari till juni {_tlast} nämnde {svn(f'{_all:.1f}')} procent av de "
+            f"Från januari till {_sm_mo_sv} {_tlast} nämnde {svn(f'{_all:.1f}')} procent av de "
             f"{_sm_ads_sv} annonserna på Platsbanken AI på något sätt, jämfört med "
             f"{svn(f'{_all25:.1f}')} procent under hela 2025. Det är en ökning med ungefär "
             f"{_sm_rise_all} procent jämfört med samma månader 2025. Av annonserna innehåller "
@@ -3298,7 +3364,7 @@ def brief(lang="en"):
             f"AI-tjänst. Dessa, cirka {svn(f'{_bdr:.1f}')} procentenheter, ingår redan i det övre "
             f"måttet. Resterande cirka "
             f"{svn(f'{_bdg:.1f}')} procentenheter klassificerar vi som \u201dAI-prat\u201d. Denna "
-            f"andel har nästan fördubblats från {svn(f'{_sm_talk_prev:.1f}')} procent under samma "
+            f"andel har {_dbl_sv} från {svn(f'{_sm_talk_prev:.1f}')} procent under samma "
             f"månader 2025 och är nu större än den uppskattade AI-efterfrågan. AI-efterfrågan har "
             f"samtidigt spridits utanför IT-yrkena: {_ni['ceiling_now']:.0f} procent finns nu i andra "
             f"yrken, jämfört med {_ni['ceiling_first']:.0f} procent {_ni['first_year']}, medan "
@@ -3341,24 +3407,45 @@ def brief(lang="en"):
             f"för den som vill ha dem. Det är alltså hindren hos de företag som tagit sig an frågan; den "
             f"större gruppen kom aldrig in i den, och det intressanta pusslet är varför de flesta "
             f"aldrig överväger AI."),
-        "outcomes": (L(
+        # Chosen from the data by squeeze_reading(), never typed (v1.7, Magnus 8 Oct 2026:
+        # employment-weighted occupations; the old pooled "widening" did not hold up).
+        "outcomes": {
+            "widens": L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
-            f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
-            f"in {ELS['meta']['last_year']}. Descriptive: entry-level hiring is also more cyclical, and "
+            f"least-exposed, a gap widening from {squeeze_gap_pp(ELS['meta']['gap_first'])}pp in {ELS['meta']['first_year']} "
+            f"to {squeeze_gap_pp(ELS['meta']['gap_last'])}pp in {ELS['meta']['last_year']}, with occupations weighted by "
+            f"employment. Descriptive: entry-level hiring is also more cyclical, and "
             f"the tightening cycle hit these occupations hardest, so this cannot separate AI from the cycle.",
             f"I de mest AI-exponerade yrkena utgör instegsjobb en mindre andel av annonserna än i de minst exponerade, "
-            f"ett gap som vuxit från −{svn(abs(ELS['meta']['gap_first']))} till −{svn(abs(ELS['meta']['gap_last']))} "
-            f"procentenheter {ELS['meta']['last_year']}. Beskrivande: instegsjobb är också mer konjunkturkänsliga, "
-            f"och räntehöjningarna slog hårdast mot just dessa yrken, så AI går inte att skilja från konjunkturen här.")
-            if squeeze_widens(ELS['meta'], ELS['series']) else L(
-            f"Pooling ad records, entry-level openings are about as common in the most AI-exposed occupations as in "
-            f"the least exposed: the gap is {squeeze_gap_pp(ELS['meta']['gap_first'])}pp in {ELS['meta']['first_year']} "
-            f"and {squeeze_gap_pp(ELS['meta']['gap_last'])}pp in {ELS['meta']['last_year']}. Descriptive, and driven by "
-            f"a few large occupations near the tier boundaries.",
-            f"Räknat på annonsposter är instegsjobb ungefär lika vanliga i de mest som i de minst AI-exponerade "
-            f"yrkena: gapet är {svn(squeeze_gap_pp(ELS['meta']['gap_first']))} procentenheter {ELS['meta']['first_year']} "
-            f"och {svn(squeeze_gap_pp(ELS['meta']['gap_last']))} procentenheter {ELS['meta']['last_year']}. Beskrivande, "
-            f"och styrt av några stora yrken nära gränserna mellan grupperna.")),
+            f"ett gap som vuxit från {svn(squeeze_gap_pp(ELS['meta']['gap_first']))} procentenheter {ELS['meta']['first_year']} "
+            f"till {svn(squeeze_gap_pp(ELS['meta']['gap_last']))} procentenheter {ELS['meta']['last_year']}, med yrkena "
+            f"viktade efter antal sysselsatta. Beskrivande: instegsjobb är också mer konjunkturkänsliga, "
+            f"och räntehöjningarna slog hårdast mot just dessa yrken, så AI går inte att skilja från konjunkturen här."),
+            "level": L(
+            f"The most AI-exposed occupations advertise somewhat fewer entry-level openings: in "
+            f"{ELS['meta']['last_year']}, {ELS['series'][-1]['high']:.1f}% of their openings asked for no prior "
+            f"experience, against {ELS['series'][-1]['low']:.1f}% in the least exposed, a gap of "
+            f"{squeeze_gap_pp(ELS['meta']['gap_last'])} percentage points with occupations weighted by employment. "
+            f"The gap has not widened: it was {squeeze_gap_pp(ELS['meta']['gap_first'])} points in "
+            f"{ELS['meta']['first_year']}. Descriptive: less-exposed work also skews lower-skill, and entry-level "
+            f"hiring is more cyclical.",
+            f"De mest AI-exponerade yrkena annonserar något färre instegsjobb: {ELS['meta']['last_year']} krävde "
+            f"{svn(round(ELS['series'][-1]['high'], 1))} procent av deras annonser ingen tidigare erfarenhet, mot "
+            f"{svn(round(ELS['series'][-1]['low'], 1))} procent i de minst exponerade, ett gap på "
+            f"{svn(squeeze_gap_pp(ELS['meta']['gap_last']))} procentenheter med yrkena viktade efter antal sysselsatta. "
+            f"Gapet har inte vuxit: det var {svn(squeeze_gap_pp(ELS['meta']['gap_first']))} procentenheter "
+            f"{ELS['meta']['first_year']}. Beskrivande: mindre exponerat arbete är oftare mindre kvalificerat, och "
+            f"instegsjobb är mer konjunkturkänsliga."),
+            "mixed": L(
+            f"With occupations weighted by employment, entry-level openings are about as common in the most AI-exposed "
+            f"occupations as in the least exposed: the gap is {squeeze_gap_pp(ELS['meta']['gap_first'])}pp in "
+            f"{ELS['meta']['first_year']} and {squeeze_gap_pp(ELS['meta']['gap_last'])}pp in {ELS['meta']['last_year']}. "
+            f"Descriptive.",
+            f"Med yrkena viktade efter antal sysselsatta är instegsjobb ungefär lika vanliga i de mest som i de minst "
+            f"AI-exponerade yrkena: gapet är {svn(squeeze_gap_pp(ELS['meta']['gap_first']))} procentenheter "
+            f"{ELS['meta']['first_year']} och {svn(squeeze_gap_pp(ELS['meta']['gap_last']))} procentenheter "
+            f"{ELS['meta']['last_year']}. Beskrivande."),
+        }[squeeze_reading(ELS['meta'], ELS['series'])],
     }
     srcs = {
         "exposure": L(f"DAIOE generative-AI composite (g2gen) {dver} × Eurostat EU-LFS {cc['meta']['weight_year']}",
@@ -3380,7 +3467,7 @@ def brief(lang="en"):
         "adoption": L(
             " * No 2021 figure is published for these rows.",
             " * Inget värde för 2021 publiceras för dessa rader."),
-        "washing": L(" 2026 covers January to June. The share of genuine AI roles among advertisements "
+        "washing": L(f" {_tlast} covers January to {_sm_mo_en}. The share of genuine AI roles among advertisements "
                      "that only say \u201cAI\u201d (about one in eight) rests on 203 advertisements read by hand.",
                      " Andelen verkliga AI-tjänster (var åttonde) bygger på 203 handlästa annonser."),
     }
@@ -4156,10 +4243,12 @@ def emit_data(out):
                                                                  f"JobTech / Platsbanken job ads (CC0) · {TREND['meta']['definition']} · distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     with (d / "entry_level_squeeze.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
-        w.writerow(["year", "entry_level_share_least_exposed_pct", "entry_level_share_most_exposed_pct", "gap_pp"])
+        # Employment-weighted occupations since v1.7 (Magnus, 8 Oct 2026); the column names say so.
+        w.writerow(["year", "entry_level_share_least_exposed_pct_empweighted",
+                    "entry_level_share_most_exposed_pct_empweighted", "gap_pp"])
         for r in ELS["series"]: w.writerow([r["year"], r["low"], r["high"], r["gap"]])
     (d / "entry_level_squeeze.svg").write_text(chart_standalone(squeeze_svg(ELS), "Entry-level openings by AI-exposure tercile, Sweden",
-                                                                    f"JobTech / Platsbanken (CC0) x DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']} · ad records, not distinct advertisements · AI-Econ Lab"), encoding="utf-8")
+                                                                    f"JobTech / Platsbanken (CC0) x DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']} · occupations weighted by SCB employment 2024 · ad records, not distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     (d / "working_conditions.svg").write_text(
         chart_standalone(dumbbell_svg(WORKCOND["conditions"], "all", active=True)), encoding="utf-8")
     with (d / "wages_exposure.csv").open("w", newline="", encoding="utf-8") as f:
@@ -4223,7 +4312,7 @@ ONEPAGERS = ("aiel-monitor-onepager.pdf", "aiel-monitor-onepager-sv.pdf")
 def strip_tags(t):
     """Plain text from a caveat string: the machine digest carries no markup and no placeholders."""
     t = re.sub(r"<[^>]+>", "", str(t))
-    t = t.replace("{records_m}", RECORD_ADS[:-1]).replace("{distinct_m}", DISTINCT_ADS[:-1])
+    t = fill_placeholders(t)
     return " ".join(t.split())
 
 

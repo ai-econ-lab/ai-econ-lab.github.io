@@ -7,11 +7,16 @@ Public data only: JobTech / Platsbanken job ads (CC0). For each year, the share 
 require NO prior experience (an entry-level proxy, from the ad's structured 'experience' field),
 computed separately for the MOST- vs LEAST-AI-exposed occupations (terciles of SSYK 2012
 occupations by DAIOE's generative-AI composite g2gen, v1.1.0, score year 2025, since 8 Oct 2026;
-until then the legacy genai index). Unit: API ad records pooled within tier, so large
-occupations dominate (see the v1.7 revision log, "Exposure input moved to DAIOE v1.1.0"). The 'experience' field is populated from 2020, so the series starts there.
+until then the legacy genai index). Aggregation (Magnus, 8 Oct 2026, v1.7): EMPLOYMENT-WEIGHTED
+occupations: each occupation's own no-experience share of its API ad records (50+ records that
+year), averaged within the tier with 2024 employment weights (SCB YREG50BAS). Until v1.7 the
+module pooled ad records within each tier, which let a few large-volume occupations near the
+tier boundaries carry the gap (v1.7 revision log, "Exposure input moved to DAIOE v1.1.0").
+The 'experience' field is populated from 2020, so the series starts there.
 
-The story is the high-minus-low GAP: AI-exposed occupations advertise proportionally fewer
-entry-level openings, and the gap widens. Descriptive, an ad-based echo of the Canaries finding;
+The story is the high-minus-low GAP: AI-exposed occupations advertise somewhat fewer entry-level
+openings, but the gap has NOT widened (about -6pp in 2020, about -5pp in 2025 on g2gen). The
+earlier "widening" reading (-3.1 -> -5.3pp, pooled records, 2023 index) did not hold up. Descriptive,
 not causal (the negative gap is partly structural, since less-exposed work skews lower-skill).
 
 Source CSV: lab-infrastructure/ai-monitor/scripts/entry_level_squeeze.py.
@@ -36,6 +41,7 @@ def main():
             if y < FIRST_YEAR:
                 continue
             by_year[y][r["tier"]] = float(r["noexp_share_pct"])
+            by_year[y][r["tier"] + "_n"] = int(r["n_occ"])
 
     series = []
     for y in sorted(by_year):
@@ -43,7 +49,9 @@ def main():
         if hi is None or lo is None:
             continue
         # gap = most-exposed minus least-exposed entry-level share (negative = the squeeze)
-        series.append({"year": y, "high": round(hi, 1), "low": round(lo, 1), "gap": round(hi - lo, 1)})
+        # gap from the two rounded shares, so the page's numbers add up as printed
+        series.append({"year": y, "high": round(hi, 1), "low": round(lo, 1),
+                       "gap": round(round(hi, 1) - round(lo, 1), 1)})
 
     if not series:
         raise SystemExit("no usable rows found in " + str(SRC))
@@ -56,7 +64,13 @@ def main():
         f'  daioe_variant: "{DAIOE_VARIANT}"',
         f'  daioe_version: "{DAIOE_VERSION}"',
         '  source: "JobTech / Platsbanken job ads (CC0)"',
-        '  measure: "Share of openings requiring no prior experience, by AI-exposure tier (DAIOE g2gen terciles, SSYK)"',
+        '  measure: "Share of openings requiring no prior experience, by AI-exposure tier (DAIOE g2gen terciles, SSYK), employment-weighted occupations"',
+        '  aggregation: "employment-weighted occupations (SCB YREG50BAS 2024), occupations with 50+ ad records a year"',
+        f"  n_occ_high_last: {by_year[series[-1]['year']]['high_n']}",
+        f"  n_occ_low_last: {by_year[series[-1]['year']]['low_n']}",
+        # widest gap in the window, so the page can say the gap has not widened with the numbers
+        f"  gap_min: {min(s['gap'] for s in series)}",
+        f"  gap_min_year: {min(series, key=lambda s: s['gap'])['year']}",
         f"  first_year: {series[0]['year']}",
         f"  last_year: {series[-1]['year']}",
         f"  gap_first: {series[0]['gap']}",

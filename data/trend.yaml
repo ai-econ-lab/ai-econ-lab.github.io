@@ -7,28 +7,28 @@
 # floor is what the October brief reports.
 # The last point is the current part-year and is drawn provisional.
 meta:
-  definition: frozen v1.6
-  def_fp: f5df448d87c46d0d
-  source: ai-monitor/data/bulk_v16/derived/series_annual.csv
+  definition: frozen v1.7
+  def_fp: 3b8c171efd1aec68
+  source: ai-monitor/data/bulk_v17/derived/series_annual.csv
   first_year: 2006
   last_year: 2026
   base_years: 2006-2008
   last_full_year: 2025
-  base_pct: 0.0282
-  multiple: 37.5
-  multiple_floor: 41.2
-  multiple_stable_base: 6.3
-  genai_per_10k: 28.8
-  genai_share_of_ai_pct: 27
-  multiple_ci: 32-43
-  multiple_floor_ci: 33-51
-  multiple_stable_ci: 6.0-6.6
-  part_coverage: January–June
+  base_pct: 0.0267
+  multiple: 39.6
+  multiple_floor: 42.9
+  multiple_stable_base: 6.5
+  genai_per_10k: 27.0
+  genai_share_of_ai_pct: 26
+  multiple_ci: 34-46
+  multiple_floor_ci: 34-53
+  multiple_stable_ci: 6.2-6.9
+  part_coverage: January–September
 trend:
   years:  [2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
-  values: [0.029, 0.028, 0.028, 0.041, 0.045, 0.068, 0.062, 0.057, 0.075, 0.105, 0.162, 0.24, 0.436, 0.695, 0.731, 0.796, 0.774, 0.741, 0.946, 1.057, 1.199]
-  floor_values: [0.013, 0.014, 0.013, 0.017, 0.02, 0.027, 0.021, 0.02, 0.029, 0.045, 0.064, 0.112, 0.212, 0.305, 0.34, 0.357, 0.349, 0.356, 0.456, 0.544, 0.595]
-  band_values: [0.001, 0.009, 0.005, 0.006, 0.004, 0.004, 0.005, 0.005, 0.008, 0.007, 0.012, 0.034, 0.092, 0.169, 0.219, 0.324, 0.378, 0.41, 0.681, 1.359, 2.137]
+  values: [0.026, 0.027, 0.026, 0.04, 0.041, 0.064, 0.058, 0.056, 0.069, 0.095, 0.152, 0.236, 0.432, 0.695, 0.734, 0.804, 0.79, 0.739, 0.95, 1.055, 1.204]
+  floor_values: [0.012, 0.013, 0.012, 0.017, 0.018, 0.025, 0.021, 0.02, 0.028, 0.041, 0.06, 0.109, 0.211, 0.305, 0.34, 0.357, 0.352, 0.347, 0.451, 0.533, 0.6]
+  band_values: [0.001, 0.009, 0.005, 0.006, 0.004, 0.004, 0.005, 0.005, 0.008, 0.007, 0.012, 0.034, 0.089, 0.163, 0.21, 0.314, 0.362, 0.4, 0.668, 1.344, 2.406]
   provisionalFrom: 20
   ymax: 1.5
   yticks: [0, 0.5, 1, 1.5]

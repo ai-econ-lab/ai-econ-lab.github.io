@@ -4,16 +4,21 @@ meta:
   daioe_variant: "generative-AI composite (g2gen)"
   daioe_version: "v2025"
   source: "JobTech / Platsbanken job ads (CC0)"
-  measure: "Share of openings requiring no prior experience, by AI-exposure tier (DAIOE g2gen terciles, SSYK)"
+  measure: "Share of openings requiring no prior experience, by AI-exposure tier (DAIOE g2gen terciles, SSYK), employment-weighted occupations"
+  aggregation: "employment-weighted occupations (SCB YREG50BAS 2024), occupations with 50+ ad records a year"
+  n_occ_high_last: 110
+  n_occ_low_last: 127
+  gap_min: -8.1
+  gap_min_year: 2022
   first_year: 2020
   last_year: 2025
-  gap_first: 0.3
-  gap_last: -0.6
+  gap_first: -5.8
+  gap_last: -4.7
   ymax: 35
 series:
-  - {year: 2020, high: 19.0, low: 18.8, gap: 0.3}
-  - {year: 2021, high: 24.8, low: 23.2, gap: 1.5}
-  - {year: 2022, high: 23.9, low: 25.0, gap: -1.1}
-  - {year: 2023, high: 22.5, low: 21.8, gap: 0.8}
-  - {year: 2024, high: 25.2, low: 25.3, gap: -0.1}
-  - {year: 2025, high: 29.4, low: 30.1, gap: -0.6}
+  - {year: 2020, high: 13.5, low: 19.3, gap: -5.8}
+  - {year: 2021, high: 17.9, low: 25.6, gap: -7.7}
+  - {year: 2022, high: 17.7, low: 25.8, gap: -8.1}
+  - {year: 2023, high: 19.6, low: 24.9, gap: -5.3}
+  - {year: 2024, high: 24.0, low: 28.5, gap: -4.5}
+  - {year: 2025, high: 28.1, low: 32.8, gap: -4.7}

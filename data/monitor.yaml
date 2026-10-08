@@ -25,7 +25,10 @@ lede: >-
 # Overview-first landing: one door per spine module (Exposure · Demand · Adoption · Outcomes).
 # International-first headline number each; Sweden is the depth cut inside the module. Every figure dated.
 overview:
-  - {k: "Exposure", num: "37<span>%</span>", lab: "of European jobs are in the top-25% most AI-exposed occupations (by generative-AI exposure); Sweden 44%, among the highest of 36 countries.", foot: "DAIOE generative-AI composite (g2gen) v2025 · EU-LFS 2025", anchor: "#exposure", cls: ""}
+  # 8 Oct 2026 (Magnus, v1.7): figures on DAIOE g2gen v2025 x EU-LFS 2025 accepted. build.py
+  # stat_overview() checks this card against cross_country.yaml (mean, Sweden's share, its rank,
+  # the vintage in the foot) and refuses to build if they disagree.
+  - {k: "Exposure", num: "36.5<span>%</span>", lab: "of jobs, on average across 36 European countries, are in the top-25% most AI-exposed occupations (by generative-AI exposure); Sweden 44.3%, third of the 36.", foot: "DAIOE generative-AI composite (g2gen) v2025 · EU-LFS 2025", anchor: "#exposure", cls: ""}
   - {k: "Demand",   num: "1.9<span>%</span>", lab: "median share of job ads requiring AI across 22 countries in 2025 (Stanford AI Index); Sweden 2.8%.", foot: "AI Index / Lightcast · 2025", anchor: "#demand", cls: "b"}
   - {k: "Adoption", num: "20<span>%</span>", lab: "of EU firms used AI in 2025, up from 8% in 2023 (Eurostat); Sweden 35%, among the leaders.", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
   # Swapped 1 Aug 2026 (Magnus). This card carried the entry-level squeeze, which is the
@@ -107,13 +110,14 @@ captions:
 # ends with a full stop.
 tiles:
   # 30 Sep 2026 (ML): the range, floor to ceiling, as in the brief; checked by refresh_trend.py --check.
-  - {num: "0.54–1.23<span>%</span>", lab: "of 2025 job advertisements ask for AI skills, from the floor (asked of the person hired) to the ceiling (AI terms anywhere, plus the hand-read share of ads that only say “AI”).", foot: "Platsbanken · frozen v1.6 · distinct ads · 2025", cls: ""}
-  - {num: "38×", lab: "rise in ads naming an AI skill, from a pooled 2006–08 base to 2025 (0.028% → 1.06%, 95% interval 32–43×); the strict floor rose 41×. Measured instead from a 2015–17 base, where the term list has been stable across freezes, the rise is 6.3× (6.0–6.6).", foot: "Platsbanken · base 2006–08 (675,259 ads, 190 flagged) · 2025", cls: "b"}
-  - {num: "28.8", lab: "ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023; 27% of AI demand.", foot: "Platsbanken · 2025", cls: "c"}
-  # 8 Oct 2026: on DAIOE g2gen v2025 the ad-pooled gap is +0.3pp (2020) and −0.6pp (2025); it read
-  # −3.1 → −5.3pp, "widening", on the 2023 legacy index. Magnus rules on the aggregation before publish
-  # (v1.7 revision log, "Exposure input moved to DAIOE v1.1.0"); this label states the data meanwhile.
-  - {num: "−0.6<span>pp</span>", lab: "gap in entry-level openings between the most and the least AI-exposed occupations in 2025, pooling ad records; it was +0.3pp in 2020 and changes sign in between, so no squeeze is visible on this count.", foot: "JobTech · DAIOE g2gen v2025 · ad records · 2020–2025", cls: "d"}
+  - {num: "0.53–1.23<span>%</span>", lab: "of 2025 job advertisements ask for AI skills, from the floor (asked of the person hired) to the ceiling (AI terms anywhere, plus the hand-read share of ads that only say “AI”).", foot: "Platsbanken · frozen v1.7 · distinct ads · 2025", cls: ""}
+  - {num: "40×", lab: "rise in ads naming an AI skill, from a pooled 2006–08 base to 2025 (0.027% → 1.05%, 95% interval 34–46×); the strict floor rose 43×. Measured instead from a 2015–17 base, where the term list has been stable across freezes, the rise is 6.5× (6.2–6.9).", foot: "Platsbanken · base 2006–08 (675,259 ads, 180 flagged) · 2025", cls: "b"}
+  - {num: "27.0", lab: "ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023; 26% of AI demand.", foot: "Platsbanken · 2025", cls: "c"}
+  # 8 Oct 2026 (Magnus, v1.7): occupations weighted by employment, on DAIOE g2gen v2025. The tile read
+  # −3.1 → −5.3pp, "widening", pooling ad records on the 2023 legacy index; that widening did not hold
+  # up (v1.7 revision log, "Exposure input moved to DAIOE v1.1.0"). Checked by refresh_trend.py --check
+  # against entry_level_squeeze.yaml, including that it never says "widened" when the series does not.
+  - {num: "−4.7<span>pp</span>", lab: "gap in entry-level openings between the most and the least AI-exposed occupations in 2025 (28.1% against 32.8%), with occupations weighted by employment; it was −5.8pp in 2020, so the gap has not widened.", foot: "JobTech · DAIOE g2gen v2025 · SCB employment 2024 · 2020–2025", cls: "d"}
 
 # The live 60-day window: its own instrument, never a point on the archive line (no-splice).
 livewindow:
@@ -202,10 +206,10 @@ segmentation:
     - {name: "Users",       color: "--c3", text: "Use AI as a tool of an otherwise non-AI job: admin, marketing, care, teaching. Small but rising fastest: 1% in 2023, 9% in the first half of 2026, and climbing quarter on quarter."}
 
 caveats:
-  - "<b>2026 is partial</b>: the first half comes from the Q1–Q2 archives and the latest weeks from the live feed; the newest point will revise."
-  - "The chart ends with the June archives; the live feed runs to today and joins the chart once the two sources are reconciled."
+  - "<b>2026 is partial</b>: January to {archive_month} comes from the {archive_quarters} archives and the latest weeks from the live feed; the newest point will revise."
+  - "The chart ends with the {archive_month} archives; the live feed runs to today and joins the chart once the two sources are reconciled."
   - "<b>The 2022–2023 dip is mostly an artefact of reposting.</b> Repeat postings ran 33% of records in 2021 and 49% in 2023, and AI ads repeat at about half that rate, so the denominator swelled faster than the numerator exactly when the dip appears. Counting each advertisement once, the share drifts 7% from 2021 to 2023 against the 30% fall the raw series shows. A real slowdown remains; a collapse does not."
-  - "<b>The ceiling is now measured across the whole series, not just 2025.</b> Counting every ad that mentions AI in any form gives 2.42% for 2025, but that band is mostly company boilerplate. We read 230 advertisements from it by hand, spread over four periods — 2006–2013, 2019, 2022 and 2025 — and 32 are genuinely AI roles. The four periods are statistically indistinguishable, so a single correction applies throughout rather than a different one per year. Re-derived on the v1.4 band it is <b>12.8% (95% interval 8.9–18.1)</b>. v1.6 removes from the band only mentions of how employers recruit, none of them an AI role, so the derivation carries over; on the smaller band it would be about 13%, well inside its interval. That puts the corrected 2025 ceiling at <b>1.23% (1.18–1.30)</b>, not 2.42%, and the published 2025 range at <b>0.54% (floor) to 1.23% (ceiling)</b>."
+  - "<b>The ceiling is now measured across the whole series, not just 2025.</b> Counting every ad that mentions AI in any form gives 2.40% for 2025, but that band is mostly company boilerplate. We read 230 advertisements from it by hand, spread over four periods — 2006–2013, 2019, 2022 and 2025 — and 32 are genuinely AI roles. The four periods are statistically indistinguishable, so a single correction applies throughout rather than a different one per year. Re-scored on the v1.7 band it is <b>12.8% (95% interval 8.9–18.1)</b>: 26 of the 203 read advertisements still in the band are AI roles, the same as the v1.4 derivation, and v1.7 is the first version whose band is exactly the one the labels describe. That puts the corrected 2025 ceiling at <b>1.23% (1.17–1.30)</b>, not 2.40%, and the published 2025 range at <b>0.53% (floor) to 1.23% (ceiling)</b>."
   - "<b>The floor and the ceiling are the strict and the broad end of what the words in an ad reveal, not bounds on true AI demand.</b> They err in both directions. On 369 hand-labelled advertisements, 86% of those the floor flags are genuine AI demand, but it finds only a little over a third of them; about two in three of those the whole-text measure flags are genuine, and it finds about two in three. An AI job described without any AI word is in neither line. The hand-labelled set over-samples hard cases, so these rates describe the measures' behaviour and cannot be applied to the population as a correction. An audit of the ads the term list never flags is the next piece of work."
   - "Ads that mention AI only when describing the company never count <i>towards the floor</i>; the floor counts an ad for what it asks of the person being hired. The broader line does count them, which is precisely why the two differ."
   - "Counts are <b>distinct advertisements</b>: employers repost, so the archive holds {records_m} million records but {distinct_m} million distinct advertisements, and each is counted once. The raw-record series is retained alongside as the robustness line. Two modules still count records and say so where they appear: the entry-level squeeze, which reads totals from an API that cannot be deduplicated, and the employers' own wording block, where a vacancy posted more than once counts each time."

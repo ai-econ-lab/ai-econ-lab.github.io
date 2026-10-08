@@ -292,6 +292,28 @@ def tile_mismatches() -> list[str]:
             if m and abs(int(m.group(1)) - doc["genai_share_of_ai_pct"]) > 0.5:
                 out.append(f"tile says {m.group(1)}% of AI demand, series gives "
                            f"{doc['genai_share_of_ai_pct']}%")
+        if "entry-level openings" in lab:
+            # The squeeze tile (v1.7, Magnus 8 Oct 2026: employment-weighted occupations). Its
+            # numbers come from entry_level_squeeze.yaml, and it may not call the gap widening
+            # unless the series widens: a typed "widening" outlived its data once already.
+            els = yaml.safe_load((site / "entry_level_squeeze.yaml").read_text(encoding="utf-8"))
+            em, ser = els["meta"], els["series"]
+            sgn = lambda t: float(t.replace("\u2212", "-").replace("+", ""))
+            claimed_ = sgn(_re.sub(r"<[^>]+>|pp", "", num).strip())
+            if abs(claimed_ - em["gap_last"]) > 0.05:
+                out.append(f"squeeze tile says {num}, entry_level_squeeze.yaml gives {em['gap_last']}pp")
+            m = _re.search(r"it was ([\u2212+\-]?[\d.]+)pp in (\d{4})", lab)
+            if not m or abs(sgn(m.group(1)) - em["gap_first"]) > 0.05 or int(m.group(2)) != em["first_year"]:
+                out.append(f"squeeze tile's first-year gap does not match {em['gap_first']}pp in {em['first_year']}")
+            m = _re.search(r"\(([\d.]+)% against ([\d.]+)%\)", lab)
+            last = ser[-1]
+            if not m or abs(float(m.group(1)) - last["high"]) > 0.05 or abs(float(m.group(2)) - last["low"]) > 0.05:
+                out.append(f"squeeze tile's shares do not match {last['high']}% against {last['low']}% ({last['year']})")
+            widened = all(r["gap"] < 0 for r in ser) and em["gap_last"] < em["gap_first"]
+            if ("widen" in lab and "not widened" not in lab) and not widened:
+                out.append("squeeze tile says the gap widened; the series does not")
+            if "not widened" in lab and widened:
+                out.append("squeeze tile says the gap has not widened; the series now widens")
     return out
 
 

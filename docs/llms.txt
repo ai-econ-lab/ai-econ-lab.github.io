@@ -9,7 +9,7 @@ The AIEL Monitor measures how artificial intelligence is showing up in the labou
 using sources anyone can obtain and code anyone can rerun. It is research, not a product;
 there is nothing to buy and no figure here that cannot be checked against its source.
 
-Term list: frozen v1.6 term list. Cite the version and the date.
+Term list: frozen v1.7 term list. Cite the version and the date.
 
 ## How to quote the Swedish AI-demand figures without getting them wrong
 

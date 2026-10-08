@@ -1,7 +1,7 @@
-year,entry_level_share_least_exposed_pct,entry_level_share_most_exposed_pct,gap_pp
-2020,18.8,19.0,0.3
-2021,23.2,24.8,1.5
-2022,25.0,23.9,-1.1
-2023,21.8,22.5,0.8
-2024,25.3,25.2,-0.1
-2025,30.1,29.4,-0.6
+year,entry_level_share_least_exposed_pct_empweighted,entry_level_share_most_exposed_pct_empweighted,gap_pp
+2020,19.3,13.5,-5.8
+2021,25.6,17.9,-7.7
+2022,25.8,17.7,-8.1
+2023,24.9,19.6,-5.3
+2024,28.5,24.0,-4.5
+2025,32.8,28.1,-4.7

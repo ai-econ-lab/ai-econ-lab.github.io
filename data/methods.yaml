@@ -40,7 +40,7 @@ in_brief:
       Against 369 hand-labelled advertisements, 86 per cent of the advertisements the floor flags under
       the current definition are genuine AI demand, and it finds a little over a third of them. The ceiling,
       the broad end of the range, adds AI terms anywhere in the advertisement and the hand-read share of
-      advertisements that only say "AI": for 2025 the published range is 0.54 to 1.23 per cent of
+      advertisements that only say "AI": for 2025 the published range is 0.53 to 1.23 per cent of
       advertisements. On the same labels about two in three advertisements the whole-text measure flags are
       genuine and it finds about two in three, so neither end is a strict bound on true demand. The floor
       mostly undercounts; the ceiling errs in both directions.
@@ -174,10 +174,32 @@ lexicon:
 # Version history. Transcribed from versions/v1_freeze_2026-07-24.json and
 # versions/v1_1_freeze_2026-07-31.json. Fingerprints are the config checksums.
 versions:
+  - version: "v1.7"
+    frozen: "7 October 2026"
+    fingerprint: "3b8c171efd1aec68"
+    current: true
+    summary: >-
+      The seventh re-freeze: nine term rules, three repairs to the v1.6 recruitment rule and two
+      older defects in code every product shares. Every Monitor product was rebuilt on it, and the
+      full twenty-year series was reprocessed on 7 and 8 October 2026. Exposure input moved at the
+      same release to DAIOE v1.1.0 in every DAIOE-based module, and the entry-level module now
+      weights occupations by employment.
+    changes:
+      - "Four terms that mostly caught another sense are narrowed: `prompting` never inside \"without prompting\" and alone only near an AI word (351 of 367 single-term hits were one competency template); `finjustering` alone only beside a model, LLM or AI word; `gemini` never Capgemini, and only with Google or an AI term nearby; `sensor fusion` only when the advertisement has other AI evidence."
+      - "Five single terms exclude their known false-positive source (Magnus, 7 October): `mönsterigenkänning` beside a police aptitude test, `asr` in networking (and alone only with a speech or AI word), `gpt` for named companies and planning documents, `svm` without AI, ML or statistics evidence, `copilot` as a company name. On 591 advertisements read in full, no genuine advertisement is removed."
+      - "The v1.6 recruitment rule is repaired three ways: a sentence boundary for archive text with no space after a full stop, an exemption for HR and recruitment jobs, and `ansökningsprocess` as a marker only beside an applicant word."
+      - "Two older defects are fixed. `ML` had joined the core in v1.4 but never the archive's pre-filter, so from v1.4 to v1.6 an advertisement whose only AI evidence was ML counted in no archive measure (622 enter the whole-text measure, 182 of them new to every measure). And the `finjustering` rule had been dead since v1.1, because its negative context contained the match itself."
+      - "The live feed now takes every measure from the archive's own scoring function, so the two can no longer disagree by construction."
+      - "Effect, all periods: floor 16,809 to 16,619 advertisements, whole-text 35,935 to 35,872, bare-AI band 22,328 to 21,902. 2025: floor 0.54% to 0.53%, ceiling 1.23% (1.17–1.30), generative AI 28.8 to 27.0 per 10,000. Ten base-year advertisements leave the pooled 2006–08 base (all other senses, read one by one), so the rise to 2025 goes from 38-fold to 40-fold (95% interval 34–46) and from the stable 2015–17 base from 6.3-fold to 6.5-fold (6.2–6.9)."
+      - "Sector comparison: from v1.7 it counts distinct advertisements, as every other Monitor series does, and takes its AI share from the Monitor's own definition scored advertisement by advertisement rather than from the July 2026 candidate frame. Earlier versions counted posting records, which gave employers who repost more weight. Information and communication rises from 5.0% to 6.1%, manufacturing from 2.1% to 2.6%, trade from 0.16% to 0.40%; the ranking of the four estimable groups is unchanged."
+      - "Exposure input: from the 2023 legacy generative index (genai) to the 2025 second-generation generative composite (g2gen, DAIOE v1.1.0) in every DAIOE-based module; Spearman 0.992, 92% shared in the top quarter, 94% in the top third; most of the composite's 2025 step comes from software engineering's first measured year. Sweden's share of jobs in the most exposed quarter of occupations moves from 39.2% to 44.3% (third of 36; mean 36.5%), on EU-LFS 2025 weights."
+      - "Entry-level openings: the module now weights occupations by employment (SCB, 2024) instead of pooling ad records within each third of occupations. The earlier pooled reading of a widening gap (−3.1 to −5.3 percentage points on the 2023 index) did not hold up on the 2025 composite, pooled (+0.3 to −0.6) or weighted (−5.8 to −4.7): pooling let a few high-volume occupations near the boundaries decide the gap, and with the new index telephone sales enters the most exposed third while care occupations leave the least exposed third. Exposed occupations still advertise somewhat fewer entry-level openings, but the gap has not widened."
+    validation: "Each rule was measured on the whole archive and then switched off one at a time: the thirteen toggles together reproduce v1.6 to one advertisement. Every advertisement a rule removes or restores was read where a rule touches 18 or fewer, and otherwise counted by pattern over all and read by sample. Seven errors are known and small (two genuine advertisements removed, one arguable, four false ones restored), none in the 2006–08 base; they are candidates for the next freeze. None of the 370 hand-labelled gold advertisements changes."
+    note: "The ceiling correction holds and, for the first time, describes the band it is applied to: re-scored with v1.7's own scoring function, 26 of the 203 read advertisements still in the band are AI roles, 12.8% (8.9–18.1), identical to the v1.4 derivation. Under v1.6 the same labels gave 14.5%, because the archive band still held the ML advertisements that the derivation had taken out."
   - version: "v1.6"
     frozen: "29 September 2026"
     fingerprint: "f5df448d87c46d0d"
-    current: true
+    current: false
     summary: >-
       The sixth re-freeze, and the first that changes no term. One rule stops text about how an
       employer recruits from counting as AI demand: a chatbot interview, a notice about using
@@ -296,7 +318,7 @@ status:
     - "This page: the estimand, the definition's composition by layer with its published sources, the full version history with fingerprints, and the validation figures for each freeze."
     - "Every figure on the Monitor as CSV and SVG, from the footer of the figure itself."
     - "The underlying advertisements: Platsbanken / JobTech, CC0, so the series can be rebuilt from source by anyone."
-    - "The ceiling correction, measured by hand across four periods: 230 advertisements drawn from the bare-AI band and read, 50 from 2006–2013 and 60 each from 2019, 2022 and 2025, of which 32 are genuine AI roles. Under the current definition 203 of them remain in the band, 26 of them AI, which gives a correction of 12.8% (95% interval 8.9–18.1). The four periods do not differ significantly (chi-square 6.1 on 3 degrees of freedom, against a critical value of 7.8), so one pooled correction is applied throughout. It puts the corrected 2025 ceiling at 1.23% (1.18–1.30) against an uncorrected 2.42%, so the published 2025 range is 0.54% to 1.23% of lexically detectable AI demand. The sample itself was drawn from a candidate extract built under v1, three freezes before the ceiling it corrects; on the band as drawn the same labels give 13.9%, inside the published interval, and the extracts now carry the definition that produced them. The test establishes no DETECTABLE variation between eras rather than none: with 60 advertisements per period it would miss a small drift."
+    - "The ceiling correction, measured by hand across four periods: 230 advertisements drawn from the bare-AI band and read, 50 from 2006–2013 and 60 each from 2019, 2022 and 2025, of which 32 are genuine AI roles. Under the current definition 203 of them remain in the band, 26 of them AI, which gives a correction of 12.8% (95% interval 8.9–18.1). The four periods do not differ significantly (chi-square 6.1 on 3 degrees of freedom, against a critical value of 7.8), so one pooled correction is applied throughout. It puts the corrected 2025 ceiling at 1.23% (1.17–1.30) against an uncorrected 2.40%, so the published 2025 range is 0.53% to 1.23% of lexically detectable AI demand. The sample itself was drawn from a candidate extract built under v1, three freezes before the ceiling it corrects; on the band as drawn the same labels give 13.9%, inside the published interval, and the extracts now carry the definition that produced them. The test establishes no DETECTABLE variation between eras rather than none: with 60 advertisements per period it would miss a small drift."
     - "The v1.1 to v1.2 revision log, stating direction and magnitude for every number that moved, and recording that only the floor moved."
   pending:
     - "The full technical note (17 pages: estimand, data, lexicon provenance, labelling conventions, validation, benchmarks, the three threats to the trend, and the drift policy). Rewritten 5 August on the corrected figures; two pending diagnostics remain inside it, both named on its own pages."

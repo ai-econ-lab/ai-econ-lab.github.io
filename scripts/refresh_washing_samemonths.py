@@ -10,7 +10,7 @@ comparison is the same months. Reads the monthly outputs of the bulk series the 
 Arithmetic as in build.py washing_series(): ceiling = whole-text + CEIL_BAND_SHARE x bare-only;
 AI talk (grey) = (1 - CEIL_BAND_SHARE) x bare-only; every mention = whole-text + bare-only.
 """
-import glob, sys
+import glob, re, sys
 from pathlib import Path
 import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent))
@@ -21,8 +21,12 @@ OUT = Path(__file__).resolve().parent.parent / "data" / "washing_samemonths.yaml
 
 def main():
     d = root() / "data" / bulk_dir()
-    m = (pd.concat([pd.read_csv(f) for f in sorted(glob.glob(str(d / "v11_monthly_*.csv")))])
-         .groupby("month").sum(numeric_only=True))
+    # Strict filename match, never a bare wildcard: iCloud drops "name 2.csv" conflict copies
+    # beside the originals and a wildcard reads them too, doubling the advertisement counts
+    # (measured on bulk_v16, 8 Oct 2026: 478,714 instead of 239,357 for Jan-Jun 2026).
+    files = sorted(f for f in glob.glob(str(d / "v11_monthly_*.csv"))
+                   if re.fullmatch(r"v11_monthly_\d{4}(-Q[1-4])?\.csv", Path(f).name))
+    m = (pd.concat([pd.read_csv(f) for f in files]).groupby("month").sum(numeric_only=True))
     last = max(x for x in m.index if m.loc[x, "total_dd"] > 1000)      # last substantial month
     yr, mo = int(last[:4]), int(last[5:7])
     cur = [f"{yr}-{k:02d}" for k in range(1, mo + 1)]
