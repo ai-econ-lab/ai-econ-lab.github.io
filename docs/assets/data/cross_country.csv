@@ -1,37 +1,37 @@
-code,country,top_tier_share_pct,daioe_genai_score,emp_coverage_pct,lfs_year
-LU,Luxembourg,56.0,2.2103,100.0,2023
-SE,Sweden,39.2,2.0651,99.7,2023
-NL,Netherlands,38.5,2.046,99.7,2023
-BE,Belgium,37.7,2.0011,99.5,2023
-CH,Switzerland,36.3,2.0227,99.9,2023
-DE,Germany,35.2,1.9727,99.6,2023
-CY,Cyprus,34.6,1.9334,98.3,2023
-DK,Denmark,34.2,1.9738,99.6,2023
-UK,United Kingdom,33.5,1.9933,99.7,2019
-FR,France,33.5,1.9454,99.3,2023
-LT,Lithuania,32.8,1.931,99.7,2023
-FI,Finland,32.8,1.9581,99.7,2023
-IE,Ireland,32.4,1.973,100.0,2023
-AT,Austria,31.6,1.9304,99.9,2023
-EE,Estonia,31.0,1.9299,99.7,2023
-PL,Poland,30.9,1.9077,99.2,2023
-NO,Norway,30.6,1.9848,100.0,2023
-MT,Malta,30.1,1.9437,99.4,2023
-SI,Slovenia,29.6,1.8732,99.3,2023
-CZ,Czechia,29.4,1.873,99.6,2023
-HU,Hungary,29.2,1.8519,99.5,2023
-IT,Italy,28.7,1.8658,99.0,2023
-PT,Portugal,28.1,1.884,99.6,2023
-LV,Latvia,28.0,1.8813,99.2,2023
-ME,Montenegro,27.1,1.842,100.0,2020
-SK,Slovakia,27.0,1.8633,99.7,2023
-HR,Croatia,26.7,1.8678,99.3,2023
-IS,Iceland,25.3,1.9527,100.0,2023
-RS,Serbia,24.7,1.8016,99.4,2023
-EL,Greece,24.4,1.8426,98.4,2023
-MK,N. Macedonia,24.2,1.8017,99.1,2023
-ES,Spain,24.1,1.8372,99.5,2023
-BG,Bulgaria,23.9,1.7967,99.2,2023
-RO,Romania,19.7,1.7145,99.4,2023
-BA,Bosnia & Herz.,19.3,1.7358,99.3,2023
-TR,Turkey,15.9,1.6821,99.3,2023
+code,country,top_tier_share_pct,daioe_g2gen_score,emp_coverage_pct,lfs_year
+LU,Luxembourg,66.1,8.6572,100.0,2024
+NL,Netherlands,45.1,7.8145,99.7,2025
+SE,Sweden,44.3,7.7422,99.6,2025
+BE,Belgium,43.8,7.5638,99.6,2025
+CY,Cyprus,42.2,7.2533,98.8,2025
+DE,Germany,41.3,7.4209,99.6,2025
+DK,Denmark,40.6,7.5054,99.5,2025
+CH,Switzerland,40.5,7.5909,99.9,2025
+LT,Lithuania,39.6,7.3403,99.7,2025
+FR,France,38.9,7.3377,99.3,2025
+IE,Ireland,38.3,7.5556,100.0,2025
+UK,United Kingdom,38.3,7.53,99.7,2019
+AT,Austria,37.8,7.2663,99.8,2025
+FI,Finland,37.3,7.2907,99.7,2025
+NO,Norway,37.3,7.5121,100.0,2025
+PL,Poland,37.2,7.1486,99.0,2025
+SI,Slovenia,36.8,7.0135,99.4,2025
+PT,Portugal,35.8,7.1452,99.5,2025
+EE,Estonia,35.4,7.1064,100.0,2025
+IS,Iceland,35.2,7.3843,100.0,2025
+MT,Malta,35.0,7.272,99.4,2025
+CZ,Czechia,34.8,6.9732,99.7,2025
+HR,Croatia,34.7,7.0712,99.1,2025
+LV,Latvia,34.7,7.0539,99.2,2025
+EL,Greece,34.6,7.0261,98.5,2025
+HU,Hungary,34.6,6.9287,99.6,2025
+SK,Slovakia,34.5,7.0478,99.5,2025
+IT,Italy,33.7,6.9554,99.0,2025
+ES,Spain,32.4,6.9148,99.6,2025
+BG,Bulgaria,32.1,6.9703,99.3,2025
+ME,Montenegro,32.1,6.8927,100.0,2020
+RS,Serbia,31.1,6.728,99.3,2025
+MK,N. Macedonia,28.2,6.5894,99.0,2025
+BA,Bosnia & Herz.,24.4,6.4131,99.3,2025
+RO,Romania,24.2,6.3441,99.5,2025
+TR,Turkey,21.8,6.2149,99.4,2025

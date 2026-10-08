@@ -25,7 +25,7 @@ lede: >-
 # Overview-first landing: one door per spine module (Exposure · Demand · Adoption · Outcomes).
 # International-first headline number each; Sweden is the depth cut inside the module. Every figure dated.
 overview:
-  - {k: "Exposure", num: "30<span>%</span>", lab: "of European jobs are in the top-25% most AI-exposed occupations (by generative-AI exposure); Sweden 39%, among the highest of 36 countries.", foot: "DAIOE genAI v2023 · EU-LFS", anchor: "#exposure", cls: ""}
+  - {k: "Exposure", num: "37<span>%</span>", lab: "of European jobs are in the top-25% most AI-exposed occupations (by generative-AI exposure); Sweden 44%, among the highest of 36 countries.", foot: "DAIOE generative-AI composite (g2gen) v2025 · EU-LFS 2025", anchor: "#exposure", cls: ""}
   - {k: "Demand",   num: "1.9<span>%</span>", lab: "median share of job ads requiring AI across 22 countries in 2025 (Stanford AI Index); Sweden 2.8%.", foot: "AI Index / Lightcast · 2025", anchor: "#demand", cls: "b"}
   - {k: "Adoption", num: "20<span>%</span>", lab: "of EU firms used AI in 2025, up from 8% in 2023 (Eurostat); Sweden 35%, among the leaders.", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
   # Swapped 1 Aug 2026 (Magnus). This card carried the entry-level squeeze, which is the
@@ -38,9 +38,9 @@ overview:
   # Restated in REAL terms 1 Aug 2026. The nominal version of this card read −9pp on
   # "40% against 49%". Deflation leaves the pay RATIO between groups unchanged but does change
   # a DIFFERENCE OF GROWTH RATES, which is what this card reports, so the honest figure is
-  # −6.6pp. It also makes the claim harder to wave away: real wages flat in every Swedish
+  # −6.6pp (−5.1pp since the move to DAIOE g2gen v2025, 8 Oct 2026). It also makes the claim harder to wave away: real wages flat in every Swedish
   # exposure group over eleven years is a starker null than "+34% nominal".
-  - {k: "Outcomes", num: "−6.6<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.6% against 10.2%); in Sweden real wages are flat in all three exposure groups. No pay premium for exposure in either country.", foot: "SCB · BLS OEWS × DAIOE genAI · real terms · SE 2014–2025, US 2015–2025", anchor: "#wages", cls: "d"}
+  - {k: "Outcomes", num: "−5.1<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.4% against 8.5%); in Sweden real wages are flat in all three exposure groups. No pay premium for exposure in either country.", foot: "SCB · BLS OEWS × DAIOE g2gen v2025 · real terms · SE 2014–2025, US 2015–2025", anchor: "#wages", cls: "d"}
   # role: driver (4 Aug 2026). Capability is not a fifth question about the labour market:
   # it measures the technology rather than the market, which is why it sits apart. Rendering
   # it as a fifth peer card is what produced the "four questions, five cards" contradiction
@@ -110,7 +110,10 @@ tiles:
   - {num: "0.54–1.23<span>%</span>", lab: "of 2025 job advertisements ask for AI skills, from the floor (asked of the person hired) to the ceiling (AI terms anywhere, plus the hand-read share of ads that only say “AI”).", foot: "Platsbanken · frozen v1.6 · distinct ads · 2025", cls: ""}
   - {num: "38×", lab: "rise in ads naming an AI skill, from a pooled 2006–08 base to 2025 (0.028% → 1.06%, 95% interval 32–43×); the strict floor rose 41×. Measured instead from a 2015–17 base, where the term list has been stable across freezes, the rise is 6.3× (6.0–6.6).", foot: "Platsbanken · base 2006–08 (675,259 ads, 190 flagged) · 2025", cls: "b"}
   - {num: "28.8", lab: "ads per 10,000 named a generative-AI skill in 2025, from near zero before 2023; 27% of AI demand.", foot: "Platsbanken · 2025", cls: "c"}
-  - {num: "−5.3<span>pp</span>", lab: "fewer entry-level openings in the most AI-exposed occupations, a gap widening since 2020; descriptive, and not separable from the rate cycle.", foot: "JobTech · 2020–2025", cls: "d"}
+  # 8 Oct 2026: on DAIOE g2gen v2025 the ad-pooled gap is +0.3pp (2020) and −0.6pp (2025); it read
+  # −3.1 → −5.3pp, "widening", on the 2023 legacy index. Magnus rules on the aggregation before publish
+  # (v1.7 revision log, "Exposure input moved to DAIOE v1.1.0"); this label states the data meanwhile.
+  - {num: "−0.6<span>pp</span>", lab: "gap in entry-level openings between the most and the least AI-exposed occupations in 2025, pooling ad records; it was +0.3pp in 2020 and changes sign in between, so no squeeze is visible on this count.", foot: "JobTech · DAIOE g2gen v2025 · ad records · 2020–2025", cls: "d"}
 
 # The live 60-day window: its own instrument, never a point on the archive line (no-splice).
 livewindow:

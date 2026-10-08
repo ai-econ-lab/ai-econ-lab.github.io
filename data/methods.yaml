@@ -133,10 +133,19 @@ datasets:
       check: "ec.europa.eu and scb.se both publish the tables; our extraction scripts are in the repository."
     - name: "AI exposure of occupations (DAIOE)"
       origin: "Ours, weighted to employment with the EU Labour Force Survey."
-      processing: "Occupational exposure scores are combined with each country's employment structure to give the share of jobs in the most exposed quarter of occupations."
+      processing: >-
+        Occupational exposure scores are combined with each country's employment structure to give
+        the share of jobs in the most exposed quarter of occupations. Version history: on 8 October
+        2026 every DAIOE-based module (cross-country exposure, entry-level openings, working
+        conditions, wages) moved from the 2023 legacy generative index (genai) to the 2025
+        second-generation generative composite (g2gen, DAIOE v1.1.0), so the site carries one
+        definition of generative AI. Across 424 ISCO-08 occupations the two rank almost alike
+        (Spearman 0.992; 97 of 106 shared in the top quarter, 92%; 133 of 142 in the top third, 94%).
       limits: >-
         Exposure describes what AI could touch. It says nothing about whether AI substitutes for
-        a worker or assists one, and the country ranking moves with where the cut is drawn.
+        a worker or assists one, and the country ranking moves with where the cut is drawn. Most of
+        the composite's 2025 step comes from software engineering in its first measured year, an
+        upper bound that later vintages may revise; the modules use its ranking, not its level.
       check: "The measure, its vintages and its documentation are published; see the DAIOE page."
 
 # Where the words come from. Every layer cites its source; counts are from the v1.1 freeze.

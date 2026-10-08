@@ -144,8 +144,10 @@ def main():
         "eu_line": prev.get("eu_line", ""),
         "caveats": [
             cav0,
-            "Exposure is DAIOE generative-AI (v2023), fixed over time: the lines answer how pay "
-            "moved in occupations that are exposed today.",
+            "Exposure is DAIOE's generative-AI composite (g2gen, v2025), fixed over time: the "
+            "lines answer how pay moved in occupations that are exposed today. Most of its 2025 "
+            "step comes from software engineering's first measured year, an upper bound later "
+            "vintages may revise; the terciles rest on ranks, which barely move.",
             # Was "Sweden is unweighted across occupations", three lines below a source line
             # saying employment-weighted. The 27 July weighting updated the series and the
             # source string and not this caveat.

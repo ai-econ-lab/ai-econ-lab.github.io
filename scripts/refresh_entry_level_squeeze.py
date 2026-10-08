@@ -5,8 +5,10 @@
 
 Public data only: JobTech / Platsbanken job ads (CC0). For each year, the share of openings that
 require NO prior experience (an entry-level proxy, from the ad's structured 'experience' field),
-computed separately for the MOST- vs LEAST-AI-exposed occupations (DAIOE generative-AI terciles
-over SSYK). The 'experience' field is populated from 2020, so the series starts there.
+computed separately for the MOST- vs LEAST-AI-exposed occupations (terciles of SSYK 2012
+occupations by DAIOE's generative-AI composite g2gen, v1.1.0, score year 2025, since 8 Oct 2026;
+until then the legacy genai index). Unit: API ad records pooled within tier, so large
+occupations dominate (see the v1.7 revision log, "Exposure input moved to DAIOE v1.1.0"). The 'experience' field is populated from 2020, so the series starts there.
 
 The story is the high-minus-low GAP: AI-exposed occupations advertise proportionally fewer
 entry-level openings, and the gap widens. Descriptive, an ad-based echo of the Canaries finding;
@@ -23,7 +25,7 @@ from monitor_root import MONITOR_ROOT
 ROOT = Path(__file__).resolve().parent.parent
 SRC = MONITOR_ROOT / "data/entry_level_squeeze.csv"
 FIRST_YEAR = 2020                       # 'experience' field unpopulated before 2020
-DAIOE_VARIANT, DAIOE_VERSION = "generative-AI", "v2023"
+DAIOE_VARIANT, DAIOE_VERSION = "generative-AI composite (g2gen)", "v2025"
 
 
 def main():
@@ -54,7 +56,7 @@ def main():
         f'  daioe_variant: "{DAIOE_VARIANT}"',
         f'  daioe_version: "{DAIOE_VERSION}"',
         '  source: "JobTech / Platsbanken job ads (CC0)"',
-        '  measure: "Share of openings requiring no prior experience, by AI-exposure tier (DAIOE genai terciles, SSYK)"',
+        '  measure: "Share of openings requiring no prior experience, by AI-exposure tier (DAIOE g2gen terciles, SSYK)"',
         f"  first_year: {series[0]['year']}",
         f"  last_year: {series[-1]['year']}",
         f"  gap_first: {series[0]['gap']}",

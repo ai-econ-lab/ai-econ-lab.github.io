@@ -6,9 +6,9 @@ intro: 'Pay as an outcome: are wages in AI-exposed occupations pulling away, or 
   are split into thirds by their DAIOE generative-AI exposure; each line tracks the group''s median wage
   in REAL terms, indexed to 100 in the first year. Read the gap between lines, not the level.'
 headline: 'Over the past decade the most AI-exposed occupations have NOT pulled away in pay. In the United
-  States their real median wage grew 3.6 per cent against 10.2 per cent for the least exposed (2015 to
-  2025), a gap of -6.6 percentage points the other way. In Sweden real wages are close to flat in all
-  three groups over 2014 to 2025 (most exposed +0.9 per cent, middle +1.1, least -0.8). Read the post-2022
+  States their real median wage grew 3.4 per cent against 8.5 per cent for the least exposed (2015 to
+  2025), a gap of -5.1 percentage points the other way. In Sweden real wages are close to flat in all
+  three groups over 2014 to 2025 (most exposed +0.8 per cent, middle +1.0, least -0.7). Read the post-2022
   turn with care: that window also covers the tightening cycle, which fell hardest on the same professional
   and technical occupations, so its timing does not identify a cause. AI-exposed occupations remain the
   best paid in level terms in both countries.'
@@ -26,47 +26,47 @@ countries:
   - year: 2015
     high: 102.0
     mid: 102.4
-    low: 102.3
+    low: 102.4
   - year: 2016
-    high: 103.9
+    high: 103.8
     mid: 103.8
-    low: 103.6
+    low: 103.8
   - year: 2017
-    high: 104.0
+    high: 103.9
     mid: 105.3
-    low: 104.2
+    low: 104.3
   - year: 2018
-    high: 104.4
-    mid: 105.9
-    low: 104.4
+    high: 104.3
+    mid: 105.8
+    low: 104.5
   - year: 2019
     high: 104.6
-    mid: 106.4
-    low: 105.2
+    mid: 106.3
+    low: 105.3
   - year: 2020
     high: 106.1
-    mid: 107.4
+    mid: 107.2
     low: 105.6
   - year: 2021
-    high: 107.3
-    mid: 108.2
-    low: 105.8
+    high: 107.2
+    mid: 108.1
+    low: 105.9
   - year: 2022
     high: 101.5
-    mid: 102.6
-    low: 100.1
+    mid: 102.5
+    low: 100.2
   - year: 2023
-    high: 97.4
-    mid: 98.5
+    high: 97.3
+    mid: 98.3
     low: 96.0
   - year: 2024
-    high: 98.5
-    mid: 98.9
-    low: 96.9
+    high: 98.4
+    mid: 98.8
+    low: 97.0
   - year: 2025
-    high: 100.9
-    mid: 101.1
-    low: 99.2
+    high: 100.8
+    mid: 101.0
+    low: 99.3
 - key: us
   label: United States · median annual wage
   source: BLS OEWS national, detailed SOC, May 2015–May 2025; 692 occupations, employment-weighted
@@ -78,44 +78,44 @@ countries:
     low: 100.0
   - year: 2016
     high: 101.3
-    mid: 101.7
-    low: 102.0
+    mid: 101.8
+    low: 101.9
   - year: 2017
-    high: 101.4
-    mid: 102.3
-    low: 103.2
+    high: 101.3
+    mid: 102.6
+    low: 102.9
   - year: 2018
-    high: 101.1
-    mid: 102.5
-    low: 103.7
+    high: 101.0
+    mid: 103.1
+    low: 103.2
   - year: 2019
-    high: 102.1
-    mid: 103.8
-    low: 105.4
+    high: 102.0
+    mid: 104.5
+    low: 104.8
   - year: 2020
-    high: 105.8
-    mid: 109.8
-    low: 111.1
+    high: 105.9
+    mid: 111.0
+    low: 109.8
   - year: 2021
-    high: 102.6
-    mid: 108.5
-    low: 109.6
+    high: 102.8
+    mid: 109.7
+    low: 108.4
   - year: 2022
-    high: 98.6
-    mid: 105.2
-    low: 106.1
+    high: 98.7
+    mid: 106.4
+    low: 104.7
   - year: 2023
-    high: 100.7
-    mid: 106.6
-    low: 108.7
+    high: 100.8
+    mid: 108.0
+    low: 107.1
   - year: 2024
     high: 101.5
-    mid: 107.8
-    low: 109.9
+    mid: 109.3
+    low: 108.3
   - year: 2025
-    high: 103.6
-    mid: 108.8
-    low: 110.2
+    high: 103.4
+    mid: 110.6
+    low: 108.5
 eu_line: 'EU27 (coarse, ISCO 1-digit, Structure of Earnings Survey): mean hourly earnings grew 14.2 per
   cent in the most exposed third against 16.8 per cent in the least, 2018 to 2022. A finer country-level
   series is the planned upgrade.'
@@ -125,8 +125,10 @@ caveats:
   EU27 line. Deflation leaves the pay RATIO between groups exactly unchanged, so it cannot manufacture
   the result; it does change a difference of growth rates, which is why the figures above are the real
   ones.
-- 'Exposure is DAIOE generative-AI (v2023), fixed over time: the lines answer how pay moved in occupations
-  that are exposed today.'
+- 'Exposure is DAIOE''s generative-AI composite (g2gen, v2025), fixed over time: the lines answer how
+  pay moved in occupations that are exposed today. Most of its 2025 step comes from software engineering''s
+  first measured year, an upper bound later vintages may revise; the terciles rest on ranks, which barely
+  move.'
 - 'Both countries are employment-weighted, with weights held fixed (Sweden: Yrkesregistret 2023) so the
   index reads as wage growth rather than employment reallocation between occupations.'
 - 'Descriptive, not causal: composition, sector and skill mix all move wages too.'

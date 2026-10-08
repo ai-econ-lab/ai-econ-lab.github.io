@@ -1644,6 +1644,7 @@ def squeeze_svg(els):
 def working_conditions_block():
     """Working-environment view (dumbbell + gender lens). A sub-view inside the Outcomes module."""
     w = WORKCOND; mt = w["meta"]; conds = w["conditions"]
+    _ctl = next(c for c in conds if c["code"] == "OlustAEO")   # the control gap quoted below
     views = "".join(dumbbell_svg(conds, g, active=(g == "all")) for g in ("all", "women", "men"))
     return f"""<div class="grouphdr" id="working-conditions" style="margin-top:36px">Working conditions and AI exposure</div>
   <p class="secintro" style="margin-top:4px">More AI-exposed occupations are the classic "active job": more mentally demanding, but with
@@ -1659,11 +1660,16 @@ def working_conditions_block():
   </div>
   {figfooter("working_conditions.csv", f"{mt['wc_source']} × DAIOE {mt['daioe_variant']} {mt['daioe_version']}", svg_name="working_conditions.svg", next_up="with SCB's next work-environment survey wave")}
   <p class="prov" style="margin-top:10px">Toggle gender: the control gap narrows as exposure rises. In low-exposure jobs women
-    report far less influence than men (56% vs 68%); in high-exposure jobs it nearly closes (74% vs 78%).</p>"""
+    report far less influence than men ({_ctl['women']['lo']:.0f}% vs {_ctl['men']['lo']:.0f}%); in high-exposure jobs it nearly closes ({_ctl['women']['hi']:.0f}% vs {_ctl['men']['hi']:.0f}%).</p>"""
+
+def ordinal(n):
+    """1 -> '1st', 2 -> '2nd', 3 -> '3rd', 4 -> '4th' (the rank is computed, never typed)."""
+    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
 
 def exposure_section():
     """Module 1 — Exposure. Interpretable metric: the share of a country's jobs in the most
-    AI-exposed occupations (top DAIOE genai tercile), rather than an abstract mean score."""
+    AI-exposed occupations (top 25% of ISCO-08 2-digit groups by DAIOE's generative-AI composite,
+    g2gen, v2025 since 8 Oct 2026), rather than an abstract mean score."""
     cc = CROSS; mt = cc["meta"]
     se = next(r for r in cc["countries"] if r["is_se"])
     xmax = 10 * (int(max(r["share"] for r in cc["countries"]) // 10) + 1)
@@ -1672,16 +1678,16 @@ def exposure_section():
     return f"""<div class="rule module-sec" id="exposure"><div class="wrap"><section>
   <p class="kicker">Module 1 · Exposure · which jobs sit in AI’s path</p>
   <h2 class="sec">How much of each country's work is AI-exposed?</h2>
-  {folded(f"""<b>{se['share']:.0f}%</b> of Swedish jobs, about four in ten, sit in the most AI-exposed quarter of occupations, and <b>exposure is not displacement</b>: it marks where AI overlaps with the work, not what follows from it. [[note]] DAIOE scores every occupation (ISCO-08) for how far generative AI overlaps with its tasks. We label the <b>top 25% of occupations</b> by that score the most AI-exposed; the bars show the share of each country's jobs in them (Eurostat EU-LFS employment, <b>{h(mt['weight_year'])}</b>; a few countries use their latest year, marked ’YY). On displacement: in the lab's own firm-level panel for Sweden, Denmark and Portugal, exposure shows no robust association with total firm employment, and within firms what it predicts is a shift away from clerical and administrative work rather than broad job loss (AI Unboxed and Jobs, linked below). Where movement has appeared so far, it is in who gets hired rather than in how many: the most exposed occupations hire fewer
+  {folded(f"""<b>{se['share']:.0f}%</b> of Swedish jobs, more than four in ten, sit in the most AI-exposed quarter of occupations, and <b>exposure is not displacement</b>: it marks where AI overlaps with the work, not what follows from it. [[note]] DAIOE scores every occupation (ISCO-08) for how far generative AI overlaps with its tasks; since 8 October 2026 the Monitor uses its second-generation generative composite (g2gen, {h(mt['daioe_version'])}), of which only the ranking enters here. We label the <b>top 25% of occupations</b> by that score the most AI-exposed; the bars show the share of each country's jobs in them (Eurostat EU-LFS employment, <b>{h(mt['weight_year'])}</b>; a few countries use their latest year, marked ’YY). On displacement: in the lab's own firm-level panel for Sweden, Denmark and Portugal, exposure shows no robust association with total firm employment, and within firms what it predicts is a shift away from clerical and administrative work rather than broad job loss (AI Unboxed and Jobs, linked below). Where movement has appeared so far, it is in who gets hired rather than in how many: the most exposed occupations hire fewer
     young workers (the Outcomes module below, and the Same Storm, Different Boats paper).""", label="How exposure is measured, and what it says about displacement")}
   <div class="dotwrap">{barplot(nordic(cc['countries']), mt['mean_share'], xmax, mt['weight_year'], 'share', '.0f', mean_label=f"{mt['n_countries']}-country")}</div>
-  {figfooter("cross_country.csv", src, "cross_country.svg", next_up="with the DAIOE v2024 release")}
+  {figfooter("cross_country.csv", src, "cross_country.svg", next_up="with the DAIOE v2026 release")}
   <div class="depth"><p class="dk">Sweden, in depth</p>
     <p class="secintro" style="margin:0"><b>{se['share']:.0f}%</b> of Swedish jobs are in the most AI-exposed
-      occupations (the <b>top 25%</b> by generative-AI exposure), the <b>2nd-highest of {h(mt['n_countries'])}</b>
+      occupations (the <b>top 25%</b> by generative-AI exposure), the <b>{ordinal(cc['countries'].index(se) + 1)}-highest of {h(mt['n_countries'])}</b>
       countries (mean {mt['mean_share']:.0f}%, seven of them outside the EU). The rank depends on where the line is drawn: Sweden is
-      2nd at this quarter cut and at a 30% cut, 3rd at a third, and 5th if only the top 20% of occupations
-      count, so read it as among the most exposed rather than as a precise placing.
+      3rd at this quarter cut and 4th at a 20% cut, a 30% cut or a third, so read it as among the most
+      exposed rather than as a precise placing.
       The occupation-by-occupation detail lives on the <a href="/daioe/">DAIOE</a> page, and Swedish employment is
       set against exposure over time in the <a href="#occupations-explorer">Occupations Explorer</a> below.</p></div>
   {related_research("exposure")}
@@ -2633,6 +2639,19 @@ def akavia_outcomes_block():
   {figfooter("akavia_governance.csv", f"{m['source']}, {m['first_year']}–{m['year']}; own processing. {m['population']}", next_up="with the next Akavia panel wave")}
   {akavia_provenance(m)}"""
 
+def squeeze_widens(em, series):
+    """True only when the data carry the module's original reading: every year's gap negative
+    and the last wider than the first. On 8 Oct 2026 the exposure input moved to DAIOE g2gen
+    v2025 and, on the module's ad-pooled aggregation, the gap became small and changed sign
+    (+0.3pp 2020, -0.6pp 2025). The prose must follow the data, so it is chosen here, not typed.
+    How to aggregate is Magnus's ruling (v1.7 revision log, "Exposure input moved to DAIOE v1.1.0")."""
+    return all(r["gap"] < 0 for r in series) and em["gap_last"] < em["gap_first"]
+
+
+def squeeze_gap_pp(x):
+    return f"{x:+.1f}".replace("-", "\u2212")
+
+
 def outcomes_section(explorers):
     """Module 4 — Outcomes. Occupations Explorer + working conditions + entry-level squeeze (all live)."""
     em = ELS["meta"]
@@ -2653,12 +2672,18 @@ def outcomes_section(explorers):
 
   <div class="grouphdr" style="margin-top:36px">Entry-level squeeze</div>
   {note(
-    f"""In the most AI-exposed occupations, a smaller share of openings ask for no prior experience than in the
+    (f"""In the most AI-exposed occupations, a smaller share of openings ask for no prior experience than in the
     least-exposed occupations, every year since {h(em['first_year'])}, and the gap has widened from
     −{abs(em['gap_first'])}pp to <b>−{abs(em['gap_last'])}pp in {h(em['last_year'])}</b>. This is consistent with the
     canaries finding of our Same Storm, Different Boats study (the most AI-exposed occupations hire fewer young
     workers, the labour market's canaries in the coal mine), but it is not independent evidence for it, and
-    <b>this module counts ad records rather than distinct advertisements</b>.""",
+    <b>this module counts ad records rather than distinct advertisements</b>.""" if squeeze_widens(em, ELS["series"]) else
+    f"""Pooling all ad records in each third of occupations, the share of openings that ask for no prior
+    experience is about the same in the most and the least AI-exposed occupations: the gap is
+    {squeeze_gap_pp(em['gap_first'])}pp in {h(em['first_year'])} and <b>{squeeze_gap_pp(em['gap_last'])}pp in
+    {h(em['last_year'])}</b>, and it changes sign in between. The pooled figure is driven by a few large occupations
+    near the tier boundaries, so it is not evidence either way on the canaries finding of our Same Storm, Different
+    Boats study, and <b>this module counts ad records rather than distinct advertisements</b>."""),
     f"""Entry-level hiring is more cyclical than experienced
     hiring, the tightening cycle that began in April 2022 fell hardest on exactly these occupations, and this series
     starts in 2020 with no pre-pandemic baseline, so it cannot separate AI from the cycle. It counts records because
@@ -2732,7 +2757,7 @@ def wages_block():
   <div class="dblegend">{"".join(f'<span><i style="background:{WAGE_COLORS[g]}"></i>{WAGE_LABELS[g]} third</span>' for g in ("high", "mid", "low"))}</div>
   <p class="psub">{h(w["eu_line"])}</p>
   <ul style="color:var(--ink-2);font-size:13px;line-height:1.55">{cavs}</ul>
-  {figfooter("wages_exposure.csv", "SCB wage structure statistics · BLS OEWS · Eurostat SES × DAIOE genAI v2023", svg_name="wages_sweden.svg", next_up="SCB and OEWS annual releases (spring 2027)")}
+  {figfooter("wages_exposure.csv", "SCB wage structure statistics · BLS OEWS · Eurostat SES × DAIOE generative-AI composite (g2gen) v2025", svg_name="wages_sweden.svg", next_up="SCB and OEWS annual releases (spring 2027)")}
 """
 
 def capability_section():
@@ -2957,7 +2982,7 @@ def monitor():
     <h3>Caveats, in plain sight</h3><ul style="color:var(--ink-2);font-size:14px;line-height:1.6">{caveats}</ul>
     <h3>How to cite</h3>
     <p>The monitor is a citable public good. Please cite the specific version and date, and the underlying source
-      shown in each figure's footer (for example DAIOE generative-AI v2023, or Eurostat 2025).</p>
+      shown in each figure's footer (for example DAIOE generative-AI composite (g2gen) v2025, or Eurostat 2025).</p>
     <p class="citebox">AI-Econ Lab (2026). AIEL Monitor: [module]. Örebro University and Ratio. [source and version
       from the figure footer]. Accessed [date], https://ai-econlab.com/monitor/</p>
     {partner_strip()}
@@ -3224,13 +3249,13 @@ def brief(lang="en"):
         "exposure": L(
             f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
             f"DAIOE generative-AI exposure), among the highest of {n_ctry} countries; the mean across "
-            f"them is {ctry_mean:.0f}%. The placing depends on where the line is drawn, from 2nd at this quarter cut to 5th "
-            f"if only the top 20% of occupations count. Exposure marks where AI overlaps with the work, not "
+            f"them is {ctry_mean:.0f}%. The placing depends on where the line is drawn: 3rd at this quarter cut, 4th "
+            f"at a 20% cut, a 30% cut or a third. Exposure marks where AI overlaps with the work, not "
             f"displacement.",
             f"{se_share:.0f}% av de svenska jobben finns i de mest AI-exponerade yrkena (den mest exponerade "
             f"fjärdedelen, topp 25% efter DAIOE generativ AI-exponering), bland de högsta av {n_ctry} länder; "
-            f"snittet över dem är {ctry_mean:.0f}%. Placeringen beror på var gränsen dras, från 2:a vid fjärdedelsgränsen "
-            f"till 5:e om bara de 20 procent mest exponerade yrkena räknas. Exponering visar var AI överlappar med "
+            f"snittet över dem är {ctry_mean:.0f}%. Placeringen beror på var gränsen dras: 3:a vid fjärdedelsgränsen, 4:a "
+            f"vid en gräns på 20 procent, 30 procent eller en tredjedel. Exponering visar var AI överlappar med "
             f"arbetet, inte förträngning."),
         "demand": L(
             "Demand continued to rise in 2025 in the countries the AI Index tracks (Sweden 2.8%). The Swedish "
@@ -3316,7 +3341,7 @@ def brief(lang="en"):
             f"för den som vill ha dem. Det är alltså hindren hos de företag som tagit sig an frågan; den "
             f"större gruppen kom aldrig in i den, och det intressanta pusslet är varför de flesta "
             f"aldrig överväger AI."),
-        "outcomes": L(
+        "outcomes": (L(
             f"In the most AI-exposed occupations, entry-level openings are a smaller share of vacancies than in the "
             f"least-exposed, a gap widening from −{abs(ELS['meta']['gap_first'])}pp to −{abs(ELS['meta']['gap_last'])}pp "
             f"in {ELS['meta']['last_year']}. Descriptive: entry-level hiring is also more cyclical, and "
@@ -3324,11 +3349,20 @@ def brief(lang="en"):
             f"I de mest AI-exponerade yrkena utgör instegsjobb en mindre andel av annonserna än i de minst exponerade, "
             f"ett gap som vuxit från −{svn(abs(ELS['meta']['gap_first']))} till −{svn(abs(ELS['meta']['gap_last']))} "
             f"procentenheter {ELS['meta']['last_year']}. Beskrivande: instegsjobb är också mer konjunkturkänsliga, "
-            f"och räntehöjningarna slog hårdast mot just dessa yrken, så AI går inte att skilja från konjunkturen här."),
+            f"och räntehöjningarna slog hårdast mot just dessa yrken, så AI går inte att skilja från konjunkturen här.")
+            if squeeze_widens(ELS['meta'], ELS['series']) else L(
+            f"Pooling ad records, entry-level openings are about as common in the most AI-exposed occupations as in "
+            f"the least exposed: the gap is {squeeze_gap_pp(ELS['meta']['gap_first'])}pp in {ELS['meta']['first_year']} "
+            f"and {squeeze_gap_pp(ELS['meta']['gap_last'])}pp in {ELS['meta']['last_year']}. Descriptive, and driven by "
+            f"a few large occupations near the tier boundaries.",
+            f"Räknat på annonsposter är instegsjobb ungefär lika vanliga i de mest som i de minst AI-exponerade "
+            f"yrkena: gapet är {svn(squeeze_gap_pp(ELS['meta']['gap_first']))} procentenheter {ELS['meta']['first_year']} "
+            f"och {svn(squeeze_gap_pp(ELS['meta']['gap_last']))} procentenheter {ELS['meta']['last_year']}. Beskrivande, "
+            f"och styrt av några stora yrken nära gränserna mellan grupperna.")),
     }
     srcs = {
-        "exposure": L(f"DAIOE generative-AI {dver} × Eurostat EU-LFS {cc['meta']['weight_year']}",
-                      f"DAIOE generativ AI {dver} × Eurostat AKU {cc['meta']['weight_year']}"),
+        "exposure": L(f"DAIOE generative-AI composite (g2gen) {dver} × Eurostat EU-LFS {cc['meta']['weight_year']}",
+                      f"DAIOE generativ AI-komposit (g2gen) {dver} × Eurostat AKU {cc['meta']['weight_year']}"),
         "demand": f"{dm['meta']['source']}, {dm['meta']['year']}",
         "adoption": L(f"{SWEAD['meta']['source']}, {SWEAD['meta']['year']}",
                       f"SCB, IT-användning i företag (NV0116), {SWEAD['meta']['year']}"),
@@ -3337,7 +3371,7 @@ def brief(lang="en"):
         "barriers": L(f"{BARRIERS['meta']['source']}, {BARRIERS['meta']['year']}",
                       f"Eurostat, isoc_eb_ain2, {BARRIERS['meta']['year']}"),
         "outcomes": L(f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}",
-                      f"{ELS['meta']['source']} × DAIOE generativ AI {ELS['meta']['daioe_version']}"),
+                      f"{ELS['meta']['source']} × DAIOE generativ AI-komposit (g2gen) {ELS['meta']['daioe_version']}"),
     }
 
     # Where a chart needs one sentence of reading instruction, it goes on the source line
@@ -3933,7 +3967,7 @@ def emit_data(out):
     import csv as _csv
     d = out / "assets" / "data"; d.mkdir(parents=True, exist_ok=True)
     with (d / "cross_country.csv").open("w", newline="", encoding="utf-8") as f:
-        w = _csv.writer(f); w.writerow(["code", "country", "top_tier_share_pct", "daioe_genai_score", "emp_coverage_pct", "lfs_year"])
+        w = _csv.writer(f); w.writerow(["code", "country", "top_tier_share_pct", "daioe_g2gen_score", "emp_coverage_pct", "lfs_year"])
         for r in CROSS["countries"]: w.writerow([r["code"], r["name"], r["share"], r["exposure"], r["coverage"], r["year"]])
     _ccx = 10 * (int(max(r["share"] for r in CROSS["countries"]) // 10) + 1)
     (d / "cross_country.svg").write_text(
@@ -4125,7 +4159,7 @@ def emit_data(out):
         w.writerow(["year", "entry_level_share_least_exposed_pct", "entry_level_share_most_exposed_pct", "gap_pp"])
         for r in ELS["series"]: w.writerow([r["year"], r["low"], r["high"], r["gap"]])
     (d / "entry_level_squeeze.svg").write_text(chart_standalone(squeeze_svg(ELS), "Entry-level openings by AI-exposure tercile, Sweden",
-                                                                    "JobTech / Platsbanken (CC0) x DAIOE genAI v2023 · ad records, not distinct advertisements · AI-Econ Lab"), encoding="utf-8")
+                                                                    f"JobTech / Platsbanken (CC0) x DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']} · ad records, not distinct advertisements · AI-Econ Lab"), encoding="utf-8")
     (d / "working_conditions.svg").write_text(
         chart_standalone(dumbbell_svg(WORKCOND["conditions"], "all", active=True)), encoding="utf-8")
     with (d / "wages_exposure.csv").open("w", newline="", encoding="utf-8") as f:
