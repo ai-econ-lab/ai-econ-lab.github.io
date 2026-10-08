@@ -27,6 +27,9 @@ years:
       # "Published" rather than "went out", because that is true of the brief on the site whether
       # or not the Substack issue has been mailed.
       - date: "Oct 8"
+        text: 'Lodefalk interviewed in Svenska Dagbladet on the new jobs that AI creates, drawing on the lab''s job-ad data: the share of Swedish job ads asking for AI skills has risen about fortyfold since the mid-2000s, and new titles such as AI governance specialists and AI agent engineers have appeared.'
+        links: [{label: "Svenska Dagbladet", url: "https://www.svd.se/a/kv6Jwj/ai-skapar-nya-jobb-har-ar-yrkena-som-vaxer-pa-framtidens-arbetsmarknad"}]
+      - date: "Oct 8"
         text: 'The 2025 vintage of DAIOE was published as version 1.1.0: occupation-year AI-exposure scores now run through 2025, with agentic task execution and mathematical and scientific reasoning added as new application areas, and the frozen 2010–2023 scores carried unchanged.'
         links: [{label: "Zenodo (DOI)", url: "https://doi.org/10.5281/zenodo.22551410"}, {label: "Pipeline & documentation", url: "https://github.com/Magnus-L/daioe-pipeline"}]
       - date: "Sep 6"
