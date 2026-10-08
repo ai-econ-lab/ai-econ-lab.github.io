@@ -6,7 +6,7 @@ lede: >-
   expert guesswork. It tracks AI capability subdomains annually since 2010, capturing the potential
   applicability of AI capabilities to occupational content, not job-loss forecasts or adoption
   probabilities. It is openly published and citable (Zenodo,
-  doi:10.5281/zenodo.21873968), versioned, and mapped across the US (SOC), international
+  doi:10.5281/zenodo.21873967), versioned, and mapped across the US (SOC), international
   (ISCO) and Swedish (SSYK) classifications, so others can use it directly.
 
 # FAQ — ported verbatim from the old ai-econlab.com/ai-exposure-daioe page (typos fixed). VERIFY.
@@ -22,11 +22,11 @@ faq:
   - {q: "What are the AI subdomains?", a: "Capability areas across games, vision and language, each tracked from its own public benchmarks. In the frozen 2010–2023 index: abstract strategy games and real-time video games; image recognition, image comprehension and image generation; reading comprehension, language modelling, translation and speech recognition. They aggregate into the overall index, and language modelling and image generation also combine into the generative-AI sub-index. Later vintages add subdomains as credible benchmarks emerge, and each vintage documents its own set."}
   - {q: "Can I compare across countries or industries?", a: "Yes. Combine occupation-level DAIOE with local workforce structures (firms, industries, regions) to assess exposure distributions."}
   - {q: "Is there a generative-AI version?", a: "Yes. We provide a generative-AI sub-index that combines language modelling and image generation."}
-  - {q: "How do I cite DAIOE?", a: "Cite the release and the paper, and name the object you used. The scores carry a DOI per version (this version: 10.5281/zenodo.21873968; all versions: 10.5281/zenodo.21873967). v1.0.0 contains two objects, so cite the DOI plus the object (frozen 2010–2023 index, or 2024 refresh) plus the filename you loaded; the repository's CITATION.cff carries the machine-readable form."}
+  - {q: "How do I cite DAIOE?", a: "Cite the release and the paper, and name the object you used. The scores carry a DOI per version (v1.1.0: 10.5281/zenodo.22551410; v1.0.0, which holds the frozen index the paper estimates on: 10.5281/zenodo.21873968; all versions: 10.5281/zenodo.21873967). A release contains several objects, so cite the DOI plus the object (frozen 2010–2023 index, 2024 refresh or 2025 vintage) plus the filename you loaded; the repository's CITATION.cff carries the machine-readable form."}
   - {q: "What is a vintage, and which should I use?", a: "A vintage is one released version of the dataset, labelled by its coverage window; vintages are separate, citable objects and are not interchangeable. Use the frozen 2010–2023 index to replicate or compare against published work, and the 2024 refresh for current analysis. The frozen window is carried cell-identically in every later vintage: published values never change."}
   - {q: "How do I standardise the scores the way the paper does?", a: "The bundle ships the frozen 2010–2020 moments (standardisation_moments_v1.csv: mean and standard deviation per classification and column), so standardising is one line, z = (value − mean) / sd, and cannot be done on the wrong window."}
   - {q: "How do I get going quickly?", a: "The repository README opens with quick starts in Python and Stata: the full ranking of occupations with percentiles, top and bottom ten with titles, and one occupation's exposure path over time. A code–title lookup for the Swedish classifications ships in the bundle."}
-  - {q: "Will DAIOE be updated, and what happens to old values?", a: "Yes, by annual vintages, with published values never changing: every release verifies cell by cell that the frozen window is identical, and all basket and membership changes take effect at annual chain points, the convention of chain-linked official statistics. A 2025 vintage is forthcoming as v1.1.0, adding agentic task execution and mathematical and scientific reasoning, with companion composites in standardised units."}
+  - {q: "Will DAIOE be updated, and what happens to old values?", a: "Yes, by annual vintages, with published values never changing: every release verifies cell by cell that the frozen window is identical, and all basket and membership changes take effect at annual chain points, the convention of chain-linked official statistics. The 2025 vintage was released as v1.1.0 on 8 October 2026, adding agentic task execution and mathematical and scientific reasoning, with companion composites in standardised units."}
 
 # The live interactive tools (Shiny for Python on Hugging Face). Built and maintained in-house.
 # Named "Occupations Explorer" on the site: primarily employment by occupation over time (and, soon,
@@ -42,7 +42,7 @@ explorers:
     open: "https://huggingface.co/spaces/ai-econ-lab/months"
 
 resources:
-  - {label: "DAIOE scores on Zenodo (citable, all versions)", href: "https://doi.org/10.5281/zenodo.21873968", note: "the canonical, versioned release; cite the vintage you use"}
+  - {label: "DAIOE scores on Zenodo (citable, all versions)", href: "https://doi.org/10.5281/zenodo.21873967", note: "the canonical, versioned release; cite the vintage you use"}
   - {label: "Construction pipeline (open source)", href: "https://github.com/Magnus-L/daioe-pipeline", note: "code, test suite, quick starts in Python and Stata"}
   - {label: "Technical documentation (construction, vintages, reading the scores)", href: "https://github.com/Magnus-L/daioe-pipeline/blob/main/DOCUMENTATION.md", note: "the release's public reference"}
   - {label: "SSYK 2012 & SSYK 96 translation utility", href: "https://github.com/ai-econ-lab/daioe_translations", note: "crosswalk helper"}
