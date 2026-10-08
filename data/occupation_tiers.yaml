@@ -2,7 +2,10 @@
 meta:
   year: 2025
   min_ads: 25
-  source: JobTech / Platsbanken job ads (CC0) · tier classifier, rubric v2.1 · distinct advertisements
+  definition: v1.7
+  definition_fp: 3b8c171efd1aec68
+  source: JobTech / Platsbanken job ads (CC0) · floor ads on the frozen v1.7 term list · tier classifier,
+    rubric v2.1 · distinct advertisements
   validation: 88.9% agreement with hand-labelled ads on the four-way split, 93.8% on the grouping
     shown
 lede: The split between building AI, putting it in place and simply using it is not a national constant.
@@ -10,55 +13,55 @@ lede: The split between building AI, putting it in place and simply using it is 
   where AI arrives as a tool.
 rows:
 - name: Software and systems developers
-  n: 756
+  n: 786
   builder: 46
-  integrator: 26
-  user: 4
+  integrator: 27
+  user: 5
 - name: Doctoral students
-  n: 230
-  builder: 80
+  n: 248
+  builder: 79
   integrator: 10
   user: 0
 - name: Research assistants
-  n: 130
-  builder: 68
-  integrator: 17
-  user: 2
+  n: 146
+  builder: 67
+  integrator: 15
+  user: 1
 - name: Other IT specialists
-  n: 118
+  n: 125
   builder: 63
-  integrator: 25
+  integrator: 26
+  user: 1
+- name: Systems analysts and IT architects
+  n: 107
+  builder: 54
+  integrator: 33
   user: 1
 - name: Electrical engineers and technicians
-  n: 115
-  builder: 48
-  integrator: 22
-  user: 2
-- name: Systems analysts and IT architects
-  n: 96
-  builder: 55
-  integrator: 31
+  n: 102
+  builder: 56
+  integrator: 26
   user: 1
 - name: University lecturers
-  n: 46
-  builder: 72
-  integrator: 11
-  user: 0
-- name: Electrical engineers (graduate)
-  n: 34
-  builder: 32
-  integrator: 18
-  user: 0
-- name: Mechanical engineers
-  n: 33
-  builder: 48
-  integrator: 21
+  n: 48
+  builder: 71
+  integrator: 10
   user: 0
 - name: Medical secretaries and care administrators
   name_short: Medical secretaries etc.
   n: 30
   builder: 0
   integrator: 0
+  user: 0
+- name: Mechanical engineers
+  n: 26
+  builder: 65
+  integrator: 27
+  user: 0
+- name: Electrical engineers (graduate)
+  n: 25
+  builder: 44
+  integrator: 24
   user: 0
 caveat: 'Occupations with at least 25 distinct AI-skill advertisements in 2025; repeat postings of
   the same advertisement are counted once. Rows do not sum to 100: the remainder is advertisements
