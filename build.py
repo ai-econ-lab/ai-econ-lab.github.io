@@ -2499,21 +2499,46 @@ def us_rps_line():
     # Reordered 12 Aug 2026 (Lydia's review): opening with "there is no representative figure"
     # read as a verdict on the Akavia numbers above rather than as the preface to the US
     # comparison that follows. Say what the Swedish number is first, then bring in the US rate.
+    # Rewritten 9 Oct 2026: the old text said Sweden publishes no whole-workforce rate. SCB
+    # does (LE0108T83, group "Anställda/Egna företagare", base = all employed, verified from
+    # SCB's own counts); it is generated into population_ai.yaml and shown in the population
+    # block below. check_claims.py now fails on the old sentence and on any mismatch.
+    e = POPAI["employed_work"]["series"][-1]
     return (f'<p class="secintro" style="margin:12px 0 0">The Swedish number above is one '
-            f'professional union\'s members; no representative Swedish figure exists at this '
-            f'level. The nearest comparison is American: <b>{w["pct"]:g}%</b> of employed adults '
+            f'professional union\'s members. The representative Swedish rate is official: '
+            f'<b>{e["pct"]:g}%</b> of all employed people used generative AI for work in the three '
+            f'months before the {e["year"]} survey (SCB; see the population figures below). The '
+            f'nearest international comparison is American: <b>{w["pct"]:g}%</b> of employed adults '
             f'used generative AI for work in the reference week '
             f'(<a href="{m["url"]}">{h(m["source"])}</a>, {h(m["vintage"])}), a whole-workforce '
-            f'rate. Sweden publishes no equivalent: the national survey asks about work-related '
-            f'use but counts it across the whole population rather than the employed. That gap is '
-            f'the reason this level is the module\'s weakest, and a thing worth measuring rather '
-            f'than citing. {h(m["caveat"])}</p>')
+            f'rate. A week is a shorter window than three months, so the two are reference points, '
+            f'not a ranking. {h(m["caveat"])}</p>')
 
 
 def _pop_age_rows():
     """Age rows for barplot(), which highlights a row via is_se. No row is highlighted
     here: these are age groups, not countries."""
     return [dict(r, name=r["group"], is_se=False) for r in POPAI["by_age"]]
+
+
+def employed_work_line():
+    """The worker-level rate from the same official survey: the share of ALL employed people
+    who used generative AI for work. Generated from LE0108T83 by refresh_population_ai.py,
+    which re-verifies on every run that the base is the whole employed group and not genAI
+    users. 2024 is not shown: that year the question was a national add-on, not Eurostat's
+    module, and its purpose split does not cohere with 2025 and 2026."""
+    ew = POPAI["employed_work"]; s = ew["series"]; a, b = s[0], s[-1]
+    return folded(
+        f"""Among people in work, <b>{b['pct']:g}%</b> used generative AI for work in the three """
+        f"""months before the {b['year']} survey (±{b['moe']:g}), up from {a['pct']:g}% in {a['year']} """
+        f"""(±{a['moe']:g}). The base is every employed person aged 16 and over, users and """
+        f"""non-users alike, so this is a whole-workforce rate. [[note]] <a href="{POPAI['meta']['url']}">"""
+        f"""{h(ew['source'])}</a>, group {h(ew['group'])}, work-related purpose; the employed """
+        f"""are those whose main activity is working, with no upper age limit, which is why the """
+        f"""base differs from the 16–74 figures above. The {s[0]['year'] - 1} wave is left out: """
+        f"""that year SCB asked about generative AI on a national add-on, before Eurostat's """
+        f"""common module, and its purpose split does not match the later waves.""",
+        style="margin:12px 0 0", label="Who is counted, and why the series starts in " + str(a['year']))
 
 
 def population_block():
@@ -2532,6 +2557,7 @@ def population_block():
       ({m['men']:g}% against {m['women']:g}%). Figures refer to the {h(m['reference_period'])}.""", style="margin:0 0 14px", label="What the population survey covers, and how firm it is")}
     <div class="dotwrap">{barplot(_pop_age_rows(), m['headline'], xmax, 0, 'adoption', '.0f', what='age groups', mean_label='Sweden')}</div>
     {figfooter("population_ai.csv", f"{m['source']}, {m['first_year']}–{m['year']} · {m['unit']}; bars {m['year']}, change vs {m['first_year']}. {m['design']}", svg_name="population_ai.svg", next_up="with SCB's next ICT-use survey wave")}
+    {employed_work_line()}
     {folded(f"""The US counterpart at this level is <b>{u['pct']:g}%</b> """
              f"""(<a href="{um['url']}">{h(um['source'])}</a>, {h(um['vintage'])}), which is a reference point """
              f"""rather than a ranking. [[note]] It covers ages 18–64 where SCB covers 16–74, and Swedish """

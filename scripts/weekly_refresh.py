@@ -258,6 +258,17 @@ def check_population(d, prev_year):
         "scripts/refresh_population_ai.py.")
     y = int(m["year"])
     assert prev_year <= y <= prev_year + 5, f"survey wave went from {prev_year} to {y}"
+    # Worker level (LE0108T83, all employed). The generator already stops if the base drifts
+    # to users only; this re-checks the written file so a hand edit cannot slip through.
+    ew = (d.get("employed_work") or {}).get("series") or []
+    assert ew, "the employed work-use block is empty"
+    assert int(ew[0]["year"]) >= 2025, "employed work use must start in 2025 (2024 is a different instrument)"
+    assert int(ew[-1]["year"]) == y, f"employed work use ends {ew[-1]['year']}, survey is {y}"
+    for r in ew:
+        assert pct_ok(r.get("pct")), "employed work-use share outside 0-100"
+        b = r["base_check"]
+        assert abs(b["pop_t83"] / b["pop_t82"] - 1) < 0.06 and b["pop_t83"] > 1.3 * b["users_t82"], (
+            f"{r['year']}: employed work use is no longer on an all-employed base")
 
 
 JOBS = [

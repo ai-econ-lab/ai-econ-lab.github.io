@@ -31,10 +31,24 @@ purpose_latest:
   # 2026 cross-section only. Multiple response, share of ALL persons 16–74.
   # The 2024 wave is deliberately omitted: its base is not reconcilable with this
   # one (purposes sum to 41 against 28% total use in 2024, 66 against 42 in 2025;
-  # formal education halves while private quadruples). Confirm SCB's base before
-  # using either wave as a series.
+  # formal education halves while private quadruples). Base confirmed 9 Oct 2026:
+  # share of all persons; 2024 was a national add-on, Eurostat's module from 2025.
   year: 2026
   shares:
     - {purpose: "formal education", pct: 14}
     - {purpose: "professional or work-related", pct: 28}
     - {purpose: "private", pct: 45}
+employed_work:
+  # Share of ALL employed persons aged 16+ (SCB group "Anställda/Egna företagare":
+  # main activity working, employees and self-employed) who used generative AI for
+  # professional or work-related purposes in the last three months (Q1 survey).
+  # NOT a share of genAI users: base_check reproduces the group population from
+  # both tables each run. From 2025 only; see the script header for why not 2024.
+  indicator: "Employed persons who used generative AI for work"
+  unit: "% of all employed persons aged 16+"
+  group: "Anställda/Egna företagare (employees and self-employed)"
+  source: "SCB, Befolkningens it-användning / ICT use among the population (LE0108T83)"
+  scb_updated: "2026-10-05"
+  series:
+    - {year: 2025, pct: 30, moe: 2, base_check: {pop_t83: 4640000, pop_t82: 4640000, users_t82: 2088700}}
+    - {year: 2026, pct: 41, moe: 2, base_check: {pop_t83: 4220000, pop_t82: 4250000, users_t82: 2590700}}

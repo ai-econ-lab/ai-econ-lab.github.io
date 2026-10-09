@@ -66,6 +66,10 @@ STALE_ASSERTIONS = [
      "a bare exposure ranking with no cut caveat within 200 characters (read-gate A1)"),
     (r"näst högst av \d+|näst mest exponerad",
      "the Swedish bare exposure ranking (read-gate A1)"),
+    # True until 9 Oct 2026, false since: SCB's LE0108T83 gives the share of ALL employed
+    # people using generative AI for work, and the page now shows it.
+    (r"Sweden publishes no equivalent|no representative Swedish figure exists",
+     "the worker-level claim that SCB has no whole-workforce rate (it has: LE0108T83)"),
 ]
 
 
@@ -302,6 +306,8 @@ def check_stated_counts(docs, problems):
     remains typed is prose that cannot carry an f-string, which is exactly what this catches.
     """
     md = yaml.safe_load((ROOT / "data" / "monthly_demand.yaml").read_text(encoding="utf-8"))
+    pa = yaml.safe_load((ROOT / "data" / "population_ai.yaml").read_text(encoding="utf-8"))
+    ew_first, ew_last = pa["employed_work"]["series"][0], pa["employed_work"]["series"][-1]
     cc = yaml.safe_load((ROOT / "data" / "cross_country.yaml").read_text(encoding="utf-8"))
     distinct, records = md["meta"]["total_ads"], md["meta"]["total_records"]
 
@@ -325,6 +331,16 @@ def check_stated_counts(docs, problems):
          [m1(records), m1(distinct)], "records and distinct advertisements"),
         (r"months built on\s*([\d,]+)\s*distinct advertisements", [f"{distinct:,}"],
          "distinct advertisements behind the monthly series"),
+        # Added 9 Oct 2026: the worker-level rate (SCB LE0108T83, all employed), in both
+        # places the page states it, against data/population_ai.yaml.
+        (r"Among people in work, (\d+)% used generative AI for work in the three months before "
+         r"the (\d{4}) survey \(±(\d+)\), up from (\d+)% in (\d{4}) \(±(\d+)\)",
+         [f"{ew_last['pct']:g}", str(ew_last["year"]), f"{ew_last['moe']:g}",
+          f"{ew_first['pct']:g}", str(ew_first["year"]), f"{ew_first['moe']:g}"],
+         "employed work use of generative AI (population block)"),
+        (r"(\d+)% of all employed people used generative AI for work in the three months before "
+         r"the (\d{4}) survey", [f"{ew_last['pct']:g}", str(ew_last["year"])],
+         "employed work use of generative AI (worker block)"),
     ]
     seen = {what: 0 for _, _, what in rules}
     for path in sorted(docs.rglob("*.html")):
