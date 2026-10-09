@@ -3,14 +3,14 @@
 # frames these numbers lives in monitor.yaml under livewindow.note.
 definition: v1.7
 definition_fp: 3b8c171efd1aec68
-asof: "8 Oct 2026"
-asof_iso: 2026-10-08
+asof: "9 Oct 2026"
+asof_iso: 2026-10-09
 window_days: 60
-n: 36939
-names_pct: 1.408
-floor_pct: 0.815
-names_ci: [1.293, 1.533]
-floor_ci: [0.728, 0.912]
-bare_band_pct: 3.105
-excluded_off_definition: 1482
-generated_at: "2026-10-08T20:23:09+00:00"
+n: 38696
+names_pct: 1.403
+floor_pct: 0.809
+names_ci: [1.291, 1.525]
+floor_ci: [0.724, 0.903]
+bare_band_pct: 3.08
+excluded_off_definition: 583
+generated_at: "2026-10-09T11:22:34+00:00"
