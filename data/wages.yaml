@@ -117,14 +117,13 @@ countries:
     mid: 110.6
     low: 108.5
 eu_line: 'EU27 (coarse, ISCO 1-digit, Structure of Earnings Survey): mean hourly earnings grew 14.2 per
-  cent in the most exposed third against 16.8 per cent in the least, 2018 to 2022. A finer country-level
+  cent (nominal) in the most exposed third against 16.8 per cent in the least, 2018 to 2022. A finer country-level
   series is the planned upgrade.'
 caveats:
 - Real wages, deflated with SCB KPI (2020=100), calendar-year mean, for Sweden; FRED CPI-U (NSA) at each
-  May, matched to the OEWS reference month, for the United States; Eurostat HICP annual average for the
-  EU27 line. Deflation leaves the pay RATIO between groups exactly unchanged, so it cannot manufacture
-  the result; it does change a difference of growth rates, which is why the figures above are the real
-  ones.
+  May, matched to the OEWS reference month, for the United States. The EU27 line is nominal (not deflated).
+  Deflation leaves the pay RATIO between groups exactly unchanged, so it cannot manufacture the result;
+  it does change a difference of growth rates, which is why the figures above are the real ones.
 - 'Exposure is DAIOE''s generative-AI composite (g2gen, v2025), fixed over time: the lines answer how
   pay moved in occupations that are exposed today. Most of its 2025 step comes from software engineering''s
   first measured year, an upper bound later vintages may revise; the terciles rest on ranks, which barely

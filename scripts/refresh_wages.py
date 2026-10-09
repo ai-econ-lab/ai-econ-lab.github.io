@@ -53,8 +53,8 @@ COUNTRIES = [
 
 # Named here because the page must state them and the page is generated from this file.
 DEFLATORS = ("SCB KPI (2020=100), calendar-year mean, for Sweden; FRED CPI-U (NSA) at each "
-             "May, matched to the OEWS reference month, for the United States; Eurostat HICP "
-             "annual average for the EU27 line")
+             "May, matched to the OEWS reference month, for the United States. The EU27 line is "
+             "nominal (not deflated)")
 
 
 def load(key, real):
