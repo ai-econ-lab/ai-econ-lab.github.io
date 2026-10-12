@@ -192,11 +192,12 @@ contact:
   email: "magnus.lodefalk@oru.se"
   phone: "+46 (0)722 21 73 40"
   address: "Örebro University, SE-701 82 Örebro, Sweden"
-  invite: "If you are interested in collaborating or writing an advanced thesis, send us an e-mail. There may be external funding for doctoral students and post-doctoral positions."
+  invite: "We welcome research collaboration where there is a clear fit with our work on AI and the labour market: please write to us. Open positions, when there are any, are advertised on Örebro University's website. We do not normally have the capacity to supervise theses outside Örebro University."
   links:
     # ORU retired /english/about-us/find-your-way-here/ (404 on 12 Aug 2026, checked on launch
     # day). Its live equivalent is the contact page, so the label follows the target.
     - {label: "Örebro University: contact and visiting details", href: "https://www.oru.se/english/about-us/contact-us/"}
+    - {label: "Örebro University: available positions", href: "https://www.oru.se/english/career/available-positions/"}
 
 # Where finished pages are written (GitHub Pages serves from this folder).
 build:
