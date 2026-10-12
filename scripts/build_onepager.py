@@ -69,6 +69,12 @@ OUT = ROOT / "docs" / "aiel-monitor-onepager.pdf"
 # FileNotFoundError inside build.py's try/except, which caught it, kept the previous PDF and
 # printed "no TeX engine here" — so a sheet that had silently stopped regenerating looked like
 # a deliberate skip. $TECTONIC overrides; otherwise PATH, then the known Homebrew locations.
+# Partner marks (consent on record, assets/logos/README.md). Absolute paths for tectonic.
+from pathlib import Path as _P
+_LOGOS = _P(__file__).resolve().parent.parent / "assets" / "logos"
+LOGO_AISCAF = (_LOGOS / "aiscaf_dark_ink_trim.png").as_posix()
+LOGO_WASPHS = (_LOGOS / "WASP-HS_Logotype_Blue_Full_Name.png").as_posix()
+
 def _find_tectonic() -> str:
     import os
     import shutil
@@ -416,7 +422,9 @@ COPY = {
             r"\emph{{write down when hiring}}: not jobs, and not firms using AI, two of the panels "
             r"above. Not all hiring is advertised. A rising line means only that employers ask "
             r"for AI skills more often."),
-  colophon=(r"AI-Econ Lab, Örebro University and the Ratio Institute. Public data throughout; every "
+  colophon=(r"AI-Econ Lab, Örebro University and the Ratio Institute. Örebro University is one of "
+            r"the three nodes of AISCAF, a research cluster financed by WASP-HS, which funds part of "
+            r"the lab's team. Public data throughout; every "
             r"figure is reproducible from the source beside it. Method: "
             r"\href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
   lab_se="Sweden", lab_eu="36-country mean", lab_eu2="EU27", lab_med="22-country median",
@@ -512,7 +520,9 @@ COPY = {
             r"\emph{{skriver ned när de rekryterar}}: inte jobb, och inte företag som använder AI, "
             r"två av panelerna ovan. All rekrytering annonseras inte. En stigande linje betyder "
             r"bara att arbetsgivare efterfrågar AI-kompetens oftare än förr."),
-  colophon=(r"AI-Econ Lab, Örebro universitet och Ratio. Öppna data genomgående; varje siffra går "
+  colophon=(r"AI-Econ Lab, Örebro universitet och Ratio. Örebro universitet är en av tre noder i "
+            r"AISCAF, ett forskningskluster som finansieras av WASP-HS och som finansierar en del av "
+            r"labbets medarbetare. Öppna data genomgående; varje siffra går "
             r"att återskapa från källan intill. Metod: \href{{https://ai-econlab.com/monitor/methods/}}{{ai-econlab.com/monitor/methods}}."),
   lab_se="Sverige", lab_eu="36-landssnitt", lab_eu2="EU27", lab_med="medianland av 22",
   lab_us="USA",
@@ -740,7 +750,7 @@ def main():
 \textcolor{{hair}}{{\rule{{\textwidth}}{{0.6pt}}}}\\[2.4mm]
 {{\normalsize\bfseries\textcolor{{ink}}{{{C['gaps_hd']}}}}}\\[2.2mm]
 {gaps}\\[2mm]
-{{\scriptsize\textcolor{{soft}}{{{C['a11y']} \quad {C['colophon']}}}}}
+\raisebox{{-0.6mm}}{{\includegraphics[height=3.4mm]{{{LOGO_AISCAF}}}}}\hspace{{2mm}}\includegraphics[height=1.7mm]{{{LOGO_WASPHS}}}\hspace{{3mm}}{{\scriptsize\textcolor{{soft}}{{{C['a11y']} \quad {C['colophon']}}}}}
 """
 
     geom = "a4paper,landscape,margin=10mm" if landscape else "a4paper,margin=10mm"
@@ -751,6 +761,7 @@ def main():
 \usepackage{{fontspec}}
 \usepackage[{geom}]{{geometry}}
 \usepackage{{xcolor}}
+\usepackage{{graphicx}}
 \usepackage{{tikz}}
 \usetikzlibrary{{calc}}
 \usepackage[most]{{tcolorbox}}
