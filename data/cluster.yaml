@@ -32,8 +32,11 @@ items:
     cite: >-
       Nordström Skans, O. and Sokolow Romin, L. (2026). Structural Change and AI-Exposed Skills:
       Evidence from Swedish Real-Time Administrative Data. Working paper, Uppsala University,
-      version 29 September 2026. Swedish report: Growth Analysis, Rapport 2026:17.
+      version 29 September 2026. https://drive.google.com/file/d/1DHVJWQgO4xaA3dSi0yJ3Yi7308kigHNU/view.
+      Swedish report: Growth Analysis, Rapport 2026:17.
     links:
+      # Public link from ML, 14 Oct 2026 (the authors' Drive copy, version 29 Sep 2026).
+      - {label: "Working paper (PDF)", href: "https://drive.google.com/file/d/1DHVJWQgO4xaA3dSi0yJ3Yi7308kigHNU/view"}
       - {label: "Summary in English (WASP-HS)", href: "https://wasp-hs.org/how-ai-affects-the-swedish-economy-and-labour-market/"}
       - {label: "Report in Swedish (Growth Analysis)", href: "https://www.tillvaxtanalys.se/publikationer/rapport/rapportserien/strukturomvandligenochai.129145.html"}
   - kicker: "Seminars · AI-Econ Lab, part of AISCAF"
