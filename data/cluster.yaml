@@ -9,9 +9,8 @@
 # 2. THE AI SWEDEN FUNCTION IS NOT MENTIONED until the consortium is signed.
 # Never write "realtid"/"real-time" in our own prose (a published title is quoted as published).
 #
-# Titles are verbatim from the publisher. Tillväxtanalys Rapport 2026:17 is published as
-# "Strukturomvandligen" (sic) on its page and cover; the PDF filename says "Strukturomvandlingen".
-# Quote the publisher, do not correct it.
+# English pages use the working paper's English title and Tillväxtanalys's English name, Growth
+# Analysis; the Swedish report (Rapport 2026:17) is linked, not titled (ML, 14 Oct 2026).
 
 intro: >-
   The Monitor is one of the AI-Econ Lab's contributions to AISCAF, a research cluster on AI,
@@ -21,22 +20,22 @@ intro: >-
   full credit, so that readers find the cluster's monitoring in one place and cite it at its source.
 
 items:
-  - kicker: "Uppsala University and Tillväxtanalys · 30 September 2026"
-    title: "Strukturomvandligen och AI: En realtidsanalys av produktivitet, dynamik, och ungdomars arbetsmarknadsinträde"
+  # English working-paper title, Growth Analysis by its English name, the Swedish report as a
+  # link only, and no sentence on how their work relates to ours (ML, 14 Oct 2026).
+  - kicker: "Uppsala University · September 2026"
+    title: "Structural Change and AI-Exposed Skills: Evidence from Swedish Real-Time Administrative Data"
     text: >-
-      Oskar Nordström Skans and Leo Sokolow Romin (Uppsala University, AISCAF) follow productivity,
-      labour-market flows and the entry of new graduates in administrative registers, in a project
-      with Tillväxtanalys. Their first report finds no clear sign yet of a broad AI-driven structural
-      change in the economy as a whole, but outcomes for new graduates from fields where AI is judged
-      especially relevant have deteriorated since 2023. The two complement each other: job
-      advertisements show what employers ask for, registers show who was hired, moved and paid.
+      Oskar Nordström Skans and Leo Sokolow Romin (Uppsala University, AISCAF), in a project with
+      the Swedish Agency for Growth Policy Analysis (Growth Analysis). They find no clear sign yet of
+      a broad AI-driven structural change in the economy as a whole, but outcomes for new graduates
+      from fields where AI is judged especially relevant have deteriorated since 2023.
     cite: >-
-      Nordström Skans, O. and Sokolow Romin, L. (2026). Strukturomvandligen och AI: En realtidsanalys
-      av produktivitet, dynamik, och ungdomars arbetsmarknadsinträde. Rapport 2026:17. Östersund:
-      Tillväxtanalys.
+      Nordström Skans, O. and Sokolow Romin, L. (2026). Structural Change and AI-Exposed Skills:
+      Evidence from Swedish Real-Time Administrative Data. Working paper, Uppsala University,
+      version 29 September 2026. Swedish report: Growth Analysis, Rapport 2026:17.
     links:
-      - {label: "The report (Tillväxtanalys)", href: "https://www.tillvaxtanalys.se/publikationer/rapport/rapportserien/strukturomvandligenochai.129145.html"}
       - {label: "Summary in English (WASP-HS)", href: "https://wasp-hs.org/how-ai-affects-the-swedish-economy-and-labour-market/"}
+      - {label: "Report in Swedish (Growth Analysis)", href: "https://www.tillvaxtanalys.se/publikationer/rapport/rapportserien/strukturomvandligenochai.129145.html"}
   - kicker: "Seminars · AI-Econ Lab, part of AISCAF"
     title: "The AI-Econ Lab brown-bag seminar series"
     text: >-
@@ -65,8 +64,8 @@ brief:
     "2026-10":
       en: >-
         Nordström Skans and Sokolow Romin (Uppsala University) find, in their first report with
-        Tillväxtanalys (<a href="https://www.tillvaxtanalys.se/publikationer/rapport/rapportserien/strukturomvandligenochai.129145.html">Rapport 2026:17</a>), worse outcomes since 2023 for new
-        graduates in fields where AI is especially relevant.
+        Growth Analysis (<a href="https://www.tillvaxtanalys.se/publikationer/rapport/rapportserien/strukturomvandligenochai.129145.html">Rapport 2026:17</a>, in Swedish), worse outcomes since 2023
+        for new graduates in fields where AI is especially relevant.
       sv: >-
         Nordström Skans och Sokolow Romin (Uppsala universitet) finner i sin första rapport med
         Tillväxtanalys (<a href="https://www.tillvaxtanalys.se/publikationer/rapport/rapportserien/strukturomvandligenochai.129145.html">Rapport 2026:17</a>) sämre utfall sedan 2023 för
