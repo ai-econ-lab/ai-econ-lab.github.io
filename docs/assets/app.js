@@ -551,3 +551,80 @@ window.drawTrend();
     opened = [];
   });
 })();
+
+/* Monitor search: "find a country or an occupation" (14 Oct 2026).
+   Countries answer inline from the Monitor's own files (embedded by build.py, search_box()).
+   Occupations open the DAIOE lookup at that occupation (/daioe/?job=isco-2512#find), loading
+   the same occupations file the lookup uses, and only when the reader first uses the box.
+   Regions join when the regional series is released. */
+(function monSearch(){
+  const form = document.getElementById("monsearch"); if (!form) return;
+  const input = document.getElementById("monq"), list = document.getElementById("monqlist"),
+        out = document.getElementById("msout");
+  const D = JSON.parse(document.getElementById("monsearch-data").textContent);
+  const sv = D.lang === "sv";
+  const T = (en, s) => sv ? s : en;
+  const num = (x, d) => { const v = Number(x).toFixed(d); return sv ? v.replace(".", ",") : v; };
+  const pct = (x, d) => sv ? `${num(x, d)} %` : `${num(x, d)}%`;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+  const byName = new Map();
+  D.countries.forEach(c => { byName.set(norm(c.en), c); byName.set(norm(c.sv), c); });
+  let occ = null, loading = null;
+  function loadOcc(){
+    if (loading) return loading;
+    loading = fetch("/assets/daioe_occupations.json").then(r => r.json()).then(j => {
+      occ = new Map();
+      for (const set of ["isco", "ssyk"]) j.sets[set].occ.forEach(o => occ.set(norm(o[1]), [set, o[0], o[1]]));
+      fill(j);
+    }).catch(() => { occ = new Map(); });
+    return loading;
+  }
+  function fill(j){
+    const names = [...new Set(D.countries.map(c => sv ? c.sv : c.en))].sort((a, b) => a.localeCompare(b));
+    const occn = [];
+    for (const set of ["isco", "ssyk"]) j.sets[set].occ.forEach(o => occn.push(o[1]));
+    list.innerHTML = names.concat(occn).map(n => `<option value="${esc(n)}"></option>`).join("");
+  }
+  input.addEventListener("focus", loadOcc, {once: true});
+  function country(c){
+    const name = sv ? c.sv : c.en, bits = [];
+    if (c.exp != null) bits.push(T(
+      `<b>${pct(c.exp, 1)}</b> of jobs are in the most AI-exposed quarter of occupations (${c.exp_rank} of ${c.exp_n} countries, ${c.exp_year})`,
+      `<b>${pct(c.exp, 1)}</b> av jobben finns i den mest AI-exponerade fjärdedelen av yrkena (plats ${c.exp_rank} av ${c.exp_n} länder, ${c.exp_year})`));
+    if (c.adopt != null) bits.push(T(`<b>${pct(c.adopt, 0)}</b> of firms used AI (${c.adopt_year})`,
+                                     `<b>${pct(c.adopt, 0)}</b> av företagen använde AI (${c.adopt_year})`));
+    if (c.dem != null) bits.push(T(`<b>${pct(c.dem, 1)}</b> of job ads required AI (${c.dem_year}, Stanford AI Index)`,
+                                   `<b>${pct(c.dem, 1)}</b> av jobbannonserna krävde AI (${c.dem_year}, Stanford AI Index)`));
+    const base = sv ? "/monitor/" : "";
+    out.innerHTML = `<div class="mscard"><b>${esc(name)}</b>: ${bits.join(" · ")}.
+      <div class="mslinks">${c.exp != null ? `<a href="${base}#exposure">${T("Exposure →","Exponering (engelska) →")}</a>` : ""}
+      ${c.adopt != null ? `<a href="${base}#adoption">${T("Adoption →","Användning (engelska) →")}</a>` : ""}
+      ${c.dem != null ? `<a href="${base}#demand">${T("Demand →","Efterfrågan (engelska) →")}</a>` : ""}</div></div>`;
+  }
+  function occupation(o){
+    location.href = `/daioe/?job=${o[0]}-${o[1]}#find`;
+  }
+  function resolve(raw){
+    const q = norm(raw); if (!q) { out.textContent = ""; return; }
+    const c = byName.get(q) || D.countries.find(c => norm(c.en).startsWith(q) || norm(c.sv).startsWith(q));
+    if (c) return country(c);
+    loadOcc().then(() => {
+      // Light stemming, as the DAIOE lookup does: "sjukskoterska" finds "sjukskoterskor",
+      // "nurse" finds "nursing". A match at the start of a word beats one inside a word.
+      const stems = [q]; if (q.length >= 5) stems.push(q.slice(0, -1)); if (q.length >= 7) stems.push(q.slice(0, -2));
+      let o = occ.get(q), best = 0;
+      if (!o) for (const [k, v] of occ) {
+        const words = k.split(/[^a-z0-9]+/);
+        const sc = stems.some(st => words.some(w => w.startsWith(st))) ? 2 : stems.some(st => k.includes(st)) ? 1 : 0;
+        if (sc > best || (sc === best && sc && v[2].length < o[2].length)) { best = sc; o = v; }
+      }
+      if (!best && !occ.get(q)) o = null;
+      if (o) return occupation(o);
+      out.textContent = T("No match. Try a country, or an occupation in English or Swedish.",
+                          "Ingen träff. Prova ett land, eller ett yrke på svenska eller engelska.");
+    });
+  }
+  form.addEventListener("submit", e => { e.preventDefault(); resolve(input.value); });
+  input.addEventListener("change", () => { if (byName.has(norm(input.value)) || (occ && occ.has(norm(input.value)))) resolve(input.value); });
+})();

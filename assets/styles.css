@@ -872,3 +872,22 @@ ul.tight li{margin:2px 0}
 .fnslot p{margin:0;font-size:13.5px;color:var(--ink-2)}
 .fnmarks{display:flex;align-items:center;gap:14px}
 .ovcard .ofoot .go{white-space:nowrap;flex-shrink:0}
+/* Search, research base, language switch (14 Oct 2026) */
+.herotop{grid-template-columns:1.35fr 1fr;align-items:end}
+.langsw{margin:14px 0 0;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.langsw a[aria-current]{color:var(--ink);font-weight:700;text-decoration:none}
+.monsearch{display:flex;flex-direction:column;gap:8px}
+.monsearch label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.msrow{display:flex;gap:8px}
+.msrow input{flex:1;min-width:0;font:inherit;font-size:15px;padding:12px 14px;border-radius:8px;border:1px solid var(--border);
+  background:var(--paper);color:var(--ink);min-height:44px;box-sizing:border-box}
+.msrow button{font:inherit;font-size:14px;font-weight:600;padding:0 16px;border-radius:8px;border:0;background:var(--c1);color:#fff;min-height:44px;cursor:pointer}
+.msout{font-size:14px;line-height:1.5;color:var(--ink-2);min-height:1em}
+.msout .mscard{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--paper)}
+.msout .mscard b{color:var(--ink)}
+.msout .mslinks{display:flex;gap:6px 14px;flex-wrap:wrap;margin-top:6px;font-family:var(--mono);font-size:12px}
+.ovcard .odoors{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11.5px;border-top:1px solid var(--border);padding-top:8px;margin-top:2px}
+.ovcard .obasewrap{color:var(--muted)}
+.ovcard .odoors a{color:var(--blue);text-decoration:none}.ovcard .odoors a:hover{text-decoration:underline}
+.ovcard:hover{transform:none}

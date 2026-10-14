@@ -358,3 +358,47 @@ capability:
   caveat: >-
     These are external research series, quoted with their dates; we summarise, we do not
     produce them. Figures refresh with the sources' own releases.
+
+# ── 14 Oct 2026: Research base links and the Swedish top (ML: search, research base, EN/SV) ──
+# Keyed by the overview card's k. `base` is what the tile's number rests on (a paper, a measure
+# or the producer's own release), shown as "Research base" beside "Open". The Swedish fields are
+# written natively (never machine-translated); build.py checks that every number in lab_sv also
+# appears in lab, so the two languages cannot drift apart. Swedish to be proofread by Lydia.
+overview_more:
+  Exposure:
+    base: {label: "DAIOE (AI Unboxed)", label_sv: "DAIOE (AI Unboxed)", href: "/daioe/"}
+    k_sv: "Exponering"
+    tag_sv: "36 LÄNDER · SE"
+    lab_sv: "av jobben, i genomsnitt i 36 europeiska länder, finns i de 25 procent mest AI-exponerade yrkena (exponering för generativ AI). Sverige 44,3 %, trea av de 36."
+    foot_sv: "DAIOE generativ AI-komposit (g2gen) v2025 · EU-LFS 2025"
+  Demand:
+    base: {label: "Stanford AI Index 2026", label_sv: "Stanford AI Index 2026", href: "https://hai.stanford.edu/assets/files/ai_index_report_2026.pdf#page=204"}
+    k_sv: "Efterfrågan"
+    tag_sv: "22 LÄNDER · SE"
+    lab_sv: "är medianandelen jobbannonser som kräver AI i 22 länder 2025 (Stanford AI Index). Sverige 2,8 %."
+    foot_sv: "AI Index / Lightcast · 2025"
+  Adoption:
+    base: {label: "Eurostat isoc_eb_ai", label_sv: "Eurostat isoc_eb_ai", href: "https://ec.europa.eu/eurostat/databrowser/view/isoc_eb_ai/default/table"}
+    k_sv: "Användning"
+    tag_sv: "EU · SE"
+    lab_sv: "av företagen i EU använde AI 2025, upp från 8 % 2023 (Eurostat). Sverige 35 %, bland de ledande."
+    foot_sv: "Eurostat · 2025"
+  Outcomes:
+    base: {label: "Exposure measure: DAIOE", label_sv: "Exponeringsmåttet DAIOE", href: "/daioe/"}
+    k_sv: "Utfall"
+    tag_sv: "USA · SE"
+    lab_sv: "långsammare real lönetillväxt i de mest AI-exponerade yrkena i USA än i de minst exponerade, 2015–2025 (3,4 % mot 8,5 %). I Sverige står reallönerna still i alla tre exponeringsgrupper. Ingen lönepremie för exponering i något av länderna."
+    foot_sv: "SCB · BLS OEWS × DAIOE g2gen v2025 · reala termer · SE 2014–2025, USA 2015–2025"
+  Capability:
+    base: {label: "METR time horizons", label_sv: "METR, tidshorisonter", href: "https://metr.org/time-horizons/"}
+    k_sv: "Förmåga"
+    tag_sv: "EXTERN SERIE"
+    lab_sv: "är de längsta uppgifterna för mänskliga experter som de främsta AI-agenterna klarar ungefär hälften av gångerna. Längden har fördubblats på 4–6 månader."
+    foot_sv: "METR · maj 2026"
+  Sweden:
+    base: {label: "Method and validation", label_sv: "Metod och validering (engelska)", href: "/monitor/methods/"}
+
+lede_sv: >-
+  Vad data och forskning visar om artificiell intelligens och arbete: internationellt, för Sverige
+  på djupet och alltmer för de nordiska länderna. Varje siffra är daterad, versionerad och har en
+  angiven källa.

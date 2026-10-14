@@ -343,7 +343,7 @@ def footer():
   <span>PUBLIC DATA · MONITOR PROTOTYPE · CITE THE VERSION AND DATE</span>
 </div></div></footer>"""
 
-def shell(title, desc, path, body, jsonld="", need_chart=False):
+def shell(title, desc, path, body, jsonld="", need_chart=False, lang="en"):
     canonical = BASE + path
     trend_js = ""
     if need_chart:
@@ -352,7 +352,7 @@ def shell(title, desc, path, body, jsonld="", need_chart=False):
                     f'floor:{t.get("floor_values", [])},ceiling:{t["ceiling_values"]},'
                     f'provisionalFrom:{t["provisionalFrom"]},ymax:{t["ymax"]},yticks:{t["yticks"]}}};</script>')
     ld = f'<script type="application/ld+json">{jsonld}</script>' if jsonld else ""
-    return f"""<!doctype html><html lang="en"><head>
+    return f"""<!doctype html><html lang="{lang}"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{h(title)}</title>
 <meta name="description" content="{h(desc)}">
@@ -2873,7 +2873,7 @@ def capability_section():
     years and survey waves, so each states its own year.</p>
 </section></div></div>"""
 
-def stat_overview():
+def stat_overview(lang="en"):
     """Overview-first landing: one door per spine module. Whole picture in ~20s; detail one click down.
 
     Entries marked role: driver are NOT questions about the labour market, they are the
@@ -2905,39 +2905,73 @@ def stat_overview():
     # trend data the Swedish chart draws (floor and ceiling of the last full year, and the
     # whole-text multiple of 2006-08), never typed. Capability keeps its tag "external series":
     # it measures the technology, not the labour market (Schroeder, 4 Aug 2026).
+    # Swedish (lang="sv", the /monitor/sv/ page): the same tiles from the *_sv fields in
+    # monitor.yaml overview_more; every number in a Swedish label must also be in the English one.
+    sv = lang == "sv"
+    L = (lambda a, b: b) if sv else (lambda a, b: a)
+    dec = (lambda x: x.replace(".", ",")) if sv else (lambda x: x)
+    more = MONITOR["overview_more"]
     t = TREND["trend"]; tm = TREND["meta"]; pf = t["provisionalFrom"]
     _yr, _fl, _ce = t["years"][pf - 1], t["floor_values"][pf - 1], t["ceiling_values"][pf - 1]
     _mult = int(round(float(tm["multiple"]) / 10.0) * 10)
-    se_tile = {"k": "Demand · Sweden in depth", "tag": "LIVE",
-               "num": f'{_fl:.2f}–{_ce:.2f}<span>%</span>',
-               "lab": (f"of Swedish job ads in {_yr} asked for AI skills, floor to ceiling, on our measure. "
-                       f"Ads naming an AI skill: about {_mult} times the {tm['base_years'].replace('-', '–')} level."),
-               "foot": f"JobTech / Platsbanken · {DEF_VERSION} · distinct ads · {_yr}",
-               "anchor": "#demand", "cls": "b"}
+    _base = tm["base_years"].replace("-", "–").replace("2006–2008", "2006–08")
+    se_tile = {"k": L("Demand · Sweden in depth", "Efterfrågan · Sverige på djupet"), "tag": "LIVE",
+               "num": f'{dec(f"{_fl:.2f}")}–{dec(f"{_ce:.2f}")}<span>%</span>',
+               "lab": L(f"of Swedish job ads in {_yr} asked for AI skills, floor to ceiling, on our measure. "
+                        f"Ads naming an AI skill: about {_mult} times the {_base} level.",
+                        f"av de svenska jobbannonserna {_yr} efterfrågade AI-kompetens, från golv till tak, "
+                        f"enligt vårt mått. Annonser som nämner en AI-kompetens: ungefär {_mult} gånger nivån {_base}."),
+               "foot": L(f"JobTech / Platsbanken · {DEF_VERSION} · distinct ads · {_yr}",
+                         f"JobTech / Platsbanken · {DEF_VERSION} · unika annonser · {_yr}"),
+               "anchor": "#demand", "cls": "b", "base": more["Sweden"]["base"]}
+    import re as _re
+    _nums = lambda x: sorted(_re.findall(r"\d+(?:[.,]\d+)?", x.replace(",", ".")))
     order = []
     for o in MONITOR["overview"]:
-        order.append(o)
-        if o["k"] == "Demand":
+        mo = more.get(o["k"], {})
+        if sv:
+            if _nums(mo["lab_sv"]) != _nums(o["lab"]):
+                raise SystemExit(f"monitor.yaml overview_more {o['k']}: the Swedish label's numbers "
+                                 f"{_nums(mo['lab_sv'])} differ from the English {_nums(o['lab'])}. Retype it.")
+            o = {**o, "k": mo["k_sv"], "tag": mo["tag_sv"], "lab": mo["lab_sv"], "foot": mo["foot_sv"],
+                 "num": dec(o["num"])}
+        order.append({**o, "base": mo.get("base")})
+        if o["anchor"] == "#demand":
             order.append(se_tile)
+    pre = "/monitor/" if sv else ""
     cards = ""
     for o in order:
         cls = f' {o["cls"]}' if o["cls"] else ""
         tag = f'<span class="otag">{h(o.get("tag", ""))}</span>' if o.get("tag") else ""
-        cards += (f'<a class="ovcard{cls}" href="{o["anchor"]}"><div class="stripe"></div>'
+        b = o.get("base")
+        basel = (f'<a class="obase" href="{h(b["href"])}">{h(b["label_sv"] if sv else b["label"])}</a>'
+                 if b else "")
+        # Cards are no longer one big link: each has two doors, the research base and the module.
+        cards += (f'<div class="ovcard{cls}"><div class="stripe"></div>'
                   f'<div class="ok"><span>{h(o["k"])}</span>{tag}</div><div class="onum">{o["num"]}</div>'
                   f'<div class="olab">{h(o["lab"])}</div>'
-                  f'<div class="ofoot"><span>{h(o["foot"])}</span><span class="go">Open →</span></div></a>')
-    # One strip under the tiles: how to cite, and the four doors a returning reader wants.
+                  f'<div class="ofoot"><span>{h(o["foot"])}</span></div>'
+                  f'<div class="odoors"><span class="obasewrap">{L("Research base", "Underlag")}: {basel}</span>'
+                  f'<a class="go" href="{pre}{o["anchor"]}">{L("Open →", "Öppna (engelska) →") if sv else "Open →"}</a></div></div>')
     _fz = _frozen_date()
-    strip = (f'<div class="citestrip"><span>Cite: AI-Econ Lab (2026). <i>AIEL Monitor</i> {DEF_VERSION} '
-             f'(frozen {h(_fz)}). Every figure also has its own Cite link.</span>'
-             f'<span class="citelinks"><a href="/monitor/brief/">Monthly brief</a>'
-             f'<a href="/aiel-monitor-onepager.pdf">The whole picture, 2 pages (PDF)</a>'
-             f'<a href="/monitor/methods/">Method and validation</a><a href="/research/">Working papers</a></span></div>')
+    if sv:
+        for en_m, sv_m in [("January","januari"),("February","februari"),("March","mars"),("April","april"),("May","maj"),("June","juni"),("July","juli"),("August","augusti"),("September","september"),("October","oktober"),("November","november"),("December","december")]:
+            _fz = _fz.replace(en_m, sv_m)
+    strip = (f'<div class="citestrip"><span>{L("Cite", "Citera")}: AI-Econ Lab (2026). <i>AIEL Monitor</i> {DEF_VERSION} '
+             f'({L("frozen", "fryst")} {h(_fz)}). '
+             f'{L("Every figure also has its own Cite link.", "Varje figur har också en egen citeringslänk.")}</span>'
+             f'<span class="citelinks">'
+             + (f'<a href="/monitor/brief/sv/">Månadsbrevet</a><a href="/aiel-monitor-onepager-sv.pdf">Hela bilden, 2 sidor (PDF)</a>'
+                f'<a href="/monitor/methods/">Metod och validering (engelska)</a><a href="/research/">Forskning</a>'
+                if sv else
+                f'<a href="/monitor/brief/">Monthly brief</a><a href="/aiel-monitor-onepager.pdf">The whole picture, 2 pages (PDF)</a>'
+                f'<a href="/monitor/methods/">Method and validation</a><a href="/research/">Working papers</a>')
+             + '</span></div>')
     return f"""<div class="rule" id="overview"><div class="wrap"><section style="padding-top:8px">
   <div class="ovgrid ovgrid3">{cards}</div>
   {strip}
 </section></div></div>"""
+
 
 def subnav():
     """Sticky spine nav under the masthead; scrollspy in app.js marks the active module."""
@@ -3006,6 +3040,96 @@ def partner_strip():
             f'three nodes of AISCAF, a research cluster financed by WASP-HS. The cluster funds '
             f'part of the lab\'s team.</p></div>')
 
+def _country_rows():
+    """One row per country for the search box: exposure, firm adoption and job-ad demand where
+    each source covers the country. Values come from the same files the modules draw."""
+    sv_names = {"LU": "Luxemburg", "NL": "Nederländerna", "SE": "Sverige", "BE": "Belgien", "CY": "Cypern",
+                "DE": "Tyskland", "DK": "Danmark", "CH": "Schweiz", "LT": "Litauen", "FR": "Frankrike",
+                "IE": "Irland", "UK": "Storbritannien", "AT": "Österrike", "FI": "Finland", "NO": "Norge",
+                "PL": "Polen", "SI": "Slovenien", "PT": "Portugal", "EE": "Estland", "IS": "Island", "MT": "Malta",
+                "CZ": "Tjeckien", "HR": "Kroatien", "LV": "Lettland", "EL": "Grekland", "HU": "Ungern",
+                "SK": "Slovakien", "IT": "Italien", "ES": "Spanien", "BG": "Bulgarien", "ME": "Montenegro",
+                "RS": "Serbien", "MK": "Nordmakedonien", "BA": "Bosnien och Hercegovina", "RO": "Rumänien",
+                "TR": "Turkiet"}
+    extra_sv = {"Singapore": "Singapore", "Hong Kong": "Hongkong", "Canada": "Kanada", "UAE": "Förenade Arabemiraten",
+                "United States": "USA", "Chile": "Chile", "Australia": "Australien", "Mexico": "Mexiko",
+                "New Zealand": "Nya Zeeland"}
+    rank = sorted(CROSS["countries"], key=lambda r: -r["share"])
+    rows = {}
+    for i, r in enumerate(rank):
+        rows[r["name"]] = {"en": r["name"], "sv": sv_names.get(r["code"], r["name"]), "code": r["code"],
+                           "exp": r["share"], "exp_rank": i + 1, "exp_n": len(rank), "exp_year": r["year"]}
+    code_by_name = {v["en"]: v["code"] for v in rows.values()}
+    for r in ADOPT["countries"]:
+        n = next((k for k, v in rows.items() if v["code"] == r["code"]), None)
+        if n:
+            rows[n].update(adopt=r["adoption"], adopt_year=r["year"])
+    for r in DEMAND["countries"]:
+        n = r["name"] if r["name"] in rows else None
+        if not n:
+            rows[r["name"]] = {"en": r["name"], "sv": extra_sv.get(r["name"], r["name"]), "code": ""}
+            n = r["name"]
+        rows[n].update(dem=r["share"], dem_year=r["year"])
+    return list(rows.values())
+
+
+def search_box(lang="en"):
+    """'Find a country or an occupation' (ML, 14 Oct 2026). Countries answer inline from the
+    Monitor's own files; occupations open the DAIOE lookup at that occupation. Regions join when
+    the regional series is released (held for the AI Sweden function, data/function.yaml)."""
+    sv = lang == "sv"
+    L = (lambda a, b: b) if sv else (lambda a, b: a)
+    data = json.dumps({"lang": lang, "countries": _country_rows()}, ensure_ascii=False)
+    return f"""<form class="monsearch" role="search" id="monsearch" autocomplete="off">
+  <label for="monq">{L("Find a country or an occupation", "Sök ett land eller ett yrke")}</label>
+  <div class="msrow"><input id="monq" type="search" list="monqlist" spellcheck="false"
+      placeholder="{L("e.g. Denmark, nurse, lärare", "t.ex. Danmark, sjuksköterska, teacher")}">
+    <button type="submit">{L("Show", "Visa")}</button></div>
+  <datalist id="monqlist"></datalist>
+  <div class="msout" id="msout" aria-live="polite"></div>
+  <script type="application/json" id="monsearch-data">{data.replace("</", "<\\/")}</script>
+</form>"""
+
+
+def monitor_sv():
+    """The Swedish Monitor page (/monitor/sv/), 14 Oct 2026: the top of the Monitor in Swedish
+    (title, lede, cluster marks, search, the six tiles, citation) with doors to the Swedish brief
+    and two-pager. The modules themselves are English for now and say so; a full Swedish Monitor
+    needs a frozen glossary and Lydia's proofreading (master plan v7), never run-time translation."""
+    m = MONITOR
+    mods = [("#exposure", "Exponering"), ("#demand", "Efterfrågan"), ("#adoption", "Användning"),
+            ("#outcomes", "Utfall"), ("#capability", "Förmåga")]
+    modlinks = "".join(f'<a class="btn ghost" href="/monitor/{a}">{t}</a>' for a, t in mods)
+    body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px"><div class="herogrid herotop">
+  <div>
+  <div class="eyebrow"><span class="dot"></span> Av forskare, för forskare och samhället</div>
+    <h1 class="title">AIEL Monitor</h1>
+    <p class="lede" style="max-width:62ch">{h(m['lede_sv'])}</p>
+    <div class="herocluster">
+      <a class="hcmarks" href="https://www.aiscaf.se/w/ac/" aria-label="AISCAF">{partner_mark("aiscaf", 22, "AISCAF")}</a>
+      <a class="hcmarks" href="https://wasp-hs.org" aria-label="WASP-HS">{partner_mark("wasphs", 11, "WASP-HS")}</a>
+      <p class="psub">AI-Econ Lab sedan 2019 · Örebro universitet och Ratio · Örebro är en nod i AISCAF, ett
+        forskningskluster som finansieras av WASP-HS · <a href="/monitor/#cluster">Mer från klustret (engelska) →</a></p>
+    </div>
+    <p class="langsw"><a href="/monitor/">EN</a> · <a href="/monitor/sv/" aria-current="page">SV</a></p>
+  </div>
+  {search_box("sv")}
+</div></div></div>
+
+{stat_overview("sv")}
+
+<div class="rule"><div class="wrap"><section>
+  <p class="kicker">Modulerna i detalj</p>
+  <h2 class="sec">Fem moduler, med Sverige på djupet i varje.</h2>
+  <p class="secintro">Modulerna med diagram, metod och data finns än så länge bara på engelska. Månadsbrevet och
+    sammanfattningen på två sidor finns på svenska.</p>
+  <div class="cta-row">{modlinks}</div>
+</section></div></div>"""
+    return shell("AIEL Monitor · " + SITE['brand']['name'],
+                 "AIEL Monitor: vad data och forskning visar om AI och arbete, internationellt och för Sverige på djupet.",
+                 "/monitor/sv/", body, lang="sv")
+
+
 def function_slot():
     """The AI Sweden function's band above the Monitor's title. OFF until the consortium is
     signed (data/function.yaml, enabled: false); returns nothing until then. Built now so it
@@ -3064,7 +3188,7 @@ def monitor():
   <div class="embedwrap"><iframe src="{e['embed']}" title="{h(e['name'])}" loading="lazy"
     referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
 </div>"""
-    body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px">
+    body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px"><div class="herogrid herotop"><div>
   <!-- New top, 14 Oct 2026 (ML approved the design draft "Monitor top: proposed vs now"):
        title, one-paragraph lede, the cluster marks, then the summary tiles directly below,
        so the whole picture is on the first screen. The cross-country hero chart moved out:
@@ -3079,7 +3203,10 @@ def monitor():
       <p class="psub">AI-Econ Lab, since 2019 · Örebro University and Ratio · Örebro is a node of
         AISCAF, a research cluster financed by WASP-HS · <a href="#cluster">More from the cluster ↓</a></p>
     </div>
-</div></div>
+    <p class="langsw"><a href="/monitor/" aria-current="page">EN</a> · <a href="/monitor/sv/" lang="sv">SV</a></p>
+  </div>
+  {search_box("en")}
+</div></div></div>
 
 {stat_overview()}
 
@@ -4105,7 +4232,7 @@ def redirect(dest):
 
 PAGES = {"index.html": home(), "monitor/index.html": monitor(), "daioe/index.html": daioe(),
          "monitor/methods/index.html": methods(),
-         "monitor/brief/index.html": brief("en"), "monitor/brief/sv/index.html": brief("sv"),
+         "monitor/brief/index.html": brief("en"), "monitor/sv/index.html": monitor_sv(), "monitor/brief/sv/index.html": brief("sv"),
          "research/index.html": research(), "people/index.html": people(),
          "events/index.html": events(), "news/index.html": news(), "about/index.html": about(),
          # Retired route kept alive for the reminder mails already in people's archives.
@@ -4548,7 +4675,7 @@ def build():
                                  "ClaudeBot", "PerplexityBot", "Googlebot", "Bingbot", "*")]
                    + [f"Sitemap: {BASE}/sitemap.xml", ""]), encoding="utf-8")
     emit_llms(OUT)
-    urls = ["/", "/monitor/", "/monitor/methods/", "/monitor/brief/", "/monitor/brief/sv/",
+    urls = ["/", "/monitor/", "/monitor/sv/", "/monitor/methods/", "/monitor/brief/", "/monitor/brief/sv/",
             "/daioe/", "/research/", "/people/", "/events/", "/news/", "/about/"]
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
