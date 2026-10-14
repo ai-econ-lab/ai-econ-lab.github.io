@@ -857,3 +857,18 @@ ul.tight li{margin:2px 0}
    push a full issue onto a second page (14 Oct 2026). */
 .briefsheet .bsec--cluster .bp { font-size:.88em; color:var(--ink-2); }
 @media print { .bsec--cluster { margin-top:7px; } .bsec--cluster .bp { font-size:8.4pt; } }
+
+/* ── Monitor top, 14 Oct 2026: six tiles, cite strip, function slot (off until signing) ── */
+.ovgrid3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:1020px){.ovgrid3{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.ovgrid3{grid-template-columns:1fr}}
+.ovcard .ok{display:flex;justify-content:space-between;gap:10px}
+.ovcard .otag{color:var(--muted);font-weight:400}
+.citestrip{display:flex;justify-content:space-between;align-items:center;gap:12px 20px;flex-wrap:wrap;
+  margin-top:16px;padding:14px 18px;border:1px solid var(--border);border-radius:12px;font-size:13.5px;color:var(--ink-2)}
+.citestrip .citelinks{display:flex;gap:8px 18px;flex-wrap:wrap;font-family:var(--mono);font-size:12px}
+.fnslot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 18px;padding:10px 14px;
+  border:1px solid var(--border);border-radius:10px}
+.fnslot p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.fnmarks{display:flex;align-items:center;gap:14px}
+.ovcard .ofoot .go{white-space:nowrap;flex-shrink:0}

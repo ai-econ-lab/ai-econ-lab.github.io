@@ -1,0 +1,27 @@
+# The AI Sweden function on the Monitor, READY BUT OFF (ML, 14 Oct 2026).
+#
+# Nothing in this file appears anywhere on the site while `enabled` is false. ML's rule
+# (12 Oct 2026): the function is invisible on the web until the consortium is signed; no page,
+# no "used by" line, no teaser. On signing, ML gives the go, the placeholders below are
+# replaced with the real name, marks and line, and `enabled` is set to true.
+#
+# What switching it on does (build.py, function_slot()):
+#   - a band above the Monitor's title with the function's name, the AI Sweden and partner
+#     marks, and one line placing the Monitor as the open, public part of the function.
+# What is HELD for the function and released under its name on signing (master plan v7, first
+# floor; built internally meanwhile, never published early):
+#   - AI demand by region (county and functional labour-market region): internal preview in
+#     lab-infrastructure/ai-monitor, branch region-demand, demo/region-demand/;
+#   - skills asked for together with AI; who is hiring; exposure beside Yrkesbarometern;
+#     redundancy notices (varsel).
+# Design draft: claude.ai/artifact/F9Noikwd1Tw6FVx5T1K6Vj (the dashed orange slot and box).
+enabled: false
+name: "[FUNCTION NAME]"
+line: "[ONE LINE: the AIEL Monitor is the open, public part of the function]"
+marks: []        # e.g. [{stem: "aisweden", h: 20, alt: "AI Sweden"}], files in assets/logos/ (dark/light ink)
+held:
+  - region_demand
+  - co_occurrence
+  - employers
+  - yrkesbarometer_x_daioe
+  - varsel

@@ -15,12 +15,12 @@ headline: "The AIEL Monitor"
 # spends a paragraph denying it can show, and it is the same defect the note above records
 # catching on 4 Aug in a different sentence. "In unusual depth" was a claim about us. The
 # wording now mirrors the sheet's own subtitle, so the two say the same thing in the same words.
+# Rewritten 14 Oct 2026 from the approved design draft. The draft ended "rests on published
+# research"; the demand series' paper (DAIOE extensions) is not public yet, so the claim is
+# kept to what holds today. No causal verb (see the 4 and 12 Aug notes above).
 lede: >-
-  The AIEL Monitor reports the evidence on artificial intelligence and work, internationally and
-  for Sweden in depth. It is organised around four questions: which jobs are exposed, what
-  employers demand, which firms adopt AI, and how employment and job quality are changing. A fifth
-  module tracks the pace of the technology itself, which the other four are read against. Every indicator
-  is dated and sourced, and built on public data so it can be cited and refreshed automatically.
+  The evidence on artificial intelligence and work, internationally, for Sweden in depth, and
+  increasingly for the Nordic countries. Every number is dated, versioned and sourced.
 
 # Overview-first landing: one door per spine module (Exposure · Demand · Adoption · Outcomes).
 # International-first headline number each; Sweden is the depth cut inside the module. Every figure dated.
@@ -28,9 +28,9 @@ overview:
   # 8 Oct 2026 (Magnus, v1.7): figures on DAIOE g2gen v2025 x EU-LFS 2025 accepted. build.py
   # stat_overview() checks this card against cross_country.yaml (mean, Sweden's share, its rank,
   # the vintage in the foot) and refuses to build if they disagree.
-  - {k: "Exposure", num: "36.5<span>%</span>", lab: "of jobs, on average across 36 European countries, are in the top-25% most AI-exposed occupations (by generative-AI exposure); Sweden 44.3%, third of the 36.", foot: "DAIOE generative-AI composite (g2gen) v2025 · EU-LFS 2025", anchor: "#exposure", cls: ""}
-  - {k: "Demand",   num: "1.9<span>%</span>", lab: "median share of job ads requiring AI across 22 countries in 2025 (Stanford AI Index); Sweden 2.8%.", foot: "AI Index / Lightcast · 2025", anchor: "#demand", cls: "b"}
-  - {k: "Adoption", num: "20<span>%</span>", lab: "of EU firms used AI in 2025, up from 8% in 2023 (Eurostat); Sweden 35%, among the leaders.", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
+  - {k: "Exposure", tag: "36 COUNTRIES · SE", num: "36.5<span>%</span>", lab: "of jobs, on average across 36 European countries, are in the top-25% most AI-exposed occupations (by generative-AI exposure); Sweden 44.3%, third of the 36.", foot: "DAIOE generative-AI composite (g2gen) v2025 · EU-LFS 2025", anchor: "#exposure", cls: ""}
+  - {k: "Demand", tag: "22 COUNTRIES · SE",   num: "1.9<span>%</span>", lab: "median share of job ads requiring AI across 22 countries in 2025 (Stanford AI Index); Sweden 2.8%.", foot: "AI Index / Lightcast · 2025", anchor: "#demand", cls: "b"}
+  - {k: "Adoption", tag: "EU · SE", num: "20<span>%</span>", lab: "of EU firms used AI in 2025, up from 8% in 2023 (Eurostat); Sweden 35%, among the leaders.", foot: "Eurostat · 2025", anchor: "#adoption", cls: "c"}
   # Swapped 1 Aug 2026 (Magnus). This card carried the entry-level squeeze, which is the
   # page's most attackable number: the only module on a different instrument, the only one
   # still counting ad records, and the first thing a competitor goes for. It also left the
@@ -43,14 +43,14 @@ overview:
   # a DIFFERENCE OF GROWTH RATES, which is what this card reports, so the honest figure is
   # −6.6pp (−5.1pp since the move to DAIOE g2gen v2025, 8 Oct 2026). It also makes the claim harder to wave away: real wages flat in every Swedish
   # exposure group over eleven years is a starker null than "+34% nominal".
-  - {k: "Outcomes", num: "−5.1<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.4% against 8.5%); in Sweden real wages are flat in all three exposure groups. No pay premium for exposure in either country.", foot: "SCB · BLS OEWS × DAIOE g2gen v2025 · real terms · SE 2014–2025, US 2015–2025", anchor: "#wages", cls: "d"}
+  - {k: "Outcomes", tag: "US · SE", num: "−5.1<span>pp</span>", lab: "slower REAL wage growth in the most AI-exposed US occupations than in the least exposed, 2015–2025 (3.4% against 8.5%); in Sweden real wages are flat in all three exposure groups. No pay premium for exposure in either country.", foot: "SCB · BLS OEWS × DAIOE g2gen v2025 · real terms · SE 2014–2025, US 2015–2025", anchor: "#wages", cls: "d"}
   # role: driver (4 Aug 2026). Capability is not a fifth question about the labour market:
   # it measures the technology rather than the market, which is why it sits apart. Rendering
   # it as a fifth peer card is what produced the "four questions, five cards" contradiction
   # Schroeder caught. stat_overview() pulls any entry marked driver out of the card grid and
   # renders it as a full-width band beneath. The key name is historical; the label shown to
   # readers is deliberately not causal.
-  - {k: "Capability", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents can finish about half the time; that length has been doubling every 4–6 months.", foot: "METR · May 2026", anchor: "#capability", cls: "e", role: "driver"}
+  - {k: "Capability", tag: "EXTERNAL SERIES", num: "12–17<span>h</span>", lab: "the longest human-expert tasks frontier AI agents can finish about half the time; that length has been doubling every 4–6 months.", foot: "METR · May 2026", anchor: "#capability", cls: "e", role: "driver"}
 
 
 # The AI in Demand module.

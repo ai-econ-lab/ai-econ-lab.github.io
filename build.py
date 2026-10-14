@@ -218,6 +218,8 @@ RELATED  = load("related_research.yaml")
 METHODS  = load("methods.yaml")
 # AISCAF cluster items for the Monitor and the brief (14 Oct 2026); credit rules in the file.
 CLUSTER  = load("cluster.yaml")
+# The AI Sweden function: ready but OFF until the consortium is signed (see the file).
+FUNCTION = load("function.yaml")
 CAPABILITY = (load("capability.yaml") if (DATA / "capability.yaml").exists()
               else MONITOR["capability"])
 ELS      = load("entry_level_squeeze.yaml")
@@ -2898,35 +2900,43 @@ def stat_overview():
                              f"(mean {_cm['mean_share']:.1f}%, Sweden {_rank[_se]['share']:.1f}% {_ord[_se]} of "
                              f"{_cm['n_countries']}, {_cm['variant']} {_cm['daioe_version']}, EU-LFS "
                              f"{_cm['weight_year']}); checks {want}. Retype the card.")
-    cards = ""
+    # Six tiles, three by two (ML, 14 Oct 2026, from the approved design draft): the five
+    # overview entries plus a "Demand · Sweden in depth" tile, which is GENERATED from the same
+    # trend data the Swedish chart draws (floor and ceiling of the last full year, and the
+    # whole-text multiple of 2006-08), never typed. Capability keeps its tag "external series":
+    # it measures the technology, not the labour market (Schroeder, 4 Aug 2026).
+    t = TREND["trend"]; tm = TREND["meta"]; pf = t["provisionalFrom"]
+    _yr, _fl, _ce = t["years"][pf - 1], t["floor_values"][pf - 1], t["ceiling_values"][pf - 1]
+    _mult = int(round(float(tm["multiple"]) / 10.0) * 10)
+    se_tile = {"k": "Demand · Sweden in depth", "tag": "LIVE",
+               "num": f'{_fl:.2f}–{_ce:.2f}<span>%</span>',
+               "lab": (f"of Swedish job ads in {_yr} asked for AI skills, floor to ceiling, on our measure. "
+                       f"Ads naming an AI skill: about {_mult} times the {tm['base_years'].replace('-', '–')} level."),
+               "foot": f"JobTech / Platsbanken · {DEF_VERSION} · distinct ads · {_yr}",
+               "anchor": "#demand", "cls": "b"}
+    order = []
     for o in MONITOR["overview"]:
-        if o.get("role") == "driver":
-            continue
+        order.append(o)
+        if o["k"] == "Demand":
+            order.append(se_tile)
+    cards = ""
+    for o in order:
         cls = f' {o["cls"]}' if o["cls"] else ""
+        tag = f'<span class="otag">{h(o.get("tag", ""))}</span>' if o.get("tag") else ""
         cards += (f'<a class="ovcard{cls}" href="{o["anchor"]}"><div class="stripe"></div>'
-                  f'<div class="ok">{h(o["k"])}</div><div class="onum">{o["num"]}</div>'
+                  f'<div class="ok"><span>{h(o["k"])}</span>{tag}</div><div class="onum">{o["num"]}</div>'
                   f'<div class="olab">{h(o["lab"])}</div>'
                   f'<div class="ofoot"><span>{h(o["foot"])}</span><span class="go">Open →</span></div></a>')
-    band = ""
-    for o in MONITOR["overview"]:
-        if o.get("role") != "driver":
-            continue
-        band += (f'<a class="driverband" href="{o["anchor"]}">'
-                 f'<div class="dnum">{o["num"]}</div>'
-                 f'<div class="dbody"><div class="dk">{h(o["k"])} · the technology itself, tracked separately</div>'
-                 f'<p>{h(o["lab"])}</p></div>'
-                 f'<div class="dfoot"><span>{h(o["foot"])}</span><span class="go">Open →</span></div></a>')
-    return f"""<div class="rule" id="overview"><div class="wrap"><section>
-  <p class="kicker">The whole picture, in one glance</p>
-  <h2 class="sec">From what the technology can do to what happens to jobs and pay.</h2>
-  <p class="secintro">The four modules follow one chain. Exposure asks which jobs sit in AI's path; demand asks
-    what employers are actually hiring for; adoption asks who is using AI in practice; outcomes asks what happens
-    to employment, entry-level hiring and wages. A fifth band, Capability, tracks the technology itself: it
-    measures what AI can do rather than the labour market, which is why it sits apart below the four. One
-    international headline each, with Sweden as the depth cut inside every module. Every figure is
-    public and dated; open a card to jump to the module.</p>
-  <div class="ovgrid">{cards}</div>
-  {band}
+    # One strip under the tiles: how to cite, and the four doors a returning reader wants.
+    _fz = _frozen_date()
+    strip = (f'<div class="citestrip"><span>Cite: AI-Econ Lab (2026). <i>AIEL Monitor</i> {DEF_VERSION} '
+             f'(frozen {h(_fz)}). Every figure also has its own Cite link.</span>'
+             f'<span class="citelinks"><a href="/monitor/brief/">Monthly brief</a>'
+             f'<a href="/aiel-monitor-onepager.pdf">The whole picture, 2 pages (PDF)</a>'
+             f'<a href="/monitor/methods/">Method and validation</a><a href="/research/">Working papers</a></span></div>')
+    return f"""<div class="rule" id="overview"><div class="wrap"><section style="padding-top:8px">
+  <div class="ovgrid ovgrid3">{cards}</div>
+  {strip}
 </section></div></div>"""
 
 def subnav():
@@ -2996,6 +3006,18 @@ def partner_strip():
             f'three nodes of AISCAF, a research cluster financed by WASP-HS. The cluster funds '
             f'part of the lab\'s team.</p></div>')
 
+def function_slot():
+    """The AI Sweden function's band above the Monitor's title. OFF until the consortium is
+    signed (data/function.yaml, enabled: false); returns nothing until then. Built now so it
+    is ready on signing day (ML, 14 Oct 2026)."""
+    f = FUNCTION
+    if not f.get("enabled"):
+        return ""
+    marks = "".join(partner_mark(m_["stem"], m_["h"], m_["alt"]) for m_ in f.get("marks", []))
+    return (f'<div class="fnslot"><div class="fnmarks">{marks}</div>'
+            f'<p><b>{h(f["name"])}</b> · {h(f["line"])}</p></div>')
+
+
 def cluster_section():
     """The AISCAF cluster on the Monitor (14 Oct 2026). Others' work is shown as theirs, with full
     credit and a link to the producer; see the rules at the top of data/cluster.yaml."""
@@ -3042,32 +3064,26 @@ def monitor():
   <div class="embedwrap"><iframe src="{e['embed']}" title="{h(e['name'])}" loading="lazy"
     referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe></div>
 </div>"""
-    body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px"><div class="herogrid">
-  <div><div class="eyebrow"><span class="dot"></span> Public monitor · international context, Sweden in depth · updated as the data arrive</div>
+    body = f"""<div class="wrap"><div class="hero" style="padding-bottom:10px">
+  <!-- New top, 14 Oct 2026 (ML approved the design draft "Monitor top: proposed vs now"):
+       title, one-paragraph lede, the cluster marks, then the summary tiles directly below,
+       so the whole picture is on the first screen. The cross-country hero chart moved out:
+       the Exposure tile now carries the international opener, and Module 1 the full chart. -->
+  {function_slot()}
+  <div class="eyebrow"><span class="dot"></span> By researchers, for researchers and society</div>
     <h1 class="title">{h(m['headline'])}</h1>
-    <p class="lede">{h(m['lede'])}</p>
-    <!-- A byline, not a paragraph. The first version put three lines of credit ABOVE the H1,
-         where it competed with the headline and read as the page's opening statement. The
-         footer strip carries the full two-facts wording; here one line is enough to make the
-         association visible in the first screen, which was the whole point. -->
-    <!-- 14 Oct 2026 (ML): the marks themselves under the title, not only words, so the cluster
-         is visible in the first screen; the link goes to the cluster section further down. -->
+    <p class="lede" style="max-width:62ch">{h(m['lede'])}</p>
     <div class="herocluster">
       <a class="hcmarks" href="https://www.aiscaf.se/w/ac/" aria-label="AISCAF">{partner_mark("aiscaf", 22, "AISCAF")}</a>
       <a class="hcmarks" href="https://wasp-hs.org" aria-label="WASP-HS">{partner_mark("wasphs", 11, "WASP-HS")}</a>
       <p class="psub">AI-Econ Lab, since 2019 · Örebro University and Ratio · Örebro is a node of
         AISCAF, a research cluster financed by WASP-HS · <a href="#cluster">More from the cluster ↓</a></p>
     </div>
-    <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
-      {sheet_pair()}
-      <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a></div>
-    <div class="cta-row"><a class="btn ghost" href="/monitor/methods/">How we measure it</a></div></div>
-  {hero_exposure_panel("#method", "#exposure")}
-</div></div></div>
-
-<div class="wrap" style="padding-bottom:6px">{sweden_trend_panel("#method")}</div>
+</div></div>
 
 {stat_overview()}
+
+<div class="wrap" style="padding-bottom:6px">{sweden_trend_panel("#method")}</div>
 
 {subnav()}
 
