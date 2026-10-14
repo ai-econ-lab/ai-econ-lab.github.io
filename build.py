@@ -216,6 +216,8 @@ N_OCC_SSYK = DAIOE_OCC['sets']['ssyk']['n']
 AKAVIA   = load("akavia.yaml")
 RELATED  = load("related_research.yaml")
 METHODS  = load("methods.yaml")
+# AISCAF cluster items for the Monitor and the brief (14 Oct 2026); credit rules in the file.
+CLUSTER  = load("cluster.yaml")
 CAPABILITY = (load("capability.yaml") if (DATA / "capability.yaml").exists()
               else MONITOR["capability"])
 ELS      = load("entry_level_squeeze.yaml")
@@ -952,7 +954,34 @@ def figfooter(csv_name, source, svg_name=None, method_href=None, next_up=None):
                f'title="High-resolution PNG on a white ground, sized for Beamer and PowerPoint slides">↓ PNG (slides)</button>')
     nxt = f'<span class="fignext">Next: {h(next_up)}</span>' if next_up else ""
     meth = f'<a class="figml" href="{h(method_href)}">Method &amp; sources →</a>' if method_href else ""
-    return f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span>{nxt}{meth}</div>'
+    return (f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span>{nxt}{meth}'
+            f'{figcite(source)}</div>')
+
+
+def _frozen_date():
+    """The freeze date of the live definition, from methods.yaml (the citable record)."""
+    for v in METHODS.get("versions", []):
+        if v.get("version") == DEF_VERSION:
+            return v.get("frozen", "")
+    return ""
+
+
+def figcite(source):
+    """A "Cite" disclosure under every figure (14 Oct 2026, ML).
+
+    PRODUCER FIRST. A series the lab builds itself (the job-advertisement series, DAIOE on its
+    own) is cited as the AIEL Monitor, version and freeze date. A series someone else produces
+    (SCB, Eurostat, Akavia, Stanford, Tillväxtanalys, ...) is cited to its producer first, with
+    the Monitor only as where it was compiled: credit goes to whom credit is due. No DOI for now
+    (ML, 12 Oct 2026); the version and freeze date make the citation stable."""
+    ours = source.startswith(("JobTech", "DAIOE", "AIEL"))
+    mon = f"AIEL Monitor {DEF_VERSION} (frozen {_frozen_date()}). Örebro University and Ratio. https://ai-econlab.com/monitor/"
+    if ours:
+        txt = f"AI-Econ Lab (2026). {mon}. Data: {source}. Accessed [date]."
+    else:
+        txt = f"{source}. Compiled in: AI-Econ Lab (2026), {mon}. Accessed [date]."
+    return (f'<details class="figcite"><summary>Cite</summary>'
+            f'<p>{h(txt)}</p></details>')
 
 def dotplot(cc):
     """Server-rendered ranked dot plot (Cleveland) — dots, not bars, since the index is
@@ -1388,7 +1417,10 @@ def washing_stack_svg(t, lang="en"):
     pc = (lambda v: f"{v:.1f}".replace(".", ",") + " %") if lang == "sv" else (lambda v: f"{v:.1f}%")
     # 170/144 (was 208/182), 30 Sep 2026: Lydia's longer Swedish text needed the lines.
     W, H = 640, 170
-    x0, x1, top, bot = 34, 452, 26, 144
+    # The Swedish gutter labels are longer ("= AI-efterfrågan, högst 1,5 %"); at x1=452 the bold
+    # line ran past the viewBox and the brief and the Swedish social card showed "1,5" with the
+    # "%" cut off (found 8 Oct, fixed 14 Oct 2026). The plot gives up the width instead.
+    x0, x1, top, bot = 34, (432 if lang == "sv" else 452), 26, 144
     ymax = max(al) * 1.05
     X = lambda i: x0 + i / (n - 1) * (x1 - x0)
     Y = lambda v: bot - v / ymax * (bot - top)
@@ -1433,7 +1465,7 @@ def washing_stack_svg(t, lang="en"):
     rows = [  # (y, text, bold, colour, swatch)
         (Y(fl[-1] / 2), L(f"Floor {pc(fl[-1])}", f"Golv {pc(fl[-1])}"), False, ink, ("var(--c1)", .95)),
         (Y(fl[-1] + add / 2), L(f"+ up to ceiling {pc(add)}", f"+ upp till taket {pc(add)}"), False, ink, ("var(--c1)", .38)),
-        (Y(ce[-1]), L(f"= AI demand, up to {pc(ce[-1])}", f"= AI-efterfrågan, upp till {pc(ce[-1])}"), True, "var(--c1)", None),
+        (Y(ce[-1]), L(f"= AI demand, up to {pc(ce[-1])}", f"= AI-efterfrågan, högst {pc(ce[-1])}"), True, "var(--c1)", None),
         (Y(ce[-1] + rest / 2), L(f"+ AI talk {pc(rest)}", f"+ AI-prat {pc(rest)}"), False, ink, ("var(--muted)", .32)),
         (Y(al[-1]), L(f"= every mention of AI {pc(al[-1])}", f"= alla som nämner AI {pc(al[-1])}"), True, ink, None),
     ]
@@ -2901,7 +2933,7 @@ def subnav():
     """Sticky spine nav under the masthead; scrollspy in app.js marks the active module."""
     items = [("#exposure", "Exposure"), ("#demand", "Demand"),
              ("#adoption", "Adoption"), ("#outcomes", "Outcomes"),
-             ("#capability", "Capability")]
+             ("#capability", "Capability"), ("#cluster", "AISCAF")]
     links = "".join(f'<a href="{a}" data-spy="{a[1:]}">{t}</a>' for a, t in items)
     return f'<nav class="subnav" aria-label="Monitor modules"><div class="wrap">{links}</div></nav>'
 
@@ -2962,6 +2994,26 @@ def partner_strip():
             f'three nodes of AISCAF, a research cluster financed by WASP-HS. The cluster funds '
             f'part of the lab\'s team.</p></div>')
 
+def cluster_section():
+    """The AISCAF cluster on the Monitor (14 Oct 2026). Others' work is shown as theirs, with full
+    credit and a link to the producer; see the rules at the top of data/cluster.yaml."""
+    cards = ""
+    for it in CLUSTER["items"]:
+        links = " · ".join(f'<a href="{h(l["href"])}">{h(l["label"])} →</a>' for l in it.get("links", []))
+        cite = (f'<details class="figcite"><summary>Cite</summary><p>{h(it["cite"])}</p></details>'
+                if it.get("cite") else "")
+        cards += (f'<div class="prod clcard"><p class="kicker" style="margin:0 0 6px">{h(it["kicker"])}</p>'
+                  f'<h3>{h(it["title"])}</h3><p>{h(it["text"])}</p>'
+                  f'<p class="mono" style="font-size:12px;margin:8px 0 0">{links}</p>{cite}</div>')
+    return f"""<div class="rule" id="cluster"><div class="wrap"><section>
+  <p class="kicker">AISCAF · the research cluster</p>
+  <h2 class="sec">The Monitor and the cluster around it.</h2>
+  <p class="secintro">{h(CLUSTER["intro"])}</p>
+  <div class="clgrid">{cards}</div>
+  {partner_strip()}
+</section></div></div>"""
+
+
 def monitor():
     m = MONITOR
     tiles = ""
@@ -2996,10 +3048,14 @@ def monitor():
          where it competed with the headline and read as the page's opening statement. The
          footer strip carries the full two-facts wording; here one line is enough to make the
          association visible in the first screen, which was the whole point. -->
-    <p class="psub" style="margin:8px 0 0;font-size:12.5px;opacity:.85">AI-Econ Lab, since 2019 ·
-      Örebro University and Ratio · Örebro is a node of
-      <a href="https://www.aiscaf.se/w/ac/">AISCAF</a>, financed by
-      <a href="https://wasp-hs.org">WASP-HS</a></p>
+    <!-- 14 Oct 2026 (ML): the marks themselves under the title, not only words, so the cluster
+         is visible in the first screen; the link goes to the cluster section further down. -->
+    <div class="herocluster">
+      <a class="hcmarks" href="https://www.aiscaf.se/w/ac/" aria-label="AISCAF">{partner_mark("aiscaf", 22, "AISCAF")}</a>
+      <a class="hcmarks" href="https://wasp-hs.org" aria-label="WASP-HS">{partner_mark("wasphs", 11, "WASP-HS")}</a>
+      <p class="psub">AI-Econ Lab, since 2019 · Örebro University and Ratio · Örebro is a node of
+        AISCAF, a research cluster financed by WASP-HS · <a href="#cluster">More from the cluster ↓</a></p>
+    </div>
     <div class="cta-row"><a class="btn primary" href="#exposure">See it across countries →</a>
       {sheet_pair()}
       <a class="btn ghost" href="/monitor/brief/">Monthly brief (PDF) →</a></div>
@@ -3022,6 +3078,8 @@ def monitor():
 {outcomes_section(explorers)}
 
 {capability_section()}
+
+{cluster_section()}
 
 <div class="rule" id="method"><div class="wrap"><section>
   <p class="kicker">Method · sources, versions and limits</p>
@@ -3055,11 +3113,12 @@ def monitor():
       series only when its coverage has been measured, not when access has been arranged.</p>
     <h3>Caveats, in plain sight</h3><ul style="color:var(--ink-2);font-size:14px;line-height:1.6">{caveats}</ul>
     <h3>How to cite</h3>
-    <p>The monitor is a citable public good. Please cite the specific version and date, and the underlying source
-      shown in each figure's footer (for example DAIOE generative-AI composite (g2gen) v2025, or Eurostat 2025).</p>
-    <p class="citebox">AI-Econ Lab (2026). AIEL Monitor: [module]. Örebro University and Ratio. [source and version
-      from the figure footer]. Accessed [date], https://ai-econlab.com/monitor/</p>
-    {partner_strip()}
+    <p>The monitor is a citable public good. Every figure has a <b>Cite</b> link under it. Our own series
+      (the job-advertisement series and DAIOE) are cited as the Monitor, by version and freeze date. A series
+      someone else produces is cited to that producer first (SCB, Eurostat, Akavia, Tillväxtanalys and so on),
+      with the Monitor as where it was compiled. Work by others in the AISCAF cluster is cited to its authors.</p>
+    <p class="citebox">AI-Econ Lab (2026). AIEL Monitor {DEF_VERSION} (frozen {_frozen_date()}). Örebro University and
+      Ratio. https://ai-econlab.com/monitor/. Accessed [date].</p>
   </div>
 </section></div></div>"""
     return shell(f"The AI-Econ Lab Monitor · {SITE['brand']['name']}",
@@ -3478,8 +3537,8 @@ def brief(lang="en"):
         "demand": f"{dm['meta']['source']}, {dm['meta']['year']}",
         "adoption": L(f"{SWEAD['meta']['source']}, {SWEAD['meta']['year']}",
                       f"SCB, IT-användning i företag (NV0116), {SWEAD['meta']['year']}"),
-        "washing": L(f"JobTech / Platsbanken job advertisements, {DEF_LABEL}",
-                     f"JobTech / Platsbanken jobbannonser, termlista {DEF_VERSION}"),
+        "washing": L(f"JobTech / Platsbanken job advertisements, {DEF_LABEL} · distinct advertisements",
+                     f"JobTech / Platsbanken jobbannonser, termlista {DEF_VERSION} · unika annonser"),
         "barriers": L(f"{BARRIERS['meta']['source']}, {BARRIERS['meta']['year']}",
                       f"Eurostat, isoc_eb_ain2, {BARRIERS['meta']['year']}"),
         "outcomes": L(f"{ELS['meta']['source']} × DAIOE {ELS['meta']['daioe_variant']} {ELS['meta']['daioe_version']}",
@@ -3840,6 +3899,16 @@ def brief(lang="en"):
                    'använda, granska och citera samma siffror.'),
         },
     }
+    # The cluster, every issue (ML, 14 Oct 2026): the standing line in the footer says the lab
+    # contributes to AISCAF and is funded through it; an issue may add one fully credited item.
+    _cb = CLUSTER["brief"]
+    _ci = _cb["issues"].get(issue, {})
+    _clang = "sv" if sv else "en"
+    # A run-in lead, not a section heading: a heading cost the two lines that pushed the
+    # October issue onto a second page.
+    cluster_sec = (f'<section class="bsec bsec--cluster">'
+                   f'<p class="bp"><strong>{L("In the AISCAF cluster.","I AISCAF-klustret.")}</strong> '
+                   f'{_ci[_clang]}</p></section>') if _ci else ""
     _news = LABNEWS.get(issue)
     news_sec = (f'<section class="bsec"><h2 class="bh2">{L("From the lab","Från labbet")}</h2>\n'
                 f'    <p class="bp">{_news["sv" if sv else "en"]}</p></section>') if _news else ""
@@ -3869,17 +3938,18 @@ def brief(lang="en"):
   <section class="bsec bsec--note"><h2 class="bh2">{h(h_lim)}</h2>
     <p class="bp">{limits[theme]}</p></section>
 
+  {cluster_sec}
+
   {news_sec}
 
   <footer class="bfooter">
-    <div class="bfoot-row">
-      <span>AI-Econ Lab · AIEL Monitor · {issue}. {L("Public data; cite the version and date.","Öppna data; ange version och datum vid citering.")}</span>
-      <span>ai-econlab.com/monitor</span>
-    </div>
+    <!-- ONE block since 14 Oct 2026: the marks, with the issue line and the standing cluster
+         line beside them (ML: every brief signals that the lab contributes to AISCAF and is funded
+         through it; text in data/cluster.yaml). Two stacked rows cost the line that pushed the
+         Swedish October issue onto a second page. -->
     <div class="bpartner">
       <div class="bpartner-marks">{partner_mark("aiscaf", 18, "AISCAF")}{partner_mark("wasphs", 9, "WASP-HS")}</div>
-      <span>{L("The AI-Econ Lab is based at Örebro University and RATIO. Örebro University is one of the three nodes of AISCAF, a research cluster financed by WASP-HS. The cluster funds part of the lab&#39;s team.",
-                "AI-Econ Lab är baserat vid Örebro universitet och RATIO. Örebro universitet är en av tre noder i AISCAF, ett forskningskluster som finansieras av WASP-HS. Klustret finansierar en del av labbets medarbetare.")}</span>
+      <span>AIEL Monitor · {issue} · {L("Örebro University and RATIO","Örebro universitet och RATIO")} · ai-econlab.com/monitor<br>{_cb["standing"][_clang]}</span>
     </div></footer>
 </article></div>"""
     return shell(f"{L('AIEL Monitor Brief','AIEL Monitor-brief')}, {mname} {today.year} · {SITE['brand']['name']}",

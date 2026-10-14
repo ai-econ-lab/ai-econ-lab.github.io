@@ -686,7 +686,7 @@ main [id]{scroll-margin-top:196px}
   .kicker { font-size:8pt; }
     /* footer{background:navy} is the SITE footer's rule and .bfooter is also a <footer>, so
      unsetting the band is part of keeping it. */
-  .bfooter { margin-top:10px; padding-top:6px; font-size:7.6pt; background:none;
+  .bfooter { margin-top:7px; padding-top:5px; font-size:7.6pt; background:none;
     color:var(--muted); flex-wrap:nowrap; gap:14px; break-inside:avoid; }
   /* On screen the measure is capped at 64ch for reading comfort in a 820px column. On A4 the
      column IS the page, so keeping the cap wastes a third of the sheet and pushes the brief
@@ -839,3 +839,21 @@ ul.tight li{margin:2px 0}
    general audience needs at the same weight as the finding. Smaller and greyer, not hidden. */
 .briefsheet .bsec--note .bh2 { opacity: .72; }
 .briefsheet .bsec--note .bp { font-size: .88em; color: var(--ink-2); opacity: .92; }
+
+/* ── AISCAF cluster and citations (14 Oct 2026) ─────────────────────────── */
+.herocluster { display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px; margin:10px 0 0; }
+.herocluster .hcmarks { display:inline-flex; align-items:center; text-decoration:none; }
+.herocluster .hcmarks img { opacity:.9; }
+.herocluster .psub { margin:0; font-size:12.5px; opacity:.85; flex:1 1 260px; }
+.clgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:18px; }
+.clcard h3 { font-size:16px; line-height:1.3; }
+.figcite { flex-basis:100%; font-family:var(--mono); font-size:11.5px; color:var(--muted); }
+.figcite summary { cursor:pointer; color:var(--blue); display:inline; list-style:none; }
+.figcite summary::-webkit-details-marker { display:none; }
+.figcite p { margin:6px 0 0; font-family:var(--sans,system-ui); font-size:12.5px; color:var(--ink-2);
+  user-select:all; overflow-wrap:anywhere; }
+@media print { .figcite { display:none; } }
+/* The brief's cluster note reads as a note, at the size of the limits note, so it does not
+   push a full issue onto a second page (14 Oct 2026). */
+.briefsheet .bsec--cluster .bp { font-size:.88em; color:var(--ink-2); }
+@media print { .bsec--cluster { margin-top:7px; } .bsec--cluster .bp { font-size:8.4pt; } }

@@ -1,0 +1,73 @@
+# The AISCAF cluster on the Monitor and in the brief (ML, 14 Oct 2026).
+#
+# Two rules govern everything in this file.
+# 1. CREDIT IS ASYMMETRIC. The lab's own items stay AIEL-branded. Every item from others in the
+#    cluster carries FULL credit (authors, institution, the publication and its date) and links
+#    to the producer's own page, with the Monitor only as the access point. Oskar Nordström
+#    Skans agreed on 12 Oct 2026 (AISCAF CLT, Uppsala) that the Monitor may spread the
+#    Tillväxtanalys results now and henceforth on exactly that condition.
+# 2. THE AI SWEDEN FUNCTION IS NOT MENTIONED until the consortium is signed.
+# Never write "realtid"/"real-time" in our own prose (a published title is quoted as published).
+#
+# Titles are verbatim from the publisher. Tillväxtanalys Rapport 2026:17 is published as
+# "Strukturomvandligen" (sic) on its page and cover; the PDF filename says "Strukturomvandlingen".
+# Quote the publisher, do not correct it.
+
+intro: >-
+  The Monitor is one of the AI-Econ Lab's contributions to AISCAF, a research cluster on AI,
+  structural change and the future of work, financed by WASP-HS, with nodes in Uppsala, Stockholm
+  and Örebro. Other researchers in the cluster
+  follow the same questions with other data. Their results are theirs: we point to them here, with
+  full credit, so that readers find the cluster's monitoring in one place and cite it at its source.
+
+items:
+  - kicker: "Uppsala University and Tillväxtanalys · 30 September 2026"
+    title: "Strukturomvandligen och AI: En realtidsanalys av produktivitet, dynamik, och ungdomars arbetsmarknadsinträde"
+    text: >-
+      Oskar Nordström Skans and Leo Sokolow Romin (Uppsala University, AISCAF) follow productivity,
+      labour-market flows and the entry of new graduates in administrative registers, in a project
+      with Tillväxtanalys. Their first report finds no clear sign yet of a broad AI-driven structural
+      change in the economy as a whole, but outcomes for new graduates from fields where AI is judged
+      especially relevant have deteriorated since 2023. The two complement each other: job
+      advertisements show what employers ask for, registers show who was hired, moved and paid.
+    cite: >-
+      Nordström Skans, O. and Sokolow Romin, L. (2026). Strukturomvandligen och AI: En realtidsanalys
+      av produktivitet, dynamik, och ungdomars arbetsmarknadsinträde. Rapport 2026:17. Östersund:
+      Tillväxtanalys.
+    links:
+      - {label: "The report (Tillväxtanalys)", href: "https://www.tillvaxtanalys.se/publikationer/rapport/rapportserien/strukturomvandligenochai.129145.html"}
+      - {label: "Summary in English (WASP-HS)", href: "https://wasp-hs.org/how-ai-affects-the-swedish-economy-and-labour-market/"}
+  - kicker: "Seminars · AI-Econ Lab, part of AISCAF"
+    title: "The AI-Econ Lab brown-bag seminar series"
+    text: >-
+      The lab's online seminar series has been part of AISCAF since autumn 2025: research on AI
+      and work, presented by its authors, open to all.
+    links:
+      - {label: "Seminars and events", href: "/events/"}
+  - kicker: "AISCAF"
+    title: "The whole cluster"
+    text: >-
+      Researchers, publications and media from all three nodes.
+    links:
+      - {label: "AISCAF publications", href: "https://www.aiscaf.se/w/ac/publications"}
+      - {label: "People at AISCAF", href: "https://www.aiscaf.se/w/ac/people-at-aiscaf"}
+
+# The brief. Every issue carries the standing line, so readers always see that the lab both
+# contributes to the cluster and is funded through it (ML, 14 Oct 2026: "the briefs henceforth
+# clearly signal that we also contribute / benefit from the cluster"). An issue may add one
+# cluster item, credited in full, keyed "YYYY-MM"; most months will have none.
+brief:
+  standing:
+    # One printed line in the brief footer (mono, beside the marks), so keep it under ~70 characters.
+    en: "The lab contributes to AISCAF (WASP-HS), which funds part of the lab."
+    sv: "Labbet bidrar till AISCAF (WASP-HS), som finansierar delar av labbet."
+  issues:
+    "2026-10":
+      en: >-
+        Nordström Skans and Sokolow Romin (Uppsala University) find, in their first report with
+        Tillväxtanalys (<a href="https://www.tillvaxtanalys.se/publikationer/rapport/rapportserien/strukturomvandligenochai.129145.html">Rapport 2026:17</a>), worse outcomes since 2023 for new
+        graduates in fields where AI is especially relevant.
+      sv: >-
+        Nordström Skans och Sokolow Romin (Uppsala universitet) finner i sin första rapport med
+        Tillväxtanalys (<a href="https://www.tillvaxtanalys.se/publikationer/rapport/rapportserien/strukturomvandligenochai.129145.html">Rapport 2026:17</a>) sämre utfall sedan 2023 för
+        nyutexaminerade inom AI-relevanta utbildningar.

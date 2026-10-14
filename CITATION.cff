@@ -1,0 +1,15 @@
+# How to cite the AIEL Monitor (14 Oct 2026). Our own series are cited as below; a series another
+# producer publishes (SCB, Eurostat, Akavia, Tillväxtanalys, ...) is cited to that producer first,
+# as the "Cite" link under each figure on https://ai-econlab.com/monitor/ shows. No DOI for now.
+cff-version: 1.2.0
+message: "If you use the AIEL Monitor, please cite it by version and freeze date, and cite third-party series to their producers."
+type: dataset
+title: "AIEL Monitor"
+version: "v1.7"
+date-released: "2026-10-08"
+authors:
+  - name: "AI-Econ Lab, Örebro University and Ratio"
+url: "https://ai-econlab.com/monitor/"
+repository-code: "https://github.com/ai-econ-lab/ai-econ-lab.github.io"
+abstract: "A public monitor of AI in the labour market, with international context and Sweden in depth: exposure, advertised demand for AI skills, adoption and outcomes. Definition v1.7, frozen 7 October 2026, fingerprint 3b8c171efd1aec68. One of the AI-Econ Lab's contributions to AISCAF, a research cluster financed by WASP-HS."
+keywords: ["artificial intelligence", "labour market", "job advertisements", "Sweden", "AISCAF"]
