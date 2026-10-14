@@ -2933,7 +2933,9 @@ def subnav():
     """Sticky spine nav under the masthead; scrollspy in app.js marks the active module."""
     items = [("#exposure", "Exposure"), ("#demand", "Demand"),
              ("#adoption", "Adoption"), ("#outcomes", "Outcomes"),
-             ("#capability", "Capability"), ("#cluster", "AISCAF")]
+             ("#capability", "Capability")]
+    # No "AISCAF" item (ML, 14 Oct 2026): in this row it read as a sixth theme of AI's impact.
+    # The cluster section is reached from the hero's "More from the cluster" link instead.
     links = "".join(f'<a href="{a}" data-spy="{a[1:]}">{t}</a>' for a, t in items)
     return f'<nav class="subnav" aria-label="Monitor modules"><div class="wrap">{links}</div></nav>'
 
