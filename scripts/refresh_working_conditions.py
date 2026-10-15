@@ -13,7 +13,7 @@ daioe_g2gen (the second-generation generative composite), score year 2025, check
 bundle's SHA256SUMS. Each 4-digit occupation gets its tie-invariant midrank percentile within the
 year (the bundle README's convention); a 2-digit group's exposure is the mean percentile of its
 4-digit occupations, as before. Until 8 Oct the input was the legacy genai index, 2023, from
-ai-monitor's F0 file (data/daioe_subdomains_ssyk4.csv). `--legacy` reproduces that file.
+ai-monitor's F0 file, frozen since 15 Oct 2026 as data/legacy/daioe_subdomains_ssyk4_pre-release_2026-07-18.csv. `--legacy` reproduces it.
 Rerun this, then build.py.
 """
 import json, csv, hashlib, os, statistics as st, sys, urllib.request
@@ -23,7 +23,7 @@ from pathlib import Path
 from monitor_root import MONITOR_ROOT
 
 ROOT = Path(__file__).resolve().parent.parent
-DAIOE_CSV = MONITOR_ROOT / "data/daioe_subdomains_ssyk4.csv"     # legacy input, --legacy only
+DAIOE_CSV = MONITOR_ROOT / "data/legacy/daioe_subdomains_ssyk4_pre-release_2026-07-18.csv"  # frozen, --legacy only
 WORKSPACE = Path(os.environ.get("AIEL_WORKSPACE", ROOT.parents[1]))
 BUNDLE = WORKSPACE / "lab-infrastructure/daioe-pipeline/dist/daioe-v1.1.0-scores"
 PANEL = "vintage-2025/daioe_ssyk2012.tsv"
