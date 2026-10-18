@@ -48,7 +48,7 @@ seasons:
           - {label: "Paper", url: "https://www.imf.org/en/Publications/WP/Issues/2023/10/04/Labor-Market-Exposure-to-AI-Cross-country-Differences-and-Distributional-Implications-539656"}
           - {label: "Slides", url: "/assets/seminars/2026-09-11_pizzinelli_labor-market-exposure-to-ai_slides.pdf"}
       - {date: "2026-10-09", speaker: "Kristina Palm", affil: "Karlstad University",
-         title: "Working with robots — from a work-environment perspective",
+         title: "Robots at Work: Emotional Labour, Social Relations, and the Work Environment",
          links: [{label: "Speaker", url: "https://www.kau.se/forskare/kristina-palm"}]}
       - {date: "2026-11-13", speaker: "Joelle Saad-Lessler", affil: "Stevens Institute of Technology",
          title: "TBD",
@@ -56,7 +56,8 @@ seasons:
       - {date: "2026-12-11", speaker: "Dennis Facius & Roberto Iacono", affil: "EUI · NTNU", title: "TBD",
          links: [{label: "Facius", url: "https://www.eui.eu/people?id=dennis-facius"}, {label: "Iacono", url: "https://robertoiacono.org"}]}
       - {date: "2027-02-12", speaker: "TBD", affil: "", title: "TBD", links: []}
-      - {date: "2027-03-12", speaker: "TBD", affil: "", title: "TBD", links: []}
+      - {date: "2027-03-12", speaker: "Oliver Schlenker", affil: "ifo Institute · IAB", title: "TBD",
+         links: [{label: "Speaker", url: "https://www.ifo.de/schlenker-o"}]}
       - {date: "2027-04-09", speaker: "TBD", affil: "", title: "TBD", links: []}
       - {date: "2027-05-14", speaker: "TBD", affil: "", title: "TBD", links: []}
   - name: "2025 / 2026"
