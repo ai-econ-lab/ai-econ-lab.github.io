@@ -3028,6 +3028,8 @@ def partner_strip():
     mark = partner_mark
     # NOT "Part of". The lab was initiated in 2019 and AISCAF in September 2025, and the lab
     # is not inside the cluster: Örebro is a node, and the cluster funds part of the team.
+    # Strip and hero say "a WASP-HS research cluster" at WASP-HS's request (Christofer,
+    # 18 Oct 2026); the funding itself is stated on About (site.yaml) and in the brief line.
     # "Part of" claims the first thing and implies the cluster came first; "contributes to",
     # which the About page used to say, errs the other way and hides the funding entirely.
     # Stating the two facts and the date lets a preposition stop doing work it cannot do.
@@ -3037,8 +3039,7 @@ def partner_strip():
             f'{mark("aiscaf", 30, "AISCAF")}{mark("wasphs", 15, "WASP-HS")}</div>'
             f'<p class="psub" style="margin:10px 0 0;font-size:12.5px">AI-Econ Lab, since 2019 · '
             f'The lab is based at Örebro University and Ratio. Örebro University is one of the '
-            f'three nodes of AISCAF, a research cluster financed by WASP-HS. The cluster funds '
-            f'part of the lab\'s team.</p></div>')
+            f'three nodes of AISCAF, a WASP-HS research cluster.</p></div>')
 
 def _country_rows():
     """One row per country for the search box: exposure, firm adoption and job-ad demand where
@@ -3109,7 +3110,7 @@ def monitor_sv():
       <a class="hcmarks" href="https://www.aiscaf.se/w/ac/" aria-label="AISCAF">{partner_mark("aiscaf", 22, "AISCAF")}</a>
       <a class="hcmarks" href="https://wasp-hs.org" aria-label="WASP-HS">{partner_mark("wasphs", 11, "WASP-HS")}</a>
       <p class="psub">AI-Econ Lab sedan 2019 · Örebro universitet och Ratio · Örebro är en nod i AISCAF, ett
-        forskningskluster som finansieras av WASP-HS · <a href="/monitor/#cluster">Mer från klustret (engelska) →</a></p>
+        forskningskluster inom WASP-HS · <a href="/monitor/#cluster">Mer från klustret (engelska) →</a></p>
     </div>
     <p class="langsw"><a href="/monitor/">EN</a> · <a href="/monitor/sv/" aria-current="page">SV</a></p>
   </div>
@@ -3201,7 +3202,7 @@ def monitor():
       <a class="hcmarks" href="https://www.aiscaf.se/w/ac/" aria-label="AISCAF">{partner_mark("aiscaf", 22, "AISCAF")}</a>
       <a class="hcmarks" href="https://wasp-hs.org" aria-label="WASP-HS">{partner_mark("wasphs", 11, "WASP-HS")}</a>
       <p class="psub">AI-Econ Lab, since 2019 · Örebro University and Ratio · Örebro is a node of
-        AISCAF, a research cluster financed by WASP-HS · <a href="#cluster">More from the cluster ↓</a></p>
+        AISCAF, a WASP-HS research cluster · <a href="#cluster">More from the cluster ↓</a></p>
     </div>
     <p class="langsw"><a href="/monitor/" aria-current="page">EN</a> · <a href="/monitor/sv/" lang="sv">SV</a></p>
   </div>
