@@ -26,6 +26,9 @@ years:
       # the 12th, so the site's own record of the launch may not post-date the announcement of it.
       # "Published" rather than "went out", because that is true of the brief on the site whether
       # or not the Substack issue has been mailed.
+      - date: "Oct 15"
+        text: 'The paper "Artificial Intelligence for Public Use" (Lodefalk, Engberg, Lidskog, Skargren & Tang) was published open access in Digital Society.'
+        links: [{label: "Article (DOI)", url: "https://doi.org/10.1007/s44206-026-00285-z"}]
       - date: "Oct 8"
         text: 'Lodefalk interviewed in Svenska Dagbladet on the new jobs that AI creates, drawing on the lab''s job-ad data: the share of Swedish job ads asking for AI skills has risen about fortyfold since the mid-2000s, and new titles such as AI governance specialists and AI agent engineers have appeared.'
         links: [{label: "Svenska Dagbladet", url: "https://www.svd.se/a/kv6Jwj/ai-skapar-nya-jobb-har-ar-yrkena-som-vaxer-pa-framtidens-arbetsmarknad"}]

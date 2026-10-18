@@ -4,13 +4,14 @@
 
 published:
   - title: "Artificial Intelligence for Public Use"
-    authors: "Lodefalk, M., Engberg, E., Lidskog, R. & A. Tang"
+    authors: "Lodefalk, M., Engberg, E., Lidskog, R., Skargren, F. & A. Tang"
     year: 2026
-    venue: "Digital Society (accepted)"
+    venue: "Digital Society, 5(3)"
     coverage:
       - {name: "Publikt", url: "https://www.publikt.se/fordjupning/pa-djupet/alla-paverkas-nar-ai-forandrar-arbetsmarknaden-27542"}
       - {name: "Dagens Industri (op-ed)", url: "https://www.di.se/debatt/brist-pa-ai-ledarskap-hammar-offentlig-sektor/"}
     links:
+      - {label: "Article (open access)", url: "https://doi.org/10.1007/s44206-026-00285-z"}
       - {label: "ORU WP 6/2025", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2025/wp-6-2025.pdf"}
       - {label: "Appendix", url: "https://drive.google.com/file/d/1hwLsobJjqwFmf28bE26DxbekuvqGmDDw/view"}
     abstract: "This paper investigates the economic and societal impacts of Artificial Intelligence (AI) in the public sector, focusing on its potential to enhance productivity and mitigate labour shortages. Employing detailed administrative data and novel occupational exposure measures, we simulate future scenarios over a 20-year horizon, using Sweden as an illustrative case. Our findings indicate that advances in AI development and uptake could significantly alleviate projected labour shortages and enhance productivity. However, outcomes vary substantially across sectors and organisational types, driven by differing workforce compositions. Complementing the economic analysis, we identify key challenges that hinder AI’s effective deployment, including technical limitations, organisational barriers, regulatory ambiguity, and ethical risks such as algorithmic bias and lack of transparency. Drawing from an interdisciplinary conceptual framework, we argue that AI’s integration in the public sector must address these socio-technical and institutional factors comprehensively. To unlock AI’s full potential, substantial investments in technological infrastructure, human capital development, regulatory clarity, and robust governance mechanisms are essential. Our study thus contributes both novel economic evidence and an integrated societal perspective, informing strategies for sustainable and equitable public-sector digitalisation"
