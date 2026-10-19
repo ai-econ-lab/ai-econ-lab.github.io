@@ -1,0 +1,24 @@
+# Daily ARC-AGI-3 check: does the Monitor's ARC tile still match ARC Prize's own data?
+# Reads arcprize.org/media/data/leaderboard/v3.json via scripts/watch_arc_daily.py and fails
+# (so GitHub emails the maintainer) only when a top score moves or the source breaks.
+# Read-only: no commit, no state. The weekly monitor-refresh run does the same check and
+# owns the state file; this exists so a mid-week ARC release is caught within a day.
+name: arc-watch
+on:
+  schedule:
+    - cron: "41 5 * * *"    # daily 05:41 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install "PyYAML~=6.0"
+      - run: python scripts/watch_arc_daily.py

@@ -28,8 +28,17 @@ Not every external series can be honestly automated, so this splits them:
                 has looked in four months" and "the figures were confirmed correct this
                 morning", and only the second is worth a person's attention when it breaks.
                 Divergence beyond the stored tolerance is a note, and notes fail the weekly
-                run. ARC gets no such check: its leaderboard streams client-side and the HTML
-                carries no scores at all.
+                run.
+
+  VERIFIED      ARC-AGI, since 19 Oct 2026. The leaderboard page is rendered client-side, but
+                the browser builds it from a plain JSON file, media/data/leaderboard/v3.json,
+                which carries every ARC-AGI-3 row with its score and release date. The
+                12 Aug check looked for a fetch call in the Next.js page chunk and found none;
+                the call sits in a separate script, scripts/leaderboard/data.js. So the top
+                Standard and top Provider Adapter scores are now read on every run and
+                compared with capability.check.arc, exactly as METR's numbers are, and the
+                same reader runs daily in arc-watch.yml so a new top score is caught within
+                a day rather than up to a week.
 
                 WHAT "IDENTITY" MEANS DIFFERS BY SOURCE, and that matters more than it sounds.
                 Hashing a whole page detects changes that are not changes: metr.org serves
@@ -45,12 +54,15 @@ Not every external series can be honestly automated, so this splits them:
                                whole-page hashes, one of them a 605 KB response against the
                                usual 417 KB. This is the anchor to prefer wherever a source
                                offers one.
-                  page hash    ARC-AGI, because it offers nothing better. The leaderboard is a
-                               Next.js app that streams its rows client-side; the HTML carries
-                               no scores and its page chunk is 6 KB of d3 rendering code with
-                               no data and no fetch call (checked 12 Aug 2026). Its page hash
-                               is at least vantage-stable, so detection works even though the
-                               figure itself must still be read in a browser.
+                  data anchor  ARC-AGI, since 19 Oct 2026: the top row of each harness
+                               (model id and score) plus the set of harnesses on the board.
+                               Until then it was a whole-page hash, which tripped the gate on
+                               every new row anywhere on the leaderboard: seven trips from
+                               10 Aug to 19 Oct, one of which (2 Sep) was a real move. A row
+                               added below the top no longer trips it; a new top score, or a
+                               new harness appearing, does.
+                  page hash    the fallback for a source that offers no anchor at all. None
+                               does at present.
 
                 A source that stops yielding its anchor is an error, never a silent fallback to
                 page hashing: falling back would trip the gate and read as a data change.
@@ -200,13 +212,69 @@ def metr_figures(raw):
             "second_p50_hours": round(p50[1] / 60, 2)}
 
 
+ARC_V3_JSON = "https://arcprize.org/media/data/leaderboard/v3.json"
+
+
+def arc_tops(raw):
+    """The best ARC-AGI-3 row under each harness, from the leaderboard's own data file.
+
+    The harness is carried only in the display name: "GPT-6 Astra - Provider Adapter (High)"
+    is a Provider Adapter result and "GPT-6 Astra (Max)" is the Standard harness. The two are
+    never pooled, because ARC itself says only the Standard harness is comparable across
+    providers (see the 4 Sep 2026 note in monitor.yaml). Any other harness name that appears
+    is kept under its own name, so it shows up in the identity rather than being folded in.
+
+    Returns {harness: (score_pct, model_id, release_date)} or None if the file has no usable
+    ARC-AGI-3 rows, which the caller treats as an error."""
+    try:
+        rows = json.loads(raw.decode("utf-8", "replace")).get("evaluations") or []
+    except (json.JSONDecodeError, AttributeError):
+        return None
+    tops = {}
+    for r in rows:
+        if r.get("datasetId") != "v3_Semi_Private" or not r.get("display", True):
+            continue
+        score, name = r.get("score"), r.get("modelDisplayName") or ""
+        if not isinstance(score, (int, float)):
+            continue
+        harness = "Standard"
+        if " - " in name:
+            harness = name.split(" - ", 1)[1].split(" (")[0].strip()
+        pct = round(100 * score, 1)
+        if harness not in tops or pct > tops[harness][0]:
+            tops[harness] = (pct, r.get("modelId", "?"), (r.get("modelReleaseDate") or "")[:10])
+    if "Standard" not in tops:
+        return None
+    return tops
+
+
+def arc_identity(raw):
+    """ARC's data identity: the top model and score per harness, and which harnesses exist.
+
+    A new row below the top leaves this unchanged, which is the point: the page hash it
+    replaces tripped on every addition anywhere on the board."""
+    tops = arc_tops(raw)
+    if tops is None:
+        return None
+    return " ".join(f"{h.replace(' ', '_')}={m}@{p}" for h, (p, m, _) in sorted(tops.items()))
+
+
+def arc_figures(raw):
+    """The two numbers on the ARC tile: the Standard-harness top (the tile's headline) and
+    the Provider Adapter top (quoted in its body), in per cent to one decimal."""
+    tops = arc_tops(raw)
+    if tops is None or "Provider Adapter" not in tops:
+        return None
+    return {"standard_top_pct": tops["Standard"][0],
+            "adapter_top_pct": tops["Provider Adapter"][0]}
+
+
 WATCHED = {
     "metr": {"url": "https://metr.org/time-horizons/", "identity": metr_identity,
              "figures": metr_figures},
-    # the leaderboard, not /arc-agi: the overview page carries no scores, so watching it
-    # would report "unchanged" while the numbers underneath moved. No data anchor exists
-    # either way, so this one is a page hash; see the module docstring.
-    "arc": {"url": "https://arcprize.org/leaderboard", "identity": None},
+    # The data file the leaderboard is drawn from, not the page and not /arc-agi: the page
+    # HTML carries no scores, and the overview page carries only the scale's definition.
+    "arc": {"url": ARC_V3_JSON, "identity": arc_identity, "figures": arc_figures},
 }
 
 
@@ -315,7 +383,7 @@ def main():
         if fp.startswith("ERROR:"):
             # Never remember an outage as an identity: the old code stored "ERROR:..." and
             # the next successful run then read that as a source change that never happened.
-            reason = ("its thData anchor is gone — rewrite metr_identity()"
+            reason = (f"its data anchor is gone — rewrite {cfg['identity'].__name__}()"
                       if fp == "ERROR:AnchorMissing" else f"source unreachable ({fp[6:]})")
             notes.append(f"{key}: {reason}")
             continue
@@ -344,7 +412,16 @@ def main():
                     verified[key] = {"on": TODAY.isoformat(), **got}
 
         ack = state.get(ack_key)
-        if ack is None or fp == ack:
+        # A change of watching SCHEME (page hash -> data anchor, as ARC on 19 Oct 2026) is
+        # not a change in the source, and the two identities can never be equal. Accept the
+        # new one when the figure check above has just confirmed the numbers, and only then:
+        # the migration must not become a way to wave a real move through.
+        migrated = (ack is not None and ack.split(":", 1)[0] != fp.split(":", 1)[0]
+                    and key in verified)
+        if migrated:
+            print(f"{key}: watching scheme changed ({ack.split(':', 1)[0]} -> "
+                  f"{fp.split(':', 1)[0]}); figures verified, new identity acknowledged")
+        if ack is None or fp == ack or migrated:
             state[ack_key] = fp                    # first sight, or unchanged since the read
             for k in (pend_key, since_key, det_key):
                 state.pop(k, None)
@@ -421,7 +498,8 @@ def main():
         "caveat": (cur["caveat"] + " The compute trend is recomputed here from Epoch's "
                    "public model table on every refresh; the METR figures are checked against "
                    "the source's own published measurements on every refresh and read by hand "
-                   "when they move; the ARC-AGI figure is read by hand when its source moves. "
+                   "when they move; the ARC-AGI figure is checked against the leaderboard's own "
+                   "data file on every refresh and daily. "
                    "Each tile carries its own date."),
         "checked": TODAY.isoformat(),
         # carried through so the generated file records when a watched source was last

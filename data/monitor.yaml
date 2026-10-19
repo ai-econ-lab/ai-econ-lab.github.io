@@ -353,6 +353,14 @@ capability:
       top_p50_hours: 17.41          # highest 50%-horizon on the suite; the top of the "12-17 h" band
       second_p50_hours: 11.98       # and its bottom
       tol_pct: 5
+    # ARC-AGI-3 from arcprize.org/media/data/leaderboard/v3.json (19 Oct 2026). The tile's
+    # headline is the Standard-harness top; the Provider Adapter top is quoted in its body.
+    # Tolerance 0.5%: a new top score that moves either by more than ~0.3 points fails the run.
+    # Change these together with the tile text, never alone.
+    arc:
+      standard_top_pct: 62.7        # GPT-6 Astra (Max), 2026-09-02
+      adapter_top_pct: 99.9         # GPT-6 Astra - Provider Adapter (High), 2026-09-02
+      tol_pct: 0.5
   facts:
     - {num: "12–17 h", lab: "Longest tasks frontier AI agents finish about half the time, in human-expert time.", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}
     - {num: "×2 every ~4 mo", lab: "How quickly that task length has been doubling, on the trend since 2023 (95% CI 3.4–5.2 months).", foot: "METR Time Horizon 1.1 · doubling time · May 2026"}
