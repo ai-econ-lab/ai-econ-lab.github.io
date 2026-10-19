@@ -333,7 +333,15 @@ capability:
   #   ARC-AGI-3 top is still GPT-6 Astra (Max) at 62.7% Standard, and the Provider Adapter best
   #   is still 99.9% (Astra High). What moved the page was again new rows below the top:
   #   GPT-6 Luna (0.0-0.6% on ARC-AGI-3) and Gemini 3.8 Flash Provider Adapter (35.0%).
-  reviewed: {metr: 2026-09-04, arc: 2026-09-28}
+  # Re-read 19 Oct 2026 in the browser (leaderboard DOM table), after the weekly gate failed on
+  #   ARC on 5, 12 and 19 Oct (change detected 5 Oct). Unchanged: the ARC-AGI-3 Standard top is
+  #   still GPT-6 Astra (Max) at 62.7%, and the Provider Adapter best is still 99.9% (Astra High).
+  #   Human Panel row still 98.0 / 100.0 / N/A. What moved the page was new rows below the top:
+  #   GPT-6.1 Sol (2026-09-29; Max 52.7% Standard, 96.2% Provider Adapter), Claude Haiku 5.5
+  #   (2026-10-07; Max 0.5% / 2.8%) and Gemini 4 Argon (2026-10-13; best 49.8% Standard (Low),
+  #   97.5% Provider Adapter (Low)). Note the gate sat failed for three weeks before anyone
+  #   read the notification, so the weekly refresh published nothing between 5 and 19 Oct.
+  reviewed: {metr: 2026-09-04, arc: 2026-10-19}
   # The same two tiles as machine-comparable numbers, which metr.org embeds in
   # benchmarkDataV1_1. refresh_capability.py reads them on every run and fails the weekly
   # build if they drift by more than tol_pct, so age alone no longer stands in for doubt:
