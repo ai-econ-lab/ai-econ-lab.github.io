@@ -51,8 +51,8 @@ links:
 caveat: These are external research series, quoted with their dates; we summarise, we do not produce them.
   Figures refresh with the sources' own releases. The compute trend is recomputed here from Epoch's public
   model table on every refresh; the METR figures are checked against the source's own published measurements
-  on every refresh and read by hand when they move; the ARC-AGI figure is read by hand when its source
-  moves. Each tile carries its own date.
+  on every refresh and read by hand when they move; the ARC-AGI figure is checked against the leaderboard's
+  own data file on every refresh and daily. Each tile carries its own date.
 checked: '2026-10-19'
 reviewed:
   arc: '2026-10-19'
@@ -63,7 +63,12 @@ verified:
     doubling_days: 128.744
     top_p50_hours: 17.41
     second_p50_hours: 11.98
+  arc:
+    'on': '2026-10-19'
+    standard_top_pct: 62.7
+    adapter_top_pct: 99.9
 checks_configured:
+- arc
 - metr
 stale:
 - METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026 (171 days old)

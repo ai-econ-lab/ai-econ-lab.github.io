@@ -7,6 +7,6 @@
   "capability_metr_checked": "2026-10-19",
   "capability_arc_checked": "2026-10-19",
   "capability_metr_id": "data:benchmarks=METR-Horizon-v1.0,METR-Horizon-v1.1 long_tasks=2ce7f1e0c4f8,799cc9c4b448 swaa=3d2ab4f0662a,f6cc84052e2a",
-  "capability_arc_id": "page:35b7f571cc817a49",
+  "capability_arc_id": "data:Provider_Adapter=openai-gpt-6-astra-high-provider-adapter@99.9 Standard=openai-gpt-6-astra-max@62.7",
   "sources_checked": "2026-10-19"
 }
