@@ -4150,6 +4150,12 @@ def methods():
     pub = "".join(f"<li>{h(x)}</li>" for x in md["status"]["published"])
     pend = "".join(f"<li>{h(x)}</li>" for x in md["status"]["pending"])
     refs = "".join(f"<li>{h(r)}</li>" for r in md["references"])
+    # BibTeX of the citation above; braces in the template rule out str.format.
+    bibtex = ""
+    if md.get("cite_bibtex"):
+        bib = md["cite_bibtex"].replace("{version}", DEF_VERSION).replace("{fp}", DEF_FP)
+        bibtex = (f'<p class="psub" style="margin-top:12px">BibTeX</p>'
+                  f'<pre class="citebox" style="white-space:pre;overflow-x:auto">{h(bib)}</pre>')
     body = f"""<div class="wrap"><div class="pagehead">
   <p class="kicker">The AIEL Monitor · methods</p><h2 class="sec">{h(md["headline"])}</h2>
   <p class="secintro">{h(md["lede"])}</p></div></div>
@@ -4204,6 +4210,7 @@ def methods():
 <div class="wrap"><section>
   <div class="grouphdr">How to cite</div>
   <p class="citebox">{h(md["cite"].format(version=DEF_VERSION, fp=DEF_FP))}</p>
+  {bibtex}
   <div class="grouphdr" style="margin-top:24px">References</div>
   <ul class="reslist">{refs}</ul>
   <p style="margin-top:22px"><a class="mono" style="font-size:12.5px" href="/monitor/">← Back to the Monitor</a></p>

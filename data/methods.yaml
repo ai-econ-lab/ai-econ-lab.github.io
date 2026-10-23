@@ -355,6 +355,21 @@ cite: >-
   AI-Econ Lab (2026). AIEL Monitor: measuring advertised AI-skill demand, definition {version} (fingerprint
   {fp}). Örebro University and Ratio. Accessed [date].
 
+# BibTeX of the same citation (ML, 23 Oct 2026, after the Stanford AI Economic Indicators benchmark,
+# ai-monitor/notes/stanford-indicators-lessons_2026-10-23.md). Placeholders are substituted with
+# str.replace, not .format, because BibTeX braces would clash. WHEN THE DAIOE-EXTENSIONS PAPER IS
+# RELEASED, replace both `cite` and `cite_bibtex` with its working-paper entry: Online Appendix
+# Part VI of that paper is the measure's citable documentation.
+cite_bibtex: |-
+  @misc{aiel-monitor-{version},
+    author       = {{AI-Econ Lab}},
+    title        = {{AIEL Monitor: Measuring Advertised AI-Skill Demand, Definition {version} (Fingerprint {fp})}},
+    howpublished = {Örebro University and Ratio},
+    year         = {2026},
+    url          = {https://ai-econlab.com/monitor/methods/},
+    note         = {Accessed [date]}
+  }
+
 references:
   - "Acemoglu, D., Autor, D., Hazell, J. and Restrepo, P. (2022). Artificial Intelligence and Jobs: Evidence from Online Vacancies. Journal of Labor Economics, 40(S1), S293–S340."
   - "Alekseeva, L., Azar, J., Giné, M., Samila, S. and Taska, B. (2021). The demand for AI skills in the labor market. Labour Economics, 71, 102002."
