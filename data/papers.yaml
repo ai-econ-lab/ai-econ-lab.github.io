@@ -15,6 +15,18 @@ published:
       - {label: "ORU WP 6/2025", url: "https://www.oru.se/globalassets/oru-sv/institutioner/hh/workingpapers/workingpapers2025/wp-6-2025.pdf"}
       - {label: "Appendix", url: "https://drive.google.com/file/d/1hwLsobJjqwFmf28bE26DxbekuvqGmDDw/view"}
     abstract: "This paper investigates the economic and societal impacts of Artificial Intelligence (AI) in the public sector, focusing on its potential to enhance productivity and mitigate labour shortages. Employing detailed administrative data and novel occupational exposure measures, we simulate future scenarios over a 20-year horizon, using Sweden as an illustrative case. Our findings indicate that advances in AI development and uptake could significantly alleviate projected labour shortages and enhance productivity. However, outcomes vary substantially across sectors and organisational types, driven by differing workforce compositions. Complementing the economic analysis, we identify key challenges that hinder AI’s effective deployment, including technical limitations, organisational barriers, regulatory ambiguity, and ethical risks such as algorithmic bias and lack of transparency. Drawing from an interdisciplinary conceptual framework, we argue that AI’s integration in the public sector must address these socio-technical and institutional factors comprehensively. To unlock AI’s full potential, substantial investments in technological infrastructure, human capital development, regulatory clarity, and robust governance mechanisms are essential. Our study thus contributes both novel economic evidence and an integrated societal perspective, informing strategies for sustainable and equitable public-sector digitalisation"
+  # Published Dec 2025; sent by Hildegunn 23 Oct 2026. Details from Crossref (DOI record), author
+  # order as published. Abstract left empty: the publisher page blocks scripted access and the
+  # SSRN text is the preprint's, not the article's.
+  - title: "Cross-border data flows and AI adoption: Agent-based model simulations"
+    authors: "Klügl, F. & H. Kyvik Nordås"
+    year: 2025
+    venue: "Structural Change and Economic Dynamics, 75, 676–688"
+    coverage: []
+    links:
+      - {label: "Article", url: "https://doi.org/10.1016/j.strueco.2025.10.009"}
+      - {label: "SSRN preprint", url: "https://doi.org/10.2139/ssrn.5136428"}
+    abstract: ""
   - title: "Artificial Intelligence, Tasks, Skills and Wages: Worker-Level Evidence from Germany"
     authors: "Engberg, E., Koch, M., Lodefalk, M. & S. Schroeder"
     year: 2025
@@ -142,13 +154,6 @@ working:
     authors: "Hellsten, M., Pulito, G. & S. Schroeder"
     year: 2025
     venue: "Resubmitted to Labour Economics"
-    coverage: []
-    links: []
-    abstract: ""
-  - title: "Cross-Border Data Flows and AI-Technology Adoption: Agent-Based Model Simulations"
-    authors: "Kyvik-Nordås, H. & F. Klügl"
-    year: 2025
-    venue: "Resubmitted, Structural Change and Economic Dynamics"
     coverage: []
     links: []
     abstract: ""
