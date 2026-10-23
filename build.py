@@ -2924,11 +2924,43 @@ def stat_overview(lang="en"):
                "foot": L(f"JobTech / Platsbanken · {DEF_VERSION} · distinct ads · {_yr}",
                          f"JobTech / Platsbanken · {DEF_VERSION} · unika annonser · {_yr}"),
                "anchor": "#demand", "cls": "b", "base": more["Sweden"]["base"]}
+    # Change on the previous period (ML, 23 Oct 2026, after the Stanford AI Economic Indicators
+    # benchmark, ai-monitor/notes/stanford-indicators-lessons_2026-10-23.md). Mechanical rule, no
+    # grading: a card gets an arrow only when its source gives the previous period on the SAME
+    # definition; the arrow is the direction of change at the precision shown, "≈" when equal at
+    # that precision. Cards with no like-for-like earlier figure get an asterisk and the one-line
+    # note under the grid, nothing more. Every number comes from the generated data files.
+    def _arr(new, old, nd=1):
+        n_, o_ = round(new, nd), round(old, nd)
+        return "▲" if n_ > o_ else ("▼" if n_ < o_ else "≈")
+    def _pp(new, old, nd=1):
+        a_ = _arr(new, old, nd)
+        return a_ if a_ == "≈" else f"{a_} {dec(f'{abs(new - old):.{nd}f}')} {L('pp', 'p.e.')}"
+    _am = ADOPT["meta"]; _sa = next(r for r in ADOPT["countries"] if r["is_se"])
+    _us = next(c for c in WAGES["countries"] if c["key"] == "us")["series"]
+    _g1, _g0 = _us[-1]["high"] - _us[-1]["low"], _us[-2]["high"] - _us[-2]["low"]
+    _span0 = f'{_us[0]["year"]}–{str(_us[-2]["year"])[2:]}'
+    for o in MONITOR["overview"]:
+        if o["k"] == "Outcomes" and f"{abs(_g1):.1f}" not in o["num"]:
+            raise SystemExit(f"monitor.yaml Outcomes card {o['num']} disagrees with wages.yaml US gap {_g1:.1f}")
+    deltas = {
+        "Exposure": (f'{_pp(_cm["mean_share"], _cm["mean_share_prev"])} {L("on", "mot")} {_cm["prev_year"]} · '
+                     f'{L("Sweden", "Sverige")} {_pp(_rank[_se]["share"], _cm["se_share_prev"])}'),
+        "Adoption": (f'{_pp(_am["eu_avg"], _am["eu_avg_prev"])} {L("on", "mot")} {_am["prev_year"]} · '
+                     f'{L("Sweden", "Sverige")} {_pp(_sa["adoption"], _sa["prev"])}'),
+        "Outcomes": (f'{_pp(_g1, _g0)} {L("on", "mot")} {_span0} '
+                     f'({dec(f"{_g0:.1f}").replace("-", "−")} {L("pp", "p.e.")})'),
+    }
+    _fl0, _ce0 = t["floor_values"][pf - 2], t["ceiling_values"][pf - 2]
+    se_tile["delta"] = (f'{_arr(_fl, _fl0, 2)} {L("from", "från")} {dec(f"{_fl0:.2f}")}–{dec(f"{_ce0:.2f}")}% '
+                        f'{L("in", "år")} {_yr - 1}')
+    nostar = {"Demand", "Capability"}          # no like-for-like earlier figure on record
     import re as _re
     _nums = lambda x: sorted(_re.findall(r"\d+(?:[.,]\d+)?", x.replace(",", ".")))
     order = []
     for o in MONITOR["overview"]:
         mo = more.get(o["k"], {})
+        o = {**o, "delta": deltas.get(o["k"]), "star": o["k"] in nostar}
         if sv:
             if _nums(mo["lab_sv"]) != _nums(o["lab"]):
                 raise SystemExit(f"monitor.yaml overview_more {o['k']}: the Swedish label's numbers "
@@ -2948,7 +2980,8 @@ def stat_overview(lang="en"):
                  if b else "")
         # Cards are no longer one big link: each has two doors, the research base and the module.
         cards += (f'<div class="ovcard{cls}"><div class="stripe"></div>'
-                  f'<div class="ok"><span>{h(o["k"])}</span>{tag}</div><div class="onum">{o["num"]}</div>'
+                  f'<div class="ok"><span>{h(o["k"])}</span>{tag}</div><div class="onum">{o["num"]}{'<sup class="ostar">*</sup>' if o.get("star") else ""}</div>'
+                  + (f'<div class="odelta">{h(o["delta"])}</div>' if o.get("delta") else "") +
                   f'<div class="olab">{h(o["lab"])}</div>'
                   f'<div class="ofoot"><span>{h(o["foot"])}</span></div>'
                   f'<div class="odoors"><span class="obasewrap">{L("Research base", "Underlag")}: {basel}</span>'
@@ -2969,6 +3002,8 @@ def stat_overview(lang="en"):
              + '</span></div>')
     return f"""<div class="rule" id="overview"><div class="wrap"><section style="padding-top:8px">
   <div class="ovgrid ovgrid3">{cards}</div>
+  <p class="ovnote">{L("Arrows: change on the previous period, same source and definition. * No like-for-like earlier figure.",
+                       "Pilar: förändring mot föregående period, samma källa och definition. * Ingen jämförbar tidigare siffra.")}</p>
   {strip}
 </section></div></div>"""
 

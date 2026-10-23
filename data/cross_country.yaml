@@ -12,6 +12,11 @@ meta:
   mean: 7.183
   mean_share: 36.52
   n_countries: 36
+  prev_year: 2024
+  mean_share_prev: 36.24
+  se_share_prev: 45.3
+  se_rank_prev: 2
+  prev_same_tier: True
   note: "Descriptive only. Exposure is not displacement: exposure predicts occupational growth as often as decline."
 countries:
   - {code: "LU", name: "Luxembourg", share: 66.1, exposure: 8.6572, coverage: 100.0, year: 2024, is_se: false}

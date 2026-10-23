@@ -140,30 +140,16 @@ def usable_year(lfs: pd.DataFrame, floor: float = 0.8) -> dict[str, int]:
     return out
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--col", default=COL)
-    ap.add_argument("--year", type=int, default=YEAR)
-    ap.add_argument("--weight-year", type=int, default=WEIGHT_YEAR)
-    ap.add_argument("--lfs-csv", help="read EU-LFS from a local CSV (country,year,isco2d,emp_ths) "
-                                      "instead of Eurostat; used for the faithfulness check")
-    ap.add_argument("--dry-run", action="store_true", help="print, do not write the yaml")
-    a = ap.parse_args()
+def shares(col: str, year: int, weight_year: int, lfs_all: pd.DataFrame):
+    """Top-25% membership and each country's employment share in it, for one score and weight year.
 
-    check_bundle()
-    expo = exposure_isco2d(a.col, a.year)
+    Returns (top, expo, rows sorted by share, mean share, mean exposure, weight year by country)."""
+    expo = exposure_isco2d(col, year)
     scores = sorted(expo.values())
     cut = scores[int(round(len(scores) * 3 / 4)) - 1]           # TOP QUARTILE (top 25%)
     top = {k for k, v in expo.items() if v >= cut}
-
-    if a.lfs_csv:
-        lfs = pd.read_csv(a.lfs_csv, dtype={"isco2d": str, "country": str})
-        lfs["isco2d"] = lfs["isco2d"].str.zfill(2)
-    else:
-        lfs = fetch_lfs(list(range(FIRST_LFS_YEAR, a.weight_year + 1)))
-    lfs = lfs[lfs["year"] <= a.weight_year].dropna(subset=["emp_ths"])
+    lfs = lfs_all[lfs_all["year"] <= weight_year].dropna(subset=["emp_ths"])
     latest = usable_year(lfs)
-
     out = []
     for c, g in lfs.groupby("country"):
         if c not in NAMES:
@@ -181,12 +167,39 @@ def main() -> None:
     out.sort(key=lambda r: -r["share"])
     mean_share = round(st.mean(r["share"] for r in out), 2)   # 2 dp: a 1-dp 36.5 prints as "36"
     mean_expo = round(st.mean(r["exposure"] for r in out), 3)
+    return top, expo, out, mean_share, mean_expo, latest
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--col", default=COL)
+    ap.add_argument("--year", type=int, default=YEAR)
+    ap.add_argument("--weight-year", type=int, default=WEIGHT_YEAR)
+    ap.add_argument("--lfs-csv", help="read EU-LFS from a local CSV (country,year,isco2d,emp_ths) "
+                                      "instead of Eurostat; used for the faithfulness check")
+    ap.add_argument("--dry-run", action="store_true", help="print, do not write the yaml")
+    a = ap.parse_args()
+
+    check_bundle()
+    if a.lfs_csv:
+        lfs_all = pd.read_csv(a.lfs_csv, dtype={"isco2d": str, "country": str})
+        lfs_all["isco2d"] = lfs_all["isco2d"].str.zfill(2)
+    else:
+        lfs_all = fetch_lfs(list(range(FIRST_LFS_YEAR, a.weight_year + 1)))
+    top, expo, out, mean_share, mean_expo, latest = shares(a.col, a.year, a.weight_year, lfs_all)
+    # The previous year on the SAME vintage and column (ML, 23 Oct 2026): the overview card shows
+    # the change on it. Same bundle, same method, one year earlier for both scores and weights,
+    # so the comparison is like for like (the overview arrow rule, build.py stat_overview).
+    p_top, _, p_out, p_mean, _, _ = shares(a.col, a.year - 1, a.weight_year - 1, lfs_all)
+    p_se = next(r for r in p_out if r["code"] == "SE")
     se = next(r for r in out if r["code"] == "SE")
     print(f"{a.col} {a.year}: top tier = {len(top)} of {len(expo)} ISCO-2d groups {sorted(top)}")
     print(f"weights: EU-LFS {a.weight_year} (latest-year fallback for "
           f"{sorted(c for c, y in latest.items() if y < a.weight_year and c in NAMES)})")
     print(f"SE {se['share']}% (rank {out.index(se) + 1} of {len(out)}); mean {mean_share}%; "
           f"top 3 {[(r['code'], r['share']) for r in out[:3]]}")
+    print(f"previous ({a.year - 1} scores, EU-LFS {a.weight_year - 1}): SE {p_se['share']}% "
+          f"(rank {p_out.index(p_se) + 1}); mean {p_mean}%; same top tier: {p_top == top}")
     if a.dry_run:
         return
 
@@ -204,6 +217,11 @@ def main() -> None:
         "mean": mean_expo,
         "mean_share": mean_share,
         "n_countries": len(out),
+        "prev_year": a.weight_year - 1,
+        "mean_share_prev": p_mean,
+        "se_share_prev": p_se["share"],
+        "se_rank_prev": p_out.index(p_se) + 1,
+        "prev_same_tier": p_top == top,
         "note": "Descriptive only. Exposure is not displacement: exposure predicts occupational growth as often as decline.",
     }
     L = ["# Cross-country workforce AI-exposure - Monitor 'Across countries' (View A).",
