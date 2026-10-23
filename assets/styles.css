@@ -556,6 +556,8 @@ details.yearblock[open]>summary::after{content:"－"}
 .ovcard .onum span{font-size:.6em;font-weight:600;margin-left:1px;color:var(--muted)}
 .ovcard .odelta{font-family:var(--mono);font-size:var(--fs-micro);color:var(--muted);letter-spacing:.02em;margin-top:-2px}
 .ovcard .ostar{font-size:.45em;color:var(--muted);margin-left:2px;vertical-align:super}
+.mdelta{font-family:var(--mono);font-size:var(--fs-micro);color:var(--ink-2);margin:6px 0 10px;letter-spacing:.01em}
+.mdelta .mdnote{color:var(--muted);margin-left:8px}
 .ovnote{font-family:var(--mono);font-size:var(--fs-micro);color:var(--muted);margin:10px 0 0}
 .ovcard .olab{font-size:var(--fs-sec);color:var(--ink-2);line-height:1.35}
 .ovcard .ofoot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px;

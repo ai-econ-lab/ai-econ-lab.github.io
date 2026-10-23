@@ -156,6 +156,10 @@ def main() -> None:
 
     tot_l, moe_l = g("tot16-74", latest)
     tot_f, _ = g("tot16-74", first)
+    # Previous wave with its margin (23 Oct 2026): the module's change arrow compares the latest
+    # wave with this one and draws an arrow only when the two published intervals do not overlap.
+    prev_y = years[-2] if len(years) > 1 else first
+    tot_p, moe_p = g("tot16-74", prev_y)
     men_l, _ = g("tot16-74", latest, "1")
     wom_l, _ = g("tot16-74", latest, "2")
     men_f, _ = g("tot16-74", first, "1")
@@ -186,6 +190,9 @@ def main() -> None:
         f'  headline: {tot_l:g}',
         f'  headline_moe: {moe_l:g}',
         f'  headline_first: {tot_f:g}',
+        f'  headline_prev_year: {prev_y}',
+        f'  headline_prev: {tot_p:g}',
+        f'  headline_prev_moe: {moe_p:g}',
         f'  men: {men_l:g}',
         f'  women: {wom_l:g}',
         f'  men_first: {men_f:g}',

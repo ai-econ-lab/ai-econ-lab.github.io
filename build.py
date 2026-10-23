@@ -2051,6 +2051,7 @@ def jobquality_block():
     """Job quality in AI-skill ads: the premium is narrowing, and on contracts it has reversed."""
     m = JOBQ["meta"]
     return (f'<div class="grouphdr" style="margin-top:26px">Are AI jobs better jobs?</div>\n'
+            f'{mdelta_jobquality()}\n'
             f'<p class="secintro" style="margin-top:4px">Job ads carry structured fields describing the post '
             f'itself, so we can ask whether a vacancy that requires an AI skill offers better terms than '
             f'everything else advertised the same year. The chart shows the gap in percentage points, '
@@ -2298,6 +2299,7 @@ def demand_section(tiles, seg):
              f"""{h('.'.join(MONITOR['captions']['scope'].split('.')[2:]))}""", cls="psub",
              style="margin:8px 0 0", label="What this measures, and what it does not")}
     <div class="tiles">{tiles}</div>
+    {mdelta_demand()}
     {figfooter("ai_in_demand_trend.csv", f"JobTech / Platsbanken job ads (CC0), 2006 onwards · {TREND['meta']['definition']} term list · distinct advertisements", svg_name="ai_in_demand_trend.svg", next_up="tier split: built, integrated or simply used")}
     {monthly_block()}
     {livewindow_block()}
@@ -2373,6 +2375,7 @@ def adoption_section():
       can show: Sweden was one of two countries reporting the 0–9 class to Eurostat for {h(swm['year'])}.</p>
       <p>The highlighted row is the same number the cross-country bar above shows. Every class is up sharply since
       {h(swm['prev_year'])}.</p></details>
+    {mdelta_swe_adoption()}
     <div class="dotwrap">{barplot(SWEAD['sizes'], sm['Tot250'], swxmax, 0, 'adoption', '.0f', what='firm-size classes', mean_label='Sweden 10+')}</div>
     {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; reference line is the Swedish 10+ headline, {sm['Tot250']}%", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
   </div>
@@ -2589,6 +2592,7 @@ def population_block():
     {folded(f"""The share of <b>everyone</b> aged 16–74 who has used generative AI at all rose from <b>{m['headline_first']:g}%</b> in {h(m['first_year'])} to <b>{m['headline']:g}%</b> in {h(m['year'])} (±{m['headline_moe']:g}), and age divides it far more than anything else: {ages[0]['adoption']:g}% of {h(ages[0]['group'])}-year-olds against {ages[-1]['adoption']:g}% of {h(ages[-1]['group'])}s, a {swing:g}-point span. [[note]] Broadest of the three levels: at work or outside it, from SCB's population survey, a probability sample with published margins of error, which makes it the firmest number in the module. The gap between men and women
       is narrowing, from {gap_then:g} points in {h(m['first_year'])} to {gap_now:g}
       ({m['men']:g}% against {m['women']:g}%). Figures refer to the {h(m['reference_period'])}.""", style="margin:0 0 14px", label="What the population survey covers, and how firm it is")}
+    {mdelta_population()}
     <div class="dotwrap">{barplot(_pop_age_rows(), m['headline'], xmax, 0, 'adoption', '.0f', what='age groups', mean_label='Sweden')}</div>
     {figfooter("population_ai.csv", f"{m['source']}, {m['first_year']}–{m['year']} · {m['unit']}; bars {m['year']}, change vs {m['first_year']}. {m['design']}", svg_name="population_ai.svg", next_up="with SCB's next ICT-use survey wave")}
     {employed_work_line()}
@@ -2749,6 +2753,7 @@ def outcomes_section(explorers):
   {akavia_outcomes_block()}
 
   <div class="grouphdr" style="margin-top:36px">Entry-level openings and AI exposure</div>
+  {mdelta_squeeze()}
   {note(
     {"widens": f"""In the most AI-exposed occupations, a smaller share of openings ask for no prior experience than in the
     least-exposed occupations, every year since {h(em['first_year'])}, and the gap has widened from
@@ -2797,6 +2802,64 @@ WAGE_LABELS = {"high": "most exposed", "mid": "middle", "low": "least exposed"}
 SHORT = {"high": "most", "mid": "mid", "low": "least"}
 
 
+
+# ── Change lines on the Swedish module headlines (ML, 23 Oct 2026) ──────────────────
+# Same rule as the overview arrows (stat_overview): a module gets a line only when its source
+# gives the previous period on the SAME definition; the arrow is the direction at the precision
+# printed, "≈" when equal; where the source publishes margins of error, the arrow also needs the
+# two intervals not to overlap. Modules without such a comparison get nothing. Every number is
+# read from the generated data files.
+def _md_arrow(new, old, nd=1, moe_new=None, moe_old=None):
+    if moe_new is not None and moe_old is not None and abs(new - old) <= moe_new + moe_old:
+        return "≈"
+    n_, o_ = round(new, nd), round(old, nd)
+    return "▲" if n_ > o_ else ("▼" if n_ < o_ else "≈")
+
+def _md_sgn(x, nd=1):
+    return f"{x:+.{nd}f}".replace("-", "−")
+
+def mdelta(*parts):
+    return ('<p class="mdelta">' + " · ".join(parts) +
+            '<span class="mdnote">change on the previous period, same source and definition</span></p>')
+
+def mdelta_demand():
+    t = TREND["trend"]; pf = t["provisionalFrom"]; y = t["years"][pf - 1]
+    f1, f0 = t["floor_values"][pf - 1], t["floor_values"][pf - 2]
+    c1, c0 = t["ceiling_values"][pf - 1], t["ceiling_values"][pf - 2]
+    return mdelta(f'{_md_arrow(f1, f0, 2)} floor {f1:.2f}% in {y} against {f0:.2f}% in {y - 1}',
+                  f'{_md_arrow(c1, c0, 2)} ceiling {c1:.2f}% against {c0:.2f}%')
+
+def mdelta_population():
+    m = POPAI["meta"]
+    if "headline_prev" not in m:
+        return ""
+    a = _md_arrow(m["headline"], m["headline_prev"], 0, m["headline_moe"], m["headline_prev_moe"])
+    return mdelta(f'{a} {m["headline"]:g}% (±{m["headline_moe"]:g}) in {m["year"]} against '
+                  f'{m["headline_prev"]:g}% (±{m["headline_prev_moe"]:g}) in {m["headline_prev_year"]}')
+
+def mdelta_swe_adoption():
+    am = ADOPT["meta"]; se = next(r for r in ADOPT["countries"] if r["is_se"])
+    return mdelta(f'{_md_arrow(se["adoption"], se["prev"])} {se["adoption"]:.1f}% of firms with 10+ employees in '
+                  f'{am["year"]} against {se["prev"]:.1f}% in {am["prev_year"]} (Eurostat series)')
+
+def mdelta_squeeze():
+    s1, s0 = ELS["series"][-1], ELS["series"][-2]
+    return mdelta(f'{_md_arrow(s1["gap"], s0["gap"])} gap {_md_sgn(s1["gap"])} pp in {s1["year"]} '
+                  f'against {_md_sgn(s0["gap"])} pp in {s0["year"]}')
+
+def mdelta_jobquality():
+    s1, s0 = JOBQ["series"][-1], JOBQ["series"][-2]
+    return mdelta(f'{_md_arrow(s1["pm_gap"], s0["pm_gap"])} permanent contracts {_md_sgn(s1["pm_gap"])} pp in '
+                  f'{s1["year"]} against {_md_sgn(s0["pm_gap"])} pp in {s0["year"]}',
+                  f'{_md_arrow(s1["ft_gap"], s0["ft_gap"])} full-time {_md_sgn(s1["ft_gap"])} pp against '
+                  f'{_md_sgn(s0["ft_gap"])} pp')
+
+def mdelta_wages():
+    c = next(c for c in WAGES["countries"] if c["key"] == "sweden"); s = c["series"]
+    g1, g0 = s[-1]["high"] - 100, s[-2]["high"] - 100
+    return mdelta(f'{_md_arrow(g1, g0)} most exposed third, Sweden: real median wage {_md_sgn(g1)}% '
+                  f'{c["base_year"]}–{str(s[-1]["year"])[2:]} against {_md_sgn(g0)}% to {s[-2]["year"]}')
+
 def wages_svg(c):
     """Three-line indexed wage series (high/mid/low DAIOE-exposure terciles), one country.
     Same visual grammar as squeeze_svg; index base 100 = first year."""
@@ -2839,6 +2902,7 @@ def wages_block():
                    f'<p class="psub" style="margin-top:4px">{h(c["source"])}</p></div>')
     cavs = " ".join(f'<li>{cv}</li>' for cv in w["caveats"])
     return f"""<div class="grouphdr" id="wages" style="margin-top:36px">Wages in AI-exposed occupations</div>
+  {mdelta_wages()}
   {folded(f'<b>{h(w["headline"].split(".")[0])}.</b>[[note]] {h(".".join(w["headline"].split(".")[1:]).strip())} '
           f'{h(w["intro"])}', style="margin-top:4px",
           label="How the thirds are cut, and the country detail")}
