@@ -421,7 +421,7 @@ def home():
                   f'<div class="foot">{h(t["foot"])}</div></div>')
     body = f"""<div class="wrap"><div class="hero"><div class="herogrid">
   <div>
-    <div class="eyebrow"><span class="dot"></span> A multi-country, multi-disciplinary research lab</div>
+    <div class="eyebrow"><span class="dot"></span> A multi-country, multi-disciplinary lab on the economics of AI</div>
     <h1 class="title">We study how <em>artificial intelligence</em> is reshaping the world of work.</h1>
     <!-- NOT "part of AISCAF" and NOT "contributing to" it. The lab was founded in 2019 and the
          cluster began in September 2025, so "part of" implies the cluster came first and that
