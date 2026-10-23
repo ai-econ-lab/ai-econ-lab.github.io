@@ -16,8 +16,7 @@ published:
       - {label: "Appendix", url: "https://drive.google.com/file/d/1hwLsobJjqwFmf28bE26DxbekuvqGmDDw/view"}
     abstract: "This paper investigates the economic and societal impacts of Artificial Intelligence (AI) in the public sector, focusing on its potential to enhance productivity and mitigate labour shortages. Employing detailed administrative data and novel occupational exposure measures, we simulate future scenarios over a 20-year horizon, using Sweden as an illustrative case. Our findings indicate that advances in AI development and uptake could significantly alleviate projected labour shortages and enhance productivity. However, outcomes vary substantially across sectors and organisational types, driven by differing workforce compositions. Complementing the economic analysis, we identify key challenges that hinder AI’s effective deployment, including technical limitations, organisational barriers, regulatory ambiguity, and ethical risks such as algorithmic bias and lack of transparency. Drawing from an interdisciplinary conceptual framework, we argue that AI’s integration in the public sector must address these socio-technical and institutional factors comprehensively. To unlock AI’s full potential, substantial investments in technological infrastructure, human capital development, regulatory clarity, and robust governance mechanisms are essential. Our study thus contributes both novel economic evidence and an integrated societal perspective, informing strategies for sustainable and equitable public-sector digitalisation"
   # Published Dec 2025; sent by Hildegunn 23 Oct 2026. Details from Crossref (DOI record), author
-  # order as published. Abstract left empty: the publisher page blocks scripted access and the
-  # SSRN text is the preprint's, not the article's.
+  # order as published. Abstract supplied by Hildegunn via Magnus, 23 Oct 2026.
   - title: "Cross-border data flows and AI adoption: Agent-based model simulations"
     authors: "Klügl, F. & H. Kyvik Nordås"
     year: 2025
@@ -26,7 +25,7 @@ published:
     links:
       - {label: "Article", url: "https://doi.org/10.1016/j.strueco.2025.10.009"}
       - {label: "SSRN preprint", url: "https://doi.org/10.2139/ssrn.5136428"}
-    abstract: ""
+    abstract: "This paper develops a dynamic Agent Based Model to study the role of cross-border data flows for the joint uptake of artificial intelligence enabled software in manufacturing and engineering. The model features two technology-related business models: engineering as a face-to-face consultancy service, and engineering as a software licensing service. Engineering agents harvest data from their software clients in the home country and abroad and use the data for quality assurance and software updates. We compare scenarios along two dimensions: (i) harvesting data from own clients only versus from open data repositories, (ii) the strength of competition measured by the probability that a contract will be extended by another period. We find that restrictions on cross-border data flows slow down the speed of adoption considerably, particularly in small countries. The simulations generate an S-shaped technology uptake path for manufacturers and a U-shaped relationship between competition and technology uptake in engineering. Interestingly, cross-border data flows flatten the U."
   - title: "Artificial Intelligence, Tasks, Skills and Wages: Worker-Level Evidence from Germany"
     authors: "Engberg, E., Koch, M., Lodefalk, M. & S. Schroeder"
     year: 2025
