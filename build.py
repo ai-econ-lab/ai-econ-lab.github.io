@@ -40,7 +40,7 @@ DATA_FILES = [
     "us_adoption_rps.yaml", "population_ai.yaml", "wages.yaml",
     "occupations.yaml", "occupation_tiers.yaml", "barriers.yaml",
     "monthly_demand.yaml", "job_quality.yaml", "governance.yaml",
-    "vocabulary.yaml", "capability.yaml",
+    "vocabulary.yaml", "capability.yaml", "employment_exposure.yaml",
 ]
 
 def data_updated():
@@ -135,6 +135,7 @@ TREND    = load("trend.yaml")
 SAMEM    = load("washing_samemonths.yaml")   # Jan-Jun vs same months a year earlier (brief 2026-10)
 
 JOBQ     = load("job_quality.yaml")
+EMPEXP   = load("employment_exposure.yaml")
 GOV      = load("governance.yaml")
 VOCAB    = load("vocabulary.yaml")
 BARRIERS = load("barriers.yaml")
@@ -2748,6 +2749,8 @@ def outcomes_section(explorers):
     <a href="/daioe/">DAIOE</a> AI-exposure overlaid. Built and maintained in-house; yearly and monthly views.</p>
   <div class="explorers">{explorers}</div>
 
+  {empexp_block()}
+
   {working_conditions_block()}
 
   {akavia_outcomes_block()}
@@ -2859,6 +2862,68 @@ def mdelta_wages():
     g1, g0 = s[-1]["high"] - 100, s[-2]["high"] - 100
     return mdelta(f'{_md_arrow(g1, g0)} most exposed third, Sweden: real median wage {_md_sgn(g1)}% '
                   f'{c["base_year"]}–{str(s[-1]["year"])[2:]} against {_md_sgn(g0)}% to {s[-2]["year"]}')
+
+
+def empexp_svg(d):
+    """Employment growth by AI-exposure bin (Hensvik and Nordström Skans 2019, Figure 1 style):
+    one dot per twentieth of exposure, area by employment, and the employment-weighted fitted line."""
+    m, bins = d["meta"], d["bins"]
+    W, H = 640, 292
+    x0, x1, top, bot = 60, 600, 22, 246
+    ys = [r["growth_pct"] for r in bins]
+    lo = 2 * (int(min(ys) // 2) - 1); hi = 2 * (int(max(ys) // 2) + 1)
+    X = lambda p: x0 + p / 100 * (x1 - x0)
+    Y = lambda v: bot - (v - lo) / (hi - lo) * (bot - top)
+    p = [f'<svg class="rankchart squeeze" viewBox="0 0 {W} {H}" role="img" aria-label="Employment growth '
+         f'{m["window"]} by AI-exposure percentile, twenty bins; fitted slope {m["slope"]:.3f} '
+         f'(95% interval {m["slope_lo"]:.3f} to {m["slope_hi"]:.3f})">']
+    for t in range(lo, hi + 1, 2):
+        p.append(f'<line class="grid" x1="{x0}" y1="{Y(t):.1f}" x2="{x1}" y2="{Y(t):.1f}"'
+                 + (' style="stroke-width:1.4"' if t == 0 else "") + "/>")
+        p.append(f'<text class="tick" x="{x0-6}" y="{Y(t)+3.5:.1f}" text-anchor="end">{t:+d}%</text>'
+                 .replace("+0%", "0%").replace("-", "−"))
+    for q in (0, 25, 50, 75, 100):
+        p.append(f'<text class="tick" x="{X(q):.1f}" y="{bot+16}" text-anchor="middle">{q}</text>')
+    p.append(f'<text class="tick" x="{(x0+x1)/2:.0f}" y="{H-8}" text-anchor="middle">AI-exposure percentile '
+             f'(DAIOE, generative composite) → more exposed</text>')
+    tw = sum(r["employed"] for r in bins)
+    mx = sum(r["pctl"] * r["employed"] for r in bins) / tw
+    my = sum(r["growth_pct"] * r["employed"] for r in bins) / tw
+    a = my - m["slope"] * mx                                   # slope is per unit of percentile/100 in growth units
+    f = lambda q: a + m["slope"] * q                          # both in percent: slope x 100 / 100
+    p.append(f'<line x1="{X(0):.1f}" y1="{Y(f(0)):.1f}" x2="{X(100):.1f}" y2="{Y(f(100)):.1f}" '
+             f'stroke="var(--c2)" stroke-width="2" stroke-dasharray="5 4"/>')
+    mxe = max(r["employed"] for r in bins)
+    for r in bins:
+        p.append(f'<circle cx="{X(r["pctl"]):.1f}" cy="{Y(r["growth_pct"]):.1f}" '
+                 f'r="{3 + 5 * (r["employed"] / mxe) ** 0.5:.1f}" fill="var(--c1)" fill-opacity=".8"/>')
+    p.append("</svg>")
+    return "".join(p)
+
+
+def _neg(x, nd):
+    return f"{x:.{nd}f}".replace("-", "−")
+
+
+def empexp_block():
+    """Outcomes: has employment moved away from AI-exposed occupations? Descriptive."""
+    m = EMPEXP["meta"]
+    return f"""<div class="grouphdr" id="employment-exposure" style="margin-top:36px">Employment growth by AI exposure</div>
+  <p class="secintro" style="margin-top:4px">If AI were already displacing work, the most exposed occupations would
+    grow more slowly than the rest. They do not, so far: across {m['n_occ']} occupations, employment growth
+    {h(m['window'])} is flat across AI exposure (fitted slope {m['slope']:.3f}, 95% interval {_neg(m['slope_lo'], 3)}
+    to {_neg(m['slope_hi'], 3)}), around an average of {m['mean_growth_pct']:.1f}%. Each dot is a twentieth of
+    occupations by exposure, sized by employment. This is a description of employment counts, not an estimate
+    of AI's effect.</p>
+  <div class="dotwrap">{empexp_svg(EMPEXP)}</div>
+  {folded(f"Why the window starts in 2023.[[note]] SCB's occupation coding improved in 2023: employed persons "
+          f"without an occupation code fell from about 272,000 to 41,000. Growth over any window crossing 2023 "
+          f"would mix real change with recoding. The window lengthens as SCB publishes new years; the "
+          f"fastest-rising and fastest-declining occupations will be added with the second clean year.",
+          cls="psub", style="margin:8px 0 0", label="Why the window starts in 2023")}
+  {figfooter("employment_exposure.csv", f"SCB occupation register (YREG50BAS, SSYK 2012 4-digit), occupations with {m['min_employed']}+ employed, employment-weighted × {m['exposure']}", svg_name="employment_exposure.svg", next_up="SCB occupation register for 2025 (2027)")}
+"""
+
 
 def wages_svg(c):
     """Three-line indexed wage series (high/mid/low DAIOE-exposure terciles), one country.
@@ -4609,6 +4674,13 @@ def emit_data(out):
         (d / f"wages_{c['key']}.svg").write_text(
             chart_standalone(wages_svg(c), f"Median wage by AI-exposure tercile, {c['label']}",
                              f"{c['source']} · AI-Econ Lab"), encoding="utf-8")
+    with (d / "employment_exposure.csv").open("w", newline="", encoding="utf-8") as f:
+        w = _csv.writer(f)
+        w.writerow(["bin", "exposure_percentile_mean", "employment_growth_pct", "employed_base_year"])
+        for r in EMPEXP["bins"]: w.writerow([r["bin"], r["pctl"], r["growth_pct"], r["employed"]])
+    (d / "employment_exposure.svg").write_text(chart_standalone(empexp_svg(EMPEXP),
+        f"Employment growth {EMPEXP['meta']['window']} by AI exposure, Sweden",
+        f"SCB YREG50BAS x {EMPEXP['meta']['exposure']} · AI-Econ Lab"), encoding="utf-8")
     with (d / "occupation_tiers.csv").open("w", newline="", encoding="utf-8") as f:
         w = _csv.writer(f)
         # occupation is the official title, always in full: a data file has no width to run
