@@ -2906,15 +2906,17 @@ def _neg(x, nd):
 
 
 def empexp_block():
-    """Outcomes: has employment moved away from AI-exposed occupations? Descriptive."""
+    """Outcomes: employment growth across AI exposure (applicability, not displacement). Descriptive."""
     m = EMPEXP["meta"]
     return f"""<div class="grouphdr" id="employment-exposure" style="margin-top:36px">Employment growth by AI exposure</div>
-  <p class="secintro" style="margin-top:4px">If AI were already displacing work, the most exposed occupations would
-    grow more slowly than the rest. They do not, so far: across {m['n_occ']} occupations, employment growth
-    {h(m['window'])} is flat across AI exposure (fitted slope {m['slope']:.3f}, 95% interval {_neg(m['slope_lo'], 3)}
-    to {_neg(m['slope_hi'], 3)}), around an average of {m['mean_growth_pct']:.1f}%. Each dot is a twentieth of
-    occupations by exposure, sized by employment. This is a description of employment counts, not an estimate
-    of AI's effect.</p>
+  <p class="secintro" style="margin-top:4px">AI exposure measures how far AI is technically applicable to an
+    occupation's tasks. It takes no side on what follows: AI may automate parts of the work, augment it, raise
+    productivity a little or a lot, or create new tasks, so exposed occupations can grow or shrink. The chart shows
+    what has happened to employment so far. Across {m['n_occ']} occupations, employment growth {h(m['window'])} is
+    flat across AI exposure (fitted slope {_neg(m['slope'], 3)}, 95% interval {_neg(m['slope_lo'], 3)} to
+    {_neg(m['slope_hi'], 3)}), around an average of {m['mean_growth_pct']:.1f}%. Each dot is a twentieth of
+    occupations by exposure, sized by employment. This describes employment counts; it is not an estimate of
+    AI's effect.</p>
   <div class="dotwrap">{empexp_svg(EMPEXP)}</div>
   {folded(f"Why the window starts in 2023.[[note]] SCB's occupation coding improved in 2023: employed persons "
           f"without an occupation code fell from about 272,000 to 41,000. Growth over any window crossing 2023 "
