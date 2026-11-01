@@ -8,6 +8,11 @@
 # the joint AISCAF launch with Uppsala/Tillväxtanalys, to be set at the 12 Oct meeting with Oskar;
 # its figures are refreshed right before release. To release: delete the entry and rebuild.
 
+# November 2026 held until ML says "go" on the rebuilt job-quality issue (1 Nov 2026), so the
+# Monday monitor refresh does not put an unapproved draft on the site. Delete on release.
+hold:
+  "2026-11": {show: "2026-10"}
+
 months:
   1:  {title_en: "Augmentation or automation?",              title_sv: "Förstärkning eller automatisering?",       theme: demand}
   2:  {title_en: "Which AI skills employers want",           title_sv: "AI-kompetenser i jobbannonserna",          theme: demand}
@@ -32,5 +37,6 @@ months:
   # Title reworded 29 Sep 2026 (Yifan): "This month: AI talk and AI skills: the widening gap"
   # put two colons in one sentence. A plain noun phrase reads as part of the standfirst.
   10: {title_en: "the widening gap between talk of AI and demand for AI skills",  title_sv: "det växande gapet mellan AI-prat och efterfrågad AI-kompetens", theme: washing}
-  11: {title_en: "Job quality and the work environment",     title_sv: "Jobbkvalitet och arbetsmiljö",              theme: outcomes}
+  # Own theme from 1 Nov 2026 (ML: the draft did not reveal the theme; it showed the entry-level chart).
+  11: {title_en: "Job quality and the work environment",     title_sv: "Jobbkvalitet och arbetsmiljö",              theme: jobquality}
   12: {title_en: "The year in review, and outlook",          title_sv: "Året i backspegeln",                        theme: exposure}

@@ -1174,7 +1174,14 @@ def barplot(data, eu_avg, xmax, hy=0, vkey="adoption", vfmt=".0f", what="countri
     p.append("</svg>")
     return "".join(p)
 
-def dumbbell_svg(conds, gkey, active=False):
+# Swedish labels for the SCB work-environment indicators, so the Swedish brief does not carry
+# English row labels (the class of bug that shipped on the one-pager and the September brief).
+WC_LABEL_SV = {"PsykAnst": "Psykiskt ansträngande arbete", "OlustAEO": "Kan påverka sitt arbete",
+               "KanSEAKopplaBort": "Kan inte koppla bort jobbet", "TekUtvNegativ": "Negativ till teknikutvecklingen",
+               "Meningsfullt": "Arbetet känns meningsfullt"}
+
+
+def dumbbell_svg(conds, gkey, active=False, lang="en"):
     """Least- vs most-AI-exposed occupations across working-condition indicators (one gender)."""
     n = len(conds); W, rowh, top, bot = 640, 38, 16, 32
     H = top + n * rowh + bot; x0, x1 = 205, 556
@@ -1189,7 +1196,8 @@ def dumbbell_svg(conds, gkey, active=False):
     for i, c in enumerate(conds):
         y = top + i * rowh + rowh * 0.5
         d = c[gkey]; lo, hi = d["lo"], d["hi"]
-        p.append(f'<text class="dname" x="192" y="{y+3.5:.1f}" text-anchor="end">{h(c["label"])}</text>')
+        _lab = WC_LABEL_SV.get(c["code"], c["label"]) if lang == "sv" else c["label"]
+        p.append(f'<text class="dname" x="192" y="{y+3.5:.1f}" text-anchor="end">{h(_lab)}</text>')
         p.append(f'<line class="dbtrack" x1="{X(lo):.1f}" y1="{y:.1f}" x2="{X(hi):.1f}" y2="{y:.1f}"/>')
         p.append(f'<circle class="dblo" cx="{X(lo):.1f}" cy="{y:.1f}" r="4"/>')
         p.append(f'<circle class="dbhi" cx="{X(hi):.1f}" cy="{y:.1f}" r="5.5"/>')
@@ -2012,7 +2020,7 @@ def monthly_block():
                         "monthly_ai_demand.svg"))
 
 
-def jobquality_svg(jq):
+def jobquality_svg(jq, lang="en"):
     """Three gap lines in percentage points: AI-skill ads minus everything else, on full-time,
     permanent and regular employment. Zero is drawn heavy, because the permanent line crosses it."""
     s = jq["series"]; n = len(s)
@@ -2035,9 +2043,10 @@ def jobquality_svg(jq):
              f'stroke-width="1.4" opacity=".55"/>')
     for i, r in enumerate(s):
         p.append(f'<text class="tick" x="{X(i):.1f}" y="{H-10}" text-anchor="middle">{r["year"]}</text>')
-    for key, colour, lab in (("ft_gap", "var(--c1)", "full-time"),
-                             ("pm_gap", "var(--c2)", "permanent"),
-                             ("rg_gap", "var(--c3)", "regular")):
+    _sv = lang == "sv"
+    for key, colour, lab in (("ft_gap", "var(--c1)", "heltid" if _sv else "full-time"),
+                             ("pm_gap", "var(--c2)", "tillsvidare" if _sv else "permanent"),
+                             ("rg_gap", "var(--c3)", "vanlig anst." if _sv else "regular")):
         pts = " ".join(f'{X(i):.1f},{Y(r[key]):.1f}' for i, r in enumerate(s))
         p.append(f'<polyline points="{pts}" fill="none" stroke="{colour}" stroke-width="2.4"/>')
         ly = Y(s[-1][key])
@@ -3707,7 +3716,56 @@ def brief(lang="en"):
         f"Tillsammans är den ljusblå och den orange delen de annonser som bara nämner AI, "
         f"{svn(f'{_wbd:.1f}')} procent, vilket är den orange linjen i diagrammet nedan.")
 
+    # November (job quality), read from the two generated files behind the Monitor's views.
+    _jq = JOBQ["meta"]
+    _wc = {c["code"]: c["all"] for c in WORKCOND["conditions"]}
+    _wcg = {c["code"]: c for c in WORKCOND["conditions"]}
+    _wcm = WORKCOND["meta"]
+    def _pp(x): return svn(f"{abs(x):.0f}")
+    # The sentence below says the permanent-contract edge "turned negative"; stop if it has not.
+    if not (_jq["pm_gap_first"] > 0 > _jq["pm_gap_last"] and _jq["ft_gap_last"] < _jq["ft_gap_first"]):
+        raise SystemExit("brief: job_quality.yaml no longer shows a narrowing full-time edge and a "
+                         "permanent-contract edge that turned negative. Rewrite takeaways['jobquality'].")
+    if not (0.4 <= _jq["ft_gap_last"] / _jq["ft_gap_first"] <= 0.6):
+        raise SystemExit("brief: the full-time edge has not 'halved'. Reword takeaways['jobquality'].")
+    if not (_wc["PsykAnst"]["hi"] > _wc["PsykAnst"]["lo"] and _wc["OlustAEO"]["hi"] > _wc["OlustAEO"]["lo"]):
+        raise SystemExit("brief: the 'more demanding, more control' reading no longer holds in "
+                         "working_conditions.yaml. Rewrite takeaways['jobquality'].")
+
     takeaways = {
+        "jobquality": L(
+            f"On the work itself, the most AI-exposed third of occupations looks like what work "
+            f"psychologists call an active job: more demanding and more autonomous. "
+            f"{_wc['PsykAnst']['hi']:.0f}% find the work mentally strenuous, against "
+            f"{_wc['PsykAnst']['lo']:.0f}% in the least exposed third, and {_wc['KanSEAKopplaBort']['hi']:.0f}% "
+            f"cannot switch off after work, against {_wc['KanSEAKopplaBort']['lo']:.0f}%. But "
+            f"{_wc['OlustAEO']['hi']:.0f}% can influence how their work is done, against "
+            f"{_wc['OlustAEO']['lo']:.0f}%, and fewer are negative about new technology "
+            f"({_wc['TekUtvNegativ']['hi']:.0f}% against {_wc['TekUtvNegativ']['lo']:.0f}%). The gap in "
+            f"influence is widest for women: {_wcg['OlustAEO']['women']['lo']:.0f}% in the least exposed "
+            f"occupations, {_wcg['OlustAEO']['women']['hi']:.0f}% in the most exposed. On the terms offered, "
+            f"the advertisements tell a different story over time. Jobs that ask for an AI skill are still more "
+            f"often full-time than other advertised jobs, but the edge has halved, from {_pp(_jq['ft_gap_first'])} "
+            f"percentage points in {_jq['first_year']} to {_pp(_jq['ft_gap_last'])} in {_jq['last_year']}. On "
+            f"permanent contracts it has turned: AI-skill jobs were slightly more often permanent in "
+            f"{_jq['first_year']} and since {_jq['pm_flip_year']} are less often so, "
+            f"{_pp(_jq['pm_gap_last'])} points below other jobs in {_jq['last_year']}.",
+            f"I själva arbetet liknar den mest AI-exponerade tredjedelen av yrkena det som "
+            f"arbetspsykologer kallar ett aktivt jobb: mer krävande och mer självständigt. "
+            f"{_wc['PsykAnst']['hi']:.0f} procent upplever arbetet som psykiskt ansträngande, mot "
+            f"{_wc['PsykAnst']['lo']:.0f} procent i den minst exponerade tredjedelen, och "
+            f"{_wc['KanSEAKopplaBort']['hi']:.0f} procent kan inte koppla bort jobbet efter arbetstid, mot "
+            f"{_wc['KanSEAKopplaBort']['lo']:.0f} procent. Men {_wc['OlustAEO']['hi']:.0f} procent kan påverka "
+            f"hur arbetet utförs, mot {_wc['OlustAEO']['lo']:.0f} procent, och färre är negativa till "
+            f"teknikutvecklingen ({_wc['TekUtvNegativ']['hi']:.0f} mot {_wc['TekUtvNegativ']['lo']:.0f} procent). "
+            f"Skillnaden i inflytande är störst bland kvinnor: {_wcg['OlustAEO']['women']['lo']:.0f} procent i "
+            f"de minst exponerade yrkena, {_wcg['OlustAEO']['women']['hi']:.0f} procent i de mest exponerade. "
+            f"Villkoren i annonserna berättar en annan historia över tid. Jobb som kräver en AI-kompetens är "
+            f"fortfarande oftare heltid än andra annonserade jobb, men försprånget har halverats, från "
+            f"{_pp(_jq['ft_gap_first'])} procentenheter {_jq['first_year']} till {_pp(_jq['ft_gap_last'])} "
+            f"{_jq['last_year']}. För tillsvidareanställning har det vänt: AI-jobben var något oftare "
+            f"tillsvidare {_jq['first_year']} och är sedan {_jq['pm_flip_year']} mer sällan det, "
+            f"{_pp(_jq['pm_gap_last'])} procentenheter under andra jobb {_jq['last_year']}."),
         "exposure": L(
             f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
             f"DAIOE generative-AI exposure), among the highest of {n_ctry} countries; the mean across "
@@ -3844,6 +3902,12 @@ def brief(lang="en"):
         }[squeeze_reading(ELS['meta'], ELS['series'])],
     }
     srcs = {
+        "jobquality": L(f"SCB, Arbetsmiljöundersökningen {_wcm['wc_year']}, by occupation (SSYK 2-digit) × DAIOE "
+                        f"{_wcm['daioe_variant']} {_wcm['daioe_version']}, least- vs most-exposed third; "
+                        f"{_jq['source']}, {_jq['first_year']}–{_jq['last_year']}",
+                        f"SCB, Arbetsmiljöundersökningen {_wcm['wc_year']}, per yrke (SSYK 2-siffer) × DAIOE "
+                        f"generativ AI-komposit (g2gen) {_wcm['daioe_version']}, minst mot mest exponerade tredjedel; "
+                        f"JobTech / Platsbanken jobbannonser, {_jq['first_year']}–{_jq['last_year']}, unika annonser"),
         "exposure": L(f"DAIOE generative-AI composite (g2gen) {dver} × Eurostat EU-LFS {cc['meta']['weight_year']}",
                       f"DAIOE generativ AI-komposit (g2gen) {dver} × Eurostat AKU {cc['meta']['weight_year']}"),
         "demand": f"{dm['meta']['source']}, {dm['meta']['year']}",
@@ -3901,6 +3965,17 @@ def brief(lang="en"):
     b_ceiling = b_sum / nonad * 100
 
     setups = {
+        "jobquality": L(
+            "Most of the debate on AI and work is about how many jobs there will be. Less is said about "
+            "what the jobs are like: how demanding they are, how much say people have over their work, "
+            "and on what terms they are hired. We look at both sides with public data: how people in "
+            "AI-exposed occupations describe their working conditions, and what employers offer when "
+            "they advertise for AI skills.",
+            "Det mesta i debatten om AI och arbete handlar om hur många jobb det blir. Mindre sägs om "
+            "hur jobben är: hur krävande de är, hur mycket man kan påverka sitt arbete och på vilka "
+            "villkor man anställs. Vi tittar på båda sidorna med öppna data: hur de som arbetar i "
+            "AI-exponerade yrken beskriver sin arbetsmiljö, och vad arbetsgivarna erbjuder när de "
+            "annonserar efter AI-kompetens."),
         "exposure": L(
             "Which jobs sit closest to what today's AI can already do? Exposure measures the overlap "
             "between an occupation's tasks and the capabilities of generative AI, occupation by "
@@ -4012,6 +4087,10 @@ def brief(lang="en"):
     # Keyed by theme, like setups, takeaways and limits, so the twelve-month calendar cannot
     # drift from them; a theme without an entry falls back to the old generic labels.
     heads = {
+        "jobquality": (L("Are AI-exposed jobs good jobs?", "Är AI-exponerade jobb bra jobb?"),
+                       L("More demanding, more control, less secure terms",
+                         "Mer krävande, mer inflytande, osäkrare villkor"),
+                       L("Occupations, not AI", "Yrkena, inte AI")),
         "barriers": (L("Why so few firms use AI", "Varför så få företag använder AI"),
                      L("Skills, not money", "Kompetens, inte pengar"),
                      L("The ranking travels, the levels do not",
@@ -4042,6 +4121,19 @@ def brief(lang="en"):
                                            L("What the data show", "Vad data visar"),
                                            L("What it does not show", "Vad det inte visar")))
     limits = {
+        "jobquality": L(
+            "Both comparisons are descriptive. The more exposed occupations are also more qualified, so "
+            "much of the gap in working conditions reflects what kind of work it is rather than anything "
+            "AI does, and the survey is a single year. In the advertisements, AI demand has spread from "
+            "a specialist niche into ordinary hiring over exactly these years, so a changing mix of "
+            "occupations could produce the whole shift in contracts. Advertisements also show the terms "
+            "offered, not the jobs as they turn out.",
+            "Båda jämförelserna är beskrivande. De mer exponerade yrkena är också mer kvalificerade, så "
+            "mycket av skillnaden i arbetsmiljö speglar vilken sorts arbete det är snarare än något AI "
+            "gör, och undersökningen avser ett enda år. I annonserna har AI-efterfrågan under just dessa "
+            "år spridits från en nisch för specialister till vanligt anställande, så en ändrad yrkesmix "
+            "kan ensam ge hela förskjutningen i anställningsformer. Annonserna visar dessutom de villkor "
+            "som erbjuds, inte jobben som de sedan blir."),
         "exposure": L(
             "Exposure says nothing about whether AI substitutes for a worker or assists one, and the "
             "country ranking shifts with where the cut is drawn.",
@@ -4174,6 +4266,17 @@ def brief(lang="en"):
             + barplot(rows_s, 0, _secmax, 0, "adoption", ".0f", what="industries",
                       cmp_key="prev", series_label=str(SWESEC["meta"]["year"]),
                       cmp_label=str(SWESEC["meta"]["prev_year"]), lang="sv" if sv else "en"))
+    elif theme == "jobquality":
+        # Two charts, people first, then the terms in the advertisements (ML, 1 Nov 2026: the
+        # November draft carried the entry-level chart under a job-quality title).
+        _lg = "sv" if sv else "en"
+        th_chart = (
+            dumbbell_svg(WORKCOND["conditions"], "all", active=True, lang=_lg)
+            + f'<div class="dblegend"><span><i class="lo"></i>{L("least-exposed third of occupations", "minst exponerade tredjedelen av yrkena")}</span>'
+              f'<span><i class="hi"></i>{L("most-exposed third", "mest exponerade tredjedelen")}</span></div>'
+            + f'<p class="secintro" style="margin:18px 0 6px">'
+              f'{L("Job advertisements that ask for an AI skill, minus all other advertisements, percentage points.", "Jobbannonser som kräver en AI-kompetens minus alla andra annonser, procentenheter.")}</p>'
+            + jobquality_svg(JOBQ, lang=_lg))
     else:
         th_chart = squeeze_svg(ELS)
     th_title = titles[theme]
