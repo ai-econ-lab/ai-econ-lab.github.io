@@ -676,6 +676,8 @@ main [id]{scroll-margin-top:196px}
   body { background:#fff; color:#000; }
   .brief { max-width:100%; padding:0; }
   .briefsheet { box-shadow:none; border:0; border-radius:0; padding:0; }
+  /* Chrome's PDF text layer drops ligatures ('qualied'), breaking search and screen readers. */
+  .briefsheet { font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0; }
   /* The chart and a list row must not be split across a page; a SECTION must be allowed to,
      or a section that does not fit the remainder is thrown whole onto the next sheet and the
      brief prints as three near-empty pages. That is how it printed before 12 Aug 2026. */

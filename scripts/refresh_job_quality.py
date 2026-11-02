@@ -27,6 +27,10 @@ SRC = (MONITOR_ROOT
        / "data/free_cuts/job_quality_v11.csv")
 OUT = Path(__file__).resolve().parent.parent / "data" / "job_quality.yaml"
 PROV = SRC.with_name("job_quality_v11.provenance.json")
+# Shift-share decomposition by occupation (ai-monitor scripts/decompose_job_quality.py, 2 Nov 2026):
+# what AI-skill ads' full-time and permanent shares would be if each ad carried its own
+# occupation's usual terms. Optional: the series builds without it, the brief refuses without it.
+DECOMP = SRC.with_name("job_quality_decomposition.csv")
 FIRST = 2018
 
 
@@ -55,6 +59,15 @@ def main():
             "rg_ai": float(a["regular_pct"]), "rg_other": float(o["regular_pct"]),
             "n_ai": int(a["ads"]),
         })
+    dec = {}
+    if DECOMP.exists():
+        dec = {int(r["year"]): r for r in csv.DictReader(DECOMP.open(encoding="utf-8"))}
+    for r in series:
+        d = dec.get(r["year"])
+        if d:
+            r["ft_pred"], r["pm_pred"] = float(d["ft_pred"]), float(d["pm_pred"])
+            r["ft_within"] = round(r["ft_ai"] - r["ft_pred"], 2)
+            r["pm_within"] = round(r["pm_ai"] - r["pm_pred"], 2)
     for r in series:
         r["ft_gap"] = round(r["ft_ai"] - r["ft_other"], 2)
         r["pm_gap"] = round(r["pm_ai"] - r["pm_other"], 2)
@@ -78,13 +91,17 @@ def main():
              f"  definition_fp: {prov['definition_fp']}",
              f"  source: JobTech historical job ads (Arbetsförmedlingen), CC0, frozen {prov['version']} "
              f"term list, distinct advertisements",
+             f"  decomposition: {'by occupation (shift-share), ai-monitor decompose_job_quality.py' if dec else 'none'}",
              "series:"]
     for r in series:
         lines.append(
             f"  - {{year: {r['year']}, ft_gap: {r['ft_gap']}, pm_gap: {r['pm_gap']}, "
             f"rg_gap: {r['rg_gap']}, ft_ai: {r['ft_ai']}, ft_other: {r['ft_other']}, "
             f"pm_ai: {r['pm_ai']}, pm_other: {r['pm_other']}, rg_ai: {r['rg_ai']}, "
-            f"rg_other: {r['rg_other']}, n_ai: {r['n_ai']}}}")
+            f"rg_other: {r['rg_other']}, n_ai: {r['n_ai']}"
+            + (f", ft_pred: {r['ft_pred']}, pm_pred: {r['pm_pred']}, ft_within: {r['ft_within']}, "
+               f"pm_within: {r['pm_within']}" if "ft_pred" in r else "")
+            + "}")
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"job_quality.yaml: {first['year']} to {last['year']}")
     print(f"  full-time gap  {first['ft_gap']:+.1f}pp -> {last['ft_gap']:+.1f}pp")
