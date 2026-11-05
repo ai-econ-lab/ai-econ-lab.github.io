@@ -55,7 +55,16 @@ seasons:
          links: [{label: "Speaker", url: "https://www.stevens.edu/profile/jsaadles"}]}
       - {date: "2026-12-11", speaker: "Dennis Facius & Roberto Iacono", affil: "EUI · NTNU", title: "TBD",
          links: [{label: "Facius", url: "https://www.eui.eu/people?id=dennis-facius"}, {label: "Iacono", url: "https://robertoiacono.org"}]}
-      - {date: "2027-02-12", speaker: "TBD", affil: "", title: "TBD", links: []}
+      - date: "2027-02-12"
+        speaker: "Antti Kauhanen"
+        affil: "Etla and Aalto University"
+        title: "Retrieval-Augmented AI in Customer Service: Evidence from a Large Bank"
+        coauthors: "with Petri Rouvinen (Etla) and Joonas Tuhkuri (Stockholm University)"
+        # Title, authors and abstract sent by the presenter, 5 Nov 2026.
+        abstract: >-
+          We study retrieval-augmented generative AI in customer service at a large Finnish retail bank. The assistant enables agents to search approved internal guidance during customer interactions. We use 9.5 million records on an average daily workforce of 1,500 agents. Dynamic difference-in-differences estimates exploiting staggered adoption indicate an initial 25% increase in daily customer interactions per agent, followed by a persistent 12% gain. The initial increase in interaction duration subsides, suggesting that agents become more proficient with the tool. The estimates indicate larger, more lasting throughput gains for agents with lower initial interaction counts. Weekly AI use is positively associated with customer experience measured by first-contact resolution and customers’ willingness to recommend the service (Net Promoter Score), but not significantly with the perceived ease of receiving help (Customer Effort Score). The findings highlight organizational knowledge access as a distinct form of AI assistance.
+        links:
+          - {label: "Speaker", url: "https://www.etla.fi/en/people/antti-kauhanen/"}
       - {date: "2027-03-12", speaker: "Oliver Schlenker", affil: "ifo Institute · IAB", title: "TBD",
          links: [{label: "Speaker", url: "https://www.ifo.de/schlenker-o"}]}
       - {date: "2027-04-09", speaker: "TBD", affil: "", title: "TBD", links: []}
