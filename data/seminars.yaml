@@ -51,7 +51,7 @@ seasons:
          title: "Robots at Work: Emotional Labour, Social Relations, and the Work Environment",
          links: [{label: "Speaker", url: "https://www.kau.se/forskare/kristina-palm"}]}
       - {date: "2026-11-13", speaker: "Joelle Saad-Lessler", affil: "Stevens Institute of Technology",
-         title: "TBD",
+         title: "Industry-Level AI Exposure and Worker Compensation: Evidence on Wages, Health Insurance, and Pension Coverage",
          links: [{label: "Speaker", url: "https://www.stevens.edu/profile/jsaadles"}]}
       - {date: "2026-12-11", speaker: "Dennis Facius & Roberto Iacono", affil: "EUI · NTNU", title: "TBD",
          links: [{label: "Facius", url: "https://www.eui.eu/people?id=dennis-facius"}, {label: "Iacono", url: "https://robertoiacono.org"}]}
