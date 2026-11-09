@@ -75,8 +75,11 @@ STALE_ASSERTIONS = [
 
 def footers(html):
     """(source line, surrounding context) for every figure footer on a page."""
+    # Read the whole footer up to the next tag. A 240-character window cut combined footers
+    # (survey source first, JobTech second) before their unit phrase and failed the November
+    # 2026 brief on text that was correct (fixed 9 Nov 2026).
     out = []
-    for m in re.finditer(r"Source:\s*([^<]{0,240})", html):
+    for m in re.finditer(r"Source:\s*([^<]{0,1200})", html):
         out.append(" ".join(m.group(1).split()))
     return out
 
@@ -228,7 +231,11 @@ def check_brief_length(problems):
 _EN_VERBS = set("is are was were be been being has have had do does did can could may might "
                 "will would shall should must".split())
 _SV_VERBS = set("är var vara varit har hade ha kan kunde ska skulle bör måste får fick blir blev "
-                "bli finns fanns gör gjorde går gick visar säger".split())
+                "bli finns fanns gör gjorde går gick visar säger "
+                # s-forms (deponent and passive) that the suffix rules miss: "Det syns också i
+                # villkoren." failed the November 2026 brief as verbless (added 9 Nov 2026).
+                "syns syntes märks märktes behövs behövdes krävs krävdes anses ansågs ses sågs "
+                "hörs hördes tycks tycktes används användes".split())
 # A bare verb stem after one of these is a finite verb ("we measure", "only mention").
 _EN_SUBJ = set("we they you i who which that only also to often rarely".split())
 
