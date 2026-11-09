@@ -56,7 +56,7 @@ caveat: These are external research series, quoted with their dates; we summaris
   own data file on every refresh and daily. Each tile carries its own date.
 checked: '2026-11-09'
 reviewed:
-  arc: '2026-10-19'
+  arc: '2026-11-09'
   metr: '2026-09-04'
 verified:
   metr:
