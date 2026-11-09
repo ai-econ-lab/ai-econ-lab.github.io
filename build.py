@@ -2072,8 +2072,8 @@ def jobquality_within_svg(jq, lang="en"):
         raise SystemExit("jobquality_within_svg: job_quality.yaml has no decomposition. Run "
                          "ai-monitor scripts/decompose_job_quality.py, then scripts/refresh_job_quality.py.")
     lo, hi = -5, 5
-    W, H = 640, 196
-    x0, x1, top, bot = 52, 522, 12, 158
+    W, H = 640, 150
+    x0, x1, top, bot = 52, 522, 10, 122
     X = lambda i: x0 + i / (n - 1) * (x1 - x0)
     Y = lambda v: bot - (v - lo) / (hi - lo) * (bot - top)
     p = [f'<svg class="rankchart jobq" viewBox="0 0 {W} {H}" role="img" aria-label="'
@@ -3798,37 +3798,50 @@ def brief(lang="en"):
     if not (all(r["ft_within"] > 0 for r in _pre) and all(r["ft_within"] < 0 for r in _post)):
         raise SystemExit("brief: the full-time within-occupation gap no longer turns in 2023. Reword.")
 
+    if not (_j0["pm_pred"] - _j1["pm_pred"] >= 0.8 * (_j0["pm_ai"] - _j1["pm_ai"])):
+        raise SystemExit("brief: occupation alone no longer explains 'almost all' of the fall in the "
+                         "AI-ad permanent share. Reword takeaways['jobquality'].")
+    _ko = _wc["KanSEAKopplaBort"]
+
     takeaways = {
         "jobquality": L(
-            f"The most AI-exposed third of occupations looks like what work "
-            f"psychologists call an active job: more demanding and more autonomous. On average across "
-            f"occupation groups, {_n(_wc['PsykAnst']['hi'])}% find the work mentally strenuous, against "
-            f"{_n(_wc['PsykAnst']['lo'])}% in the least exposed third, and more cannot switch off after work. But "
-            f"{_n(_wc['OlustAEO']['hi'])}% can influence how their work is done, against "
-            f"{_n(_wc['OlustAEO']['lo'])}%. The difference in influence is far larger among women, "
-            f"{_n(_wo['lo'])}% against {_n(_wo['hi'])}%, than among men, {_n(_mo['lo'])}% against "
-            f"{_n(_mo['hi'])}%. Last month we showed demand for AI skills spreading from ICT into ordinary "
-            f"occupations. The terms in those advertisements have followed: in {_j1['year']}, "
-            f"{_n(_j1['pm_ai'])}% of AI-skill advertisements offered a permanent contract, down from "
-            f"{_n(_j0['pm_ai'])}% in {_j0['year']}, while other advertisements stayed between "
-            f"{_n(min(_po))}% and {_n(max(_po))}%. Almost all of that fall is the occupation mix: compared with other advertisements in the same occupation, AI-skill "
-            f"advertisements are as often or slightly more often permanent in every year. Full-time work is "
-            f"the exception: slightly more common than in the same occupation up to 2022, and since 2023 {_n(min(_ftw))} to {_n(max(_ftw))} "
-            f"percentage points less common.",
-            f"Den mest AI-exponerade tredjedelen av yrkena liknar det som "
-            f"arbetspsykologer kallar ett aktivt jobb: mer krävande och mer självständigt. I genomsnitt "
-            f"över yrkesgrupperna upplever {_n(_wc['PsykAnst']['hi'])} procent arbetet som psykiskt "
-            f"ansträngande, mot {_n(_wc['PsykAnst']['lo'])} procent i den minst exponerade tredjedelen, och fler "
-            f"kan inte koppla bort jobbet efter arbetstid. Men {_n(_wc['OlustAEO']['hi'])} procent kan påverka "
-            f"hur arbetet utförs, mot {_n(_wc['OlustAEO']['lo'])} procent. Skillnaden i inflytande är mycket "
-            f"större bland kvinnor, {_n(_wo['lo'])} mot {_n(_wo['hi'])} procent, än bland män, "
-            f"{_n(_mo['lo'])} mot {_n(_mo['hi'])} procent. Förra månaden visade vi att efterfrågan på "
-            f"AI-kompetens sprids från it-yrkena till vanliga yrken. Villkoren i de annonserna har följt med: "
-            f"{_j1['year']} erbjöd {_n(_j1['pm_ai'])} procent av AI-annonserna en tillsvidareanställning, mot "
-            f"{_n(_j0['pm_ai'])} procent {_j0['year']}, medan övriga annonser låg mellan {_n(min(_po))} och "
-            f"{_n(max(_po))} procent. Nästan hela nedgången beror på yrkesmixen: "
-            f"jämfört med andra annonser i samma yrke är AI-annonserna lika ofta eller något oftare "
-            f"tillsvidare varje år. Heltid är undantaget: något vanligare än i samma yrke fram till 2022, "
+            f"The most AI-exposed third of occupations looks like what work-environment research calls "
+            f"active jobs: more demanding and more autonomous. In the most exposed occupations, on average "
+            f"{_n(_wc['PsykAnst']['hi'])}% of workers find the work mentally strenuous, against "
+            f"{_n(_wc['PsykAnst']['lo'])}% in the least exposed. In the most exposed occupations "
+            f"{_n(_ko['hi'])}% cannot switch off from work after hours, against {_n(_ko['lo'])}% in the least "
+            f"exposed. At the same time, {_n(_wc['OlustAEO']['hi'])}% of employees in the most exposed "
+            f"occupations can influence how their work is done, against {_n(_wc['OlustAEO']['lo'])}% in the "
+            f"least exposed. The difference in influence is far larger among women, {_n(_wo['hi'])}% against "
+            f"{_n(_wo['lo'])}%, than among men, {_n(_mo['hi'])}% against {_n(_mo['lo'])}%. Last month we "
+            f"showed demand for AI skills spreading from ICT into ordinary occupations. That shows in the "
+            f"terms too. In {_j0['year']}, {_n(_j0['pm_ai'])}% of AI-skill advertisements offered a permanent "
+            f"contract, in {_j1['year']} only {_n(_j1['pm_ai'])}%, while other advertisements stayed between "
+            f"{_n(min(_po))}% and {_n(max(_po))}% throughout. It looks like worse terms for AI jobs, but almost "
+            f"all of the fall comes from AI-skill advertisements moving into occupations where fixed-term "
+            f"contracts are more common. Compared with other advertisements in the same "
+            f"occupation, AI-skill advertisements offer a permanent contract at least as often, in every "
+            f"year. Full-time work is the exception. Up to 2022 it was slightly more common in AI-skill "
+            f"advertisements than in others in the same occupation, but since 2023 it has "
+            f"been {_n(min(_ftw))} to {_n(max(_ftw))} percentage points less common.",
+            f"Den mest AI-exponerade tredjedelen av yrkena liknar det som arbetsmiljöforskningen kallar "
+            f"aktiva arbeten: mer krävande och mer självständiga. Bland dem som arbetar i de mest exponerade "
+            f"yrkena upplever i genomsnitt {_n(_wc['PsykAnst']['hi'])} procent arbetet som psykiskt "
+            f"ansträngande, mot {_n(_wc['PsykAnst']['lo'])} procent i de minst exponerade. "
+            f"I de mest exponerade yrkena kan {_n(_ko['hi'])} procent inte koppla bort jobbet efter "
+            f"arbetstid, mot {_n(_ko['lo'])} procent i de minst exponerade. Samtidigt kan "
+            f"{_n(_wc['OlustAEO']['hi'])} procent av de anställda i de mest exponerade yrkena påverka hur "
+            f"arbetet utförs, mot {_n(_wc['OlustAEO']['lo'])} procent i de minst exponerade. Skillnaden i "
+            f"inflytande är mycket större bland kvinnor, {_n(_wo['hi'])} mot {_n(_wo['lo'])} procent, än "
+            f"bland män, {_n(_mo['hi'])} mot {_n(_mo['lo'])} procent. Förra månaden visade vi att "
+            f"efterfrågan på AI-kompetens har spridit sig från it-yrkena ut i vanliga yrken. Det syns också "
+            f"i villkoren. {_j0['year']} erbjöd {_n(_j0['pm_ai'])} procent av AI-annonserna en "
+            f"tillsvidareanställning, {_j1['year']} bara {_n(_j1['pm_ai'])} procent, medan övriga annonser "
+            f"hela tiden låg mellan {_n(min(_po))} och {_n(max(_po))} procent. Det ser ut som att AI-jobben "
+            f"har fått sämre villkor, men nedgången beror nästan helt på att AI-annonserna nu finns i yrken "
+            f"där tidsbegränsade anställningar är vanligare. Jämfört med andra annonser i samma yrke "
+            f"erbjuder AI-annonserna tillsvidareanställning minst lika ofta, varje år. Heltid är undantaget. "
+            f"Fram till 2022 var heltid något vanligare i AI-annonserna än i andra annonser i samma yrke, "
             f"men sedan 2023 är det {_n(min(_ftw))}–{_n(max(_ftw))} procentenheter ovanligare."),
         "exposure": L(
             f"{se_share:.0f}% of Swedish jobs are in the most AI-exposed occupations (the top 25% of occupations by "
@@ -3971,13 +3984,13 @@ def brief(lang="en"):
                         f"{round(max(c['n_occ'] for c in WORKCOND['conditions']) / 3)} occupation groups each), "
                         f"unweighted mean over groups; {_jq['source']}, "
                         f"{_jq['first_year']}–{_jq['last_year']}, {_jq['n_ai_last']:,} AI-skill advertisements in "
-                        f"{_jq['last_year']}, each set against all advertisements in its occupation",
+                        f"{_jq['last_year']}",
                         f"SCB, Arbetsmiljöundersökningen {_wcm['wc_year']}, per yrke (SSYK 2-siffer) × DAIOE "
                         f"generativ AI-komposit (g2gen) {_wcm['daioe_version']}, minst mot mest exponerade tredjedel "
                         f"(omkring {round(max(c['n_occ'] for c in WORKCOND['conditions']) / 3)} yrkesgrupper vardera), "
                         f"ovägt medel över grupperna; JobTech / Platsbanken jobbannonser (Arbetsförmedlingen), "
                         f"CC0, fryst termlista {_jq['definition']}, unika annonser, {_jq['first_year']}–{_jq['last_year']}, "
-                        f"{_nai_sv} AI-annonser {_jq['last_year']}, var och en ställd mot alla annonser i sitt yrke"),
+                        f"{_nai_sv} AI-annonser {_jq['last_year']}"),
         "exposure": L(f"DAIOE generative-AI composite (g2gen) {dver} × Eurostat EU-LFS {cc['meta']['weight_year']}",
                       f"DAIOE generativ AI-komposit (g2gen) {dver} × Eurostat AKU {cc['meta']['weight_year']}"),
         "demand": f"{dm['meta']['source']}, {dm['meta']['year']}",
@@ -4036,14 +4049,12 @@ def brief(lang="en"):
 
     setups = {
         "jobquality": L(
-            "Most of the debate on AI and work is about how many jobs there will be, less about what "
-            "the jobs are like. We look at both sides with public data: how people in "
-            "AI-exposed occupations describe their working conditions, and what employers offer when "
-            "they advertise for AI skills.",
-            "Debatten om AI och arbete handlar mest om hur många jobb det blir, mindre om hur jobben "
-            "är. Vi tittar på båda sidorna med öppna data: hur de som arbetar i "
-            "AI-exponerade yrken beskriver sin arbetsmiljö, och vad arbetsgivarna erbjuder när de "
-            "annonserar efter AI-kompetens."),
+            "Most of the debate on AI and work is about the number of jobs, less about what the jobs "
+            "are like. We look at what the jobs are like, both as employees describe them and as "
+            "employers offer them in advertisements.",
+            "Debatten om AI och arbete handlar mest om antalet jobb, mindre om hur jobben är. Vi tittar "
+            "på hur jobben är, både som de anställda beskriver dem och som arbetsgivarna erbjuder dem i "
+            "annonser."),
         "exposure": L(
             "Which jobs sit closest to what today's AI can already do? Exposure measures the overlap "
             "between an occupation's tasks and the capabilities of generative AI, occupation by "
@@ -4193,12 +4204,12 @@ def brief(lang="en"):
             "Both comparisons are descriptive. The exposed occupations are also more qualified, so much "
             "of the gap in working conditions reflects the kind of work rather than AI, and the 2024 "
             "survey's new method rules out comparison with earlier years. Comparing within occupations "
-            "removes the occupation mix but not differences between employers, and advertisements show "
-            "the terms offered, not the jobs as they turn out.",
+            "removes differences between occupations but not differences between employers, and advertisements show "
+            "the terms offered, not the jobs themselves.",
             "Båda jämförelserna är beskrivande. De exponerade yrkena är också mer kvalificerade, så "
             "mycket av skillnaden i arbetsmiljö speglar vilken sorts arbete det är snarare än AI, och "
             "undersökningen 2024 gjordes med en ny metod som inte går att jämföra med tidigare år. "
-            "Jämförelsen inom yrket tar bort yrkesmixen men inte skillnader mellan arbetsgivare, och "
+            "Jämförelsen inom yrket tar bort skillnader mellan yrken men inte skillnader mellan arbetsgivare, och "
             "annonserna visar villkoren som erbjuds, inte jobben i sig."),
         "exposure": L(
             "Exposure says nothing about whether AI substitutes for a worker or assists one, and the "
@@ -4344,7 +4355,7 @@ def brief(lang="en"):
                          "all", active=True, lang=_lg)
             + f'<div class="dblegend"><span><i class="lo"></i>{L("least-exposed third of occupations", "minst exponerade tredjedelen av yrkena")}</span>'
               f'<span><i class="hi"></i>{L("most-exposed third", "mest exponerade tredjedelen")}</span></div>'
-            + f'<p class="secintro" style="margin:18px 0 6px">'
+            + f'<p class="secintro" style="margin:8px 0 4px">'
               f'{L("AI-skill ads minus other ads in the same occupation, percentage points.", "AI-annonser minus andra annonser i samma yrke, procentenheter.")}</p>'
             + jobquality_within_svg(JOBQ, lang=_lg))
     else:

@@ -61,8 +61,8 @@ items:
 brief:
   standing:
     # One printed line in the brief footer (mono, beside the marks), so keep it under ~70 characters.
-    en: "The lab contributes to AISCAF (WASP-HS), which funds part of the lab."
-    sv: "Labbet bidrar till AISCAF (WASP-HS), som finansierar delar av labbet."
+    en: "The lab contributes to AISCAF, a WASP-HS research cluster."
+    sv: "Labbet bidrar till AISCAF, ett forskningskluster inom WASP-HS."
   issues:
     "2026-10":
       en: >-
