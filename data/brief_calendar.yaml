@@ -8,10 +8,8 @@
 # the joint AISCAF launch with Uppsala/Tillväxtanalys, to be set at the 12 Oct meeting with Oskar;
 # its figures are refreshed right before release. To release: delete the entry and rebuild.
 
-# November 2026 held until ML says "go" on the rebuilt job-quality issue (1 Nov 2026), so the
-# Monday monitor refresh does not put an unapproved draft on the site. Delete on release.
-hold:
-  "2026-11": {show: "2026-10"}
+# November 2026 released 9 Nov 2026 (ML: EN and SV approved, no proofreading round this time).
+hold: {}
 
 months:
   1:  {title_en: "Augmentation or automation?",              title_sv: "Förstärkning eller automatisering?",       theme: demand}
