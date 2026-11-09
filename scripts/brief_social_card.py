@@ -20,6 +20,17 @@ TITLES = {"en": ("Swedish job ads mention AI far more often than they ask for AI
                  "Andel av alla jobbannonser på Platsbanken, 2016 till {mo_sv} {y}",
                  "Källa: JobTech / Platsbanken. AI-Econ Lab, AIEL Monitor {m}. ai-econlab.com/monitor")}
 
+# Per-issue titles (9 Nov 2026). Months not listed use TITLES above (the October washing card).
+# November leads with the work-environment chart, so the card carries that chart and its legend.
+TITLES_BY_MONTH = {
+    "2026-11": {"en": ("AI-exposed jobs are more demanding, and give more say over the work",
+                       "Share of employees (mean over occupation groups), least- vs most-AI-exposed third, 2024",
+                       "Source: SCB, Arbetsmiljöundersökningen 2024 × DAIOE. AI-Econ Lab, AIEL Monitor {m}. ai-econlab.com/monitor"),
+                "sv": ("AI-exponerade jobb är mer krävande, men ger mer inflytande över arbetet",
+                       "Andel anställda (medel över yrkesgrupper), minst mot mest AI-exponerade tredjedelen, 2024",
+                       "Källa: SCB, Arbetsmiljöundersökningen 2024 × DAIOE. AI-Econ Lab, AIEL Monitor {m}. ai-econlab.com/monitor")},
+}
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--month", required=True); a = ap.parse_args()
     env = {**os.environ, "BRIEF_MONTH_OVERRIDE": a.month}
@@ -39,10 +50,16 @@ def main():
         "february", "februari").replace("march", "mars")
     for lang, rel in (("en", "monitor/brief/index.html"), ("sv", "monitor/brief/sv/index.html")):
         page = (docs / rel).read_text(encoding="utf-8")
-        svg = re.search(r'<div class="bchart">(<svg.*?</svg>)', page, re.S).group(1)
+        if a.month in TITLES_BY_MONTH:
+            # first chart plus its legend (the legend is a div after the svg)
+            svg = re.search(r'<div class="bchart">(<svg.*?</svg>\s*<div class="dblegend">.*?</div>)', page, re.S).group(1)
+            svg = f'<div style="width:100%">{svg}</div>'
+        else:
+            svg = re.search(r'<div class="bchart">(<svg.*?</svg>)', page, re.S).group(1)
         # The card's subtitle carries the unit; drop the chart's own axis caption so it is not said twice.
         svg = re.sub(r'<text[^>]*>(Share of all job advertisements on Platsbanken|Andel av alla jobbannonser på Platsbanken)</text>', '', svg)
-        title, sub, src = (t.format(y=y, m=a.month, mo_en=mo_en, mo_sv=mo_sv) for t in TITLES[lang])
+        title, sub, src = (t.format(y=y, m=a.month, mo_en=mo_en, mo_sv=mo_sv)
+                           for t in TITLES_BY_MONTH.get(a.month, TITLES)[lang])
         html = f"""<!doctype html><html lang="{lang}" data-theme="light"><head><meta charset="utf-8">
 <link rel="stylesheet" href="/assets/styles.css"><style>
 html,body{{margin:0;background:#fff}} .card{{width:1200px;height:675px;box-sizing:border-box;padding:44px 56px 30px;
