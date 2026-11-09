@@ -9,11 +9,11 @@ intro: 'Everything above measures AI in the labour market; this small module tra
   in the most work-relevant unit there is: how much human working time a single AI run can replace. The
   frontier is jagged, and it moves fast: on novel interactive worlds, where the goal must be inferred
   without instructions, the best system scored under 1% at the benchmark''s launch, 30% of human level
-  in July 2026 and 63% in September, and 99.9% when the same September model is allowed the context management
-  its own provider designed for it. That benchmark is scored against people by construction: every environment
-  is verified solvable by a human, and 100% means matching human efficiency, so the figure is a distance
-  to human performance rather than a head-to-head result. Frontier capability is also what our DAIOE exposure
-  measure tracks on the technology side.'
+  in July 2026, 63% in September and 81% in November, and a September model reaches 99.9% when it is allowed
+  the context management its own provider designed for it. That benchmark is scored against people by
+  construction: every environment is verified solvable by a human, and 100% means matching human efficiency,
+  so the figure is a distance to human performance rather than a head-to-head result. Frontier capability
+  is also what our DAIOE exposure measure tracks on the technology side.'
 facts:
 - num: 12–17 h
   lab: Longest tasks frontier AI agents finish about half the time, in human-expert time.
@@ -31,14 +31,15 @@ facts:
   foot: Epoch AI · notable models · Oct 2026
   mode: auto
   asof: '2026-10-28'
-- num: 63<span>% of human level</span>
+- num: 81<span>% of human level</span>
   lab: 'Frontier AI on novel interactive worlds: explore, infer the goal, plan, with no instructions.
     The scale is human-calibrated (100% means beating every game as efficiently as a person), so this
-    is a distance to human performance, not a measured head-to-head. Under 1% at launch, 30% in July.
-    Allowed the context management its provider designed for it, the same model scores 99.9%.'
-  foot: ARC-AGI-3 Semi-Private · GPT-6 Astra (Max), Standard harness, 62.7% · Sep 2026
+    is a distance to human performance, not a measured head-to-head. Under 1% at launch, 30% in July,
+    63% in September. Allowed the context management its provider designed for it, a September model scores
+    99.9%.'
+  foot: ARC-AGI-3 Semi-Private · Claude Fable 5.2 (XHigh), Standard harness, 81.2% · Nov 2026
   mode: watched
-  asof: '2026-09-01'
+  asof: '2026-11-01'
 links:
 - label: METR time horizons
   url: https://metr.org/time-horizons/
@@ -65,7 +66,7 @@ verified:
     second_p50_hours: 11.98
   arc:
     'on': '2026-11-09'
-    standard_top_pct: 62.7
+    standard_top_pct: 81.2
     adapter_top_pct: 99.9
 checks_configured:
 - arc
