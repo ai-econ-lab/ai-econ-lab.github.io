@@ -26,6 +26,8 @@ years:
       # the 12th, so the site's own record of the launch may not post-date the announcement of it.
       # "Published" rather than "went out", because that is true of the brief on the site whether
       # or not the Substack issue has been mailed.
+      - date: "Nov 13"
+        text: 'Kyvik-Nordås co-authored chapter 2, "AI Adoption in the Asia-Pacific: Pathways to Economic Opportunities" (with Younas and Zeng), of the Pacific Economic Cooperation Council''s <a href="https://www.pecc.org/pecc/208-publications/1029-state-of-the-region-2026-2027">State of the Region 2026-2027</a>, released today.'
       - date: "Oct 15"
         text: 'The paper "Artificial Intelligence for Public Use" (Lodefalk, Engberg, Lidskog, Skargren & Tang) was published open access in Digital Society.'
         links: [{label: "Article (DOI)", url: "https://doi.org/10.1007/s44206-026-00285-z"}]
