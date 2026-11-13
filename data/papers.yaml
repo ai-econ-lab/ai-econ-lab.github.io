@@ -165,11 +165,13 @@ working:
     abstract: ""
   - title: "Automation and the Changing Composition of Skill Demand"
     authors: "Hellsten, M., Pulito, G. & S. Schroeder"
-    year: 2025
+    year: 2026
     venue: "Resubmitted to Labour Economics"
     coverage: []
-    links: []
-    abstract: ""
+    links:
+      - {label: "SSRN", url: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5735629"}
+      - {label: "RFBerlin DP 122/26", url: "https://www.rfberlin.com/wp-content/uploads/2026/04/26122.pdf"}
+    abstract: "This paper provides new evidence on how automation reshapes firms’ demand for skills, not only by changing the occupational composition, but also by reshaping what existing jobs require. Using matched data on firm-level automation investments and detailed job vacancy postings from Denmark, we extract multidimensional skill profiles through natural language processing and decompose changes in skill demand into within- and between-occupation components. Within-occupation adjustment is a quantitatively important margin, accounting for 14–39% of total skill demand change depending on skill type and occupational group. Drawing on a task-based framework that links automation to shifts in multiple skill types within occupations, we estimate the causal effect of automation using a staggered difference-in-differences design. The effects are heterogeneous across the occupational hierarchy: among managers and professionals, automation increases the demand for soft skills, shifting the within-occupation skill mix toward interpersonal and cognitive competencies; among production workers, adjustment operates primarily through reduced hiring rather than changes in skill requirements, while retraining intensity rises by 5 percentage points. Our findings highlight that automation operates through multiple adjustment margins, with implications for training policy and labour market resilience."
   - title: "Artificial Intelligence, Trade and Services Jobs"
     authors: "Engberg, E., Kyvik-Nordås, H. & A. Tang"
     year: 2022
@@ -178,14 +180,14 @@ working:
     links:
       - {label: "Adelaide WP 2022-14", url: "https://iit.adelaide.edu.au/ua/media/1783/wp-2022-14-h-nordas_a-tang.-march-2022.pdf"}
     abstract: ""
-  - title: "Returns to AI Skills"
+  - title: "What is an AI Worker? Evidence from Matched Vacancy-Hires"
     authors: "Hellsten, M."
-    year: 2024
-    venue: "Submission tbc"
+    year: 2026
+    venue: "Working paper"
     coverage: []
     links:
-      - {label: "Ratio WP 378", url: "https://cms.ratio.se/app/uploads/2024/08/wp-378-framsida-sammanfogad.pdf"}
-    abstract: "This paper assesses whether workers who develop and apply artificial intelligence experience a earnings premium. I link skill requirements specified in job vacancies to the individuals ultimately hired to fill those positions using a combination of Swedish job vacancy and matched employer-employee register data. By identifying positions that explicitly necessitate AI skills, this paper seeks to determine if a earnings premium is associated with these skills while controlling for other individual attributes. Findings suggest a significant earnings premium for individuals hired to positions requiring AI skills. Discerning between AI developers and AI users, the results indicate that the former group experiences a stronger earnings premium. The premium is partly driven by workers being hired into high-wage industries. However, transitioning into roles requiring AI skills does not result in additional earnings increases, indicating that firms do not engage in wage competition for these workers"
+      - {label: "Ratio WP 393", url: "https://ratio.se/en/publications/ratio-working-paper-no-393-what-is-an-ai-worker"}
+    abstract: "Despite growing policy interest in AI workforce development, surprisingly little is known about what defines these workers, or indeed if they differ from their occupational peers. Using a novel matched vacancy-hire dataset linking Swedish job postings to the individuals hired to fill them, drawn from register data on the entire Swedish population, I study the characteristics of workers who develop and apply AI. Observable traits including high cognitive ability, a tertiary degree in STEM subjects, and a recent migrant background largely explain occupational sorting. Of these, only higher education, prior AI experience, and a science degree set them apart within occupation. I then use earnings as a window onto unobservable differences: AI workers earn approximately 5% more than their peers, entirely explained by firm-level wages. However, AI workers with a doctorate degree stand out sharply in both traits and earnings, indicating that AI workers split into segments that differ by the complexity of their skills and tasks. Taken together, these results point to two distinct policy levers: the supply of average AI workers, termed AI integrators, can be expanded via STEM education participation, while the elite AI developers are supplied by researchers moving to the private sector."
   - title: "The First AI at My Firm: Worker Outcomes after Firm-Level AI Adoption"
     authors: "Hellsten, M., Lodefalk, M., Lechner, M., Löthman, L., Persson, A. & Y. Yakymovych"
     year: 2026
