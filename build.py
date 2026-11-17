@@ -2407,6 +2407,24 @@ def adoption_section():
     swm = SWEAD["meta"]; sm = {r["code"]: r["adoption"] for r in SWEAD["sizes"]}
     swxmax = 10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1)    # round up to 10
     xmax = 5 * (int(max(r["adoption"] for r in ad["countries"]) // 5) + 1)  # round up to 5
+    # SCB can be a wave ahead of Eurostat (from 5 Nov 2026: SCB 2026, Eurostat 2025), and then
+    # the SCB headline is NOT the number on the cross-country bar. The text used to say it was,
+    # unconditionally; it now says which source and which year each figure is (17 Nov 2026).
+    _same = int(swm["year"]) == int(amt["year"])
+    _micro = [r for r in SWEAD["sizes"] if r["code"] not in ("250-", "50-249", "Tot250", "10-49")]
+    _micro_lo = min(r["adoption"] for r in _micro) if _micro else None
+    if _same:
+        _swe_lead = (f"Sweden is among the EU leaders at <b>{se['adoption']:g}%</b> in {h(amt['year'])}, and adoption "
+                     f"climbs steeply with the size of the firm")
+        _swe_note = (f"The highlighted row is the same number the cross-country bar above shows. Every class "
+                     f"is up sharply since {h(swm['prev_year'])}.")
+    else:
+        _swe_lead = (f"SCB's {h(swm['year'])} wave is out ahead of Eurostat's: <b>{sm['Tot250']}%</b> of Swedish "
+                     f"firms with ten or more employees used AI in {h(swm['year'])}, against {se['adoption']:g}% in "
+                     f"{h(amt['year'])} on the Eurostat bar above. Adoption climbs steeply with the size of the firm")
+        _swe_note = (f"The highlighted row is SCB's {h(swm['year'])} figure; the cross-country bar above is Eurostat's "
+                     f"{h(amt['year'])} wave, and Eurostat's {h(swm['year'])} figures follow later. Every class from ten "
+                     f"employees up has risen since {h(swm['prev_year'])}. {h(swm.get('series_note') or '')}")
     return f"""<div class="rule module-sec" id="adoption"><div class="wrap"><section>
   <p class="kicker">Module 3 · Adoption · who is actually using it</p>
   <h2 class="sec">How widely has AI actually been adopted?</h2>
@@ -2423,17 +2441,15 @@ def adoption_section():
   <div class="dotwrap">{barplot(nordic(ad['countries']), amt['eu_avg'], xmax, amt['year'])}</div>
   {figfooter("cross_country_adoption.csv", f"{amt['source']}, {amt['year']} (change vs {amt['prev_year']}) · {amt['unit']}", "cross_country_adoption.svg", next_up="Eurostat 2026 wave (expected around year-end)")}
   <div class="depth"><p class="dk">Sweden, in depth · by firm size</p>
-    <p class="secintro" style="margin:0 0 14px">Sweden is among the EU leaders at <b>{se['adoption']:g}%</b> in
-      {h(amt['year'])}, and adoption climbs steeply with the size of the firm, from <b>{sm['10-49']}%</b> of small
+    <p class="secintro" style="margin:0 0 14px">{_swe_lead}, from <b>{sm['10-49']}%</b> of small
       firms to <b>{sm['250-']}%</b> of large ones. <b>The headline ({sm['Tot250']}%) is a figure for firms with ten
-      or more employees</b>, and among the smallest firms adoption is roughly half that, which is worth knowing
+      or more employees</b>, and among the smallest firms adoption is far lower ({_micro_lo}%), which is worth knowing
       before it is read as a national rate.</p>
     <details class="note"><summary>Why the headline stops at ten employees</summary>
       <p>Eurostat's population stops at ten employees and it publishes no EU figure for anything smaller. SCB
-      surveys firms from no employees upward, so the three rows below the headline are ones almost no other country
-      can show: Sweden was one of two countries reporting the 0–9 class to Eurostat for {h(swm['year'])}.</p>
-      <p>The highlighted row is the same number the cross-country bar above shows. Every class is up sharply since
-      {h(swm['prev_year'])}.</p></details>
+      surveys firms from no employees upward, so the rows below the 10–49 class are ones almost no other country
+      can show (Sweden was one of two countries reporting the 0–9 class to Eurostat for 2025).</p>
+      <p>{_swe_note}</p></details>
     {mdelta_swe_adoption()}
     <div class="dotwrap">{barplot(SWEAD['sizes'], sm['Tot250'], swxmax, 0, 'adoption', '.0f', what='firm-size classes', mean_label='Sweden 10+')}</div>
     {figfooter("swe_adoption.csv", f"{swm['source']}, {swm['year']} (change vs {swm['prev_year']}) · {swm['unit']}; reference line is the Swedish 10+ headline, {sm['Tot250']}%", svg_name="swe_adoption.svg", next_up="with SCB's next ICT-in-enterprises wave")}
@@ -3902,7 +3918,7 @@ def brief(lang="en"):
             f"motsvarande andel för golvet har legat kvar kring {_ni['floor_now']:.0f} procent."),
         "adoption": L(
             f"Adoption climbs steeply with firm size: {smd['10-49']}% among small firms (10–49 employees) "
-            f"against {smd['250-']}% among large ones (250+) in {SWEAD['meta']['year']}, and every size class has risen since {SWEAD['meta']['prev_year']}. "
+            f"against {smd['250-']}% among large ones (250+) in {SWEAD['meta']['year']}, and every size class from ten employees up has risen since {SWEAD['meta']['prev_year']}. "
             f"The industries that adopted least are growing "
             f"fastest in proportional terms and falling further behind all the same: "
             f"{_nm(_fastest)} multiplied its adoption by {_fast_x:.1f} since "
@@ -3910,7 +3926,7 @@ def brief(lang="en"):
             f"between highest and lowest industry widened from {_gap_then} to {_gap_now} percentage "
             f"points.",
             f"Användningen ökar markant med företagsstorlek: {smd['10-49']}% bland småföretagen (10–49 anställda) "
-            f"mot {smd['250-']}% bland de stora (250+) {SWEAD['meta']['year']}, och varje storleksklass har ökat sedan {SWEAD['meta']['prev_year']}. "
+            f"mot {smd['250-']}% bland de stora (250+) {SWEAD['meta']['year']}, och varje storleksklass från tio anställda och uppåt har ökat sedan {SWEAD['meta']['prev_year']}. "
             f"De branscher som använde minst AI växer snabbast "
             f"relativt sett och halkar ändå efter: {_nm(_fastest)} har {svn(round(_fast_x,1))}-faldigat "
             f"sin användning sedan {SWESEC['meta']['prev_year']}, mot {svn(round(_hi_x,1))} för "
@@ -4030,7 +4046,9 @@ def brief(lang="en"):
     # demand lede carried v1.1 numbers for two freezes because it was typed, which is the
     # defect this pattern exists to prevent.
     import statistics as _stats
-    total_se = SWEAD["meta"]["total"]; eu_adopt = ADOPT["meta"]["eu_avg"]
+    # Eurostat's Sweden figure, same wave as the EU average and the barrier question it is set
+    # against. Not SWEAD's total: SCB can be a wave ahead (2026 vs 2025 from Nov 2026).
+    total_se = next(r["adoption"] for r in ADOPT["countries"] if r["is_se"]); eu_adopt = ADOPT["meta"]["eu_avg"]
     dem_med = _stats.median(r["share"] for r in dm["countries"])
     se_dem = next(r["share"] for r in dm["countries"] if r.get("is_se"))
     # The METR task-horizon tile, read from the generated file rather than restated. Matched on
@@ -4339,7 +4357,11 @@ def brief(lang="en"):
                     10 * (max(r["adoption"] for r in SWEAD["sizes"]) // 10 + 1), 0,
                     "adoption", ".0f", what="firm-size classes", lang="sv" if sv else "en")
             + f'<p class="secintro" style="margin:18px 0 6px">'
-              f'{L("The same survey splits adoption by industry for the same year.", "Samma undersökning delar upp användningen per bransch för samma år.")}</p>'
+              + (L("The same survey splits adoption by industry for the same year.", "Samma undersökning delar upp användningen per bransch för samma år.")
+                 if SWESEC["meta"]["year"] == SWEAD["meta"]["year"] else
+                 L(f"The same survey splits adoption by industry; the industry cut is still {SWESEC['meta']['year']}, because SCB's {SWEAD['meta']['year']} wave uses new industry codes (SNI 2025).",
+                   f"Samma undersökning delar upp användningen per bransch; branschuppdelningen gäller fortfarande {SWESEC['meta']['year']}, eftersom SCB:s våg {SWEAD['meta']['year']} använder nya branschkoder (SNI 2025)."))
+              + '</p>'
             + barplot(rows_s, 0, _secmax, 0, "adoption", ".0f", what="industries",
                       cmp_key="prev", series_label=str(SWESEC["meta"]["year"]),
                       cmp_label=str(SWESEC["meta"]["prev_year"]), lang="sv" if sv else "en"))

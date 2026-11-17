@@ -39,6 +39,13 @@ Watched sources and why they need a human:
                 (the question's routing changed between waves), and this is
                 what stops the pin from also being a blindfold.
 
+  scb_ai_firms  SCB NV0116M, AI in enterprises (added 17 Nov 2026). SCB put the 2026
+                wave in NEW tables (SNI 2025) on 5 Nov 2026 while the refresh asked the
+                old table for a pinned 2025, so the site fell a year behind with every
+                run green. The size cut now discovers its table and year; this watcher
+                flags (a) any new table in the node and (b) the sector cut still sitting
+                on an older wave, which needs a human to map the SNI 2025 industry groups.
+
 Akavia has no watcher: the data arrive from the partner by hand. That round is
 a documented manual workflow (process the new wave, reconcile against Akavia's
 own published figures, update data/akavia.yaml, rebuild).
@@ -257,6 +264,43 @@ def watch_eurostat_barriers(state):
             "next on whatever comes after it.")
 
 
+def watch_scb_ai_firms(state):
+    """New table in SCB's AI-in-enterprises node, or the site's firm cuts behind its newest year.
+
+    Two checks. (a) The set of table ids in NV0116M: a reclassification (SNI 2007 -> 2025 in
+    Nov 2026) shows up as new ids, which re-querying an old id can never see. The set is
+    seeded on the first run, so only additions after that are flagged. (b) The newest year in
+    any AiTeknikerTyp* table against the years in the committed swe_adoption.yaml and
+    swe_adoption_sector.yaml: the size cut auto-follows, so (b) normally fires for the sector
+    cut, whose industry groups must be remapped by hand when SCB changes the industry codes.
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import scb_nv0116m as scb
+    import yaml
+    ids = sorted(t["id"] for t in scb.tables())
+    seen = state.get("scb_nv0116m_tables")
+    new_ids = [] if seen is None else [i for i in ids if i not in seen]
+    state["scb_nv0116m_tables"] = ids
+    table, latest = scb.latest("AiTeknikerTyp")
+    behind = []
+    for f in ("swe_adoption.yaml", "swe_adoption_sector.yaml"):
+        y = int(yaml.safe_load((ROOT / "data" / f).read_text(encoding="utf-8"))["meta"]["year"])
+        if y < latest:
+            behind.append(f"{f} is on {y}")
+    key = f"{latest}:{','.join(behind)}:{','.join(new_ids)}"
+    if not (new_ids or behind) or state.get("scb_ai_firms_flagged") == key:
+        return None
+    state["scb_ai_firms_flagged"] = key
+    return (f"SCB AI-in-enterprises: newest wave {latest} ({table}); site cuts behind or new tables",
+            f"Newest year across SCB NV0116M AiTeknikerTyp* tables: {latest}, in {table}.\n\n"
+            + ("Behind: " + "; ".join(behind) + ".\n\n" if behind else "")
+            + ("New tables in the node: " + ", ".join(new_ids) + ".\n\n" if new_ids else "")
+            + "The size cut follows automatically (scripts/refresh_swe_adoption.py). The sector cut "
+              "(scripts/refresh_swe_adoption_sector.py) is pinned because its industry groups must be "
+              "mapped to the table's industry codes; when SCB changes the codes (SNI 2007 -> SNI 2025 "
+              "in 2026), define the new groups, regenerate, rebuild, and mark the series break.")
+
+
 def open_issue(title, body):
     """Create a GitHub issue unless an open one already has this title."""
     gh = shutil.which("gh")
@@ -274,7 +318,7 @@ def main():
     state = json.loads(STATE_FILE.read_text())
     errors, flags = [], []
     for w in (watch_ai_index, watch_daioe_dataset, watch_eu_lfs, watch_scb_amu,
-              watch_fred_rps, watch_eurostat_barriers):
+              watch_fred_rps, watch_eurostat_barriers, watch_scb_ai_firms):
         try:
             hit = w(state)
             if hit:

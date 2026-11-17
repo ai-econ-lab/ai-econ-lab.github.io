@@ -3,76 +3,87 @@
 
     python3 scripts/refresh_swe_adoption.py    # -> data/swe_adoption.yaml, then build.py
 
-Public data: SCB, ICT usage in enterprises (NV0116), table AiTeknikerTypN, technology
-'0080 = use of at least one AI technology'. It decomposes the national adoption headline
-(which the cross-country Eurostat bar shows) into the firm-SIZE gradient: large firms adopt
-far more than small ones. The all-firms total matches the Eurostat figure (both trace to
-this SCB survey). Rerun this, then build.py. DO NOT hand-edit the yaml.
+Public data: SCB, ICT usage in enterprises (NV0116), technology '0080 = use of at least one
+AI technology'. It decomposes the national adoption headline into the firm-SIZE gradient:
+large firms adopt far more than small ones. DO NOT hand-edit the yaml.
+
+YEAR AND TABLE ARE DISCOVERED, NOT PINNED (17 Nov 2026). This script used to ask the SNI 2007
+table `AiTeknikerTypN` for a hard-coded YEAR = "2025". SCB published 2026 on 5 Nov 2026 in a
+new table classified by SNI 2025 (`AiTeknikerTypSNI2025`), so the script went on re-pulling
+2025 every Monday and stayed green while the site fell a year behind. Now `scb_nv0116m.latest`
+picks the newest year across every `AiTeknikerTyp*` table, and the comparison year is the most
+recent earlier wave in any of them.
+
+Comparability across the reclassification. Firm-size classes do not depend on the industry
+code, and SCB's headline is the same population in both tables (all surveyed industries, 10+
+employees: `TotSNI` equals `Tot250` in both), so the four classes from 10 employees up carry a
+change. The micro classes did change: 2026 publishes 0–1 and 2–9 employees where 2025 had 0,
+1–4 and 5–9, so those rows carry no change. That is written into meta.series_note, which the
+page prints, rather than left for a reader to discover.
+
+The headline (Tot250) is the level Eurostat publishes for firms with 10+ employees. It equals
+the Eurostat bar only when both are the same wave; when SCB is ahead (as from Nov 2026 until
+Eurostat's 2026 release) the page says which is which.
 """
-import json, urllib.request
 from pathlib import Path
 
+import scb_nv0116m as scb
+
 ROOT = Path(__file__).resolve().parent.parent
-SCB = "https://api.scb.se/OV0104/v1/doris/en/ssd/START/NV/NV0116/NV0116M/AiTeknikerTypN"
-YEAR, PREV = "2025", "2021"
-# SCB size-class code -> (display name, highlight?). Order = how the bars stack (biggest first).
-# Micro classes added 12 Aug 2026. Eurostat's published population is 10+ persons employed and
-# it has no EU aggregate below that, but SCB surveys firms from zero employees up and publishes
-# 0, 1-4, 5-9, 1-9 and 0-9. Sweden is one of two countries reporting 0-9 to Eurostat for 2025.
-# That makes the ladder BELOW the headline something almost nobody else can show, and it is also
-# the honest answer to "35% of what?": SCB's own "totalt" (TotSNI) equals Tot250 exactly, so the
-# headline is a 10+ figure and not an all-firms one.
-# Swedish names added 31 Aug 2026: the Swedish brief and one-pager were rendering these bars
-# with ENGLISH labels, because the yaml carried only `name`. The sector sibling shipped bilingual
-# from the start; this brings the size cut level with it.
+PREFIX = "AiTeknikerTyp"
+TECH = "0080"   # use of at least one AI technology
+# SCB size-class code -> (display name, Swedish name, highlight?). Order = how the bars stack.
+# Both micro ladders are listed; only the classes the current table publishes are written.
+# Micro classes added 12 Aug 2026 (Sweden is one of two countries reporting 0-9 to Eurostat);
+# Swedish names 31 Aug 2026; "Headline: 10+ employees" after Lydia's SV proofread, 3 Sep 2026.
 SIZES = [
     ("250-",   "250+ employees",   "250+ anställda",     False),
     ("50-249", "50–249 employees", "50–249 anställda",   False),
-    # Lydia's SV proofread, 3 Sep 2026: "Huvudtal: 10+" did not say 10+ WHAT. Name the unit
-    # on the bar; the source line adds that this is the level comparable with Eurostat.
-    ("Tot250", "Headline: 10+ employees", "Huvudtal: 10+ anställda", True),  # ties to the cross-country bar
+    ("Tot250", "Headline: 10+ employees", "Huvudtal: 10+ anställda", True),
     ("10-49",  "10–49 employees",  "10–49 anställda",    False),
-    ("5-9",    "5–9 employees",    "5–9 anställda",      False),
-    ("1-4",    "1–4 employees",    "1–4 anställda",      False),
-    ("0",      "No employees",     "Inga anställda",     False),
+    ("2-9",    "2–9 employees",    "2–9 anställda",      False),   # SNI 2025 table, 2026-
+    ("5-9",    "5–9 employees",    "5–9 anställda",      False),   # SNI 2007 table, -2025
+    ("1-4",    "1–4 employees",    "1–4 anställda",      False),   # SNI 2007 table, -2025
+    ("0-1",    "0–1 employees",    "0–1 anställda",      False),   # SNI 2025 table, 2026-
+    ("0",      "No employees",     "Inga anställda",     False),   # SNI 2007 table, -2025
 ]
 
 
-def fetch():
-    q = {"query": [
-        {"code": "TypAvTeknik", "selection": {"filter": "item", "values": ["0080"]}},
-        {"code": "Redovisningsgrupp", "selection": {"filter": "item", "values": [s[0] for s in SIZES]}},
-        {"code": "ContentsCode", "selection": {"filter": "item", "values": ["000007JC"]}},   # share, percent
-        {"code": "Tid", "selection": {"filter": "item", "values": [PREV, YEAR]}}],
-        "response": {"format": "json-stat2"}}
-    req = urllib.request.Request(SCB, data=json.dumps(q).encode(),
-                                 headers={"Content-Type": "application/json", "User-Agent": "research"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        d = json.load(r)
-    ids, sizes, val = d["id"], d["size"], d["value"]
-    idx = {k: d["dimension"][k]["category"]["index"] for k in ids}
-    nT = sizes[ids.index("Tid")]
-    tpos = idx["Tid"]                                   # {"2021":0,"2025":1}
-    out = {}
-    # value order: TypAvTeknik(1) x Redovisningsgrupp x ContentsCode(1) x Tid
-    for scode, spos in idx["Redovisningsgrupp"].items():
-        base = spos * nT
-        cur = val[base + tpos[YEAR]]
-        prev = val[base + tpos[PREV]]
-        out[scode] = (cur, prev)
-    return out
+def comparison(cur_table, year):
+    """(table, year) of the most recent earlier wave: same table if it has one, otherwise the
+    newest earlier year in any sibling table."""
+    best = None
+    for t in scb.tables():
+        if not t["id"].startswith(PREFIX):
+            continue
+        earlier = [y for y in scb.years(t["id"]) if y < year]
+        if earlier:
+            cand = (max(earlier), t["id"] == cur_table, t["id"])
+            if best is None or cand > best:
+                best = cand
+    return (best[2], best[0]) if best else (None, None)
 
 
 def main():
-    data = fetch()
+    table, year = scb.latest(PREFIX)
+    ptable, pyear = comparison(table, year)
+    codes = [s[0] for s in SIZES]
+    cur = scb.values(table, TECH, codes, year)
+    prev = scb.values(ptable, TECH, codes, pyear) if ptable else {}
     rows = []
     for code, name, name_sv, hi in SIZES:
-        cur, prev = data.get(code, (None, None))
-        if cur is None:
+        if code not in cur:
             continue
-        rows.append({"code": code, "name": name, "name_sv": name_sv, "adoption": int(round(cur)),
-                     "prev": (None if prev is None else int(round(prev))), "is_se": hi})
-    total = next((r["adoption"] for r in rows if r["code"] == "Tot250"), None)
+        p = prev.get(code)
+        rows.append({"code": code, "name": name, "name_sv": name_sv, "adoption": int(round(cur[code])),
+                     "prev": None if p is None else int(round(p)), "is_se": hi})
+    total = next(r["adoption"] for r in rows if r["code"] == "Tot250")
+    note = ""
+    if ptable and ptable != table:
+        # Reader-facing (the page prints it): no table ids here, they are in meta.table/prev_table.
+        note = (f"SCB moved the survey to new industry codes (SNI 2025) in {year}. Size classes from "
+                f"10 employees up are comparable with {pyear}; the smallest size classes were "
+                f"redefined, so they show no change.")
     lines = [
         "# AI adoption by firm size in Sweden (Adoption module, 'Sweden, in depth').",
         "# Auto-generated; rerun scripts/refresh_swe_adoption.py then build.py. DO NOT hand-edit.",
@@ -80,18 +91,22 @@ def main():
         '  indicator: "Enterprises using at least one AI technology, by firm size"',
         '  unit: "% of enterprises"',
         '  source: "SCB, ICT usage in enterprises (NV0116)"',
-        f"  year: {YEAR}",
-        f"  prev_year: {PREV}",
+        f"  table: {table}",
+        f"  year: {year}",
+        f"  prev_table: {ptable}",
+        f"  prev_year: {pyear}",
         f"  total: {total}",
+        f'  series_note: "{note}"',
         "sizes:",
     ]
     for r in rows:
-        prev = "null" if r["prev"] is None else r["prev"]
+        p = "null" if r["prev"] is None else r["prev"]
         lines.append(f'  - {{code: "{r["code"]}", name: "{r["name"]}", name_sv: "{r["name_sv"]}", '
-                     f'adoption: {r["adoption"]}, prev: {prev}, is_se: {str(r["is_se"]).lower()}}}')
+                     f'adoption: {r["adoption"]}, prev: {p}, is_se: {str(r["is_se"]).lower()}}}')
     out = ROOT / "data" / "swe_adoption.yaml"
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"wrote {out.name}: " + ", ".join(f"{r['name']}={r['adoption']}%" for r in rows))
+    print(f"wrote {out.name} from {table} {year} (vs {ptable} {pyear}): "
+          + ", ".join(f"{r['name']}={r['adoption']}%" for r in rows))
 
 
 if __name__ == "__main__":
