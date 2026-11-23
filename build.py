@@ -395,7 +395,9 @@ def daioe_ld():
         # reported on 16 Aug 2026. The repository publishes each vintage in three formats, so
         # all three are declared rather than guessing at one. contentUrl is the repository
         # landing page, which is where a human starts; the formats say what they will find.
-        "distribution":{"@type":"DataDownload","contentUrl":DAIOE["resources"][0]["href"],
+        # Pinned to the Zenodo deposit (23 Nov 2026), not resources[0]: the first resource is now
+        # the simple CSVs on GitHub, for people, while search engines should get the citable DOI.
+        "distribution":{"@type":"DataDownload","contentUrl":next(r["href"] for r in DAIOE["resources"] if "zenodo" in r["href"]),
                         "encodingFormat":["text/csv",
                                           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                                           "application/x-stata-dta"]},
