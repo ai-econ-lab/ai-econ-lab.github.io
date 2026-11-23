@@ -42,6 +42,7 @@ explorers:
     open: "https://huggingface.co/spaces/ai-econ-lab/months"
 
 resources:
+  - {label: "Just the scores: one CSV per classification (ISCO-08, SOC 2010, SSYK 2012)", href: "https://github.com/Magnus-L/daioe-pipeline#just-the-scores", note: "seven columns, generative AI and all AI with percentiles, 2025 and 2012-2025; the quickest way in"}
   - {label: "DAIOE scores on Zenodo (citable, all versions)", href: "https://doi.org/10.5281/zenodo.21873967", note: "the canonical, versioned release; cite the vintage you use"}
   - {label: "Construction pipeline (open source)", href: "https://github.com/Magnus-L/daioe-pipeline", note: "code, test suite, quick starts in Python and Stata"}
   - {label: "Technical documentation (construction, vintages, reading the scores)", href: "https://github.com/Magnus-L/daioe-pipeline/blob/main/DOCUMENTATION.md", note: "the release's public reference"}
