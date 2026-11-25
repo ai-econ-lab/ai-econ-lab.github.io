@@ -1,0 +1,425 @@
+code,title,year,genai,genai_pctl,allai,allai_pctl
+4413,"Coding, proof-reading and related clerks",2025,14.6628,100.0,12.3437,100.0
+2641,Authors and related writers,2025,14.0249,99.8,9.9374,97.9
+2431,Advertising and marketing professionals,2025,13.3739,99.5,9.8642,96.9
+2120,"Mathematicians, actuaries and statisticians",2025,12.6584,99.3,10.3879,99.3
+2642,Journalists,2025,12.5381,99.1,9.3133,93.2
+2514,Applications programmers,2025,12.4781,98.8,10.6838,99.8
+2633,"Philosophers, historians and political scientists",2025,12.3512,98.6,9.3844,94.1
+2631,Economists,2025,12.2494,98.3,9.7491,96.5
+2512,Software developers,2025,12.153,98.1,10.0932,98.8
+4416,Personnel clerks,2025,11.9151,97.9,9.628,95.8
+3342,Legal secretaries,2025,11.8433,97.6,9.8964,97.4
+2412,Financial and investment advisers,2025,11.7819,97.4,9.9601,98.3
+2521,Database designers and administrators,2025,11.6084,97.2,9.9809,98.6
+2632,"Sociologists, anthropologists and related professionals",2025,11.5844,96.9,9.0333,90.1
+2421,Management and organization analysts,2025,11.5755,96.7,9.1819,91.3
+0211,Physical and earth science professionals,2025,11.5418,96.5,9.586,95.3
+2519,Software and applications developers and analysts not elsewhere classified,2025,11.52,96.2,9.4318,94.3
+2511,Systems analysts,2025,11.5017,96.0,9.2851,92.7
+2112,Meteorologists,2025,11.4978,95.8,9.7238,96.0
+3314,"Statistical, mathematical and related associate professionals",2025,11.4941,95.5,10.2647,99.1
+2145,Chemical engineers,2025,11.4915,95.3,9.7306,96.2
+2111,Physicists and astronomers,2025,11.4251,95.0,9.328,93.4
+2529,Database and network professionals not elsewhere classified,2025,11.3821,94.8,9.5423,95.0
+2513,Web and multimedia developers,2025,11.3715,94.6,9.6127,95.5
+2413,Financial analysts,2025,11.3455,94.3,9.9366,97.6
+5211,Stall and market salespersons,2025,11.315,93.9,8.1839,80.9
+5243,Door to door salespersons,2025,11.315,93.9,8.1839,80.9
+9520,Street vendors (excluding food),2025,11.315,93.9,8.1839,80.9
+2310,University and higher education teachers,2025,11.245,93.4,8.5434,85.1
+2411,Accountants,2025,11.1709,93.2,9.8511,96.7
+4313,Payroll clerks,2025,11.1233,92.9,10.3935,99.5
+4120,Secretaries (general),2025,11.1195,92.7,9.2281,92.0
+2151,Electrical engineers,2025,11.1164,92.5,9.2629,92.2
+2166,Graphic and multimedia designers,2025,11.0186,92.2,8.5647,85.6
+2146,"Mining engineers, metallurgists and related professionals",2025,10.9612,92.0,9.1946,91.5
+3344,Medical secretaries,2025,10.8978,91.7,9.9496,98.1
+5244,Contact centre salespersons,2025,10.8517,91.5,8.4525,83.7
+2142,Civil engineers,2025,10.8093,91.3,9.0778,91.0
+3513,Computer network and systems technicians,2025,10.7584,91.0,9.3076,92.9
+2152,Electronics engineers,2025,10.7477,90.8,9.0562,90.3
+2612,Judges,2025,10.692,90.6,8.9624,89.6
+2143,Environmental engineers,2025,10.6789,90.3,8.9002,89.2
+2164,Town and traffic planners,2025,10.6388,90.1,8.4621,84.0
+2162,Landscape architects,2025,10.5941,89.9,8.1628,80.4
+4110,General office clerks,2025,10.5806,89.6,9.2247,91.7
+4225,Enquiry clerks,2025,10.5749,89.4,9.0746,90.6
+2654,"Film, stage and related directors and producers",2025,10.5719,89.2,8.4717,84.4
+2141,Industrial and production engineers,2025,10.5089,88.9,8.9588,89.4
+3252,Medical records and health information technicians,2025,10.4965,88.7,9.3596,93.9
+2422,Policy administration professionals,2025,10.4836,88.4,8.7363,87.3
+3514,Web technicians,2025,10.4711,88.2,9.0778,90.8
+2432,Public relations professionals,2025,10.4676,88.0,7.9974,78.1
+3118,Draughtspersons,2025,10.4548,87.7,8.8876,88.9
+3321,Insurance representatives,2025,10.4431,87.5,8.6126,85.8
+2621,Archivists and curators,2025,10.4412,87.3,8.3173,82.3
+3352,Government tax and excise officials,2025,10.4161,87.0,9.4542,94.8
+2149,Engineering professionals not elsewhere classified,2025,10.3722,86.8,8.842,88.4
+2423,Personnel and careers professionals,2025,10.3601,86.6,8.2934,82.1
+4312,"Statistical, finance and insurance clerks",2025,10.3579,86.3,9.3445,93.6
+2643,"Translators, interpreters and other linguists",2025,10.3514,86.1,8.7431,87.5
+1222,Advertising and public relations managers,2025,10.3342,85.8,7.8914,76.2
+3312,Credit and loans officers,2025,10.2362,85.6,8.8758,88.7
+4229,Client information workers not elsewhere classified,2025,10.2332,85.4,8.7124,87.0
+2163,Product and garment designers,2025,10.2199,85.1,8.0155,78.8
+2351,Education methods specialists,2025,10.2122,84.9,7.854,75.5
+4311,Accounting and bookkeeping clerks,2025,10.1899,84.7,9.866,97.2
+2634,Psychologists,2025,10.1789,84.4,8.0076,78.5
+2611,Lawyers,2025,10.1737,84.2,7.6335,71.7
+2144,Mechanical engineers,2025,10.172,84.0,8.6876,86.8
+4227,Survey and market research interviewers,2025,9.9973,83.7,8.972,89.9
+3324,Trade brokers,2025,9.996,83.5,8.4293,83.0
+2131,"Biologists, botanists, zoologists and related professionals",2025,9.9662,83.3,8.3556,82.8
+3339,Business services agents not elsewhere classified,2025,9.9478,83.0,8.2603,81.6
+4419,Clerical support workers not elsewhere classified,2025,9.9446,82.8,8.7584,87.7
+2113,Chemists,2025,9.9341,82.5,8.6248,86.1
+2619,Legal professionals not elsewhere classified,2025,9.9085,82.3,7.7607,74.1
+1211,Finance managers,2025,9.9031,82.1,8.4694,84.2
+1212,Human resource managers,2025,9.8662,81.8,7.6745,72.2
+2353,Other language teachers,2025,9.8234,81.6,7.8859,75.9
+2161,Building architects,2025,9.8106,81.4,8.1186,79.2
+1330,Information and communications technology service managers,2025,9.8007,81.1,8.0762,79.0
+1223,Research and development managers,2025,9.7708,80.9,8.2196,81.4
+2355,Other arts teachers,2025,9.6535,80.7,7.7284,73.3
+3311,Securities and finance dealers and brokers,2025,9.6436,80.4,7.9966,77.8
+4214,Debt-collectors and related workers,2025,9.6084,80.2,7.9066,76.4
+2341,Primary school teachers,2025,9.5919,80.0,7.6806,72.4
+1113,Traditional chiefs and heads of villages,2025,9.5866,79.7,7.5099,70.5
+3354,Government licensing officials,2025,9.5841,79.5,8.4394,83.5
+2522,Systems administrators,2025,9.5707,79.2,8.5429,84.9
+3411,Legal and related associate professionals,2025,9.5689,79.0,8.7812,88.2
+4226,Receptionists (general),2025,9.5536,78.8,8.5627,85.4
+3313,Accounting associate professionals,2025,9.5306,78.5,9.4469,94.6
+2656,"Announcers on radio, television and other media",2025,9.5204,78.3,8.1302,80.0
+4322,Production clerks,2025,9.5167,78.1,8.4297,83.3
+2359,Teaching professionals not elsewhere classified,2025,9.4759,77.8,7.4599,69.3
+2655,Actors,2025,9.4756,77.6,7.0837,60.6
+2330,Secondary education teachers,2025,9.4343,77.4,7.7637,74.3
+1221,Sales and marketing managers,2025,9.4063,77.1,7.3741,67.7
+2114,Geologists and geophysicists,2025,9.388,76.9,8.2696,81.8
+3323,Buyers,2025,9.3854,76.7,8.0055,78.3
+3315,Valuers and loss assessors,2025,9.3763,76.4,8.6271,86.3
+2265,Dieticians and nutritionists,2025,9.3727,76.2,7.258,66.0
+2424,Training and staff development professionals,2025,9.3546,75.8,7.2346,65.0
+2356,Information technology trainers,2025,9.3546,75.8,7.2346,65.0
+4131,Typists and word processing operators,2025,9.3445,75.5,9.2845,92.5
+4222,Contact centre information clerks,2025,9.31,75.2,8.1603,80.2
+4323,Transport clerks,2025,9.3089,75.0,8.5035,84.7
+3322,Commercial sales representatives,2025,9.2954,74.8,7.6857,72.6
+3343,Administrative and executive secretaries,2025,9.2732,74.5,8.7742,88.0
+5312,Teachers' aides,2025,9.257,74.3,7.7512,73.8
+3353,Government social benefits officials,2025,9.215,74.1,8.1195,79.5
+2153,Telecommunications engineers,2025,9.1825,73.8,8.1215,79.7
+1213,Policy and planning managers,2025,9.1546,73.2,7.7852,74.9
+1349,Professional services managers not elsewhere classified,2025,9.1546,73.2,7.7852,74.9
+1439,Services managers not elsewhere classified,2025,9.1546,73.2,7.7852,74.9
+1322,Mining managers,2025,9.1546,73.2,7.7852,74.9
+2622,Librarians and related information professionals,2025,9.1351,72.6,7.9209,77.6
+1114,Senior officials of special-interest organizations,2025,9.0532,72.4,7.3422,67.0
+2523,Computer network professionals,2025,8.9806,72.2,7.907,76.7
+1342,Health services managers,2025,8.9716,71.9,7.3715,67.5
+3334,Real estate agents and property managers,2025,8.9608,71.7,7.6014,71.2
+2433,Technical and medical sales professionals (excluding ICT),2025,8.9576,71.5,7.2923,66.3
+4223,Telephone switchboard operators,2025,8.9398,71.2,8.6313,86.6
+1324,"Supply, distribution and related managers",2025,8.9154,71.0,7.495,70.0
+1341,Child care services managers,2025,8.9095,70.8,7.1792,63.7
+2354,Other music teachers,2025,8.8303,70.4,7.2369,65.4
+5165,Driving instructors,2025,8.8303,70.4,7.2369,65.4
+1345,Education managers,2025,8.7788,70.0,6.8957,57.3
+2434,Information and communications technology sales professionals,2025,8.7742,69.8,7.1424,62.5
+4224,Hotel receptionists,2025,8.7525,69.6,7.4417,69.1
+1346,Financial and insurance services branch managers,2025,8.7277,69.3,7.4737,69.6
+2636,Religious professionals,2025,8.7159,69.1,6.7947,56.4
+2211,Generalist medical practitioners,2025,8.6516,68.9,7.6468,71.9
+2230,Traditional and complementary medicine professionals,2025,8.582,68.6,7.7085,72.9
+2342,Early childhood educators,2025,8.5708,68.4,6.9207,57.8
+1120,Managing directors and chief executives,2025,8.5695,68.2,6.9939,59.2
+1219,Business services and administration managers not elsewhere classified,2025,8.5589,67.9,7.1314,62.0
+3512,Information and communications technology user support technicians,2025,8.5563,67.7,7.5764,71.0
+5212,Street food salespersons,2025,8.5063,67.5,7.1674,63.0
+4221,Travel consultants and clerks,2025,8.4421,67.2,7.1778,63.2
+3341,Office supervisors,2025,8.4342,67.0,6.9543,59.0
+2133,Environmental protection professionals,2025,8.4034,66.7,7.355,67.2
+2652,"Musicians, singers and composers",2025,8.3839,66.5,7.1365,62.3
+7321,Pre-press technicians,2025,8.3535,66.3,7.734,73.6
+2263,Environmental and occupational health and hygiene professionals,2025,8.2826,66.0,7.3272,66.7
+1112,Senior government officials,2025,8.2815,65.8,6.744,55.9
+3432,Interior designers and decorators,2025,8.2741,65.6,6.6469,54.5
+1343,Aged care services managers,2025,8.262,65.3,6.9248,58.0
+2651,Visual artists,2025,8.2245,65.1,6.7063,55.4
+2165,Cartographers and surveyors,2025,8.2003,64.9,7.8646,75.7
+3522,Telecommunications engineering technicians,2025,8.1683,64.4,7.909,77.1
+3155,Air traffic safety electronics technicians,2025,8.1683,64.4,7.909,77.1
+3114,Electronics engineering technicians,2025,8.1683,64.4,7.909,77.1
+2635,Social work and counselling professionals,2025,8.113,63.9,6.66,54.7
+3333,Employment agents and contractors,2025,8.107,63.7,7.3938,68.6
+2269,Health professionals not elsewhere classified,2025,8.0933,63.4,7.0651,60.1
+3331,Clearing and forwarding agents,2025,8.0454,63.2,7.6153,71.5
+2266,Audiologists and speech therapists,2025,8.0318,63.0,7.2418,65.8
+2132,"Farming, forestry and fisheries advisers",2025,8.0106,62.7,6.8317,56.6
+7111,House builders,2025,7.9669,62.4,7.3791,68.0
+1323,Construction managers,2025,7.9669,62.4,7.3791,68.0
+1431,"Sports, recreation and cultural centre managers",2025,7.8391,62.0,7.071,60.4
+2352,Special needs teachers,2025,7.8304,61.8,6.5572,53.3
+3111,Chemical and physical science technicians,2025,7.7724,61.6,7.4958,70.3
+5241,Fashion and other models,2025,7.7464,61.3,6.1346,46.7
+4132,Data entry clerks,2025,7.7026,61.1,8.3178,82.5
+3141,Life science technicians (excluding medical),2025,7.6589,60.8,7.5115,70.8
+5113,Travel guides,2025,7.6223,60.6,6.779,56.1
+3332,Conference and event planners,2025,7.5595,60.4,6.1902,47.9
+5221,Shopkeepers,2025,7.5523,60.0,6.478,51.5
+1420,Retail and wholesale trade managers,2025,7.5523,60.0,6.478,51.5
+2262,Pharmacists,2025,7.5503,59.7,6.7277,55.7
+4415,Filing and copying clerks,2025,7.5489,59.4,7.3824,68.4
+3117,Mining and metallurgical technicians,2025,7.5277,59.2,7.4301,68.9
+3511,Information and communications technology operations technicians,2025,7.4864,59.0,7.4744,69.8
+3435,Other artistic and cultural associate professionals,2025,7.4532,58.7,6.5146,52.8
+1344,Social welfare managers,2025,7.4425,58.5,6.1828,47.6
+4411,Library clerks,2025,7.3958,58.3,7.0842,60.8
+2320,Vocational education teachers,2025,7.3577,58.0,6.3127,49.3
+3142,Agricultural technicians,2025,7.3556,57.8,7.1893,63.9
+3116,Chemical engineering technicians,2025,7.3086,57.5,7.2962,66.5
+3154,Air traffic controllers,2025,7.2002,57.3,7.1791,63.4
+3521,Broadcasting and audio-visual technicians,2025,7.1767,57.1,7.2309,64.6
+7543,Product graders and testers (excluding foods and beverages),2025,7.1718,56.8,7.7148,73.1
+3433,"Gallery, museum and library technicians",2025,7.1675,56.6,6.5969,53.8
+3112,Civil engineering technicians,2025,7.1665,56.4,7.1023,61.1
+0315,Ship and aircraft controllers and technicians,2025,7.114,56.1,7.0353,59.9
+2267,Optometrists and ophthalmic opticians,2025,7.093,55.9,7.2169,64.4
+3431,Photographers,2025,7.0832,55.7,6.4878,52.1
+5242,Sales demonstrators,2025,7.0749,55.4,6.4248,50.9
+4212,"Bookmakers, croupiers and related gaming workers",2025,7.0516,55.2,7.1587,62.7
+3119,Physical and engineering science technicians not elsewhere classified,2025,6.9747,55.0,6.9454,58.7
+5141,Hairdressers,2025,6.9253,54.7,6.2591,48.8
+1321,Manufacturing managers,2025,6.9196,54.5,6.6208,54.2
+7319,Handicraft workers not elsewhere classified,2025,6.908,54.1,5.9684,43.0
+7317,"Handicraft workers in wood, basketry and related materials",2025,6.908,54.1,5.9684,43.0
+3254,Dispensing opticians,2025,6.8847,53.8,6.5294,53.1
+3212,Medical and pathology laboratory technicians,2025,6.8709,53.5,7.1229,61.3
+2212,Specialist medical practitioners,2025,6.8623,53.3,6.3761,50.0
+5169,Personal services workers not elsewhere classified,2025,6.8583,53.1,6.1029,45.8
+3256,Medical assistants,2025,6.8388,52.8,6.6685,55.0
+3412,Social work associate professionals,2025,6.8297,52.6,6.2447,48.6
+3422,"Sports coaches, instructors and officials",2025,6.8211,52.4,6.2148,48.3
+3213,Pharmaceutical technicians and assistants,2025,6.7932,52.1,7.0237,59.7
+3131,Power production plant operators,2025,6.772,51.9,6.9965,59.4
+3255,Physiotherapy technicians and assistants,2025,6.7665,51.7,6.1279,46.5
+3139,Process control technicians not elsewhere classified,2025,6.748,51.4,7.2056,64.2
+5142,Beauticians and related workers,2025,6.7435,51.2,6.2971,49.1
+5311,Child care workers,2025,6.7297,50.9,5.9426,42.5
+3115,Mechanical engineering technicians,2025,6.7238,50.7,6.8736,57.1
+7549,Craft and related workers not elsewhere classified,2025,6.7037,50.5,6.4781,51.9
+7512,"Bakers, pastry-cooks and confectionery makers",2025,6.6757,50.2,6.8733,56.8
+3359,Regulatory government associate professionals not elsewhere classified,2025,6.6708,50.0,7.127,61.8
+3113,Electrical engineering technicians,2025,6.6563,49.8,6.9292,58.5
+2222,Midwifery professionals,2025,6.6299,49.5,6.1754,47.2
+4211,Bank tellers and related clerks,2025,6.5835,49.3,6.8983,57.5
+3214,Medical and dental prosthetic technicians,2025,6.5405,49.1,6.6151,54.0
+7311,Precision-instrument makers and repairers,2025,6.523,48.8,6.9266,58.3
+2264,Physiotherapists,2025,6.5039,48.6,5.6287,35.8
+3230,Traditional and complementary medicine associate professionals,2025,6.4856,48.2,6.3943,50.4
+3222,Midwifery associate professionals,2025,6.4856,48.2,6.3943,50.4
+4414,Scribes and related workers,2025,6.4849,47.8,5.9838,43.8
+5162,Companions and valets,2025,6.4849,47.8,5.9838,43.8
+3257,Environmental and occupational health inspectors and associates,2025,6.4808,47.4,6.6787,55.2
+5223,Shop sales assistants,2025,6.414,47.2,5.8615,41.3
+3423,Fitness and recreation instructors and program leaders,2025,6.4119,46.9,5.6119,34.9
+5249,Sales workers not elsewhere classified,2025,6.3992,46.7,6.365,49.8
+7531,"Tailors, dressmakers, furriers and hatters",2025,6.3809,46.5,6.4482,51.2
+7313,Jewellery and precious-metal workers,2025,6.3014,46.2,7.1253,61.6
+5322,Home-based personal care workers,2025,6.1422,46.0,5.7568,39.2
+2221,Nursing professionals,2025,6.0412,45.8,5.8181,41.0
+3259,Health associate professionals not elsewhere classified,2025,6.0142,45.5,6.0581,44.8
+2240,Paramedical practitioners,2025,6.0099,45.3,6.087,45.5
+1411,Hotel managers,2025,6.0062,45.0,5.3134,26.2
+2250,Veterinarians,2025,5.9933,44.8,6.069,45.0
+1311,Agricultural and forestry production managers,2025,5.9501,44.5,5.742,38.6
+1312,Aquaculture and fisheries production managers,2025,5.9501,44.5,5.742,38.6
+3211,Medical imaging and therapeutic equipment technicians,2025,5.8983,44.1,6.0084,44.3
+3122,Manufacturing supervisors,2025,5.8715,43.9,5.7801,40.3
+4321,Stock clerks,2025,5.8623,43.6,6.3551,49.5
+1412,Restaurant managers,2025,5.8298,43.4,5.4311,30.7
+9334,Shelf fillers,2025,5.8189,43.2,6.1189,46.2
+3151,Ships' engineers,2025,5.7944,42.9,6.0015,44.1
+5230,Cashiers and ticket clerks,2025,5.7852,42.7,6.5128,52.6
+3355,Police inspectors and detectives,2025,5.751,42.5,5.6877,36.8
+7222,Toolmakers and related workers,2025,5.7423,42.2,6.4105,50.7
+5164,Pet groomers and animal care workers,2025,5.7347,42.0,5.72,37.5
+5112,Transport conductors,2025,5.6851,41.7,5.7923,40.8
+7314,Potters and related workers,2025,5.6831,41.5,5.5928,34.4
+8132,Photographic products machine operators,2025,5.6664,41.3,6.052,44.6
+5120,Cooks,2025,5.6633,41.0,5.7606,39.4
+2261,Dentists,2025,5.6472,40.8,5.6674,36.6
+8212,Electrical and electronic equipment assemblers,2025,5.5853,40.6,6.5576,53.5
+5222,Shop supervisors,2025,5.5729,40.3,5.2359,21.2
+3253,Community health workers,2025,5.5701,40.1,5.2337,21.0
+7421,Electronics mechanics and servicers,2025,5.5684,39.9,5.8856,41.7
+5414,Security guards,2025,5.5581,39.6,6.5079,52.4
+3434,Chefs,2025,5.5317,39.4,5.2812,25.0
+3251,Dental assistants and therapists,2025,5.4591,39.2,5.7097,37.0
+9411,Fast food preparers,2025,5.4546,38.9,5.7907,40.6
+5329,Personal care workers in health services not elsewhere classified,2025,5.4485,38.7,5.7102,37.3
+9629,Elementary workers not elsewhere classified,2025,5.415,38.4,6.0778,45.3
+5419,Protective services workers not elsewhere classified,2025,5.4034,38.2,5.9344,42.2
+3351,Customs and border inspectors,2025,5.4031,38.0,5.3831,28.8
+7515,Food and beverage tasters and graders,2025,5.3458,37.7,6.2077,48.1
+3240,Veterinary technicians and assistants,2025,5.3349,37.5,5.743,38.9
+5163,Undertakers and embalmers,2025,5.3193,37.3,5.2775,24.5
+7532,Garment and related pattern-makers and cutters,2025,5.319,37.0,5.9532,42.7
+5151,"Cleaning and housekeeping supervisors in offices, hotels and other establishments",2025,5.2213,36.7,5.1033,17.3
+5152,Domestic housekeepers,2025,5.2213,36.7,5.1033,17.3
+7234,Bicycle and related repairers,2025,5.1862,36.3,5.2581,23.3
+8321,Motorcycle drivers,2025,5.1834,36.1,5.6266,35.6
+7422,Information and communications technology installers and servicers,2025,5.1785,35.8,5.6409,36.3
+5111,Travel attendants and travel stewards,2025,5.1316,35.6,5.4404,30.9
+5131,Waiters,2025,5.1305,35.4,5.4783,32.1
+3152,Ships' deck officers and pilots,2025,5.1247,35.1,5.5731,34.2
+3121,Mining supervisors,2025,5.1198,34.8,5.162,19.5
+3123,Construction supervisors,2025,5.1198,34.8,5.162,19.5
+5132,Bartenders,2025,5.0858,34.4,5.1503,18.9
+7514,"Fruit, vegetable and related preservers",2025,5.0732,34.2,6.1814,47.4
+7316,"Sign writers, decorative painters, engravers and etchers",2025,5.0597,34.0,5.8709,41.5
+7232,Aircraft engine mechanics and repairers,2025,4.999,33.7,5.4065,29.7
+8182,Steam engine and boiler operators,2025,4.9886,33.5,5.9762,43.4
+7312,Musical instrument makers and tuners,2025,4.9784,33.3,5.461,31.4
+5245,Service station attendants,2025,4.9447,33.0,5.3157,26.7
+7322,Printers,2025,4.8823,32.8,5.7232,37.7
+7412,Electrical mechanics and fitters,2025,4.8726,32.5,5.5063,33.0
+7127,Air conditioning and refrigeration mechanics,2025,4.8696,32.3,5.2434,22.9
+9611,Garbage and recycling collectors,2025,4.8576,32.1,5.309,25.7
+3133,Chemical processing plant controllers,2025,4.8427,31.8,6.1692,46.9
+5321,Health care assistants,2025,4.8308,31.6,5.0238,16.0
+3132,Incinerator and water treatment plant operators,2025,4.7616,31.4,5.4823,32.3
+8157,Laundry machine operators,2025,4.7379,31.1,5.4737,31.8
+5246,Food service counter attendants,2025,4.7174,30.9,5.2779,24.8
+7411,Building and related electricians,2025,4.6653,30.7,5.2582,23.6
+8156,Shoemaking and related machine operators,2025,4.6571,30.4,5.9299,42.0
+8312,"Railway brake, signal and switch operators",2025,4.6513,30.2,5.3563,28.5
+4412,Mail carriers and sorting clerks,2025,4.6363,30.0,5.5354,33.7
+8219,Assemblers not elsewhere classified,2025,4.6334,29.7,5.5544,34.0
+8332,Heavy truck and lorry drivers,2025,4.6305,29.5,5.3425,27.8
+8160,Food and related products machine operators,2025,4.6279,29.2,5.7763,39.9
+7413,Electrical line installers and repairers,2025,4.6211,29.0,5.0475,16.3
+7513,Dairy-products makers,2025,4.6007,28.8,5.7766,40.1
+3153,Aircraft pilots and related associate professionals,2025,4.5939,28.5,5.5348,33.5
+6121,Livestock and dairy producers,2025,4.5865,27.8,5.2421,22.2
+6122,Poultry producers,2025,4.5865,27.8,5.2421,22.2
+6221,Aquaculture workers,2025,4.5865,27.8,5.2421,22.2
+6123,Apiarists and sericulturists,2025,4.5865,27.8,5.2421,22.2
+6129,Animal producers not elsewhere classified,2025,4.5865,27.8,5.2421,22.2
+7544,Fumigators and other pest and weed controllers,2025,4.5771,27.1,5.0576,16.7
+9623,Meter readers and vending-machine collectors,2025,4.5697,26.9,5.5274,33.3
+3221,Nursing associate professionals,2025,4.5696,26.7,4.6743,9.0
+3143,Forestry technicians,2025,4.5507,26.4,5.1693,19.8
+8211,Mechanical machinery assemblers,2025,4.5485,26.2,5.4945,32.5
+8154,"Bleaching, dyeing and fabric cleaning machine operators",2025,4.5483,25.9,5.739,38.2
+5153,Building caretakers,2025,4.5447,25.6,5.268,24.2
+9123,Window cleaners,2025,4.5447,25.6,5.268,24.2
+7221,"Blacksmiths, hammersmiths and forging press workers",2025,4.5416,25.2,5.636,36.1
+7323,Print finishing and binding workers,2025,4.5368,25.0,5.3389,27.6
+7213,Sheet-metal workers,2025,4.5029,24.8,5.407,30.0
+3134,Petroleum and natural gas refining plant operators,2025,4.4851,24.5,5.7688,39.6
+8344,Lifting truck operators,2025,4.4642,24.3,5.326,27.4
+7522,Cabinet-makers and related workers,2025,4.4413,24.1,5.318,26.9
+8131,Chemical products plant and machine operators,2025,4.4362,23.8,5.4569,31.1
+7533,"Sewing, embroidery and related workers",2025,4.4305,23.6,5.7274,38.0
+9111,Domestic cleaners and helpers,2025,4.4272,23.3,4.8858,12.0
+8343,"Crane, hoist and related plant operators",2025,4.3533,23.1,5.3146,26.4
+8189,Stationary plant and machine operators not elsewhere classified,2025,4.3376,22.9,5.3875,29.2
+7315,"Glass makers, cutters, grinders and finishers",2025,4.3258,22.6,5.3974,29.5
+8153,Sewing machine operators,2025,4.3181,22.4,6.1105,46.0
+8322,"Car, taxi and van drivers",2025,4.3127,22.2,5.1415,18.6
+9622,Odd job persons,2025,4.3034,21.9,5.3487,28.3
+6224,Hunters and trappers,2025,4.2826,21.7,5.135,18.4
+7231,Motor vehicle mechanics and repairers,2025,4.2803,21.5,5.1294,18.2
+9333,Freight handlers,2025,4.2464,21.2,4.9774,14.4
+7223,Metal working machine tool setters and operators,2025,4.1891,21.0,5.4294,30.4
+7318,"Handicraft workers in textile, leather and related materials",2025,4.1795,20.6,5.6173,35.3
+7536,Shoemakers and related workers,2025,4.1795,20.6,5.6173,35.3
+8171,Pulp and papermaking plant operators,2025,4.1535,20.3,5.5037,32.8
+8331,Bus and tram drivers,2025,4.1406,20.0,5.4628,31.6
+7516,Tobacco preparers and tobacco products makers,2025,4.119,19.8,5.3117,25.9
+6130,Mixed crop and animal producers,2025,4.1175,19.6,5.1958,20.8
+7542,Shotfirers and blasters,2025,4.1083,19.3,5.1819,20.0
+7224,"Metal polishers, wheel grinders and tool sharpeners",2025,4.0971,19.1,5.4193,30.2
+9215,Forestry labourers,2025,4.0758,18.9,4.7905,10.4
+8142,Plastic products machine operators,2025,4.0715,18.6,5.3428,28.1
+9112,"Cleaners and helpers in offices, hotels and other establishments",2025,4.0653,18.4,4.9868,14.9
+8122,"Metal finishing, plating and coating machine operators",2025,4.0568,18.2,5.2897,25.5
+9331,Hand and pedal vehicle drivers,2025,4.0345,17.9,5.1133,17.7
+7125,Glaziers,2025,4.0281,17.7,4.9229,12.7
+2653,Dancers and choreographers,2025,4.0255,17.5,3.3914,0.2
+7212,Welders and flamecutters,2025,4.0217,17.2,5.3867,29.0
+7535,"Pelt dressers, tanners and fellmongers",2025,4.0208,17.0,5.2883,25.2
+7534,Upholsterers and related workers,2025,4.0148,16.7,4.711,9.7
+5412,Police officers,2025,3.9982,16.5,4.41,3.5
+6320,Subsistence livestock farmers,2025,3.9903,16.2,4.9724,13.8
+9212,Livestock farm labourers,2025,3.9903,16.2,4.9724,13.8
+7126,Plumbers and pipe fitters,2025,3.9901,15.8,4.8293,10.8
+8181,Glass and ceramics plant operators,2025,3.9781,15.6,5.2399,21.5
+7233,Agricultural and industrial machinery mechanics and repairers,2025,3.9667,15.3,4.8898,12.3
+7119,Building frame and related trades workers not elsewhere classified,2025,3.9595,15.1,4.6553,8.7
+7523,Woodworking-machine tool setters and operators,2025,3.9563,14.9,5.5942,34.7
+5413,Prison guards,2025,3.9462,14.6,4.4357,3.8
+8114,"Cement, stone and other mineral products machine operators",2025,3.9249,14.4,5.1604,19.1
+7215,Riggers and cable splicers,2025,3.918,14.2,5.051,16.5
+8183,"Packing, bottling and labelling machine operators",2025,3.9174,13.9,5.1161,17.9
+9321,Hand packers,2025,3.906,13.7,5.0089,15.1
+7122,Floor layers and tile setters,2025,3.8884,13.4,4.5763,7.5
+8143,Paper products machine operators,2025,3.8835,13.2,5.2653,23.8
+7115,Carpenters and joiners,2025,3.8756,13.0,4.5087,6.1
+7511,"Butchers, fishmongers and related food preparers",2025,3.8548,12.7,4.9574,13.4
+3258,Ambulance workers,2025,3.8365,12.5,4.4998,5.7
+7521,Wood treaters,2025,3.8326,12.3,5.191,20.5
+6112,Tree and shrub crop growers,2025,3.7996,11.8,5.023,15.6
+6111,Field crop and vegetable growers,2025,3.7996,11.8,5.023,15.6
+6114,Mixed crop growers,2025,3.7996,11.8,5.023,15.6
+9621,"Messengers, package deliverers and luggage porters",2025,3.7838,11.3,4.6972,9.4
+6210,Forestry and related workers,2025,3.7814,11.1,4.9263,13.0
+8141,Rubber products machine operators,2025,3.7741,10.8,5.0719,17.0
+8152,Weaving and knitting machine operators,2025,3.7707,10.6,5.1863,20.3
+7124,Insulation workers,2025,3.7704,10.4,4.5456,7.3
+7541,Underwater divers,2025,3.7549,10.1,4.5432,7.1
+8311,Locomotive engine drivers,2025,3.7407,9.9,5.2507,23.1
+7123,Plasterers,2025,3.6965,9.7,4.4909,5.0
+9412,Kitchen helpers,2025,3.6801,9.4,4.5243,6.6
+8172,Wood processing plant operators,2025,3.6674,9.2,5.3218,27.1
+6222,Inland and coastal waters fishery workers,2025,3.6494,8.8,4.4956,5.3
+6223,Deep-sea fishery workers,2025,3.6494,8.8,4.4956,5.3
+9213,Mixed crop and livestock farm labourers,2025,3.6427,8.4,4.641,8.4
+6330,Subsistence mixed crop and livestock farmers,2025,3.6427,8.4,4.641,8.4
+7132,Spray painters and varnishers,2025,3.6196,8.0,4.8704,11.6
+6113,"Gardeners, horticultural and nursery growers",2025,3.6183,7.8,4.6246,8.0
+8112,Mineral and stone processing plant operators,2025,3.6048,7.5,4.9417,13.2
+9329,Manufacturing labourers not elsewhere classified,2025,3.5805,7.3,4.9192,12.5
+7131,Painters and related workers,2025,3.571,7.1,4.4889,4.7
+7113,"Stonemasons, stone cutters, splitters and carvers",2025,3.5529,6.8,4.2097,1.2
+5411,Fire-fighters,2025,3.5329,6.6,4.1252,0.9
+6340,"Subsistence fishers, hunters, trappers and gatherers",2025,3.5122,6.4,4.6877,9.2
+8113,Well drillers and borers and related workers,2025,3.5102,6.1,4.8422,11.1
+7112,Bricklayers and related workers,2025,3.4851,5.9,4.537,6.8
+7211,Metal moulders and coremakers,2025,3.4775,5.7,4.8804,11.8
+8121,Metal processing plant operators,2025,3.4497,5.4,4.974,14.2
+9216,Fishery and aquaculture labourers,2025,3.4346,5.2,4.5104,6.4
+9612,Refuse sorters,2025,3.383,5.0,4.4782,4.5
+8151,"Fibre preparing, spinning and winding machine operators",2025,3.3215,4.7,4.7884,10.1
+6310,Subsistence crop farmers,2025,3.2951,4.4,4.3096,2.2
+9211,Crop farm labourers,2025,3.2951,4.4,4.3096,2.2
+7114,"Concrete placers, concrete finishers and related workers",2025,3.2624,4.0,4.329,2.6
+3421,Athletes and sports players,2025,3.2421,3.8,3.5961,0.5
+9129,Other cleaning workers,2025,3.2414,3.5,4.5793,7.8
+9313,Building construction labourers,2025,3.2247,3.3,4.2218,1.4
+9122,Vehicle cleaners,2025,3.2239,3.1,4.8066,10.6
+9624,Water and firewood collectors,2025,3.2117,2.8,4.3029,1.9
+7214,Structural-metal preparers and erectors,2025,3.2029,2.6,4.3471,2.8
+9214,Garden and horticultural labourers,2025,3.1955,2.4,4.2728,1.7
+8341,Mobile farm and forestry plant operators,2025,3.1167,2.1,4.9849,14.6
+3135,Metal production process controllers,2025,3.1152,1.9,4.8591,11.3
+9311,Mining and quarrying labourers,2025,3.072,1.7,4.3989,3.1
+9312,Civil engineering labourers,2025,3.0696,1.4,4.4693,4.2
+8342,Earthmoving and related plant operators,2025,2.9877,1.2,4.7316,9.9
+8350,Ships' deck crews and related workers,2025,2.9793,0.9,4.4095,3.3
+8111,Miners and quarriers,2025,2.963,0.7,4.5002,5.9
+7121,Roofers,2025,2.9199,0.5,3.9667,0.7
+9121,Hand launderers and pressers,2025,2.6588,0.2,4.467,4.0

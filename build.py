@@ -620,8 +620,11 @@ def daioe():
   <div class="eyebrow"><span class="dot"></span> {h(d['tagline'])}</div>
   <h1 class="title" style="max-width:16ch">{h(d['headline'])}: how exposed is each job to AI?</h1>
   <p class="lede" style="max-width:60ch">{h(d['lede'])}</p>
-  <div class="cta-row"><a class="btn primary" href="{d['resources'][0]['href']}">Download the data →</a>
-    <a class="btn ghost" href="/monitor/#occupations-explorer">See it applied in the Monitor</a></div>
+  <p class="mono" style="margin:26px 0 0;font-size:var(--fs-sec)">Download the {DAIOE_OCC['year']} scores, one CSV per classification:</p>
+  <div class="cta-row" style="margin-top:10px">{daioe_dl_buttons()}</div>
+  <p class="mono" style="margin:10px 0 0;font-size:var(--fs-sec)">Seven columns: generative AI and all AI, each with its percentile.
+    <a href="{d['resources'][0]['href']}">All years 2012–2025, the full release and code →</a></p>
+  <div class="cta-row" style="margin-top:18px"><a class="btn ghost" href="/monitor/#occupations-explorer">See it applied in the Monitor</a></div>
 </div></div></div>
 
 <div class="rule" id="find"><div class="wrap"><section>
@@ -971,6 +974,22 @@ def _frozen_date():
         if v.get("version") == DEF_VERSION:
             return v.get("frozen", "")
     return ""
+
+
+DAIOE_DL = (("daioe_isco08_2025.csv", "ISCO-08 (international)"),
+            ("daioe_soc2010_2025.csv", "SOC 2010 (US)"),
+            ("daioe_ssyk2012_2025.csv", "SSYK 2012 (Swedish)"))
+
+
+def daioe_dl_buttons():
+    """One-click downloads on the DAIOE page (25 Nov 2026, ML): the pipeline's seven-column
+    CSVs, copied into assets/daioe-scores/ by scripts/build_daioe_occupations.py. Served from
+    this site so the download attribute saves the file; a missing copy fails the build."""
+    for f, _ in DAIOE_DL:
+        if not (ROOT / "assets" / "daioe-scores" / f).exists():
+            raise SystemExit(f"assets/daioe-scores/{f} missing: run scripts/build_daioe_occupations.py")
+    return "".join(f'<a class="btn primary" href="/assets/daioe-scores/{f}" download>↓ {h(lab)}</a>'
+                   for f, lab in DAIOE_DL)
 
 
 def daioe_cite(obj):

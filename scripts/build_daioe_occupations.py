@@ -25,6 +25,12 @@ Percentiles are computed within year and classification as the tie-invariant mid
 (100 * average rank / N), the convention the bundle README recommends over the legacy
 pctl_rank_* columns. The JSON stores raw index values; the page derives ranks from them.
 
+It also copies the pipeline's "just the scores" CSVs for 2025 (scores/daioe_<cls>_2025.csv,
+seven columns) into assets/daioe-scores/, so the page's download buttons save a file in one
+click (a link to GitHub opens the CSV as text instead). They are copied, never rebuilt here, so
+the pipeline's scores/ stays the one master; the copy is checked against the lookup built above
+(same occupations, same generative-AI values) and fails loudly if they disagree.
+
 Run order: this script, then build.py. When a new vintage changes the JSON, bump the
 `?v=` on the two fetches of daioe_occupations.json in assets/app.js, so browsers holding
 the old file do not pair it with new code.
@@ -209,6 +215,31 @@ def main() -> None:
     ypath.write_text(yaml.safe_dump(exp, allow_unicode=True, sort_keys=False), encoding="utf-8")
     print(f"wrote {ypath.relative_to(ROOT)}: top {exp['most'][0]['occ']} {exp['most'][0]['score']}, "
           f"bottom {exp['least'][-1]['occ']} {exp['least'][-1]['score']}")
+    copy_simple_scores(isco, ssyk)
+
+
+SIMPLE = WORKSPACE / "lab-infrastructure/daioe-pipeline/scores"
+SIMPLE_FILES = ("daioe_isco08_2025.csv", "daioe_soc2010_2025.csv", "daioe_ssyk2012_2025.csv")
+
+
+def copy_simple_scores(isco: pd.DataFrame, ssyk: pd.DataFrame) -> None:
+    """Copy the three 2025 CSVs and check two of them against the release panels read above."""
+    dest = ROOT / "assets" / "daioe-scores"
+    dest.mkdir(exist_ok=True)
+    last = isco.year.max()
+    for name in SIMPLE_FILES:
+        raw = (SIMPLE / name).read_bytes()
+        csv = pd.read_csv(SIMPLE / name, dtype={"code": str})
+        assert list(csv.columns) == ["code", "title", "year", "genai", "genai_pctl", "allai", "allai_pctl"], name
+        assert csv.year.eq(last).all() and csv.notna().all().all(), name
+        ref = {"daioe_isco08_2025.csv": isco, "daioe_ssyk2012_2025.csv": ssyk}.get(name)
+        if ref is not None:
+            r = ref[ref.year == last].set_index("code")["genai"]
+            c = csv.set_index("code")["genai"]
+            if set(r.index) != set(c.index) or (c - r.reindex(c.index)).abs().max() > 1e-3:
+                raise SystemExit(f"{name}: does not match the release panel; rebuild the pipeline's scores/")
+        (dest / name).write_bytes(raw)
+        print(f"  copied {name}: {len(csv)} occupations, sha256 {hashlib.sha256(raw).hexdigest()[:12]}")
 
 
 if __name__ == "__main__":
