@@ -1,5 +1,5 @@
 note: DAIOE generative-AI exposure by occupation (ISCO-08). Higher = more exposed.
-source: DAIOE v1.1.0 (vintage-2025), doi:10.5281/zenodo.22551410, AI-Econ Lab; built
+source: DAIOE v1.1.1 (vintage-2025), doi:10.5281/zenodo.24494713, AI-Econ Lab; built
   by scripts/build_daioe_occupations.py
 year: 2025
 most:

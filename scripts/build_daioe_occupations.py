@@ -6,7 +6,7 @@ most/least-exposed lists all read these two files. Until 1 Oct 2026 the JSON was
 by hand from the frozen 2010-2023 window; this script rebuilds both from the PUBLISHED
 release so every number on the page traces to a citable deposit (verification rule V14).
 
-Source: the DAIOE v1.1.0 scores bundle (Zenodo, doi:10.5281/zenodo.22551410), folder
+Source: the DAIOE v1.1.1 scores bundle (Zenodo, doi:10.5281/zenodo.24494713; data identical to v1.1.0), folder
 `vintage-2025/`, which carries the frozen 2010-2023 window cell-identically and chains 2024
 and 2025 at the seam (until 8 Oct 2026: v1.0.0, `refresh-2024/`). The bundle is read from the pipeline's local `dist/` copy; the script refuses
 to run if SHA256SUMS does not match, so the page cannot silently drift off the deposit.
@@ -43,9 +43,9 @@ ROOT = Path(__file__).resolve().parents[1]
 import os
 # AIEL_WORKSPACE overrides the default when the site is checked out elsewhere (e.g. a worktree)
 WORKSPACE = Path(os.environ.get("AIEL_WORKSPACE", ROOT.parents[1]))
-BUNDLE = WORKSPACE / "lab-infrastructure/daioe-pipeline/dist/daioe-v1.1.0-scores"
-VERSION = "1.1.0"
-DOI = "10.5281/zenodo.22551410"
+BUNDLE = WORKSPACE / "lab-infrastructure/daioe-pipeline/dist/daioe-v1.1.1-scores"
+VERSION = "1.1.1"
+DOI = "10.5281/zenodo.24494713"
 VINTAGE = "vintage-2025"
 FIRST_YEAR = 2012          # 2010 and 2011 are empty in every panel (benchmark coverage starts 2012)
 N_EXTREMES = 10            # rows in each of the page's most/least lists
@@ -116,8 +116,10 @@ def check_bundle() -> None:
         if got != digest:
             raise SystemExit(f"SHA256 mismatch for {name}: bundle is not the v{VERSION} deposit")
         checked += 1
-    if checked != 5:
-        raise SystemExit(f"expected 5 {VINTAGE} panels in SHA256SUMS, checked {checked}")
+    # Five taxonomy panels, plus daioe_soc2018 from v1.1.1 (24 Nov 2026).
+    expected = 6 if VERSION >= "1.1.1" else 5
+    if checked != expected:
+        raise SystemExit(f"expected {expected} {VINTAGE} panels in SHA256SUMS, checked {checked}")
     print(f"bundle verified: {checked} {VINTAGE} panels match SHA256SUMS")
 
 

@@ -686,7 +686,7 @@ def daioe():
     <div><div class="exphead"><span class="dotc lo"></span>Least exposed</div>
       <div class="expbars">{least}</div></div>
   </div>
-  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI composite (g2gen) v{DAIOE_EXP['year']} · ISCO-08", next_up="with the DAIOE v2026 release")}
+  {figfooter("daioe_most_least.csv", f"DAIOE generative-AI composite (g2gen) v{DAIOE_EXP['year']} · ISCO-08", next_up="with the DAIOE v2026 release", cite=f"2025 vintage, generative-AI composite (daioe_g2gen), ISCO-08, file vintage-2025/daioe_isco08")}
   <p class="prov" style="margin-top:16px">Source: DAIOE v{DAIOE_EXP['year']} · ISCO-08 · higher score = more exposed.
     Explore every occupation in the <a href="/monitor/#occupations-explorer">Occupations Explorer</a>.</p>
 </section></div></div>
@@ -944,13 +944,15 @@ def folded(txt, cls="secintro", style="", label=None):
     return note(lead, rest, label=label).replace('<p class="secintro">', f'<p class="{cls}"{st}>', 1)
 
 
-def figfooter(csv_name, source, svg_name=None, method_href=None, next_up=None):
+def figfooter(csv_name, source, svg_name=None, method_href=None, next_up=None, cite=None):
     """Item 10: download + provenance under a figure. Source states DAIOE variant + year.
     Offers the data (CSV) plus, when the figure has a static SVG, the chart as SVG and PNG
     (PNG is rasterised client-side from the SVG, so no build dependency). method_href, when
     given, appends a link to the fuller method/sources note. next_up states when the figure's
     source is next expected to move (release-calendar practice, per module: sources publish on
-    their own cadences, so there is no single site-wide next date)."""
+    their own cadences, so there is no single site-wide next date).
+    cite, when given, replaces the Monitor citation: on the DAIOE page a figure is cited to the
+    DAIOE release, not to the Monitor (ML, 25 Nov 2026)."""
     dl = f'<a class="figdl" href="/assets/data/{csv_name}" download>↓ Data (CSV)</a>'
     if svg_name:
         dl += (f'<a class="figdl" href="/assets/data/{svg_name}" download>↓ SVG</a>'
@@ -960,7 +962,7 @@ def figfooter(csv_name, source, svg_name=None, method_href=None, next_up=None):
     nxt = f'<span class="fignext">Next: {h(next_up)}</span>' if next_up else ""
     meth = f'<a class="figml" href="{h(method_href)}">Method &amp; sources →</a>' if method_href else ""
     return (f'<div class="figfoot">{dl}<span class="figsrc">Source: {h(source)}</span>{nxt}{meth}'
-            f'{figcite(source)}</div>')
+            f'{daioe_cite(cite) if cite else figcite(source)}</div>')
 
 
 def _frozen_date():
@@ -969,6 +971,18 @@ def _frozen_date():
         if v.get("version") == DEF_VERSION:
             return v.get("frozen", "")
     return ""
+
+
+def daioe_cite(obj):
+    """Cite disclosure for a figure on the DAIOE page: the Zenodo release first, in the form
+    Zenodo itself prints (authors from CITATION.cff), then the object used (25 Nov 2026, ML)."""
+    authors = ("Engberg, E., Görg, H., Hellsten, M., Javed, F., Lodefalk, M., Längkvist, M., "
+               "Monteiro, N., Kyvik Nordås, H., Pulito, G., Schroeder, S., & Tang, A.")
+    txt = (f"{authors} (2026). DAIOE: Dynamic AI Occupational Exposure (Version {DAIOE_OCC['version']}) "
+           f"[Data set]. Zenodo. https://doi.org/{DAIOE_OCC['doi']}. Object: {obj}. "
+           f"Please also cite the paper (see the FAQ).")
+    return (f'<details class="figcite"><summary>Cite</summary>'
+            f'<p>{h(txt)}</p></details>')
 
 
 def figcite(source):
