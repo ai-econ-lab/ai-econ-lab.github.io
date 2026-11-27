@@ -225,8 +225,8 @@ capability:
     time a single AI run can replace. The frontier is jagged, and it moves fast: on novel
     interactive worlds, where the goal must be inferred without instructions, the best
     system scored under 1% at the benchmark's launch, 30% of human level in July 2026,
-    63% in September and 81% in November, and a September model reaches 99.9% when it is
-    allowed the context management its own provider designed for it.
+    63% in September and 81% in November, and a model released in November reaches 100%
+    when it is allowed the context management its own provider designed for it.
     That benchmark is scored against people by construction: every environment is verified
     solvable by a human, and 100% means matching human efficiency, so the figure is a
     distance to human performance rather than a head-to-head result. Frontier capability is
@@ -341,7 +341,7 @@ capability:
   #   (2026-10-07; Max 0.5% / 2.8%) and Gemini 4 Argon (2026-10-13; best 49.8% Standard (Low),
   #   97.5% Provider Adapter (Low)). Note the gate sat failed for three weeks before anyone
   #   read the notification, so the weekly refresh published nothing between 5 and 19 Oct.
-  reviewed: {metr: 2026-09-04, arc: 2026-11-09}
+  reviewed: {metr: 2026-09-04, arc: 2026-11-27}
   # The same two tiles as machine-comparable numbers, which metr.org embeds in
   # benchmarkDataV1_1. refresh_capability.py reads them on every run and fails the weekly
   # build if they drift by more than tol_pct, so age alone no longer stands in for doubt:
@@ -359,13 +359,17 @@ capability:
     #   capped and XHigh is the figure to quote). Provider Adapter top unchanged: GPT-6 Astra
     #   (High) 99.9; Fable 5.2's best Adapter score is 97.7, so the tile no longer says "the
     #   same model" for the 99.9.
+    # Re-read 27 Nov 2026 (ML: 'fix all of this', /email session): v3.json generated 2026-11-19 20:40 UTC.
+    #   Standard top unchanged, Claude Fable 5.2 (XHigh) 81.17. Provider Adapter top now GPT-6.2 Astra
+    #   (XHigh) 100.0, released 2026-11-17 (was GPT-6 Astra (High) 99.9); intro sentence updated.
+    #   METR re-verified the same day against its embedded blob: no newer suite than May 2026.
     # ARC-AGI-3 from arcprize.org/media/data/leaderboard/v3.json (19 Oct 2026). The tile's
     # headline is the Standard-harness top; the Provider Adapter top is quoted in its body.
     # Tolerance 0.5%: a new top score that moves either by more than ~0.3 points fails the run.
     # Change these together with the tile text, never alone.
     arc:
       standard_top_pct: 81.2        # Claude Fable 5.2 (XHigh), 2026-11-09
-      adapter_top_pct: 99.9         # GPT-6 Astra - Provider Adapter (High), 2026-09-02
+      adapter_top_pct: 100.0        # GPT-6.2 Astra - Provider Adapter (XHigh), 2026-11-17
       tol_pct: 0.5
   facts:
     - {num: "12–17 h", lab: "Longest tasks frontier AI agents finish about half the time, in human-expert time.", foot: "METR Time Horizon 1.1 · above 16 h unreliable on this task suite · May 2026"}
